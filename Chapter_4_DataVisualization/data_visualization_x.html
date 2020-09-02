@@ -1,0 +1,3238 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Data visualization with ggplot2</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="AECN 396/896-002" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/animate.css/animate.xaringan.css" rel="stylesheet" />
+    <link href="libs/tachyons/tachyons.min.css" rel="stylesheet" />
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <script src="libs/htmlwidgets/htmlwidgets.js"></script>
+    <script src="libs/jquery/jquery.min.js"></script>
+    <link href="libs/datatables-css/datatables-crosstalk.css" rel="stylesheet" />
+    <script src="libs/datatables-binding/datatables.js"></script>
+    <link href="libs/dt-core/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="libs/dt-core/css/jquery.dataTables.extra.css" rel="stylesheet" />
+    <script src="libs/dt-core/js/jquery.dataTables.min.js"></script>
+    <link href="libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+    <script src="libs/crosstalk/js/crosstalk.min.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Data visualization with <code>ggplot2</code>
+### AECN 396/896-002
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-code {
+  display: block;
+  overflow-x: auto;
+  padding: .5em;
+  background: #ffe7e7;
+} 
+
+.hljs-github .hljs {
+  background: #f2f2fd;
+}
+
+.remark-inline-code {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: #e6e6e6;
+}
+
+.left-full {
+  width: 80%;
+  height: 92%;
+  float: left;
+}
+
+.left-code {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left-plot5 {
+  width: 48%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot5 {
+  width: 48%;
+  float: right;
+  padding-left: 1%;
+}
+
+ul li{
+  margin: 7px;
+}
+
+ul, li{
+  margin-left: 9px; 
+  padding-left: 0px; 
+}
+
+ol li{
+  margin: 7px;
+}
+
+ol, li{
+  margin-left: 9px; 
+  padding-left: 0px; 
+}
+&lt;/style&gt;
+
+
+# Table of contents
+
+1. [Importing and exporting data](#inputoutput)
+2. [`data.frame` and `tibble`](#df_tbl)
+3. [Data manipulation with `dplyr`: the Basics](#dplyr)
+4. [Grouped operations](#grouped)
+5. [Extensions](#extensions)
+6. [Reshaping data](#reshaping)
+7. [Merging datasets](#merging)
+
+---
+
+# Learning objectives
+
+The objectives of this chapter is to learn how to use the `ggplot2` package to create figures for effective communication 
+
+---
+
+#  `ggplot2` package
+
+Install the package if you have not.
+
+
+```r
+install.packages('ggplot2')
+```
+
+When you load the `tidyverse` package, it automatically load it. 
+
+
+```r
+#--- load ggplot2 along with others in the tidyverse package ---#
+library(tidyverse)
+
+#--- or ---#
+library(ggplot2)
+```
+
+---
+
+# The datasets we use
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+Go [here]() and download **county_yield.rds** and then read the file onto R:
+  ]
+
+.panel[.panel-name[R Code]
+
+```r
+county_yield &lt;- readRDS("county_yield.rds") %&gt;% 
+  select(soy_yield, corn_yield, year, county_code, state_name, d0_5_9, d1_5_9, d2_5_9, d3_5_9, d4_5_9)
+```
+  ]
+
+.panel[.panel-name[Output]
+
+
+```
+##       soy_yield corn_yield year county_code state_name d0_5_9 d1_5_9
+##    1:        NA         NA 2018         053     Kansas 0.8980 3.8186
+##    2:        NA         NA 2017         053     Kansas 3.9994 7.0006
+##    3:        NA         NA 2016         053     Kansas 0.5724 0.0996
+##    4:        NA         NA 2015         053     Kansas 4.4283 1.6177
+##    5:        NA         NA 2014         053     Kansas 4.7032 9.9327
+##   ---                                                               
+## 4319:        53        181 2004         073   Nebraska 0.0000 3.2915
+## 4320:        57        195 2003         073   Nebraska 0.0000 7.7427
+## 4321:        51        170 2002         073   Nebraska 0.0000 7.0000
+## 4322:        56        195 2001         073   Nebraska 5.7915 0.0000
+## 4323:        54        147 2000         073   Nebraska 0.0000 4.7386
+##        d2_5_9 d3_5_9 d4_5_9
+##    1: 13.5279 0.0000      0
+##    2:  0.0000 0.0000      0
+##    3:  0.0000 0.0000      0
+##    4:  0.0000 0.0000      0
+##    5:  3.5824 4.7817      0
+##   ---                      
+## 4319: 19.7085 0.0000      0
+## 4320: 11.8459 3.4114      0
+## 4321:  1.2978 4.7022      9
+## 4322:  0.0000 0.0000      0
+## 4323: 17.6887 0.5727      0
+```
+
+  ]
+
+.panel[.panel-name[Variable Definitions]
++ `soy_yield`: soybean yield (bu/acre)
++ `corn_yield`: corn yield (bu/acre)
++ `d0_5_9`: 
++ `d1_5_9`: 
++ `d2_5_9`: 
++ `d3_5_9`: 
++ `d4_5_9`: 
+  ]
+]
+
+
+&lt;!-- 
+#=========================================
+# ggplot2 Basics
+#=========================================
+--&gt;
+  
+---
+
+class: inverse, center, middle
+name: inputoutput
+
+# `ggplot2` basics
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+
+# Basics
+
+.panelset[ 
+
+.panel[.panel-name[Step 1]
+
+.left-full[
+
+The very first job you need to do to create a figure using the `ggplot2` package is to let R know the dataset you are trying to visualize, which can be done using `ggplot()` as follows:
+
+
+```r
+g_fig &lt;- ggplot(data = county_yield)
+```
+
+When you create a figure using the `ggplot2` package, `ggplot()` is always the function you call first.
+
+]
+
+  ]
+
+.panel[.panel-name[g_fig]
+
+.left-code[
+Let's now see what is inside `g_fig`:
+
+
+```r
+g_fig
+```
+
+Well, it's blank. Obviously, `g_fig` still does not have enough information to create any kind of figures. You have not told R anything specific about how you would like to use the information in the dataset.
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[Step 2]
+
+.left-full[
+
+So, the next thing you need to do is tell `g_fig` what type of figure you want by `geom_*()` functions. 
+
+For example, we use `geom_point()` to create a scatter plot. 
+
+To create a scatter plot, R needs to know which variables should be on the y-axis and x-axis. 
+
+These information can be passed to `g_fig` by the following code:
+
+
+```r
+g_fig_scatter &lt;- g_fig + geom_point(aes(x = d3_5_9, y = corn_yield))
+```
+
+Here, 
+
++ `geom_point()` was added to `g_fig` to declare that you want a scatter plot 
++ `aes(x = d3_5_9, y = corn_yield)` inside `geom_point()` tells R that you want to create a scatter plot where you have `d3_5_9` on the x-axis and `corn_yield` on the y-axis
+
+]
+
+  ]
+
+.panel[.panel-name[g_fig_scatter]
+
+.left-code[
+
+This is what `g_fig_scatter` looks:
+
+
+```r
+g_fig_scatter
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-8-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[`aes()`]
+
+.left-full[
+Going back to the code,
+
+
+```r
+g_fig_scatter &lt;- g_fig + geom_point(aes(x = d3_5_9, y = corn_yield))
+```
+
+Note that `x = d3_5_9`, `y = corn_yield` are inside `aes()`. 
+
+&lt;span style="color:red"&gt; Important:&lt;/span&gt; `aes()` is used to make the &lt;span style='color:red'&gt;aes&lt;/span&gt;thetic of the figure to be a function of variables in the dataset that you told `ggplot` to use (here, `county_yield`). 
+
+`aes(x = d3_5_9, y = corn_yield)` is telling `ggplot` to use `d3_5_9` and `corn_yield` variables in the `county_yield` dataset for the x-axis and y-axis, respectively. 
+
+If you do not have `x = d3_5_9`, `y = corn_yield` inside `aes()`, R is going to look for `d3_5_9` and `corn_yield` themselves (but not in `county_yield`), which you have not defined.
+
+Try
+
+
+```r
+g_fig + geom_point(x = d3_5_9, y = corn_yield)
+```
+]
+
+
+  ]
+
+.panel[.panel-name[summary]
+
+.left-full[
++ `ggplot(data = dataset)` to initiate the process of creating a figure
+
++ add `geom_*()` to declare what kind of figure you would like to make 
+
++ specify what variables in the dataset to use and how they are used inside `aes()` 
+
++ place the `aes()` you defined above in the `geom_*()` you specified above
+
+]
+
+  ]
+]
+
+
+&lt;!-- 
+#=========================================
+# Different types of figures
+#=========================================
+--&gt;
+  
+---
+
+class: inverse, center, middle
+name: inputoutput
+
+# Different types of figures
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+
+# Different types of figures
+
+.panelset[ 
+
+.panel[.panel-name[Figure types]
+
+&lt;br&gt;
+
+`ggplot2` lets you create lots of different kinds of figures via various `geom_*()` functions.
+
++ `geom_histogram()`/`geom_density()`
++ `geom_line()`
++ `geom_boxplot()`
++ `geom_bar()`
+
+How to specify aesthetics vary by `geom_*()`.
+
+  ]
+
+.panel[.panel-name[Histogram]
+
+.left-code[
+
+```r
+g_fig + 
+  geom_histogram(
+    aes(x = corn_yield)
+  )
+```
+
+`geom_histogram()` only needs `x`.
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-12-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[Density Plot]
+
+.left-code[
+
+```r
+g_fig + 
+  geom_density(
+    aes(x = corn_yield)
+  )
+```
+
+`geom_density()` only needs `x`.
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-13-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[Line plot]
+
+.left-code[
+
+Create a dataset first:
+
+
+```r
+mean_yield &lt;- county_yield %&gt;% 
+  group_by(year) %&gt;% 
+  summarize(
+    corn_yield = mean(corn_yield, na.rm = TRUE)
+  ) %&gt;% 
+  filter(!is.na(year))
+```
+
+Create a line plot:
+
+
+```r
+ggplot(data = mean_yield) + 
+  geom_line(aes(x = year, y = corn_yield))
+```
+
+`geom_line()` needs `x` and `y`.
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-15-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[Boxplot]
+
+.left-code[
+
+```r
+ggplot(data = county_yield) + 
+  geom_boxplot(
+    aes(x = factor(year), y = corn_yield)
+  )
+```
+
+`geom_boxplot()` needs `x` and `y`.
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-16-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+  ]
+
+.panel[.panel-name[Bar plot]
+
+.left-code[
+
+```r
+ggplot(data = county_yield) + 
+  geom_bar(
+    aes(
+      x = factor(year), 
+      y = corn_yield
+    ), 
+    stat = "identity" 
+  )
+```
+
+`geom_bar()` needs `x` and `y`.
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-17-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+  ]
+
+]
+
+---
+
+# Modifying how figures look
+
+.panelset[ 
+
+.panel[.panel-name[Notes]
+
+&lt;br&gt;
+
+All the elements in the figures we have created so far are in black and white.
+
+You can change how figure elements look by providing options inside `geom_*()`.
+
+Here are the list of options to control the aesthetics of figures: 
+
++ fill
++ color
++ size
++ shape
+
+Elements of figures that you can modify differ by `geom` types
+
+The same element name can mean different things based on `geom` types
+
+  ]
+
+.panel[.panel-name[Scatter plot]
+
+.left-code[
+
+```r
+g_fig + 
+  geom_point(
+    aes(x = d3_5_9, y = corn_yield),
+    color = "red", 
+    size = 0.7,
+    shape = 0
+  )
+```
+
++ `color = "red"`: makes all the squares red
++ `size = 0.5`: makes the size of the squares smaller 
++ `shape = 0`: change the shape of the points (find other shapes [here](http://www.sthda.com/english/wiki/ggplot2-point-shapes))
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-18-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[Histogram]
+
+.left-code[
+
+```r
+g_fig + 
+  geom_histogram(
+    aes(x = corn_yield),
+    color = "blue", 
+    fill = "green",
+    size = 2,
+    shape = 2 # will be ignored
+  )
+```
+
++ `color = "blue"`: makes all the boundary of the bars blue
++ `fill = "green"`: makes the fill of the bars green
++ `size = 2`: makes the line width of the boundary of the bars thicker 
++ `shape = 2`: does nothing
+ 
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-19-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[Boxplot]
+.left-code[
+
+```r
+ggplot(data = county_yield) + 
+  geom_boxplot(
+    aes(x = factor(year), y = corn_yield),
+    color = "red", 
+    fill = "orange",
+    size = 0.2,
+    shape = 1 
+    )
+```
+
++ `color = "blue"`: makes all the boundary of the boxes red
++ `fill = "orange"`: makes the fill of the boxes orange
++ `size = 0.2`: makes the line width of the boundary of the boxes thinner 
++ `shape = 1`: does nothing
+ 
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-20-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+  ]
+
+
+.panel[.panel-name[Line plot]
+
+.left-code[
+
+```r
+ggplot(data = mean_yield) + 
+  geom_line(
+    aes(x = year, y = corn_yield),
+    color = "blue",
+    size = 1.5,
+    fill = "red" 
+  )
+```
+
++ `color = "blue"`: makes the line blue
++ `size = 1.5`: makes the line thicker 
++ `fill = "red"`: does nothing
+
+]
+
+
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-22-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+]
+
+---
+
+# Exercises
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+This exercise use the `diamonds` dataset from the `ggplot2()` package. First, load the dataset and extract observations with `Premium` cut whose color is one of `E`, `I`, and `F`:
+
+
+```r
+data('diamonds')
+premium &lt;- diamonds %&gt;%
+  filter(
+    cut=='Premium' &amp; color %in% c('E','I','F')
+    )
+
+#--- take a look ---#
+premium
+```
+
+```
+## # A tibble: 6,096 x 10
+##    carat cut     color clarity depth table price     x     y     z
+##    &lt;dbl&gt; &lt;ord&gt;   &lt;ord&gt; &lt;ord&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 0.21  Premium E     SI1      59.8    61   326  3.89  3.84  2.31
+##  2 0.290 Premium I     VS2      62.4    58   334  4.2   4.23  2.63
+##  3 0.22  Premium F     SI1      60.4    61   342  3.88  3.84  2.33
+##  4 0.2   Premium E     SI2      60.2    62   345  3.79  3.75  2.27
+##  5 0.32  Premium E     I1       60.9    58   345  4.38  4.42  2.68
+##  6 0.24  Premium I     VS1      62.5    57   355  3.97  3.94  2.47
+##  7 0.290 Premium F     SI1      62.4    58   403  4.24  4.26  2.65
+##  8 0.22  Premium E     VS2      61.6    58   404  3.93  3.89  2.41
+##  9 0.42  Premium I     SI2      61.5    59   552  4.78  4.84  2.96
+## 10 0.24  Premium E     VVS1     60.7    58   553  4.01  4.03  2.44
+## # … with 6,086 more rows
+```
+
+  ]
+
+.panel[.panel-name[Exercise 1]
+
+&lt;br&gt;
+
+Using `carat` and `price` variables from `premium`, generate the figure below:
+
+&lt;img src="data_visualization_x_files/figure-html/diamond_fig_1-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+  ]
+
+.panel[.panel-name[Exercise 2]
+
+&lt;br&gt;
+
+Using `price` variables from `premium`, generate a histogram of `price` shown below:
+
+&lt;img src="data_visualization_x_files/figure-html/diamond_fig_2-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+  ]
+
+]
+
+
+&lt;!-- 
+#=========================================
+# Placing more information
+#=========================================
+--&gt;
+  
+---
+
+class: inverse, center, middle
+name: inputoutput
+
+# Placing more information in one figure
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+
+# Placing more information in one figure 
+
+.panelset[ 
+
+.panel[.panel-name[Motivation]
+
+&lt;br&gt;
+
+So far, we have learned how to create popular types of figures. 
+
+We can make a figure much more informative by making its aesthetics data-dependent.
+
+For example, suppose you are interested in comparing the history of irrigated corn yield by state in a line plot.
+
+So, you want to create a line for each state and make the lines distinguishable so the readers know which line is for which state like this:   
+
+   
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-23-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+  ]
+
+.panel[.panel-name[How]
+
+&lt;br&gt;
+
+We can make the aesthetics of a figure data-dependent by specifying which variable you use for aesthetics differentiation &lt;span style="color:red"&gt; INSIDE &lt;/span&gt;`aes()`.
+
+Here is an example:
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_mean) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_line(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(y = corn_yield, x = year, &lt;span style='background-color:#ffff7f'&gt;color = state_name&lt;/span&gt;)&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+
+In this code, `color = state_name` is inside `aes()` and it tells R to draw a line by `state_name` (by state) where the lines are color-differentiated.
+
+A legend is automatically generated.
+
+  ]
+
+.panel[.panel-name[Let's do it]
+
+&lt;br&gt;
+
+.left-code[
+
+Create a data set of corn yield by state-year first:
+
+
+```r
+county_yield_mean &lt;- county_yield %&gt;% 
+  group_by(state_name, year) %&gt;% 
+  summarize(corn_yield = mean(corn_yield, na.rm = T))
+```
+
+Create a plot:
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_mean) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_line(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;y = corn_yield, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;x = year, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;color = state_name&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;)&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-27-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+]
+
+---
+
+# More examples
+
+.panelset[ 
+
+.panel[.panel-name[Density plot]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_mean) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_density(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;x = corn_yield, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;fill = state_name&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;alpha = 0.3&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+
++ `alpha`: ranges from 0 to 1 and controls the transparency of the fill
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-29-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+
+.panel[.panel-name[Box plot]
+
+.left-code[
+
+Just get NE and KS:
+
+
+```r
+county_yield_KS_NE &lt;- county_yield %&gt;% 
+  filter(state_name %in% c("Nebraska", "Kansas")) 
+```
+
+Create a boxplot:
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_KS_NE) + &lt;br&gt;&amp;nbsp;&amp;nbsp;geom_boxplot(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;x = factor(year), &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;y = corn_yield, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;fill = state_name&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;)&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-32-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[Scatter plot]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_KS_NE) + &lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;x = d3_5_9, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;y = corn_yield, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;color = state_name,&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;shape = state_name&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;size = 0.7&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-34-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+]
+
+---
+
+# Exercises
+
+.panelset[ 
+
+
+.panel[.panel-name[Exercise 1]
+
+&lt;br&gt;
+
+Using `premium`, create a scatter plot of `price` (y-axis) against `depth` (x-axis) by `clarity` as shown below:
+
+&lt;img src="data_visualization_x_files/figure-html/ex_2_1-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+  ]
+
+.panel[.panel-name[Exercise 2]
+
+&lt;br&gt;
+
+Using `premium`, create density plots of `carat` by `color` as shown below (set `alpha` to 0.5):
+
+&lt;img src="data_visualization_x_files/figure-html/ex_2_2-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+  ]
+
+]
+
+&lt;!-- 
+#=========================================
+# Faceting
+#=========================================
+--&gt;
+  
+---
+
+class: inverse, center, middle
+name: inputoutput
+
+# Faceting  
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+
+# Faceting: the basics
+
+.panelset[ 
+
+.panel[.panel-name[Preparation]
+
+.left-full[
+
+Let's filter `county_yield` to keep the observations only in  Nebraska, Colorado, Kansas, and South Dakota.
+
+
+```r
+county_yield_s &lt;- county_yield %&gt;% 
+  filter(state_name %in% c("Nebraska", "Colorado", "Kansas", "South Dakota")) 
+```
+
+]
+
+ ]
+
+.panel[.panel-name[Motivation]
+
+Sometimes, you would like to visualize information across groups on separate panels. 
+
+.left-plot5[
+
+Too much information in one panel?
+
+&lt;img src="data_visualization_x_files/figure-html/box_all-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+.right-plot5[
+
+On separate panels (faceting)?
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-36-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[How]
+
+.left-full[
+
+We can make faceted figures by adding either `facet_wrap` or `facet_grid()` in which you specify which variable to use for faceting. 
+
+Here is an example:
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_s) + &lt;br&gt;&amp;nbsp;&amp;nbsp;geom_boxplot(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(x = factor(year), y = corn_yield)&lt;br&gt;&amp;nbsp;&amp;nbsp;) +&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;facet_wrap(state_name ~ .)&lt;/span&gt;&lt;/code&gt;
+
+In this code, `facet_wrap(state_name ~ .)` is added to a simple boxplot, which tells R to make a boxplot by `state_name` (state).
+
+What does `~ .` do?
+
+]
+
+  ]
+
+.panel[.panel-name[Figure 1]
+
+.left-code[
+
+```r
+ggplot(data = county_yield_s) + 
+  geom_boxplot(
+    aes(x = factor(year), y = corn_yield)
+  ) +
+  facet_wrap(state_name ~ .)
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-38-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[two-way faceting]
+
+.left-full[
+Two-way faceting will 
+
++ divide the data into groups where each group has a unique combination of the two faceting variables  
+
++ create a plot for each group
+
+
+
+This code will create a histogram of corn yield for each of the unique state-year combination.
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_s) + &lt;br&gt;&amp;nbsp;&amp;nbsp;geom_histogram(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(x = corn_yield)&lt;br&gt;&amp;nbsp;&amp;nbsp;) +&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;facet_wrap(state_name ~ year)&lt;/span&gt;&lt;/code&gt;
+]
+
+
+ ]
+
+.panel[.panel-name[Figure 2]
+
+.left-code[
+
+Filter `county_yield_s` to those in 2017 and 2018.
+
+
+```r
+county_yield_s2 &lt;- county_yield_s %&gt;% 
+  filter(year %in% c(2017, 2018))
+```
+
+Create a faceted density plots.
+
+
+```r
+ggplot(data = county_yield_s2) + 
+  geom_histogram(
+    aes(x = corn_yield)
+  ) +
+  facet_wrap(state_name ~ year)  
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-41-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+  ]
+
+]
+
+---
+
+
+# Faceting with `facet_grid()`
+
+.panelset[ 
+
+.panel[.panel-name[compare]
+
+.left-plot5[
+
+`facet_wrap`
+
+
+```r
+ggplot(data = county_yield_s2) + 
+  geom_histogram(aes(x = corn_yield)) +
+  facet_wrap(state_name ~ year)  
+```
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-42-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+.right-plot5[
+
+`facet_grid`
+
+
+```r
+ggplot(data = county_yield_s2) + 
+  geom_histogram(aes(x = corn_yield)) +
+  facet_grid(state_name ~ year)  
+```
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-43-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+  ]
+
+.panel[.panel-name[facet_grid()]
+
+.left-code[
+
+Unlike `facet_wrap()`, which side you put faceting variables matters a lot. 
+
++ left hand side: rows 
++ right hand side: columns 
+
+
+```r
+ggplot(data = county_yield_s2) + 
+  geom_histogram(aes(x = corn_yield)) +
+  facet_grid(state_name ~ year)
+```
+
+In the code above, `state_name` values become the rows, and `year` values become columns.
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-44-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[order]
+
+.left-plot5[
+
+```r
+ggplot(data = county_yield_s2) + 
+  geom_histogram(aes(x = corn_yield)) +
+  facet_grid(state_name ~ year)
+```
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-45-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+.right-plot5[
+
+```r
+ggplot(data = county_yield_s2) + 
+  geom_histogram(aes(x = corn_yield)) +
+  facet_grid(year ~ state_name) 
+```
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-46-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[scale]
+
+.left-full[
+
+`facet_grid()` allows 
+
++ the figures in different columns to have different scales for the x-axis (figures in the same column have the same scale for the x-axis)
+
++ the figures in different rows to have different scales for the y-axis (figures in the same rows have the same scale for the x-axis)
+
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[free x]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_s2) + &lt;br&gt;&amp;nbsp;&amp;nbsp;geom_histogram(aes(x = corn_yield)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;facet_grid(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;state_name ~ year, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;scales = "free_x"&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-48-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[free y]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_s2) + &lt;br&gt;&amp;nbsp;&amp;nbsp;geom_histogram(aes(x = corn_yield)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;facet_grid(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;state_name ~ year, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;scales = "free_y"&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-50-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[both free]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_s2) + &lt;br&gt;&amp;nbsp;&amp;nbsp;geom_histogram(aes(x = corn_yield)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;facet_grid(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;state_name ~ year, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;scales = "free"&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-52-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+]
+
+
+
+---
+
+
+# Exercises
+
+.panelset[ 
+
+.panel[.panel-name[Exercise 1]
+
+&lt;br&gt;
+
+Using `premium`, create scatter plots of `price` (y-axis) against `carat` (x-axis) by `color` on separate panels as shown below:
+
+&lt;img src="data_visualization_x_files/figure-html/ex_3_1-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+  ]
+
+.panel[.panel-name[Exercise 2]
+
+&lt;br&gt;
+
+Using premium, create histogram of `carat` by `color` and `clarity` on separate panels as shown below:
+
+&lt;img src="data_visualization_x_files/figure-html/ex_3_2-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+  ]
+
+]
+
+&lt;!-- 
+#=========================================
+# Other useful geom_* 
+#=========================================
+--&gt;
+  
+---
+
+class: inverse, center, middle
+name: inputoutput
+
+# Other supplementary `geom_*()`  
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+
+# Other supplementary `geom_*()`  
+
+.panelset[ 
+
+.panel[.panel-name[geom_*]
+
+.left-full[
+
+Here are the list of useful **geom_**.
+
++ `geom_vline()`: draw a vertical line
++ `geom_hline()`: draw a horizontal line
++ `geom_abline()`: draw a line with the specified intercept and slope
++ `geom_smooth()`: draw an OLS-estimated regression line (other regression methods available)
++ `geom_ribbon()`: create a shaded area
++ `geom_text()` and `annotate()`: add texts in the figure
+
+We will use `g_fig_scatter` to illustrate how these functions work.
+
+]
+
+  ]
+
+.panel[.panel-name[vline and hline]
+
+.left-code[
+
+```r
+g_fig_scatter +
+  geom_vline(
+    xintercept = 10, 
+    color = "blue"
+  ) +
+  geom_hline(
+    yintercept = 100, 
+    color = "red"
+  ) 
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-53-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[abline]
+
+.left-code[
+
+
+
+```r
+g_fig_scatter +
+  geom_abline(
+    #--- a ---#
+    intercept = 50, 
+    #--- b ---#
+    slope = 4,
+    color = "blue"
+  )  
+```
+
+`$$y = a + b\times x$$`
+
++ `intercept`: `\(a\)`
++ `slope`: `\(b\)`
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-54-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[smooth]
+
+.left-code[
+
+```r
+g_fig_scatter +
+  geom_smooth(
+    aes(
+      y = corn_yield, 
+      x = d3_5_9
+    )
+  )
+```
+
+Also try
+
+
+```r
+g_fig_scatter +
+  geom_smooth(
+    aes(
+      y = corn_yield, 
+      x = d3_5_9
+    ),
+    method = "lm"
+  )
+```
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-56-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[ribbon]
+
+.left-code[
+
+```r
+g_fig_scatter +
+  geom_ribbon(
+    aes(
+      x = d3_5_9, 
+      ymin = 100,
+      ymax = 200
+    ),
+    fill = "green",
+    alpha = 0.3
+  )
+```
+
++ `ymin`: lower bound of the ribbon
++ `ymax`: upper bound of the ribbon
+
+Useful when drawing confidence intervals.
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-57-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[text]
+
+.left-code[
+
+```r
+g_fig_scatter +
+  geom_text(
+    aes(
+      x = d3_5_9,
+      y = corn_yield,
+      label = state_name,
+    )
+  )
+```
++ `x`, `y`: position of where texts are placed
++ `label`: variable to print
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-58-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+
+.panel[.panel-name[annotate]
+
+.left-code[
+
+```r
+g_fig_scatter +
+  annotate(
+    'text',
+    x = 10,
+    y = 50,
+    label = 'Drought hurts \n a lot!!',
+    size = 3
+  )
+```
+
++ `x`: where on x-axis
++ `y`: where on y-axis
++ `label`: text to print (\n break the line)
++ size: font size
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-59-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+]
+
+---
+
+# Multiple `geom_*()`s and datasets in one figure
+
+.panelset[ 
+
+.panel[.panel-name[multiple geoms]
+
+.left-full[
+
+Technically, you can place more than one `geom_*()`s in a single figure.
+
+We actually have done this already.
+
+
+```r
+g_fig_scatter +
+  geom_smooth(aes(y = corn_yield, x = d3_5_9))  
+```
+
+This is actually this:
+
+
+```r
+ggplot(data = county_yield) + 
+  geom_point(aes(y = corn_yield, x = d3_5_9)) +
+  geom_smooth(aes(y = corn_yield, x = d3_5_9))
+```
+
+&lt;span style="color:red"&gt;Important: &lt;/span&gt;`data = county_yield` declared inside `ggplot()` applies to ALL the subsequent `geom_*()`s unless overwritten locally inside individual `geom_*()`s.
+
+Try this:
+
+
+```r
+ggplot() + 
+  geom_point(data = county_yield, aes(y = corn_yield, x = d3_5_9)) +
+  geom_smooth(aes(y = corn_yield, x = d3_5_9))
+```
+
+]
+
+ 
+  ]
+
+.panel[.panel-name[multiple datasets]
+
+.left-full[
+
+It is easy to use multiple datasets inside a single `ggplot` object (or a figure). 
+
+You just need to specify what dataset to use locally inside individual `geom_*()`s.
+
+Let's see how this works using an example of drawing the  confidence intervals around the regression lie of the following regression:
+
+&lt;br&gt;
+
+`$$corn\_yield = \beta_0 + \beta_1 d3\_5\_9 + v$$`
+
+]
+
+  ]
+
+.panel[.panel-name[Preparation]
+
+.left-full[
+
+
+```r
+#--- regression ---#
+reg &lt;- lm(corn_yield ~ d3_5_9, data = county_yield)
+
+#--- find confidence interval ---#
+min_d3 &lt;- county_yield$d3_5_9 %&gt;% min(na.rm = TRUE) # minimum d3 observed
+max_d3 &lt;- county_yield$d3_5_9 %&gt;% max(na.rm = TRUE) # maximum d3 observed
+
+eval_points &lt;- data.frame(d3_5_9 = seq(min_d3, max_d3, length = 1000)) # evaluation points
+
+ci_bound &lt;- predict(reg, newdata = eval_points, interval = "confidence", level = 0.9) # upper and lower bound
+
+ci_bound_data &lt;- cbind(eval_points, ci_bound) # combine evaluation points and ci
+```
+
+
+```r
+head(ci_bound_data) 
+```
+
+```
+##       d3_5_9      fit      lwr      upr
+## 1 0.00000000 179.7011 178.7234 180.6788
+## 2 0.02202202 179.6673 178.6918 180.6429
+## 3 0.04404404 179.6336 178.6602 180.6070
+## 4 0.06606607 179.5998 178.6286 180.5711
+## 5 0.08808809 179.5661 178.5970 180.5352
+## 6 0.11011011 179.5323 178.5653 180.4993
+```
+]
+
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Example]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot() + &lt;br&gt;&amp;nbsp;&amp;nbsp;#--- scatter plot ---#&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;data = county_yield,&lt;/span&gt; &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(y = corn_yield, x = d3_5_9)&lt;br&gt;&amp;nbsp;&amp;nbsp;) +&lt;br&gt;&amp;nbsp;&amp;nbsp;#--- regression line ---#&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_line(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;data = ci_bound_data,&lt;/span&gt; &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(x = d3_5_9, y = fit)&lt;br&gt;&amp;nbsp;&amp;nbsp;) +&lt;br&gt;&amp;nbsp;&amp;nbsp;#--- confidence interval ---#&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_ribbon(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;data = ci_bound_data,&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(x = d3_5_9, ymin = lwr, ymax = upr),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;fill = "red",&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;alpha = 0.4&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-66-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+  ] &lt;!-- panel ends here --&gt;
+
+]
+
+&lt;!-- 
+#=========================================
+# Make your figures presentable to others    
+#=========================================
+--&gt;
+  
+---
+
+class: inverse, center, middle
+name: inputoutput
+
+# Make your figures presentable to others
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+
+# Make your figures presentable to others 
+
+
+.panelset[ 
+
+.panel[.panel-name[Motivation]
+
+.left-full[
+
++ Figures we have created so far cannot be used for formal presentations or publications. They are simply too crude.
+
++ We need fine-tune raw figures before they are publishable. 
+
++ You can control virtually every element of a figure under the `ggplot2` framework.
+
++ Take a look at [here](https://ggplot2.tidyverse.org/reference/theme.html) for the complete list of options you can use to modify the theme of figures
+
+&lt;span style="color:red"&gt; Key:&lt;/span&gt; The most important thing is actually to know which part of a figure a theme option refers to (e.g., `axis.text`)
+
+]
+
+  ]
+
+.panel[.panel-name[two types]
+
+.left-full[
+
+## Two types of operations
+
+Operations to make your figures presentable can be categorized into two types:
+
++ Content-altering
++ Theme-altering
+ 
+They are two separate things.
+
+## Examples:
+
+For the y-axis title,
+
++ The axis title text itself (say "Corn Yield (bu/acre)") falls under the **content** category.   
+
++ The position of or the font size of the axis-title fall under the **theme** category
+
+The content itself does not change when theme is altered.
+
+]
+ 
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[content-altering]
+
+
+
+.left-plot5[
+
+Original
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-68-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+.right-plot5[
+
+Altered
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-69-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[theme-altering]
+
+.left-plot5[
+
+Original
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-70-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+.right-plot5[
+
+Altered
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-71-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Note]
+
+.left-full[
+
+&lt;br&gt;
+
++ Distinctions between the two types of actions are not always clear
+
++ But, typically, you use 
+  * `scale_*()` function series to alter contents
+  * `theme()` function to alter the theme
+
++ Note that there are shorthand convenience functions to alter figure contents for commonly altered parts of figures
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+]
+
+---
+
+# Axes content  
+
+.panelset[ 
+
+.panel[.panel-name[Preparation]
+
+We are going to build on this figure in this section:
+
+.left-code[
+
+
+```r
+county_yield_s_b2010 &lt;- county_yield_s %&gt;% 
+  filter(year &gt;= 2005, year &lt;= 2010)
+
+g_box &lt;- ggplot(data = county_yield_s_b2010) + 
+  geom_boxplot(
+    aes(
+      x = factor(year), 
+      y = corn_yield, 
+      fill = state_name
+    )
+  )
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-72-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[How]
+
+.left-full[
+We can use 
+
++ `scale_x_discrete()`/`scale_x_continuous()` for x-axis
++ `scale_y_discrete()`/`scale_y_continuous()` for y-axis
+
+to control the following elements of axes:
+
++ `name`: an axis title 
++ `limit`: the range of an axis
++ `breaks`: axis ticks positions
++ `label`: axis texts at ticks
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+We use `scale_x_discrete()` if `x` is a discrete variable (not numeric) and `scale_x_continuous()` if `x` is a continuous variable (numeric).
+
+The same applies for `y`.
+
+]
+
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[axis title]
+
+.left-code[
+
+
+
+
+`name` option to set the axis title
+
+
+&lt;code class ='r hljs remark-code'&gt;g_box + &lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;scale_x_discrete(name = "Year")&lt;/span&gt; +&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;scale_y_continuous(name = "Corn Yield (bu/acre)")&lt;/span&gt;&lt;/code&gt;
+
+Or just this,
+
+
+```r
+g_box + 
+  xlabel("Year") +
+  ylabel("Corn Yield (bu/acre)") 
+```
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-75-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[limit]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_box + &lt;br&gt;&amp;nbsp;&amp;nbsp;scale_x_discrete(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;name = "Year" &lt;br&gt;&amp;nbsp;&amp;nbsp;) +&lt;br&gt;&amp;nbsp;&amp;nbsp;scale_y_continuous(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;name = "Corn Yield (bu/acre)",&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;#--- first min, second max ---#&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;limit = c(100, 200)&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+
+Or just,
+
+
+```r
+g_box + 
+  xlabel("Year") +
+  ylabel("Corn Yield (bu/acre)") +
+  ylim(100, 200) 
+```
+Or,
+
+You can filter the data first and then use the filtered data.
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-78-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+  ]
+
+.panel[.panel-name[breaks and labels]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_box + &lt;br&gt;&amp;nbsp;&amp;nbsp;scale_x_discrete(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;name = "Year",&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;label = gsub("20", "", as.character(2000:2018))&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;) +&lt;br&gt;&amp;nbsp;&amp;nbsp;scale_y_continuous(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;name = "Corn Yield (bu/acre)",&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;limit = c(100, 200),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;breaks = seq(100, 200, by = 10)&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+
+&lt;br&gt;
+
++ `breaks`: determines where the ticks are located
++ `labels`: defines the texts at the ticks
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-80-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+  ] &lt;!-- panel ends here --&gt;
+
+]
+
+---
+
+# Legends content
+
+.panelset[ 
+
+.panel[.panel-name[Preparation]
+
+We are going to build on this figure in this section:
+
+.left-code[
+
+```r
+g_axis &lt;- g_box + 
+  scale_x_discrete(
+    name = "Year",
+    label = gsub("20", "", as.character(2000:2018))
+  ) +
+  scale_y_continuous(
+    name = "Corn Yield (bu/acre)",
+    limit = c(100, 200),
+    breaks = seq(100, 200, by = 10)
+  )
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-81-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+ 
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[title]
+
+
+.left-code[
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_axis + &lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;scale_fill_brewer(name = "State")&lt;/span&gt;&lt;/code&gt;
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=350px&gt;&lt;/html&gt;
+
+Or,
+
+
+```r
+g_axis + 
+  labs(fill = "State")
+```
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-84-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[fill color]
+
+.left-code[
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_axis + &lt;br&gt;&amp;nbsp;&amp;nbsp;scale_fill_brewer(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;name = "state", &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;palette = "Set1"&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+
+&lt;span style="color:red"&gt; We are going to spend lots of time on color scheme later. &lt;/span&gt;
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-86-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[title position]
+
+.left-code[
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_axis + &lt;br&gt;&amp;nbsp;&amp;nbsp;scale_fill_brewer(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;name = "state", &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;palette = "Set1",&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;guide = guide_legend(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;title.position = "left"&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;)&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-88-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[wrapping]
+
+.left-code[
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_axis + &lt;br&gt;&amp;nbsp;&amp;nbsp;scale_fill_brewer(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;name = "state", &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;palette = "Set1",&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;guide = guide_legend(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;title.position = "left",&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;nrow = 2&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;)&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-90-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt; 
+]
+
+---
+
+
+# Theme
+
+.panelset[ 
+
+.panel[.panel-name[Naming rules]
+
+.left-full[
+
+When specifying the theme of figure elements, it is good to know the naming convention of figure elements:
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+For example:
+
++ `axis.title` 
+
+This refers to the title of both x- and y-axis. Any aesthetic theme you apply to this element will be reflected on the title of both x- and y-axis.  
+
++ `axis.title.x` 
+
+This refers to the title of only x-axis. Any aesthetic theme you apply to this element will be reflected on the title of only x-axis.
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+So, basically appending `.name` narrows down the scope of the figure elements the element name refers to.
+
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Common functions]
+
+.left-full[
+
+There are common functions we use to specify the aesthetic nature of figure elements based on the type of the elements:
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+&lt;br&gt;
+
++ `element_text()`: for text elements like `axis.text`, `axis.title`, `legend.text`
+
+Inside the function, you specify things like font size, font family, angle, etc.
+
++ `element_rect()`: for box-like elements like `legend.background`, `plot.background`, `strip.background`
+
+Inside the function, you specify things like font background color, border line color, etc.
+
++ `element_line()`: for line elements like `panel.grid.major`, `axis.line.x`
+
+Inside the function, you specify things like line thickness, line color, etc.
+
++ `element_blank()`: any components
+
+It makes the specified component disappear.
+
++ `unit()`: for attributes of figure elements like `legend.key.width`, `legend.box.spacing` 
+]
+
+  ]
+
+]
+
+
+---
+
+# Axis theme 
+
+.panelset[ 
+
+.panel[.panel-name[Preparation]
+
+We are going to build on this figure in this section:
+
+.left-code[
+
+```r
+g_axis
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-91-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[title and text]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_axis +&lt;br&gt;&amp;nbsp;&amp;nbsp;theme(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;axis.title.x = element_text(size = 8, color = "red")&lt;/span&gt;,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;axis.text = element_text(size = 14, family = "Times")&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-93-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[line]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_axis +&lt;br&gt;&amp;nbsp;&amp;nbsp;theme(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;axis.title.x = element_text(size = 8, color = "red"),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;axis.text = element_text(size = 14, family = "Times"),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;axis.line.y = element_line(size = 2, color = "blue")&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-95-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[ticks]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_axis +&lt;br&gt;&amp;nbsp;&amp;nbsp;theme(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;axis.title.x = element_text(size = 8, color = "red"),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;axis.text = element_text(size = 14, family = "Times"),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;axis.line.y = element_line(size = 2, color = "blue"),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;axis.ticks.length.x = unit(2, "cm")&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-97-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+  ]
+
+  &lt;!-- panel ends here --&gt;
+
+]
+
+
+---
+
+
+# Legends theme
+
+.panelset[ 
+
+
+.panel[.panel-name[How]
+
+&lt;br&gt;
+
+We can use `them()` to change the aesthetics of legends. Some of the elements include
+
++ title
++ position
++ key 
++ text
++ direction
++ background
+
+See [here](https://ggplot2.tidyverse.org/reference/theme.html) for the full list of options related to legends.
+
+We will discuss how to change the color scheme of legends later in much detail.
+
+  ]
+
+.panel[.panel-name[Preparation]
+
+This is what we will build on: 
+
+.left-code[
+
+```r
+g_l &lt;- g_axis +
+  scale_fill_brewer(
+    palette = "Paired",
+    guide = guide_legend(
+      title.position = "left",
+      nrow = 2
+    )
+  )
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-98-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] 
+
+.panel[.panel-name[position]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_l +&lt;br&gt;&amp;nbsp;&amp;nbsp;labs(fill = "State") +&lt;br&gt;&amp;nbsp;&amp;nbsp;theme(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;legend.position = "bottom"&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-100-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[key]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_l +&lt;br&gt;&amp;nbsp;&amp;nbsp;labs(fill = "State") +&lt;br&gt;&amp;nbsp;&amp;nbsp;theme(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;legend.position = "bottom",&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;legend.key.height = unit(0.5, "cm")&lt;/span&gt;,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;legend.key.width = unit(2, "cm")&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-102-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[font]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_l +&lt;br&gt;&amp;nbsp;&amp;nbsp;labs(fill = "State") +&lt;br&gt;&amp;nbsp;&amp;nbsp;theme(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;legend.position = "bottom",&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;legend.key.height = unit(0.5, "cm"),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;legend.key.width = unit(2, "cm"),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;legend.text&lt;/span&gt; = element_text(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;size = 16, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;family = "Times"&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;legend.title&lt;/span&gt; = element_text(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;size = 6, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;family = "Courier",&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = "red"&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;), &lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-104-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[background]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_l +&lt;br&gt;&amp;nbsp;&amp;nbsp;labs(fill = "State") +&lt;br&gt;&amp;nbsp;&amp;nbsp;theme(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;legend.position = "bottom",&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;legend.key.height = unit(0.5, "cm"),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;legend.key.width = unit(2, "cm"),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;legend.text = element_text(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;size = 16, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;family = "Times"&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;legend.title = element_text(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;size = 6, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;family = "Courier",&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = "red"&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;legend.background&lt;/span&gt; = element_rect(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;fill = "lightblue", &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;linetype = "solid"&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;) &lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-106-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+  ] &lt;!-- panel ends here --&gt;
+
+]
+
+---
+
+
+# Pre-made themes
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.left-full[
+There are a bunch of pre-made themes from the `ggplot2` and `ggthemes` packages that can quickly change how figures look.
+
+Install and library  `ggthemes` package first:
+
+
+```r
+#--- install ---#
+install.packages("ggthemes") 
+
+#--- library ---#
+library("ggthemes") 
+```
+
+See the full list of pre-made themes [here](https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/).
+
+]
+
+  ]
+
+.panel[.panel-name[bw]
+
+.left-code[
+
+```r
+g_axis +
+  theme_bw()
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-108-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[void]
+
+.left-code[
+
+```r
+g_axis +
+  theme_void()
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-109-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[stata]
+
+.left-code[
+
+```r
+g_axis +
+  theme_stata()
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-110-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[gdocs]
+
+.left-code[
+
+```r
+g_axis +
+  theme_gdocs()
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-111-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[economist]
+
+.left-code[
+
+```r
+g_axis +
+  theme_economist()
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-112-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[excel]
+
+.left-code[
+
+```r
+g_axis +
+  theme_excel()
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-113-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+]
+
+---
+
+# Panel (build on a pre-made theme)
+
+.panelset[ 
+
+.panel[.panel-name[How]
+
+.left-full[
+
+## Build on pre-made theme
+You can simply override parts of the pre-made theme by adding theme options like this:
+
+
+```r
+g_axis +
+  theme_bw() +
+  theme(
+    panel.grid.minor = element_blank()
+  )
+```
+
+So, you can pick the pre-made theme that looks the closest to what you would like, and then add on theme elements to the part you do not like.
+
+]
+
+  ]
+
+.panel[.panel-name[Preparation]
+
+.left-code[
+This is what we will be building on:
+
+
+```r
+g_axis +
+  theme_bw()  
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-115-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[minor grid]
+
+.left-plot5[
+
+]
+
+.right-plot5[
+
+]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_axis +&lt;br&gt;&amp;nbsp;&amp;nbsp;theme_bw() +&lt;br&gt;&amp;nbsp;&amp;nbsp;theme(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;panel.grid.minor = element_blank()&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-117-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[major grid]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_axis +&lt;br&gt;&amp;nbsp;&amp;nbsp;theme_bw() +&lt;br&gt;&amp;nbsp;&amp;nbsp;theme(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;panel.grid.minor = element_blank(),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;panel.grid.major.x = element_blank()&lt;/span&gt;,&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;panel.grid.major.y&lt;/span&gt; = element_line(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;size = 2, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = "blue", &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;linetype = 2&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;)&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+
+See [here](http://sape.inf.usi.ch/quick-reference/ggplot2/linetype) for the line types available.
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-119-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+]
+
+---
+
+
+# Faceted figure theme 
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+&lt;br&gt;
+
+Faceted figures have `strip` elements that do no exist for non-faceted figures like
+
++ `strip.background`
++ `strip.placement`
++ `strip.text`
++ `panel.spacing`
+
+We learn how to modify these elements. 
+
+  ]
+
+.panel[.panel-name[Preparation]
+
+.left-code[
+
+Create a dataset for this section:
+
+
+```r
+county_yield_f &lt;- county_yield %&gt;% 
+  filter(state_name %in% c("Nebraska", "Colorado", "Kansas")) %&gt;% 
+  filter(year %in% c(2005, 2006))  
+```
+
+Create a faceted figure we will build on:
+
+
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-121-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] 
+
+.panel[.panel-name[text]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_f +&lt;br&gt;&amp;nbsp;&amp;nbsp;theme(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;strip.text.x&lt;/span&gt; = element_text(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;size = 12, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;family = "Times", &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = "red"&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;strip.text.y&lt;/span&gt; = element_text(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;angle = 0, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;size = 6, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = "blue"&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;)&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-123-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[background]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_f +&lt;br&gt;&amp;nbsp;&amp;nbsp;theme(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;strip.text.x = element_text(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;size = 12, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;family = "Times", &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = "red"&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;strip.text.y = element_text(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;angle = 0, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;size = 6, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = "blue"&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;strip.background.x&lt;/span&gt; = element_rect(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = "blue"&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;strip.background.y&lt;/span&gt; = element_blank()&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-125-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] 
+
+.panel[.panel-name[panel spacing]
+
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_f +&lt;br&gt;&amp;nbsp;&amp;nbsp;theme(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;strip.text.x = element_text(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;size = 12, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;family = "Times", &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = "red"&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;strip.text.y = element_text(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;angle = 0, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;size = 6, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = "blue"&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;strip.background.x = element_rect(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = "blue"&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;strip.background.y = element_blank(),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;panel.spacing.x&lt;/span&gt; = unit(2, "cm"),&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;panel.spacing.y&lt;/span&gt; = unit(0.01, "cm")&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-127-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+]
+
+---
+
+
+# More font families 
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.left-full[
+
+You can use more font families by taking advantage of the `extrafont` package. 
+
+Install and library the package, and then run `font_import()` to import font families (you need to do this only once). 
+
+
+```r
+install.packages(extrafont)
+
+library(extrafont)
+
+font_import()
+```
+
+Next time around, just run `library(extrafont)`.
+
+]
+
+  ]
+
+.panel[.panel-name[font families]
+
+<div id="htmlwidget-cc261cd3745bbe5aabb6" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-cc261cd3745bbe5aabb6">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72"],["-Keyboard","-SFNSDisplay","-SFNSText","-SFNSText-Italic","AndaleMono","AppleBraille","AppleBraille-Outline6Dot","AppleBraille-Outline8Dot","AppleBraille-Pinpoint6Dot","AppleBraille-Pinpoint8Dot","AppleMyungjo","Arial-Black","Arial-BoldItalicMT","Arial-BoldMT","Arial-ItalicMT","ArialMT","ArialNarrow","ArialNarrow-Bold","ArialNarrow-BoldItalic","ArialNarrow-Italic","ArialRoundedMTBold","ArialUnicodeMS","BodoniOrnamentsITCTT","BodoniSvtyTwoSCITCTT-Book","Bradley-Hand-Bold","BrushScriptMT","ComicSansMS","ComicSansMS-Bold","CourierNewPS-BoldItalicMT","CourierNewPS-BoldMT","CourierNewPS-ItalicMT","CourierNewPSMT","DINAlternate-Bold","DINCondensed-Bold","Georgia","Georgia-Bold","Georgia-BoldItalic","Georgia-Italic","Impact","KhmerSangamMN","LaoSangamMN","Luminari-Regular","MicrosoftSansSerif","Tahoma","Tahoma-Bold","TimesNewRomanPS-BoldItalicMT","TimesNewRomanPS-BoldMT","TimesNewRomanPS-ItalicMT","TimesNewRomanPSMT","Trattatello","Trebuchet-BoldItalic","TrebuchetMS","TrebuchetMS-Bold","TrebuchetMS-Italic","Verdana","Verdana-Bold","Verdana-BoldItalic","Verdana-Italic","Webdings","Wingdings-Regular","Wingdings2","Wingdings3","OpenSans-Bold","OpenSans-BoldItalic","OpenSans-ExtraBold","OpenSans-ExtraBoldItalic","OpenSans-Italic","OpenSans-Light","OpenSans-LightItalic","OpenSans-Regular","OpenSans-SemiBold","OpenSans-SemiBoldItalic"],[false,false,false,false,false,false,false,false,false,false,false,false,true,true,false,false,false,true,true,false,false,false,false,false,true,false,false,true,true,true,false,false,true,true,false,true,true,false,false,false,false,false,false,false,true,true,true,false,false,false,true,false,true,false,false,true,true,false,false,false,false,false,true,true,false,false,false,false,false,false,false,false],[false,false,false,true,false,false,false,false,false,false,false,false,true,false,true,false,false,false,true,true,false,false,false,false,false,true,false,false,true,false,true,false,false,false,false,false,true,true,false,false,false,false,false,false,false,true,false,true,false,false,true,false,false,true,false,false,true,true,false,false,false,false,false,true,false,true,true,false,true,false,false,true]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>FontName<\/th>\n      <th>Bold<\/th>\n      <th>Italic<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script>
+
+  ]
+
+.panel[.panel-name[try a family]
+
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;g_f +&lt;br&gt;&amp;nbsp;&amp;nbsp;theme(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;strip.text.y = element_text(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;family = "Georgia"&lt;/span&gt;, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = "red"&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;)&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-131-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+]
+
+---
+
+# More flexible color options with HEX 
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.left-full[
+Instead of naming the color you want to use, you can use **HEX color codes** instead.
+
+&lt;span style="color:red"&gt; Direction: &lt;/span&gt;
+
++ Visit [here](https://www.color-hex.com/)
++ Click on any color you like
++ Then you will see two sets of color gradients (thicker and lighter from the color you picked)
++ Pick the color you like from the color bar and copy the HEX color code beneath the color you picked
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+You could alternatively use the RGB codes, but I do not see any reasons to do so because the use of HEX codes is sufficient. 
+
+]
+
+  ]
+
+.panel[.panel-name[Example]
+
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point(aes(y = corn_yield, x = d3_5_9), &lt;span style='background-color:#ffff7f'&gt;color = "#824283"&lt;/span&gt;)&lt;/code&gt;
+
+You can use HEX color codes for any color-related elements in a figure.
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-133-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+]
+
+
+---
+
+
+# Color scale
+
+.panelset[ 
+ 
+.panel[.panel-name[Intro 1]
+
+The choice of color schemes for your figures are very important (not so much for academic journals ...)
+
+We use `scale_A_B()` functions to for color specification:
+
++ **A** is the name of aesthetic (`color` or `fill`)
++ **B** is the type of color specification method
+
+   ]
+ 
+.panel[.panel-name[Intro 2]
+
+For example, consider the following code:
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point(aes(y = corn_yield, x = d3_5_9, &lt;span style='background-color:#ffff7f'&gt;color = corn_yield&lt;/span&gt;))&lt;/code&gt;
+
+Since it is the `color` aesthetic that we want to work on, **A** = `color`.
+
+There are many options for **B**. Indeed, there are so many that, it gets confusing!
+
++ `scale_color_brewer()` (discrete)
++ `scale_color_distiller()` (continuous)
++ `scale_color_viridis_d()` (discrete)
++ `scale_color_viridis_c()` (continuous)
++ `scale_color_continuous()` (continuous)
++ `scale_color_discrete()` (discrete)
++ `scale_color_hue()` (discrete)
+
+One thing to remember is that you need to be aware of whether the aesthetic variable (here, `corn_yield`) is numeric or not as that determines acceptable type of **B**.
+
+   ]
+ 
+ ]
+  
+---
+
+# Viridis 
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+&lt;br&gt;
+
+We have four `scale` functions for Viridis color map:
+
++ `scale_color_viridis_c()`: for `color` aesthetic with a continuous variable
++ `scale_color_viridis_d()`: for `color` aesthetic with a discrete variable
++ `scale_fill_viridis_c()`: for `fill` aesthetic with a continuous variable
++ `scale_fill_viridis_d()`: for `fill` aesthetic with a discrete variable
+
+There are five color scheme types under the Viridis color map:
+
++ magma
++ inferno
++ plasma
++ viridis
++ civiris
+
+You can use `option` to specify which one of them you want to use inside the `scale` functions.
+
+These color schemes are color-blind sage.
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[types]
+
+&lt;img src="data_visualization_x_files/figure-html/viridis-ex-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+  ]
+
+.panel[.panel-name[Example 1]
+
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;y = corn_yield, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;x = d3_5_9, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = corn_yield&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;)&lt;br&gt;&amp;nbsp;&amp;nbsp;) +&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;scale_color_viridis_c()&lt;/span&gt;&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-136-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[Example 2]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;y = corn_yield, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;x = d3_5_9, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = corn_yield&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;)&lt;br&gt;&amp;nbsp;&amp;nbsp;) +&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;scale_color_viridis_c(option = 2)&lt;/span&gt;&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-138-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[reverse]
+
+.left-code[
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = filter(county_yield, corn_yield &gt; 50)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;y = corn_yield, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;x = d3_5_9, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = corn_yield&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;)&lt;br&gt;&amp;nbsp;&amp;nbsp;) +&lt;br&gt;&amp;nbsp;&amp;nbsp;scale_color_viridis_c(option = 2, &lt;span style='background-color:#ffff7f'&gt;direction = - 1&lt;/span&gt;)&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-140-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+]
+
+---
+
+# RColorBrewer 
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.left-full[
+`RColorBrewer` package provides a number of color palettes of three types:
+
++ sequential: suitable for a variable that has ordinal meaning (e.g., temperature, precipitation)
++ diverging: suitable for variables that take both negative and positive values (e.g., changes in groundwater level)
++ qualitative: suitable for qualitative or categorical variable
+
+These palettes are particularly suitable for maps.
+
+&lt;span style="color:red"&gt; Direction: &lt;/span&gt;visit [here](https://colorbrewer2.org/#type=sequential&amp;scheme=BuGn&amp;n=3). 
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+We use two types of scale functions for the palettes:
+
++ `scale_A_brewer()`: for discrete aesthetic variable
++ `scale_A_distiller()`: for continuous aesthetic variable 
+ 
+]
+
+  ]
+
+.panel[.panel-name[sequential]
+
+
+```r
+display.brewer.all(type = "seq")  
+```
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-141-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+  ]
+
+.panel[.panel-name[diverging]
+
+
+```r
+display.brewer.all(type = "div")  
+```
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-142-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+  ]
+
+.panel[.panel-name[qualitative]
+
+
+```r
+display.brewer.all(type = "qual")  
+```
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-143-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+  ]
+
+.panel[.panel-name[Example 1]
+
+
+.left-code[
+
+Generate a dataset for visualization:
+
+
+```r
+county_yield_s_b2010 &lt;- county_yield_s %&gt;% 
+  filter(year &gt;= 2005, year &lt;= 2010)
+```
+
+Create a figure:
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_s_b2010) + &lt;br&gt;&amp;nbsp;&amp;nbsp;geom_boxplot(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;x = factor(year), &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;y = corn_yield, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;fill = state_name&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;)&lt;br&gt;&amp;nbsp;&amp;nbsp;) +&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;scale_fill_brewer(palette = "Set2")&lt;/span&gt;&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-146-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Example 2]
+
+.left-code[
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = filter(county_yield, corn_yield &gt; 50)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_point(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;y = corn_yield, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;x = d3_5_9, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;color = corn_yield&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;)&lt;br&gt;&amp;nbsp;&amp;nbsp;) +&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;scale_color_distiller(palette = "RdYlGn")&lt;/span&gt;&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-148-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] &lt;!-- panel ends here --&gt;
+
+]
+
+---
+
+
+# Set discrete color scale manually 
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.left-full[
+
+Sometimes, you just want to pick colors yourself. In that case, you can use 
+
++ `scale_color_manual()`
++ `scale_fill_manual()`
+
+You specify a sequence of colors and supply it to the `scale` function via the `values` option.
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+It is recommended that you use a named vector like.
+
+For example, consider the box plot of corn yield for four states: Colorado, Kansas, Nebraska, and South Dakota. Then, a sample named vector looks like this:
+
+
+```r
+cols &lt;- c("Colorado" = "red", "Nebraska" = "blue", "Kansas" = "orange", "South Dakota" = "#ff0080")
+```
+
+Now that a named vector is created, you can do the following to impose the color scheme you just defined.
+
+
+```r
+scale_fill_manual(values = cols)
+```
+
+]
+ 
+
+  ]
+
+.panel[.panel-name[Example]
+
+.left-code[
+
+Define a named color vector:
+
+
+```r
+cols &lt;- c("Colorado" = "red", "Nebraska" = "blue", "Kansas" = "orange", "South Dakota" = "#ff0080")
+```
+
+Create a figure:
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_s_b2010) + &lt;br&gt;&amp;nbsp;&amp;nbsp;geom_boxplot(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;x = factor(year), &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;y = corn_yield, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;fill = state_name&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;)&lt;br&gt;&amp;nbsp;&amp;nbsp;) +&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;scale_fill_manual(values = cols)&lt;/span&gt;&lt;/code&gt;
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-153-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+  ]
+
+]
+
+ 
+
+---
+
+
+# Patchwork (grid of figures)
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.left-code[
+
+The `patchwork` package allows you to combine and arrange multiple figures (and even tables and texts) like the figure to the right:
+
+
+```r
+install.packages("patchwork")  
+
+library("patchwork")
+```
+
+See the [`patchwork` package website](https://patchwork.data-imaginist.com/index.html) for a fuller treatment of this package.
+
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-155-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+.panel[.panel-name[Preparation]
+
+&lt;br&gt;
+
+We are going to use following figures:
+
+
+```r
+g_1 &lt;- ggplot(data = county_yield) + 
+  geom_histogram(aes(x = corn_yield)) +
+  ggtitle("g_1") 
+
+g_2 &lt;- ggplot(data = county_yield) + 
+  geom_boxplot(aes(x = factor(year), y = corn_yield)) +
+  ggtitle("g_2")
+
+g_3 &lt;- ggplot(data = county_yield) + 
+  geom_density(aes(x = corn_yield)) +
+  ggtitle("g_3")
+
+g_4 &lt;- ggplot(data = mean_yield) + 
+  geom_line(aes(x = year, y = corn_yield)) +
+  ggtitle("g_4")
+```
+
+Note: `mean_yield` for `g_4` is created in the **Line Plot** tab in slide 9.
+
+  ] 
+
+.panel[.panel-name[+]
+
+
+```r
+g_1 + g_2 
+```
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-156-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[++]
+
+
+```r
+g_1 + g_2 + g_3 + g_4 
+```
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-157-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[/]
+
+
+```r
+g_1 / g_2
+```
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-158-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[|]
+
+
+```r
+g_1 | g_2
+```
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-159-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[||]
+
+
+```r
+g_1 | g_2 | g_3 | g_4
+```
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-160-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[()]
+
+
+```r
+g_1 | (g_3 / g_4)
+```
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-161-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+  ] &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[faceting?]
+
+.left-full[
+
+The difference between faceted figures and panel of independent figures
+
++ `facet_*()`: faceted figures share the same legend   
++ `patchwork`: panel of independent figures can clearly have independent legends    
+
+Faceting is not suitable for presenting multiple distinct variables as they need to share the same legend.
+
+Imagine plotting temperature (in Celsius) and precipitation (in mm) as faceted figures.
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+&lt;span style="color:red"&gt; Note: &lt;/span&gt;
+
++ Before you use the `patchwork` packages to do figure arrangement, think a bit if you really need to do it. Can't you just arrange figures in WORD or latex? 
++ It is very useful if the destination of the panels of figures is html (e.g., shiny, flex dashboard) because it is not trivial to arrange figures the way the `patchwork` allows you to (you certainly need to know how **css** works).
+
+]
+
+  ] 
+
+]
+
+
+---
+
+# Tips 
+
+factor
+
+
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:10",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
