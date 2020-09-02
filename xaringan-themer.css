@@ -35,7 +35,7 @@
   --code-font-is-google: 1;
   --base-font-size: 20px;
   --text-font-size: 0.7rem;
-  --code-font-size: 0.6rem;
+  --code-font-size: 0.7rem;
   --code-inline-font-size: 1em;
   --header-h1-font-size: 1.8rem;
   --header-h2-font-size: 1.3rem;
@@ -102,6 +102,9 @@ h1, h2, h3 {
   color: #035AA6;
   background-color: #f0f0f0;
   padding: 1px;
+}
+.r.hljs.remark-code.remark-inline-code{
+  font-size: var(--code-font-size);
 }
 .remark-slide-number {
   color: #035AA6;
