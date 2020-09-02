@@ -1,0 +1,242 @@
+---
+title: "Reporting using Rmarkdown"
+author: "Taro Mieno"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    number_sections: yes
+    theme: flatly
+    toc: yes
+    toc_float: yes
+  word_document:
+    toc: yes
+# bibliography: example.bib
+---
+
+<!-- ```{r , include = F}
+library(knitr)
+opts_chunk$set(
+  echo = FALSE,
+  messages = FALSE,
+  warnings = FALSE,
+  fig.align = 'center',
+  fig.width = 5,
+  fig.height = 4
+  ) 
+
+opts_knit$set(root.dir = "~/Box/Teaching/UNL/DataScience/Data")
+```
+-->
+
+# Basic illustrations
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo = FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Including a table
+
+```{r }
+knitr::kable(iris[1:5, ], caption = 'A caption')	
+```
+
+## Inline r code
+
+```{r }
+yield <- 200 * runif(100)
+mean_yield <- mean(yield)
+```
+
+The average yield is `r mean_yield`.
+
+# Markdown basics (level 1 header)
+
+## level 2 header
+
+### level 3 header
+
+See the source rmd file:
+
++ list item 1
++ list item 2
++ list item 3
++ *italics*
++ **bold**
++ `code` (do not put r right after the first tick mark)
++ inline math: I hate math. What does this $\int_a^b f(x)dx$ even mean?
++ math: $$\sum_{i=1}^n x_i/n$$
++ link: [Markdown basics](https://rmarkdown.rstudio.com/lesson-8.html)
++ citationL: The best resource to learn how to use Rmarkdown is [@xie2018r].
+
+# Chunk options 
+
+## `echo` and `eval`
+
+**R code and results** 
+
+```{r}
+summary(cars)
+```
+
+**R code suppressed** 
+
+```{r, echo = FALSE}
+summary(cars)
+```
+
+**Only R code (R code was not evaluated)**
+
+```{r, eval = FALSE}
+summary(cars)
+```
+
+**Both R codes and results not shown**
+
+```{r, echo = FALSE, eval = FALSE}
+summary(cars)
+```
+
+---
+
+## `messages` and `warnings`
+
+### both messages and warnings
+
+```{r}
+library(tidyverse)
+detach("package:tidyverse", unload=TRUE)
+```
+
+### messages suppressed
+
+```{r, message=FALSE}
+library(tidyverse)
+detach("package:tidyverse", unload=TRUE)
+```
+
+### both messages and warnings suppressed
+
+```{r, message=FALSE,warning=FALSE}
+library(tidyverse)
+detach("package:tidyverse", unload=TRUE)
+```
+
+---
+
+## `results`
+
+No results are shown.
+
+```{r, results = "hide"}
+a <- runif(100)
+```
+
+But, this shows the above code was evaluated and object `a` was created.
+
+```{r}
+a
+```
+
+---
+
+## `include = FALSE`
+
+No results are shown.
+
+```{r, include = FALSE}
+rm(a)
+a <- runif(100)
+```
+
+But, this shows the above code was evaluated and object `a` was created.
+
+```{r include_ex}
+a
+```
+
+---
+
+# Caching
+
+```{r cache_1, eval = T, cache = T}
+#--- repeat steps 1-3 B times ---#
+MC_sim <- function(i){
+
+  N <- 50000 # sample size
+
+  #--- steps 1 and 2:  ---#
+  mu <- rnorm(N) # the common term shared by both x and u
+  x <- rnorm(N) + mu # independent variable
+  v <- rnorm(N) + mu # error
+  y <- 1 + x + v # dependent variable
+  data <- data.frame(y = y, x = x)
+
+  #--- OLS ---# 
+  reg <- lm(y~x, data = data) # OLS
+
+  #--- return the coef ---#
+  return(reg$coef['x'])
+}
+
+MC_results <- lapply(1:1000, MC_sim) %>% 
+  unlist() %>% 
+  mean()
+
+MC_results
+```
+
+```{r cache_2, eval = T, cache = T, dependson = "cache_1"}
+MC_results
+```
+
+
+# Interactive features: htmlwidgets
+
+## interactive data table  
+
+```{r }
+library(DT)
+iris %>% datatable(
+  extensions = 'Buttons',
+  options = list(
+    dom = 'Blfrtip',
+    buttons = c('copy', 'csv', 'excel', 'pdf', 'print'),
+    lengthMenu = list(c(10,25,50,-1),
+    c(10,25,50,"All"))
+  )
+)
+```
+
+## Interactive time-series data
+
+```{r }
+library(dygraphs)
+dygraph(nhtemp, main = "New Haven Temperatures") %>% 
+  dyRangeSelector(dateWindow = c("1920-01-01", "1960-01-01")) 
+```
+
+## Interactive ggplot2 figures
+
+```{r }
+library(ggplot2)
+library(plotly)
+p <- ggplot(data = diamonds) +
+  geom_bar(aes(x = cut, fill = clarity), position = "dodge") 
+ggplotly(p) 
+```

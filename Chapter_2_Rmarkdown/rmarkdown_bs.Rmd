@@ -1,0 +1,109 @@
+---
+title: "How to use dplyr to manipulate data"
+author: "Taro Mieno"
+date: "September 2, 2017"
+output:
+  knitrBootstrap::bootstrap_document:
+    title: "Test file"
+    theme: amelia
+    highlight: sunburst
+    theme.chooser: TRUE
+    highlight.chooser: TRUE
+geometry: margin=0.75in
+---
+
+# Introduction to Rmarkdown #
+
+
+```{r chunk_set,echo=FALSE}
+library(stargazer)
+library(knitr)
+opts_chunk$set(
+  comment = NA,
+  message = FALSE,
+  warning = FALSE,
+  tidy=FALSE,
+  #--- figure related ---#
+  fig.align='center',
+  fig.width=5,
+  fig.height=4
+  # dev='pdf'
+  )
+data(cars)
+```
+
+In this course, you will be using **rmarkdown** to write up your assignments and the final paper. This note is a gentle introduction to how to use **rmarkdown**.
+
+# Why **rmarkdown** (instead of Word) 
+
+**rmarkdown** allows you to easily embed $R$ codes and their results within a document. It is best to see an example. First, click on the "add document" button at the upper left corner of your $Rstudio$ GUI and select "R Markdown..." When you are prompted enter the title of the new document, just put in whatever name you like and click "OK" at the bottom of the pop-up window. You now should have an example **rmarkdown** file open in your $Rstudio$. All the **rmarkdown** files have $.Rmd$ extension. 
+
+Let's inspect the **rmarkdown** file a bit. On lines 1-4, you have a header in $YAML$ format. For the moment, ignore this part. On lines 6 and 8, you have some texts talking. Then, on lines 10-12, you have an $R$ code $summary(cars)$, which produces the summary of a dataset called $cars$ if you evaluate it on $R$. The $R$ code is encompassed by $```{r}$ and $```$. This indeed is a way for you to let $Rstudio$ know that whatever inside between $```{r}$ and $```$ should be treated as $R$ codes, not just regular texts like on lines 6 and 8. We call a part with $R$ code wrapped around by $```{r}$ and $```$ an R code <span style='color:blue'>chunk</span>. Another $R$ code chunk appear at lines 16-18, with $plot(cars)$ inside, which as you can guess makes an plot. 
+
+Now, let's hit the "Knit HTML" button at the top of the same pane. What you will see is a document in a new window. Let's try to understand what just happened. Lines 6 and 8 in the **Rmd** file appear as exactly the same in the new **html** file (except blue highlighting on the url). What's interesting comes next. You see $summary(cars)$ on the new document, but without $```{r}$ and $```$. Immediately after that, you have summary statistics of **cars** dataset, which was not part of the original **Rmd** file. What you just saw is very significant. When you hit the "Knit HTML" button, **Rstudio** was made recognized that $summary(cars)$ is an $R code$ by means of $```{r}$ and $```$ wrapping the $R$ code, evaluate it, and then presents the evaluation outcomes on the resulting new document. The same thing happened to the second $R$ code chunk: $plot(cars)$ was recognized as an $R$ code, evaluated, and its results (, which is a plot) was placed onto the new document. 
+
+Let's summaries what we just did.
+
++ write a document with mix of regular texts (not enclosed by $```{r}$ and $```$) and $R$ codes (enclosed by $```{r}$ and $```$)
++ when you hit "Knit HTML," **Rstudio** "process" the **Rmd** file: 
+  * display regular texts exactly the way they appear on the **Rmd** file
+  * evaluate the $R$ code chunks and display the results along with the $R$ codes
+
+We call this "process" <span style='color:blue'>knitting</span>. The functionality of "knitting" $R$ codes and their results into an document is provided by the **knitr** package developed by Yihui Xie. 
+
+Here are some big differences between **Rmd knitting** **Word**. First, unlike **Rmd knitting**, what you write on **Word** is what you see as the final output, meaning that you do not have an extra step of processing what you wrote to produce the final output. Second and most important, **Rmd knitting** makes it incredibly easy for you to present $R$ codes (what you did) and their results (what you found). Imagine, for example, to place the same figure we created with $plot(cars)$. The steps you will take to have the figure on your **Word** document is this:
+
+1. generate the figure by evaluating $plot(cars)$ on $R$
+2. save the figure, which requires additional line of $R$ code
+3. import the figure, which involves multiple manual clicking of buttons including navigating through your file system to get to the figure you want
+4. resize and align the figure because most of the time you don't like what you see when the figure is just imported
+
+It becomes even more agonizing to use **Word** if you would like to present regression results, which you will do countless times this semester for your assignments and final paper. Here is what you need to do to present regression results in **Word**:
+
+1. run regression on $R$
+2. copy and paste the results onto **Word**
+3. format the copied results so the reader (me) can read the results
+
+[This website](http://thomasleeper.com/Rcourse/Tutorials/wordoutput.html) shows other options to present regression results in a decent format on **Word**. What you see here is lots of lines of code for the sake of having a well-formatted regression results on **Word**. At least for your assignments and final paper, the time you spend on formatting regression results is a <span style='color:red'>pure waste</span> (the codes shown on the website can be very useful when publishing if you are not using **Latex**). Moreover, if you would like to present $R$ codes that generated the results you are presenting, you obviously need to type out the $R$ codes on **Word** yourself. 
+
+As you saw above, what **Rmd knitting** can do is do all these time-consuming steps for you. With **Rmd knitting**, you will write an $R$ code that conducts a regression (which you have to do anyway even when you are using **Word**). You then write another line of $R$ code that generates publication-ready quality regression results, using the **stargazer** function from the **stargazer** package. 
+
+Here is an example $R$ code chunk you would have to report regression results:
+
+```{r, results='asis'}
+#--- run OLS ---#
+reg <- lm(dist~speed,data=cars)
+
+#--- display the results in a nice format ---#
+stargazer(reg,type='html')
+```
+
+
+This document introduces you to various operations the **dplyr()** package provides, using the **flights** data available from the **NYCFLIGHTS13** package. There are exercises at the end using the **weather** data from the same package. 
+
+------
+
+<!-- ```{r ans_3, message=FALSE, warning=FALSE,eval=TRUE}
+winter_weather <- daily_weather %>% 
+  filter(month %in% c(11,12,1,2),origin=='EWR')  
+winter_weather
+``` -->
+
+<br />
+
+------
+
+## Session Information
+
+```{r session, echo=FALSE}
+sessionInfo()
+```
+
+<br />
+<br />
+
+
+
+ 
+
+
