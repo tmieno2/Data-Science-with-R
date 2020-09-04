@@ -1,0 +1,187 @@
+
+---
+
+
+```{r fig-scatter-f, cache = F, include = F}
+g_fig + #BREAK
+  geom_point( 
+    aes(x = d3_5_9, y = corn_yield), 
+    color = "red", #BREAK2
+    size = 0.7, #BREAK3
+    shape = 0 #BREAK4
+  )
+```
+
+`r chunk_reveal(
+  chunk_name = "fig-scatter-f", 
+  title = "Scatter Plott",
+  break_type = "non_seq", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+
+```{r taste, cache = F, include = F}
+tibble(mtcars) %>% #BREAK
+  ggplot(data = .) + #BREAK2 
+  aes(x = hp, y = mpg) + #BREAK3
+  geom_point(aes(color = factor(cyl)), size = 3) + #BREAK4
+  geom_smooth(method = "lm", color = "black") + #BREAK5
+  facet_wrap(. ~ cyl) + #BREAK6
+  scale_color_viridis_d(name = "Number of Cylinders") + #BREAK7
+  labs(x = "Horse Power", y = "Mile per Gallon") + #BREAK8
+  theme(legend.position = "bottom") #BREAK9
+```
+
+`r chunk_reveal(
+  chunk_name = "taste", 
+  title = "# Taste of ggplot2",
+  break_type = "non_seq", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+---
+
+
+```{r taste, cache = F, include = F}
+county_yield %>%#BREAK
+  ggplot(data = .) + #BREAK2
+  aes(x = factor(year), y = corn_yield) + #BREAK3
+  geom_boxplot(aes(fill = state_name)) + #BREAK4
+  facet_grid(state_name ~ .) + #BREAK5
+  theme(legend.position = "bottom", axis.text.x = element_text(angle = 90)) + #BREAK6
+  xlab("Year") + #BREAK7
+  scale_y_continuous(name = "Corn Yield (bu/acre)", limit = c(100, 200)) +  #BREAK8
+  scale_fill_viridis_d(name = "State", guide = guide_legend(title.position = "top")) + #BREAK9
+  ggtitle("Corn yield (bu/acre) over the \n past 20 years by State") #BREAK10
+
+```
+
+`r chunk_reveal(
+  chunk_name = "taste", 
+  title = "# Taste of ggplot2",
+  break_type = "non_seq", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+---
+
+```{r fig-scatter-f, cache = F, include = F}
+g_fig + #BREAK
+  geom_point( 
+    aes(x = d3_5_9, y = corn_yield), 
+    color = "red", #BREAK2
+    size = 0.7, #BREAK3
+    shape = 0 #BREAK4
+  )
+```
+
+`r chunk_reveal(
+  chunk_name = "fig-scatter-f", 
+  title = "# Scatter Plot",
+  break_type = "non_seq", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
++ `color = "red"`: makes all the squares red
++ `size = 0.5`: makes the size of the squares smaller 
++ `shape = 0`: change the shape of the points (find other shapes [here](http://www.sthda.com/english/wiki/ggplot2-point-shapes))
+
+---
+
+```{r hist-f, cache = F, include = F}  
+g_fig + #BREAK
+  geom_histogram(
+    aes(x = corn_yield), 
+    color = "blue", #BREAK2
+    fill = "green", #BREAK3
+    size = 2, #BREAK4 
+    shape = 2 #BREAK5 
+  )
+```
+
+`r chunk_reveal(
+  chunk_name = "hist-f", 
+  title = "# Histogram",
+  break_type = "non_seq", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
++ `color = "blue"`: makes all the boundary of the bars blue
++ `fill = "green"`: makes the fill of the bars green
++ `size = 2`: makes the line width of the boundary of the bars thicker 
++ `shape = 2`: does nothing
+ 
+
+---
+
+
+```{r box-f, cache = F, include = F}
+ggplot(data = county_yield) + #BREAK
+  geom_boxplot(
+    aes(x = factor(year), y = corn_yield),
+    color = "red", #BREAK2
+    fill = "orange", #BREAK3
+    size = 0.2, #BREAK4
+    shape = 1 #BREAK5
+    )
+```
+
+`r chunk_reveal(
+  chunk_name = "box-f", 
+  title = "# Box Plot",
+  break_type = "non_seq", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
++ `color = "blue"`: makes all the boundary of the boxes red
++ `fill = "orange"`: makes the fill of the boxes orange
++ `size = 0.2`: makes the line width of the boundary of the boxes thinner 
++ `shape = 1`: does nothing
+
+---
+
+```{r line-f, cache = F, include = F}
+ggplot(data = mean_yield) + #BREAK1
+  geom_line(
+    aes(x = year, y = corn_yield), 
+    color = "blue", #BREAK2
+    size = 1.5, #BREAK3
+    fill = "red", #BREAK4  
+    linetype = "dotted", #BREAK5
+  )
+```
+
+`r chunk_reveal(
+  chunk_name = "line-f", 
+  title = "# Line Plot",
+  break_type = "non_seq", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
++ `color = "blue"`: makes the line blue
++ `size = 1.5`: makes the line thicker 
++ `fill = "red"`: does nothing
++ `linetype = "dotted"`: makes the line dotted
+
+---
+
