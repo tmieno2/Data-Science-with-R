@@ -119,22 +119,28 @@ ol, li{
 }
 &lt;/style&gt;
 
+# Before you start
 
-# Table of contents
-
-1. [Importing and exporting data](#inputoutput)
-2. [`data.frame` and `tibble`](#df_tbl)
-3. [Data manipulation with `dplyr`: the Basics](#dplyr)
-4. [Grouped operations](#grouped)
-5. [Extensions](#extensions)
-6. [Reshaping data](#reshaping)
-7. [Merging datasets](#merging)
-
----
-
-# Learning objectives
+## Learning objectives
 
 The objectives of this chapter is to learn how to use the `ggplot2` package to create figures for effective communication 
+
+## Table of contents
+
+1. [`ggplot2` basics](#ggplot2-basics)
+2. [Different types of figures](#dif-geoms)
+3. [Placing more information in one figure](#more-info)
+4. [Faceted figures](#faceting)
+5. [Other supplementary `geom_*()`](#other-geoms)
+6. [Make your figures presentable to others](#fine-tune)
+7. [Tips](#tips)
+7. [Gallery of other type of figures](#gallery)
+7. [Animated figures](#animated)
+
+&lt;br&gt;
+
+&lt;span style="color:red"&gt; Tips: &lt;/span&gt;hitting "o" key will give you a panel view of the slides
+
 
 ---
 
@@ -230,7 +236,7 @@ county_yield &lt;- readRDS("county_yield.rds") %&gt;%
 ---
 
 class: inverse, center, middle
-name: inputoutput
+name: ggplot2-basics
 
 # `ggplot2` basics
 
@@ -949,7 +955,7 @@ g_fig + geom_point(x = d3_5_9, y = corn_yield)
 ---
 
 class: inverse, center, middle
-name: inputoutput
+name: dif-geoms
 
 # Different types of figures
 
@@ -1719,7 +1725,7 @@ Using `price` variables from `premium`, generate a histogram of `price` shown be
 ---
 
 class: inverse, center, middle
-name: inputoutput
+name: more-info
 
 # Placing more information in one figure
 
@@ -2103,7 +2109,7 @@ Using `premium`, create density plots of `carat` by `color` as shown below (set 
 ---
 
 class: inverse, center, middle
-name: inputoutput
+name: faceting
 
 # Faceting  
 
@@ -2478,7 +2484,7 @@ Using premium, create histogram of `carat` by `color` and `clarity` on separate 
 ---
 
 class: inverse, center, middle
-name: inputoutput
+name: other-geoms
 
 # Other supplementary `geom_*()`  
 
@@ -2886,7 +2892,7 @@ ggplot() +
 ---
 
 class: inverse, center, middle
-name: inputoutput
+name: fine-tune
 
 # Make your figures presentable to others
 
@@ -4097,7 +4103,6 @@ You can use HEX color codes for any color-related elements in a figure.
 
 ---
 
-
 # Color scale
 
 .panelset[ 
@@ -4631,7 +4636,7 @@ Imagine plotting temperature (in Celsius) and precipitation (in mm) as faceted f
 ---
 
 class: inverse, center, middle
-name: inputoutput
+name: tips
 
 # Tips 
 
@@ -4959,14 +4964,13 @@ After this, all of your figures will follow  `my_theme`.
 ---
 
 class: inverse, center, middle
-name: inputoutput
+name: gallery
 
 # Gallery of other type of figures
 
 &lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
 
 ---
-
 
 
 # Pie charts
@@ -5361,9 +5365,9 @@ ggplot(data = yield_group) +
 ---
 
 class: inverse, center, middle
-name: inputoutput
+name: animated
 
-# Animation 
+# Animated figures 
 
 &lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
 
@@ -5580,11 +5584,16 @@ name: inputoutput
 
 # Resources
 
+## Books and tutorials
 
++ [ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/)
++ [Data Visualization with R](https://rkabacoff.github.io/datavis/)
++ [ggplot2 tutorial by Cedric Scherer](https://cedricscherer.netlify.app/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/)
++ [Interactive html document](https://plotly-r.com/index.html)
+
+## Packages
 + [ggplot2 extensions](https://exts.ggplot2.tidyverse.org/)
-
-
-
++ [gganimat](https://exts.ggplot2.tidyverse.org/)
 
 
 
