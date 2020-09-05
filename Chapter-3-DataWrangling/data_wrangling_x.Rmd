@@ -29,7 +29,7 @@ opts_chunk$set(
   )
 
 opts_knit$set(root.dir = "~/Dropbox/TeachingUNL/DataScience/Datasets/Chapter_3_data_wrangling")
-# setwd("~/Dropbox/TeachingUNL/DataScience/Datasets") 
+# setwd("~/Dropbox/TeachingUNL/DataScience/Datasets/Chapter_3_data_wrangling") 
 
 library(flipbookr)
 library(flair)
@@ -2230,6 +2230,7 @@ Multiple column representing a single variable
 To convert a long-formatted `data.frame` into a wide-formatted `data.frame`, you can use `pivot_wider()` function from the `tidyr` package.
 
 ```{r eval = F}
+#--- NOT RUN ---#
 pivot_wider(
   data, 
   names_from = variable 1, 
@@ -2387,8 +2388,6 @@ yield_data_wide %>% select(c(state, starts_with("yield_"))) %>%
 
 # Wide or long?
 
-<br>
-
 Suppose you are interested in estimating the following statistical model:
 
 $$corn yield = \beta_0 + \beta_1 R_{May}  + \beta_2 R_{June} + \beta_2 R_{July} + \beta_2 R_{August} + \beta_2 R_{September} + v$$
@@ -2420,8 +2419,6 @@ is in a <span style="color:red"> long </span> format.
 ---
 
 # Wide or long?
-
-<br>
 
 This is <span style="color:red"> too long for your analysis.</span> 
 
