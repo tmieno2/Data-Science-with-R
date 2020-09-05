@@ -4650,6 +4650,8 @@ name: tips
 
 .panel[.panel-name[Preparation]
 
+.left-full[
+
 Create a dataset for this section:
 
 
@@ -4671,6 +4673,8 @@ g_f &lt;- ggplot(data = county_yield_f) +
   )
 ```
 
+]
+
   ]
 
 .panel[.panel-name[Problem]
@@ -4686,6 +4690,8 @@ g_f &lt;- ggplot(data = county_yield_f) +
   ]
 
 .panel[.panel-name[Solution]
+
+.left-full[
 
 You can turn `state_name` into a factor with the preferred order of state names.
 
@@ -4708,10 +4714,11 @@ county_yield_f$state_name_f %&gt;% head()
 ## Levels: Nebraska Kansas Colorado
 ```
 
+]
+
   ] &lt;!-- panel ends here --&gt;
 
-.panel[.panel-name[Look]
-
+.panel[.panel-name[Problem solved]
 
 .left-code[
 
@@ -4881,6 +4888,8 @@ name: custom-theme
 
 .panel[.panel-name[Custom theme]
 
+.left-full[
+
 You can create your own theme, save it, and then use it later. 
 
 Here, I am creating my own theme off of `theme_economist()`, where axis titles and major panel grids are absent.
@@ -4904,6 +4913,8 @@ ggplot(data = weather) +
   ) +
   my_theme
 ```
+
+]
 
   ]
 
@@ -4941,6 +4952,8 @@ ggplot(data = weather) +
 
 .panel[.panel-name[theme_set()]
 
+.left-full[
+
 If you would like to apply your theme to all the figures you generate, then use `theme_set()` like below:
 
 
@@ -4949,6 +4962,8 @@ theme_set(my_theme)
 ```
 
 After this, all of your figures will follow  `my_theme`.
+
+]
 
   ] &lt;!-- panel ends here --&gt;
 
@@ -4979,6 +4994,8 @@ name: gallery
 
 .panel[.panel-name[Instruction]
 
+.left-full[
+
 + You can use `geom_arc_bar()` from the `ggforce` package to create a pie chart
 
 
@@ -4988,6 +5005,8 @@ library(ggforce)
 
 + First create a dataset where the starting and ending angles based on the share for each group (see next slide)
 + Then use `geom_arc_bar()` to create a pie chart
+
+]
 
   ]
 

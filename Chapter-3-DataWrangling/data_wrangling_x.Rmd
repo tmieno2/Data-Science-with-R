@@ -24,8 +24,10 @@ opts_chunk$set(
   #fig.width=6, fig.height=4.5, 
   # out.width="748px", #out.length="520.75px",
   # dpi = 100, #fig.path='Figs/',
-  cache = T
-  #, echo=F, warning=F, message=F
+  cache = T,
+  warning = F, 
+  message = F
+  #, echo=F, 
   )
 
 opts_knit$set(root.dir = "~/Dropbox/TeachingUNL/DataScience/Datasets/Chapter_3_data_wrangling")
@@ -35,7 +37,7 @@ library(flipbookr)
 library(flair)
 ```
 
-```{r xaringan-themer, include = FALSE, warning = FALSE}
+```{r xaringan-themer, include = FALSE, warning = FALSE, eval = F}
 library(xaringanthemer)
 style_duo_accent(
   header_h1_font_size = "1.6rem",
@@ -2442,6 +2444,58 @@ data.frame(
 
 <span style="color:red"> Key point:</span> Whether a dataset is wide or long is determined based on what you are doing with the dataset.
 
+---
+
+# Exercises 
+
+.panelset[ 
+
+
+.panel[.panel-name[Exercise 1]
+
++ Using `flights` data, calculate the total number of flights by carrier-month, which in the long format
+
++ Reshape the data into a long format so that you have number of flights per month in columns 
+
+Here is the output you are supposed to get if done correctly:
+
+```{r echo = F}
+(
+num_flights_wide <- flights %>% 
+  group_by(carrier, month) %>% 
+  summarize(num_obs = n()) %>% 
+  pivot_wider(
+    names_from = month,
+    names_prefix = "month_",
+    values_from = num_obs
+  ) 
+)
+
+```
+
+  ]
+
+.panel[.panel-name[Exercise 2]
+
++ Reshape the data back into the long format so that a single columns has all the flight number values 
+
+Here is the output you are supposed to get if done correctly:
+
+```{r echo = F}
+num_flights_wide %>% 
+  pivot_longer(
+    starts_with("month_"),
+    names_to = "month",
+    names_prefix = "month_",
+    values_to = "num_flights"
+  ) 
+```
+
+  ]
+
+]
+
+
 <!-- 
 #/*=================================================*/
 #' # Data merge
@@ -2576,7 +2630,6 @@ What are the keys here?
 
   ]
 ]
-
 
 
 ---
@@ -2727,5 +2780,75 @@ left_join(yield_data, weather_data, by = c("county", "year")) %>%
   ) %>% 
   arrange(county, year)
 ```
+
+---
+
+# Exercises
+
+.panelset[ 
+
+.panel[.panel-name[Preparation]
+
+Create the following datasets and take a look at them to understand their contents:
+
+**Flights in January**:
+
+```{r }
+flights_Jan <- flights %>% 
+  filter(month == 1) %>% 
+  select(month, day, dep_delay, origin)
+```
+
+**daily temperature in January**:
+
+```{r }
+daily_temp_Jan <- weather %>% 
+  filter(month == 1) %>% 
+  group_by(origin, month, day) %>% 
+  summarize(temp = mean(temp))
+```
+
+**hourly temperature in January**:
+
+```{r }
+hourly_temp_Jan <- weather %>% 
+  filter(month == 1) %>% 
+  select(origin, month, day, hour, temp)
+```
+
+  ] 
+
+.panel[.panel-name[Exercise 1]
+
++ You are interested in learning the impact of **daily** temperature on departure delay for the flights in January. To do so, you need to have them in a single dataset.  
+
++ Merge `daily_temp_Jan` to `flights_Jan` using `left_join()`
+
+Here is the output you are supposed to get if done correctly:
+
+```{r echo = F}
+left_join(flights_Jan, daily_temp_Jan, by = c("origin", "month", "day"))
+```
+
+  ]
+
+.panel[.panel-name[Exercise 2]
+
++ You are interested in learning the impact of **hourly** temperature on departure delay for the flights in January. To do so, you need to have them in a single dataset.  
+
++ Merge `hourly_temp_Jan` to `flights_Jan` using `left_join()`
+
+Here is the output you are supposed to get if done correctly:
+
+```{r echo = F}
+left_join(flights_Jan, hourly_temp_Jan, by = c("origin", "month", "day"))
+```
+
+Each flight (single row in `flights_Jan`) now has multiple rows. Was this expected. 
+
+
+  ]
+
+]
 
 
