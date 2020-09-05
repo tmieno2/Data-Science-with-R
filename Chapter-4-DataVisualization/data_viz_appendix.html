@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Data visualization with ggplot2</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="AECN 396/896-002" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/animate.css/animate.xaringan.css" rel="stylesheet" />
+    <link href="libs/tachyons/tachyons.min.css" rel="stylesheet" />
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Data visualization with <code>ggplot2</code>
+### AECN 396/896-002
+
+---
+
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+.remark-code {
+  display: block;
+  overflow-x: auto;
+  padding: .5em;
+  background: #ffe7e7;
+} 
+
+.hljs-github .hljs {
+  background: #f2f2fd;
+}
+
+.remark-inline-code {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: #e6e6e6;
+}
+
+.left-full {
+  width: 80%;
+  height: 92%;
+  float: left;
+}
+
+.left-code {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left-plot5 {
+  width: 48%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot5 {
+  width: 48%;
+  float: right;
+  padding-left: 1%;
+}
+
+ul li{
+  margin: 7px;
+}
+
+ul, li{
+  margin-left: 9px; 
+  padding-left: 0px; 
+}
+
+ol li{
+  margin: 7px;
+}
+
+ol, li{
+  margin-left: 9px; 
+  padding-left: 0px; 
+}
+&lt;/style&gt;
+
+
+
+
+&lt;!-- 
+#=========================================
+# ggplot2 Basics
+#=========================================
+--&gt;
+  
+---
+
+class: inverse, center, middle
+name: inputoutput
+
+# `ggplot2` basics
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+
+
+
+count: false
+ 
+# Taste of ggplot2
+.panel1-taste-user[
+
+```r
+*county_yield
+```
+]
+ 
+.panel2-taste-user[
+
+```
+##       soy_yield corn_yield year county_code state_name d0_5_9 d1_5_9  d2_5_9
+##    1:        NA         NA 2018         053     Kansas 0.8980 3.8186 13.5279
+##    2:        NA         NA 2017         053     Kansas 3.9994 7.0006  0.0000
+##    3:        NA         NA 2016         053     Kansas 0.5724 0.0996  0.0000
+##    4:        NA         NA 2015         053     Kansas 4.4283 1.6177  0.0000
+##    5:        NA         NA 2014         053     Kansas 4.7032 9.9327  3.5824
+##   ---                                                                       
+## 2960:        53        181 2004         073   Nebraska 0.0000 3.2915 19.7085
+## 2961:        57        195 2003         073   Nebraska 0.0000 7.7427 11.8459
+## 2962:        51        170 2002         073   Nebraska 0.0000 7.0000  1.2978
+## 2963:        56        195 2001         073   Nebraska 5.7915 0.0000  0.0000
+## 2964:        54        147 2000         073   Nebraska 0.0000 4.7386 17.6887
+##       d3_5_9 d4_5_9
+##    1: 0.0000      0
+##    2: 0.0000      0
+##    3: 0.0000      0
+##    4: 0.0000      0
+##    5: 4.7817      0
+##   ---              
+## 2960: 0.0000      0
+## 2961: 3.4114      0
+## 2962: 4.7022      9
+## 2963: 0.0000      0
+## 2964: 0.5727      0
+```
+]
+
+---
+count: false
+ 
+# Taste of ggplot2
+.panel1-taste-user[
+
+```r
+county_yield %&gt;%
+* ggplot(data = .)
+```
+]
+ 
+.panel2-taste-user[
+&lt;img src="data_viz_appendix_files/figure-html/taste_user_02_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# Taste of ggplot2
+.panel1-taste-user[
+
+```r
+county_yield %&gt;%
+  ggplot(data = .) +
+* aes(x = factor(year), y = corn_yield)
+```
+]
+ 
+.panel2-taste-user[
+&lt;img src="data_viz_appendix_files/figure-html/taste_user_03_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# Taste of ggplot2
+.panel1-taste-user[
+
+```r
+county_yield %&gt;%
+  ggplot(data = .) +
+  aes(x = factor(year), y = corn_yield) +
+* geom_boxplot(aes(fill = state_name))
+```
+]
+ 
+.panel2-taste-user[
+&lt;img src="data_viz_appendix_files/figure-html/taste_user_04_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# Taste of ggplot2
+.panel1-taste-user[
+
+```r
+county_yield %&gt;%
+  ggplot(data = .) +
+  aes(x = factor(year), y = corn_yield) +
+  geom_boxplot(aes(fill = state_name)) +
+* facet_grid(state_name ~ .)
+```
+]
+ 
+.panel2-taste-user[
+&lt;img src="data_viz_appendix_files/figure-html/taste_user_05_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# Taste of ggplot2
+.panel1-taste-user[
+
+```r
+county_yield %&gt;%
+  ggplot(data = .) +
+  aes(x = factor(year), y = corn_yield) +
+  geom_boxplot(aes(fill = state_name)) +
+  facet_grid(state_name ~ .) +
+* theme(
+*   legend.position = "bottom",
+*   legend.title = element_text(size = 6),
+*   legend.text = element_text(size = 6),
+*   axis.text.x = element_text(angle = 90, size = 6),
+*   axis.text.y = element_text(size = 6),
+*   axis.title = element_text(size = 8)
+* )
+```
+]
+ 
+.panel2-taste-user[
+&lt;img src="data_viz_appendix_files/figure-html/taste_user_06_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# Taste of ggplot2
+.panel1-taste-user[
+
+```r
+county_yield %&gt;%
+  ggplot(data = .) +
+  aes(x = factor(year), y = corn_yield) +
+  geom_boxplot(aes(fill = state_name)) +
+  facet_grid(state_name ~ .) +
+  theme(
+    legend.position = "bottom",
+    legend.title = element_text(size = 6),
+    legend.text = element_text(size = 6),
+    axis.text.x = element_text(angle = 90, size = 6),
+    axis.text.y = element_text(size = 6),
+    axis.title = element_text(size = 8)
+  ) +
+* xlab("Year")
+```
+]
+ 
+.panel2-taste-user[
+&lt;img src="data_viz_appendix_files/figure-html/taste_user_07_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# Taste of ggplot2
+.panel1-taste-user[
+
+```r
+county_yield %&gt;%
+  ggplot(data = .) +
+  aes(x = factor(year), y = corn_yield) +
+  geom_boxplot(aes(fill = state_name)) +
+  facet_grid(state_name ~ .) +
+  theme(
+    legend.position = "bottom",
+    legend.title = element_text(size = 6),
+    legend.text = element_text(size = 6),
+    axis.text.x = element_text(angle = 90, size = 6),
+    axis.text.y = element_text(size = 6),
+    axis.title = element_text(size = 8)
+  ) +
+  xlab("Year") +
+* scale_y_continuous(
+*   name = "Corn Yield (bu/acre)",
+*   limit = c(100, 200)
+* )
+```
+]
+ 
+.panel2-taste-user[
+&lt;img src="data_viz_appendix_files/figure-html/taste_user_08_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# Taste of ggplot2
+.panel1-taste-user[
+
+```r
+county_yield %&gt;%
+  ggplot(data = .) +
+  aes(x = factor(year), y = corn_yield) +
+  geom_boxplot(aes(fill = state_name)) +
+  facet_grid(state_name ~ .) +
+  theme(
+    legend.position = "bottom",
+    legend.title = element_text(size = 6),
+    legend.text = element_text(size = 6),
+    axis.text.x = element_text(angle = 90, size = 6),
+    axis.text.y = element_text(size = 6),
+    axis.title = element_text(size = 8)
+  ) +
+  xlab("Year") +
+  scale_y_continuous(
+    name = "Corn Yield (bu/acre)",
+    limit = c(100, 200)
+  ) +
+* scale_fill_viridis_d(
+*   name = "State",
+*   guide = guide_legend(
+*     title.position = "left"
+*   )
+* )
+```
+]
+ 
+.panel2-taste-user[
+&lt;img src="data_viz_appendix_files/figure-html/taste_user_09_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+&lt;style&gt;
+.panel1-taste-user {
+  color: black;
+  width: 49%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-taste-user {
+  color: black;
+  width: 49%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-taste-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+
+
+count: false
+ 
+# 
+.panel1-facet-wrap-one-user[
+
+```r
+*ggplot(data = county_yield) +
+* geom_boxplot(
+*   aes(x = factor(year), y = corn_yield)
+* )
+```
+]
+ 
+.panel2-facet-wrap-one-user[
+&lt;img src="data_viz_appendix_files/figure-html/facet-wrap-one_user_01_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-facet-wrap-one-user[
+
+```r
+ggplot(data = county_yield) +
+  geom_boxplot(
+    aes(x = factor(year), y = corn_yield)
+  ) +
+* facet_wrap(state_name ~ .)
+```
+]
+ 
+.panel2-facet-wrap-one-user[
+&lt;img src="data_viz_appendix_files/figure-html/facet-wrap-one_user_02_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+&lt;style&gt;
+.panel1-facet-wrap-one-user {
+  color: black;
+  width: 49%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-facet-wrap-one-user {
+  color: black;
+  width: 49%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-facet-wrap-one-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+
+
+
+
+count: false
+ 
+# 
+.panel1-multiple-geoms-user[
+
+```r
+*ggplot() +
+* geom_point(
+*   data = county_yield,
+*   aes(y = corn_yield, x = d3_5_9)
+* )
+```
+]
+ 
+.panel2-multiple-geoms-user[
+&lt;img src="data_viz_appendix_files/figure-html/multiple-geoms_user_01_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-multiple-geoms-user[
+
+```r
+ggplot() +
+  geom_point(
+    data = county_yield,
+    aes(y = corn_yield, x = d3_5_9)
+  ) +
+* geom_line(
+*   data = ci_bound_data,
+*   aes(x = d3_5_9, y = fit)
+* )
+```
+]
+ 
+.panel2-multiple-geoms-user[
+&lt;img src="data_viz_appendix_files/figure-html/multiple-geoms_user_02_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-multiple-geoms-user[
+
+```r
+ggplot() +
+  geom_point(
+    data = county_yield,
+    aes(y = corn_yield, x = d3_5_9)
+  ) +
+  geom_line(
+    data = ci_bound_data,
+    aes(x = d3_5_9, y = fit)
+  ) +
+* geom_ribbon(
+*   data = ci_bound_data,
+*   aes(x = d3_5_9, ymin = lwr, ymax = upr),
+*   fill = "red",
+*   alpha = 0.4
+* )
+```
+]
+ 
+.panel2-multiple-geoms-user[
+&lt;img src="data_viz_appendix_files/figure-html/multiple-geoms_user_03_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+&lt;style&gt;
+.panel1-multiple-geoms-user {
+  color: black;
+  width: 49%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-multiple-geoms-user {
+  color: black;
+  width: 49%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-multiple-geoms-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+
+---
+
+
+
+
+
+count: false
+ 
+# 
+.panel1-axes-content-user[
+
+```r
+*county_yield_s_b2010
+```
+]
+ 
+.panel2-axes-content-user[
+
+```
+##      soy_yield corn_yield year county_code state_name  d0_5_9  d1_5_9 d2_5_9
+##   1:        NA         NA 2010         053     Kansas  0.4422  0.0000 0.0000
+##   2:        NA         NA 2009         053     Kansas  1.7234  0.0000 0.0000
+##   3:        NA         NA 2008         053     Kansas  0.0000  0.0000 0.0000
+##   4:        NA         NA 2007         053     Kansas  0.0000  0.0000 0.0000
+##   5:        NA         NA 2006         053     Kansas 17.9436  0.0405 0.0000
+##  ---                                                                        
+## 932:        65      214.2 2009         073   Nebraska  2.0237  0.0000 0.0000
+## 933:        57      186.0 2008         073   Nebraska  2.5101  0.0000 0.0000
+## 934:        58      186.0 2007         073   Nebraska  0.0000  0.0000 0.0000
+## 935:        62      193.0 2006         073   Nebraska  0.0000 11.4440 9.1840
+## 936:        58      195.0 2005         073   Nebraska  8.1882  9.0797 5.7324
+##      d3_5_9 d4_5_9
+##   1:  0.000      0
+##   2:  0.000      0
+##   3:  0.000      0
+##   4:  0.000      0
+##   5:  0.000      0
+##  ---              
+## 932:  0.000      0
+## 933:  0.000      0
+## 934:  0.000      0
+## 935:  2.372      0
+## 936:  0.000      0
+```
+]
+
+---
+count: false
+ 
+# 
+.panel1-axes-content-user[
+
+```r
+county_yield_s_b2010 %&gt;%
+* ggplot(data = .)
+```
+]
+ 
+.panel2-axes-content-user[
+&lt;img src="data_viz_appendix_files/figure-html/axes-content_user_02_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-axes-content-user[
+
+```r
+county_yield_s_b2010 %&gt;%
+  ggplot(data = .) +
+* aes(x = factor(year), y = corn_yield)
+```
+]
+ 
+.panel2-axes-content-user[
+&lt;img src="data_viz_appendix_files/figure-html/axes-content_user_03_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-axes-content-user[
+
+```r
+county_yield_s_b2010 %&gt;%
+  ggplot(data = .) +
+  aes(x = factor(year), y = corn_yield) +
+* geom_boxplot()
+```
+]
+ 
+.panel2-axes-content-user[
+&lt;img src="data_viz_appendix_files/figure-html/axes-content_user_04_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-axes-content-user[
+
+```r
+county_yield_s_b2010 %&gt;%
+  ggplot(data = .) +
+  aes(x = factor(year), y = corn_yield) +
+  geom_boxplot() +
+* aes(fill = state_name)
+```
+]
+ 
+.panel2-axes-content-user[
+&lt;img src="data_viz_appendix_files/figure-html/axes-content_user_05_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-axes-content-user[
+
+```r
+county_yield_s_b2010 %&gt;%
+  ggplot(data = .) +
+  aes(x = factor(year), y = corn_yield) +
+  geom_boxplot() +
+  aes(fill = state_name) +
+* scale_x_discrete(
+*   name = "Year",
+*   label = gsub("20", "", as.character(2000:2018))
+* )
+```
+]
+ 
+.panel2-axes-content-user[
+&lt;img src="data_viz_appendix_files/figure-html/axes-content_user_06_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-axes-content-user[
+
+```r
+county_yield_s_b2010 %&gt;%
+  ggplot(data = .) +
+  aes(x = factor(year), y = corn_yield) +
+  geom_boxplot() +
+  aes(fill = state_name) +
+  scale_x_discrete(
+    name = "Year",
+    label = gsub("20", "", as.character(2000:2018))
+  ) +
+* scale_y_continuous(
+*   name = "Corn Yield (bu/acre)",
+*   limit = c(100, 200),
+*   breaks = seq(100, 200, by = 10)
+* )
+```
+]
+ 
+.panel2-axes-content-user[
+&lt;img src="data_viz_appendix_files/figure-html/axes-content_user_07_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+&lt;style&gt;
+.panel1-axes-content-user {
+  color: black;
+  width: 49%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-axes-content-user {
+  color: black;
+  width: 49%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-axes-content-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:10",
+"highlightStyle": "monokai",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,430 @@
+---
+title: "Data visualization with `ggplot2`"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    lib_dir: libs
+    nature:
+      ratio: 16:10
+      highlightStyle: monokai
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup-knitr, include = FALSE}
+
+library(knitr)
+options(htmltools.dir.version = FALSE)
+options(knitr.duplicate.label = "allow")
+
+opts_chunk$set(
+  fig.align = "center", 
+  fig.retina = 5,
+  fig.dim = c(4, 3.5), 
+  out.width = "100%", 
+  warning = F, 
+  message = F,
+  #fig.path='Figs/',
+  cache = T
+  #, echo=F, warning=F, message=F
+  )
+
+# setwd("~/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-4-DataVisualization") 
+
+library(flipbookr)
+library(flair)
+```
+
+```{r xaringanExtra, echo=FALSE, cache = F}
+library(xaringanExtra)
+xaringanExtra::use_xaringan_extra(c("tile_view", "animate_css", "tachyons"))
+xaringanExtra::use_tile_view()
+xaringanExtra::use_panelset()
+```
+
+```{r xaringan-themer, include = FALSE, warning = FALSE, cache = F}
+library(xaringanthemer)
+style_duo_accent(
+  header_h1_font_size = "2.1rem",
+  header_h2_font_size = "1.5rem",
+  code_inline_background_color = "#e6e6e6", 
+  text_font_size = "0.7rem",
+  code_font_size = "0.6rem",
+  link_color = "#ff005a"
+)
+```
+
+```{r libraries, include = F, cache = F}
+#--- load packages ---#
+suppressMessages(library(data.table))
+suppressMessages(library(exactextractr))
+suppressMessages(library(prism))
+suppressMessages(library(sf))
+suppressMessages(library(raster))
+suppressMessages(library(DT))
+suppressMessages(library(tictoc))
+suppressMessages(library(tmap))
+suppressMessages(library(extrafont))
+suppressMessages(library(patchwork))
+suppressMessages(library(plotly))
+suppressMessages(library(ggthemes))
+suppressMessages(library(RColorBrewer))
+suppressMessages(library(parallel))
+suppressMessages(library(maps))
+suppressMessages(library(tidyverse))
+````
+
+```{css css-setup, echo = F}
+.remark-code {
+  display: block;
+  overflow-x: auto;
+  padding: .5em;
+  background: #ffe7e7;
+} 
+
+.hljs-github .hljs {
+  background: #f2f2fd;
+}
+
+.remark-inline-code {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: #e6e6e6;
+}
+
+.left-full {
+  width: 80%;
+  height: 92%;
+  float: left;
+}
+
+.left-code {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left-plot5 {
+  width: 48%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot5 {
+  width: 48%;
+  float: right;
+  padding-left: 1%;
+}
+
+ul li{
+  margin: 7px;
+}
+
+ul, li{
+  margin-left: 9px; 
+  padding-left: 0px; 
+}
+
+ol li{
+  margin: 7px;
+}
+
+ol, li{
+  margin-left: 9px; 
+  padding-left: 0px; 
+}
+```
+
+
+```{r dataset, results = "hide", include = F}
+county_yield <- readRDS("county_yield.rds") %>% 
+  select(soy_yield, corn_yield, year, county_code, state_name, d0_5_9, d1_5_9, d2_5_9, d3_5_9, d4_5_9) %>% 
+    filter(state_name %in% c("Nebraska", "Kansas", "Colorado"))
+```
+
+<!-- 
+#=========================================
+# ggplot2 Basics
+#=========================================
+-->
+  
+---
+
+class: inverse, center, middle
+name: inputoutput
+
+# `ggplot2` basics
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+
+```{r taste, cache = F, include = F}
+county_yield %>% #BREAK
+  ggplot(data = .) + #BREAK
+  aes(x = factor(year), y = corn_yield) + #BREAK
+  geom_boxplot(aes(fill = state_name)) + #BREAK
+  facet_grid(state_name ~ .) + #BREAK
+  theme(
+    legend.position = "bottom", 
+    legend.title = element_text(size = 6), 
+    legend.text = element_text(size = 6), 
+    axis.text.x = element_text(angle = 90, size = 6),
+    axis.text.y = element_text(size = 6),
+    axis.title = element_text(size = 8)
+  ) + #BREAK
+  xlab("Year") + #BREAK
+  scale_y_continuous(
+    name = "Corn Yield (bu/acre)", 
+    limit = c(100, 200)
+  ) +  #BREAK
+  scale_fill_viridis_d(
+    name = "State", 
+    guide = guide_legend(
+      title.position = "left"
+    )
+  ) #BREAK
+```
+
+`r chunk_reveal(
+  chunk_name = "taste", 
+  title = "# Taste of ggplot2",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+---
+
+```{r facet-wrap-one, cache = F, include = F}
+ggplot(data = county_yield) + 
+  geom_boxplot(
+    aes(x = factor(year), y = corn_yield)
+  ) + #BREAK
+  facet_wrap(state_name ~ .) #BREAK
+```
+
+`r chunk_reveal(
+  chunk_name = "facet-wrap-one", 
+  title = "# ",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+---
+
+```{r echo = F}
+#--- regression ---#
+reg <- lm(corn_yield ~ d3_5_9, data = county_yield)
+
+#--- find confidence interval ---#
+min_d3 <- county_yield$d3_5_9 %>% min(na.rm = TRUE) # minimum d3 observed
+max_d3 <- county_yield$d3_5_9 %>% max(na.rm = TRUE) # maximum d3 observed
+
+eval_points <- data.frame(d3_5_9 = seq(min_d3, max_d3, length = 1000)) # evaluation points
+
+ci_bound <- predict(reg, newdata = eval_points, interval = "confidence", level = 0.9) # upper and lower bound
+
+ci_bound_data <- cbind(eval_points, ci_bound) # combine evaluation points and ci
+```
+
+```{r multiple-geoms, cache = F, include = F}
+ggplot() + 
+  geom_point(
+    data = county_yield, 
+    aes(y = corn_yield, x = d3_5_9)
+  ) + #BREAK
+  geom_line(
+    data = ci_bound_data, 
+    aes(x = d3_5_9, y = fit)
+  ) + #BREAK
+  geom_ribbon(
+    data = ci_bound_data,
+    aes(x = d3_5_9, ymin = lwr, ymax = upr),
+    fill = "red",
+    alpha = 0.4
+  )
+```
+
+`r chunk_reveal(
+  chunk_name = "multiple-geoms", 
+  title = "# ",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+---
+
+```{r include = F}
+county_yield_s_b2010 <- county_yield %>% 
+  filter(year >= 2005, year <= 2010) 
+```
+
+```{r axes-content, cache = F, include = F}
+county_yield_s_b2010 %>% #BREAK
+  ggplot(data = .) + #BREAK
+  aes(x = factor(year), y = corn_yield) + #BREAK
+  geom_boxplot() + #BREAK
+  aes(fill = state_name) + #BREAK
+  scale_x_discrete( 
+    name = "Year", 
+    label = gsub("20", "", as.character(2000:2018)) 
+  ) + #BREAK
+  scale_y_continuous(
+    name = "Corn Yield (bu/acre)", 
+    limit = c(100, 200), 
+    breaks = seq(100, 200, by = 10) 
+  ) 
+```    
+
+`r chunk_reveal(
+  chunk_name = "axes-content", 
+  title = "# ",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+---
+
+
+```{r diverging, cache = F, include = F}
+county_yield %>% #BREAK
+  filter(state_name == "Nebraska") %>% #BREAK 
+  filter(!is.na(corn_yield)) %>% 
+  group_by(county_code) %>% 
+  summarize(corn_yield = mean(corn_yield)) %>% #BREAK
+  mutate(
+    yield_norm = (corn_yield - mean(corn_yield))/sd(corn_yield),
+    below_above = ifelse(yield_norm < 0, "below", "above")
+  ) %>% #BREAK
+  arrange(yield_norm) %>% #BREAK
+  mutate(
+    county_code_f = factor(county_code, levels = .$county_code)
+  ) %>% #BREAK
+  ggplot(data = .) + #BREAK
+  geom_bar(
+    aes(fill = below_above, x = county_code_f, y = yield_norm, label = county_code_f), 
+    stat = 'identity', 
+    width = 0.5
+  )  + #BREAK
+  scale_fill_manual(
+    name = "Productivity", 
+    labels = c("Above Average", "Below Average"), 
+    values = c("above" = "#00ba38", "below" = "#f8766d")
+  ) + #BREAK
+  coord_flip() + #BREAK
+  labs(x = "Normalized Yield", y = "County Code") + #BREAK
+  theme(
+    legend.position = "bottom",
+    axis.text.y = element_text(size = 6)
+  )
+```
+
+`r chunk_reveal(
+  chunk_name = "diverging", 
+  title = "# Diverging chart (variant of a bar chart)",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+---
+
+
+```{r pie-cheat, cache = F, include = F}
+#--- define two parameters ---#
+rpie = 1 # pie radius
+rlabel = 0.6 * rpie # radius of the labels
+
+#--- create a pie chart ---#
+share_data %>% #BREAk
+  ggplot(data = .) + 
+    geom_arc_bar(
+      aes(x0 = 0, y0 = 0, r0 = 0, r = rpie, # fixed values
+        start = start_angle, 
+        end = end_angle, 
+        fill = state_name
+      )
+    ) + #BREAk
+    geom_text(
+      aes(
+        x = rlabel * sin(mid_angle), 
+        y = rlabel * cos(mid_angle), 
+        label = state_name
+      ), 
+      hjust = 0.5, 
+      vjust = 0.5
+    ) + #BREAk
+    coord_fixed() + #BREAk
+    theme_void() + #BREAk
+    scale_fill_viridis_d("State")
+
+```
+
+`r chunk_reveal(
+  chunk_name = "pie-cheat", 
+  title = "# Pie chart",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+---
+
+```{r mean-se, cache = F, include = F}
+data(Salaries, package="carData")
+
+Salaries %>%
+  group_by(rank) %>% #BREAK
+  summarize(
+    n = n(),
+    mean_salary = mean(salary),
+    sd = sd(salary),
+    se = sd / sqrt(n),
+    ci = qt(0.975, df = n - 1) * sd / sqrt(n)
+  ) %>% #BREAK
+  ggplot(data = .) + #BREAK
+  aes(x = rank, y = mean_salary) + #BREAK
+  geom_point(size = 3) + #BREAK
+  geom_errorbar(
+    aes(
+      ymin = mean_salary - 1.96 * se, 
+      ymax = mean_salary + 1.96 * se
+      ), 
+    width = .1
+  )
+
+```
+
+`r chunk_reveal(
+  chunk_name = "mean-se", 
+  title = "# Mean and Standard Error",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
