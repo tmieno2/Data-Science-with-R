@@ -4566,6 +4566,109 @@ htmltools::save_html(ggplotly(test, width = 800, height = 400), file = "fig.html
 
 ]
 
+
+<!-- 
+#=========================================
+# Exporting a figure as an image    
+#=========================================
+-->
+  
+---
+
+class: inverse, center, middle
+name: inputoutput
+
+# Exporting a figure as an image 
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+
+# Exporting a figure as an image 
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.left-full[
+
+You can use the `ggsave()` function with the following syntax:
+
+```{r eval = F}
+#--- Syntax (NOT RUN) ---#
+ggsave(filename = file name, plot = ggplot object)  
+
+#--- or just this ---#
+ggsave(file name, ggplot object)  
+```
+
+## Example
+
+```{r }
+ggsave("ex_boxplot.pdf", g_box)  
+```
+
+This will save `g_box` as **ex_boxplot.pdf** in the working directory.
+
+]
+
+  ]
+
+.panel[.panel-name[output file format]
+
+.left-full[
+
++ Many different file formats are supported including pdf, svg, eps, png, jpg, tif, etc. One thing you want to keep in mind is the type of graphics:
+  * vector graphics (pdf, svg, eps)
+  * raster graphics (jpg, png, tif)
+
++ While vector graphics are scalable, raster graphics are not. 
+
++ If you enlarge raster graphics, the cells making up the figure become visible, making the figure unappealing. 
+
++ Unless it is required to save figures as raster graphics, it is encouraged to save figures as vector graphics.
+
++ **pdf** is almost always a good choice
+
+]
+
+  ]
+
+.panel[.panel-name[Options]
+
+.left-full[
+
+## Image width and height
+
++ You can control the width and height of the output image using the `width` and `height` options (the default unit is inch.):
+
+```{r }
+ggsave("ex_boxplot.pdf", g_box, height = 5, width = 7)   
+```
+
+## Image resolution
+
++ You can control the resolution of the output image by specifying DPI (dots per inch) using the dpi option. 
+
++ The default DPI value is 300, but you can specify any value suitable for the output image, including “retina” (320) or “screen” (72). 
+
++ 600 or higher is recommended when a high resolution output is required.
+
+```{r eval = F}
+#--- dpi = 320 ---#
+ggsave("nc_dpi_320.png", g_nc, height = 5, width = 7, dpi = "retina")
+
+ggsave("nc_dpi_600.png", g_nc, height = 5, width = 7, dpi = 600)
+```
+
+]
+
+  ] 
+
+]
+
+
+
 <!-- 
 #=========================================
 # Resources    
