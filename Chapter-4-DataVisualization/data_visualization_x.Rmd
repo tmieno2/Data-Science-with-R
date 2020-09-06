@@ -4,7 +4,7 @@ author: "AECN 396/896-002"
 output:
   xaringan::moon_reader:
     # css: [default, metropolis, metropolis-fonts] 
-    css: xaringan-themer.css 
+    css: ["xaringan-themer.css", "extension.css"] 
     lib_dir: libs
     nature:
       ratio: 16:10
@@ -45,18 +45,6 @@ xaringanExtra::use_panelset()
 xaringanExtra::use_clipboard()
 ```
 
-```{r xaringan-themer, include = FALSE, warning = FALSE, cache = F}
-library(xaringanthemer)
-style_duo_accent(
-  header_h1_font_size = "2.1rem",
-  header_h2_font_size = "1.5rem",
-  code_inline_background_color = "#e6e6e6", 
-  text_font_size = "0.7rem",
-  code_font_size = "0.6rem",
-  link_color = "#ff005a"
-)
-```
-
 ```{r libraries, include = F, cache = F}
 #--- load packages ---#
 suppressMessages(library(data.table))
@@ -78,84 +66,6 @@ suppressMessages(library(maps))
 suppressMessages(library(tidyverse))
 ````
 
-```{css css-setup, echo = F}
-.remark-code {
-  display: block;
-  overflow-x: auto;
-  padding: .5em;
-  background: #ffe7e7;
-} 
-
-.hljs-github .hljs {
-  background: #f2f2fd;
-}
-
-.remark-inline-code {
-  padding-top: 0px;
-  padding-bottom: 0px;
-  background-color: #e6e6e6;
-}
-
-.left-full {
-  width: 80%;
-  height: 92%;
-  float: left;
-}
-
-.left-code {
-  width: 38%;
-  height: 92%;
-  float: left;
-}
-
-.right-plot {
-  width: 60%;
-  float: right;
-  padding-left: 1%;
-}
-
-.left5 {
-  width: 48%;
-  height: 92%;
-  float: left;
-}
-
-.right5 {
-  width: 48%;
-  float: right;
-  padding-left: 1%;
-}
-
-.left4 {
-  width: 38%;
-  height: 92%;
-  float: left;
-}
-
-.right6 {
-  width: 58%;
-  float: right;
-  padding-left: 1%;
-}
-
-ul li{
-  margin: 7px;
-}
-
-ul, li{
-  margin-left: 9px; 
-  padding-left: 0px; 
-}
-
-ol li{
-  margin: 7px;
-}
-
-ol, li{
-  margin-left: 9px; 
-  padding-left: 0px; 
-}
-```
 
 # Before you start
 
@@ -184,6 +94,8 @@ The objectives of this chapter is to learn how to use the `ggplot2` package to c
 
 #  `ggplot2` package
 
+.left-full[
+
 Install the package if you have not.
 
 ```{r ggplot2-install, eval = FALSE}
@@ -199,6 +111,8 @@ library(tidyverse)
 #--- or ---#
 library(ggplot2) #<<
 ```
+
+]
 
 ---
 
@@ -4695,6 +4609,7 @@ name: inputoutput
 + [Data Visualization with R](https://rkabacoff.github.io/datavis/)
 + [ggplot2 tutorial by Cedric Scherer](https://cedricscherer.netlify.app/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/)
 + [Interactive html document](https://plotly-r.com/index.html)
++ [R Graphics Cookbook, 2nd edition](https://r-graphics.org/)
 
 ## Packages
 + [ggplot2 extensions](https://exts.ggplot2.tidyverse.org/)
