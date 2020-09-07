@@ -88,6 +88,10 @@ suppressMessages(library(tidyverse))
   background-color: #e6e6e6;
 }
 
+.r.hljs.remark-code.remark-inline-code{
+  font-size: 0.9em
+}
+
 .left-full {
   width: 80%;
   height: 92%;

@@ -16,6 +16,10 @@ output:
 ```{r, child = './../setup.Rmd'}
 ```
 
+```{r, include = F, cache = F}
+suppressMessages(library(nycflights13)) 
+```
+
 # Before you start
 
 ## Learning objectives
