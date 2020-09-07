@@ -1,5 +1,5 @@
 ---
-title: "Define Your Own Functions"
+title: "User-defined Function, Loop, and Parallelization"
 author: "AECN 396/896-002"
 output:
   xaringan::moon_reader:
@@ -16,8 +16,6 @@ output:
 
 ```{r, child = './../setup.Rmd'}
 ```
-
-# User-defined Function, Loop, and Parallelization
 
 ## Learning objectives
 
