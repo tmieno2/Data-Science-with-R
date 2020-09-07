@@ -1,0 +1,1180 @@
+---
+title: "Define Your Own Functions"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    lib_dir: libs
+    nature:
+      # ratio: 16:10
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+
+```{r, child = './../setup.Rmd'}
+```
+
+# User-defined Function, Loop, and Parallelization
+
+## Learning objectives
+
++ Learn how to write functions yourself
++ Learn how to use a for loop and `lapply()` to complete repetitive jobs
++ Learn how not to loop things that can be easily vectorized
++ Learn how to parallelize repetitive jobs using the `future_lapply()` function from the `future.apply` package
+
+## Table of contents
+
+1. [User-defined Function](#user-defined-function)
+2. [Looping](#loop)
+3. [Parallelization](#par)
+
+---
+
+class: inverse, center, middle
+name: user-defined-function
+
+# User-defined Function 
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+
+# A simple function
+
+.panelset[ 
+
+.panel[.panel-name[When]
+
+.left-full[
+
+It is beneficial to write your own function when you expect to repeat the same action with different inputs to the action.
+
+## Example: `mean()`
+
+Calculating the average of an variable is such a common task 
+
++ You do not want to do `sum(x)/length(x)` every time you get a mean
++ You can just use the `mean()` function
+
+A function is more useful when the task is longer and more complicated.
+
+]
+
+  ]
+
+.panel[.panel-name[How]
+
+.left-full[
+
+Here is the general structure of a user-defined function:
+
+```{r eval = F}
+#--- NOT RUN ---#
+function_name <- function(x) {
+
+  1. do something on x
+
+  2. return the results
+
+}
+```
+
+Then, you can use the function like this:
+
+```{r eval = F}
+#--- NOT RUN ---#
+function_name(x)
+```
+
+Note: the argument does not have to be named `x`
+
+]
+
+  ]
+
+.panel[.panel-name[Example]
+
+.left-full[
+
+The following function takes numeric numbers, square them, and return the squared values: 
+
+```{r }
+square_it <- function(a) {
+
+  #--- 1. do something on x ---# 
+  squared_a <- a^2
+
+  #--- 2. return the results ---# 
+  return(squared_a)
+
+}
+```
+
+<br>
+
+Try the function:
+
+```{r }
+ten_squared <- square_it(10) 
+
+ten_squared
+```
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[Scope 1]
+
+.left-full[
+
+Any objects that are defined within a function are not created on the global environment.  
+
+For example, `squared_a` and `original_a` are defined only internally, and are not registered on the global environment. 
+
+```{r }
+square_and_sqrt_it <- function(a) {
+
+  #--- 1. do something on x ---# 
+  squared_a <- a^2
+  original_a <- sqrt(squared_a)
+
+  #--- 2. return the results ---# 
+  return(original_a)
+
+} 
+```
+
+You can confirm this by looking at the environment tab in RStudio after running the following:
+
+```{r }
+square_and_sqrt_it(8)
+```
+
+Even though we are returning `original_a`, only its content is returned.
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[Scope 2]
+
+.left-full[
+
+When R sees objects that are not provided explicitly as arguments to the function, then R looks for them in the global environment:
+
+```{r square-multiply-it-fcn}
+square_multiply_it <- function(a) {
+
+  #--- 1. do something on a ---# 
+  squared_a <- a^2
+  z <- multiplier * squared_a #<<
+
+  #--- 2. return the results ---# 
+  return(z)
+
+} 
+```
+
+Here, `multiplier` is provided as an argument to the function.
+
+Try this:
+
+```{r eval = F}
+square_multiply_it(10) 
+```
+
+Now, define `multiplier` on the global environment, and then run it again:
+
+```{r }
+multiplier <- 10
+square_multiply_it(10)  
+```
+]
+
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[default value]
+
+.left-full[
+
+You can set default values for function arguments by `argument = value` like below: 
+
+```{r square-multiply-it-fcn}
+square_it <- function(a = 5) {
+
+  #--- 1. do something on a ---# 
+  squared_a <- a^2
+
+  #--- 2. return the results ---# 
+  return(squared_a)
+
+} 
+```
+
+Try this:
+
+```{r }
+square_it()
+```
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+
+---
+
+# Multiple arguments
+
+It is easy to create a function with multiple arguments. You just simply add more arguments within `function()` like below:
+
+```{r square-multiply-it-fcn}
+#--- define a function with two arguments ---#
+square_them_add <- function(a = 5, b = 2) {
+
+  #--- 1. do something on a ---# 
+  squared_and_summed <- a^2 + b^2
+
+  #--- 2. return the results ---# 
+  return(squared_and_summed)
+
+} 
+
+#--- run it ---#
+square_them_add(4, 3)
+```
+
+--
+
+As you are likely to have noticed, the order of input arguments are assumed to be the same as the order of the arguments of the function. Above,
+
++ `a = 4`
++ `b = 3`
+
+You can mess with the order of input arguments if you want if you name the input arguments as follows:
+
+```{r }
+square_them_add(b = 3, a = 4) 
+```
+
+---
+
+
+# Exercises
+
+.panelset[ 
+
+.panel[.panel-name[Exercise 1]
+
+.left-full[
+
+Define a function that takes temperature in Fahrenheit, convert it into Celsius, and return it. 
+
+Here is the formula: `temp_C <- (temp_F - 32) * 5 / 9`
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[Exercise 2]
+
+.left-full[
+
+After running a randomized nitrogen trial, you found the following relationship between corn yield (bu/acre) and nitrogen rate (lb/acre):
+
+$$
+\mbox{corn yield} = 120 + 25 \times log(\mbox{nitrogen rate})
+$$ 
+
+Write a function that takes a nitrogen rate as an argument, calculate the estimated yield for the nitrogen rate, and then return the estimated yield.
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[Exercise 3]
+
+.left-full[
+
+You would like to calculate the expected revenue as a function of nitrogen rate based on the yield response function.
+
+Write a function that takes corn price and nitrogen rate as its arguments, calculate revenue (and yield as an intermediate step), and return revenue.
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+---
+class: inverse, center, middle
+name: loop
+
+# Loop
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+
+# Loop
+
+.panelset[ 
+
+.panel[.panel-name[Motivations]
+
++ We sometimes need to run the same process over and over again often with slight changes in parameters. 
+ 
++ In such a case, it is very time-consuming and messy to write all of the steps one bye one. 
+
++ For example, suppose you are interested in knowing the square of 1 through 5 with a step of 1 ([1,2,3,4,5]). The following code certainly works:
+
+```{r eval = F}
+1^2 
+2^2 
+3^2 
+4^2 
+5^2 
+```
+
++ However, imagine you have to do this for 1000 integers. 
+
++ Yes, you don’t want to write each one of them one by one as that would occupy 1000 lines of your code, and it would be time-consuming. 
+
++ Things will be even worse if you need to repeat much more complicated processes like Monte Carlo simulations. So, let’s learn how to write a program to do repetitive jobs effectively using loop.
+
+  ]
+
+.panel[.panel-name[What]
+
+<br>
+
++ Looping is repeatedly evaluating the same (except parameters) process over and over again. 
+
++ In the example above, 
+  * the same repeated process is the action of squaring 
+  * what you square (parameter) changes 
+
+## Syntax
+
+```{r eval = F}
+#--- NOT RUN ---#
+for (x in a_list_of_values){
+  you do what you want to do with x
+} 
+```
+
+
+  ]
+
+.panel[.panel-name[An example]
+
+```{r }
+for (x in 1:5){
+  print(x^2)
+}  
+```
+
+This does the same:
+
+```{r }
+for (bluh_bluh_bluh in 1:5){
+  print(bluh_bluh_bluh^2)
+}  
+```
+
+  ]
+
+.panel[.panel-name[Exercise]
+
+<br>
+
+Write a loop that cubes each element of the sequence of numbers that starts from 5 and increases up to 50 with the incremental step of 5.
+
+  ] 
+
+]
+
+---
+
+# Looping with `lapply()`
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+<br>
+
+Instead of using a `for` loop, we can use the `lapply()` function from the base package to loop.
+
+## Syntax
+
+```{r eval = F}
+#--- NOT RUN ---#  
+lapply(A, B) 
+```
+
++ `A` is the list of values 
++ `B` is the function you would like to apply to each of the values in `A` 
+  ] 
+
+.panel[.panel-name[Example]
+
+<br>
+
+This does the same thing as the for loop example we looked at earlier:
+
+```{r }
+lapply(1:5, function(x){x^2})  
+```
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+The key difference from a for loop is the object class of the output after the loop. 
+
+<span style="color:red"> Important</span>: 
+
++ the output type of `lappy()` is always a `list`
++ the output type of a for loop is flexible (it is your decision) 
+
+  ] 
+
+.panel[.panel-name[define a function]
+
+It is often the case that you want to write a function of the action you intend to repeat first and then loop.
+
+For example, for the loop of squaring numbers, you can first define a function that implements the action of squaring: 
+
+```{r }
+square_it <- function(x){
+  return(x^2)
+} 
+```
+
+And then loop:
+
+```{r }
+lapply(1:5, function(x) square_it(x))
+```
+
+  ] 
+
+.panel[.panel-name[multiple arguments]
+
+Often times, you would like to loop over a single parameter of a function that has multiple arguments: 
+
+For example, you would like to fix the value of `b` at 5 while trying different values of `a` of the following function:
+
+```{r }
+square_them_add <- function(a, b) {
+
+  squared_and_summed <- a^2 + b^2
+
+  return(squared_and_summed)
+
+} 
+```
+
+Then you can do this:
+
+```{r }
+lapply(1:10, function(x) square_them_add(x, b = 5)) 
+```
+
+As you can see, this function try each of `1:10` (called internally `x`), give it to `square_them_add()` as its first argument while `b` is fixed at 5.
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+
+---
+
+# Looping over multiple variables 
+
+.panelset[ 
+
+.panel[.panel-name[Motivations]
+
++ The example we have looked at is a very simple case where a loop is done over a single list of values
+
++ It is often the case that you want to loop over multiple variables. 
+ 
+## Example
+
+You are interested in understanding the sensitivity of the profitability of corn production with respect to corn price and nitrogen application rate. 
+
+So, you would like to loop over two sets of sequences of values:
+
++ corn price
++ nitrogen application rate
+
+## How
+
+The trick is to 
+
++ create a `data.frame` of two (or as many variables as you would like to loop over) variables (corn price and nitrogen application rate), which stores all the permutations of the two variables 
+
++ then loop over the rows of the `data.frame` 
+
+  ]
+
+.panel[.panel-name[Example]
+
+<br>
+
++ We are interested in understanding the sensitivity of corn revenue to corn price and applied nitrogen amount.
+
++ We consider
+  * the range of $3.0/bu to $5.0/bu for corn price 
+  * 0 lb/acre to 300/acre for nitrogen rate
+
+  ] 
+
+.panel[.panel-name[Step 1]
+
+Get a sequence of values for corn price and nitrogen rate: 
+
+```{r }
+#--- corn price vector ---#
+corn_price_vec <- seq(3, 5, by = 1)
+
+#--- nitrogen vector ---#
+nitrogen_vec <- seq(0, 300, by = 100) 
+```
+
+We then create a complete combination of the values using the `expand.grid()` function, and then convert it to a `data.frame` object (this is not strictly necessary).
+
+```{r }
+#--- crate a data.frame that holds parameter sets to loop over ---#
+(
+parameters_data <- expand.grid(corn_price = corn_price_vec, nitrogen = nitrogen_vec) %>% 
+  #--- convert the matrix to a data.frame ---#
+  data.frame()
+)
+
+```
+
+  ] 
+
+.panel[.panel-name[Step 2]
+
+Define a function that 
+
++ takes a row number
++ refer to `parameters_data` to extract the parameters stored at the row number
++ calculate corn yield and revenue based on the extracted parameters (corn price and nitrogen rate).
+
+```{r }
+gen_rev_corn <- function(i) {
+
+  #--- define corn price ---#
+  corn_price <- parameters_data[i,'corn_price']
+
+  #--- define nitrogen  ---#
+  nitrogen <- parameters_data[i,'nitrogen']
+
+  #--- calculate yield ---#
+  yield <- 240 * (1 - exp(0.4 - 0.02 * nitrogen))
+
+  #--- calculate revenue ---#
+  revenue <- corn_price * yield 
+
+  #--- combine all the information you would like to have  ---#
+  data_to_return <- data.frame(
+    corn_price = corn_price,
+    nitrogen = nitrogen,
+    revenue = revenue
+  )
+
+  return(data_to_return)
+} 
+```
+
+<!-- This function 
++ takes `i` (act as a row number within the function) 
++ extract corn price and nitrogen from the `i`th row of `parameters_mat`
++ use the extracted values to calculate yield and revenue
++ create a `data.frame` of the resulting revenue, corn price, and nitrogen rate
++ returns the `data.frame` -->
+
+  ] 
+
+.panel[.panel-name[Step 3]
+
+Do a loop using `lapply()`:
+
+```{r }
+#--- loop over all the parameter combinations ---#
+rev_data <- lapply(1:nrow(parameters_data), gen_rev_corn)
+
+#--- take a look ---#
+rev_data %>% head()
+```
+
+  ] 
+
+.panel[.panel-name[Step 4]
+
+Combine the list of `data.frame`s into a single `data.frame` using `bind_rows()` from the `dplyr` package.
+
+```{r }
+(
+final_results <- bind_rows(rev_data)
+)
+```
+
+  ] 
+
+]
+
+
+---
+
+
+# Tips to write a function for loop 
+
+Before define a function, write a code that works for one row.
+
+We will work on a specific value of `i`. Here is it `i = 1`.
+
+```{r }
+#--- define corn price ---#
+corn_price <- parameters_data[1, 'corn_price']
+
+#--- define nitrogen  ---#
+nitrogen <- parameters_data[1, 'nitrogen']
+
+#--- calculate yield ---#
+yield <- 240 * (1 - exp(0.4 - 0.02 * nitrogen))
+
+#--- calculate revenue ---#
+revenue <- corn_price * yield 
+
+#--- combine all the information you would like to have  ---#
+data_to_return <- data.frame(
+  corn_price = corn_price,
+  nitrogen = nitrogen,
+  revenue = revenue
+)
+```
+
+After you confirm the code you write gives you desired outcomes, make it a function by replacing `1` with `i`.
+
+---
+
+# Do you really need to loop?
+
+.panelset[ 
+
+<br>
+
+.panel[.panel-name[Why not?]
+
+.left-full[
+
++ Actually, we should not have used a for loop or `lapply()` in any of the examples above in practice1
+
++ This is because they can be easily **vectorized**. 
+
++ Vectorized operations are those that take vectors as inputs and work on each element of the vectors in parallel
+
+**Example**
+
+```{r }
+#--- define numeric vectors ---#
+x <- 1:1000
+y <- 1:1000
+
+#--- element wise addition ---#
+z_vec <- x + y   
+```
+
+]
+
+  ]
+
+
+.panel[.panel-name[compare]
+
+.left-full[
+
+**Vectorized** 
+
+```{r }
+#--- define numeric vectors ---#
+x <- 1:1000
+y <- 1:1000
+
+#--- element wise addition ---#
+z_vec <- x + y   
+```
+
+**Non-vectorized (loop)** 
+
+```{r }
+z_la <- lapply(1:1000, function(i) x[i] + y[i]) %>%  unlist()
+```
+
+**Compare**
+
+```{r }
+#--- check if identical with z_vec ---#
+all.equal(z_la, z_vec) 
+```
+
+Both produce the same results. However, R is written in a way that is much better at doing vectorized operations. 
+
+
+]
+
+  ]
+
+.panel[.panel-name[time]
+
+.left-full[
+
+Let's time them using the `microbenchmark()` function from the `microbenchmark` package. 
+
+Here, we do not `unlist()` after `lapply()` to just focus on the multiplication part.
+
+```{r }
+library(microbenchmark)
+
+microbenchmark(
+  #--- vectorized ---#
+  "vectorized" = { x + y }, 
+  #--- not vectorized ---#
+  "not vectorized" = { lapply(1:1000, function(i) x[i] + y[i])},
+  times = 100, 
+  unit = "ms"
+) 
+```
+
++ As you can see, the vectorized version is faster. 
++ The time difference comes from R having to conduct many more internal checks and hidden operations for the non-vectorized one
+
+]
+
+  ]
+
+.panel[.panel-name[vectorize 1]
+
+<br>
+
+Instead of this:
+
+```{r eval = F}
+lapply(1:1000, square_it)
+```
+
+<br>
+
+You can just do this:
+
+```{r eval = F}
+square_it(1:1000)
+```
+
+  ] 
+
+.panel[.panel-name[vectorize 2]
+
+<br>
+
+Here is the vectorized version of the revenue sensitivity analysis:
+
+```{r }
+gen_rev_corn_short <- function(corn_price, nitrogen) {
+
+  #--- calculate yield ---#
+  yield <- 240 * (1 - exp(0.4 - 0.02 * nitrogen))
+
+  #--- calculate revenue ---#
+  revenue <- corn_price * yield 
+
+  return(revenue)
+} 
+```
+
+Then use the function to calculate revenue and assign it to a new variable in the parameters_data data.
+
+```{r }
+rev_data_2 <- mutate(
+  parameters_data,
+  revenue = gen_rev_corn_short(corn_price, nitrogen)
+) 
+```
+ 
+  ] 
+
+.panel[.panel-name[compare]
+
+<br>
+
+Let’s compare the vectorized and non-vectorized version:
+
+```{r mb-v}
+microbenchmark(
+
+  #--- vectorized ---#
+  "vectorized" = { rev_data <- mutate(parameters_data, revenue = gen_rev_corn_short(corn_price, nitrogen)) },
+
+  #--- not vectorized ---#
+  "not vectorized" = { parameters_data$revenue <- lapply(1:nrow(parameters_data), gen_rev_corn) },
+  times = 100, 
+  unit = "ms"
+
+) 
+```
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+
+---
+
+
+# Exercises 
+
+.panelset[ 
+
+.panel[.panel-name[Exercise 1]
+
+Write a loop that 
+
+  ]
+
+.panel[.panel-name[Exercise 2]
+
+  ]
+
+]
+
+---
+
+class: inverse, center, middle
+name: par
+
+# Parallelized computation
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+
+# Parallel processing 
+
+.panelset[ 
+
+.panel[.panel-name[Intro]
+
+.left-full[
+
++ Parallelization of computation involves distributing the task at hand to multiple cores so that multiple processes are done in parallel. 
+
++ Our focus is on the so called **embarrassingly parallel** processes.
+
+**Embarrassingly parallel process**: a collection of processes where each process is completely independent of any another (one process does not use the outputs of any of the other processes) 
+
++ The example of integer squaring is embarrassingly parallel. In order to calculate 12, you do not need to use the result of 22 or any other squares. 
+ 
++ Embarrassingly parallel processes are very easy to parallelize because you do not have to worry about which process to complete first to make other processes happen. 
+
++ Fortunately, most of the processes you are interested in parallelizing fall under this category
+
+
+]
+
+  ]
+
+.panel[.panel-name[Instruction]
+
+.left-full[
+
++ We will use the `future_lapply()` function from the `future.apply` package for parallelization. 
+
++ Using the package, parallelization is a piece of cake as it is basically the same syntactically as `lapply()`.
+
+```{r eval = F}
+#--- install the package ---#
+install.packages(future.apply) 
+
+#--- load packages ---#
+library(future.apply) 
+```
+
+## How
+
+You can simply replace `lapply()` with `future_lapply()`!
+
+```{r eval = F}
+#--- parallelized ---#
+sq_ls <- lapply(1:1000, function(x) x^2) 
+
+#--- not parallelized ---#
+sq_ls_par <- future_lapply(1:1000, function(x) x^2) 
+```
+
+]
+
+  ]
+
+.panel[.panel-name[Preparation]
+
+.left-full[
+
++ You can find out how many cores you have available for parallel computation on your computer using the `detectCores()` function from the `parallel` package.
+
+```{r }
+library(parallel)  
+
+#--- number of all cores ---#
+detectCores()
+```
+
++ Before we implement parallelized `lapply()`, we need to declare what backend process we will be using by `plan()`. 
+
+```{r }
+plan(multiprocess, workers = detectCores() - 1)
+```
+
+]
+
+  ] 
+
+.panel[.panel-name[Try it]
+
+.left-full[
+
+```{r eval = F}
+sq_ls <- future_lapply(1:1000, function(x) x^2)
+```
+
+]
+
+  ] 
+
+.panel[.panel-name[Any faster?]
+
+.left-full[
+
+```{r mb-l}
+microbenchmark(
+
+  #--- parallelized ---#
+  "parallelized" = { sq_ls <- future_lapply(1:1000, function(x) x^2) }, 
+
+  #--- non-parallelized ---#
+  "not parallelized" = { sq_ls <- lapply(1:1000, function(x) x^2) },
+  times = 100, 
+  unit = "ms"
+
+) 
+```
+
+]
+
+   ]
+
+   <!-- panel ends here --> 
+
+.panel[.panel-name[What happened?]
+
+.left-full[
+
++ This is because communicating jobs to each core takes some time as well. 
+
++ So, if each of the iterative processes is super fast (like this example where you just square a number), the time spent on communicating with the cores outweighs the time saving due to parallel computation.
+
++ Parallelization is more beneficial when each of the repetitive processes takes long.
+
+]
+
+  ] <!-- panel ends here -->
+]
+
+---
+
+
+# Parallel processing: less trivial example 
+
+.panelset[ 
+
+.panel[.panel-name[MC simulation]
+
+.left-full[
+
++ One of the very good use cases of parallelization is MC simulation 
+
++ We will run MC simulations that test whether the correlation between an independent variable and error term would cause bias (yes, we know the answer). 
+
+]
+
+  ]
+
+.panel[.panel-name[MC steps]
+
+.left-full[
+
+1. generate a dataset (50,000 observations) according to the following data generating process:
+
+$$
+ y = 1 + x + v
+$$
+
+where $\mu \sim N(0,1)$, $x \sim N(0,1) + \mu$, and $v \sim N(0,1) + \mu$. The $\mu$ term cause correlation between $x$ (the covariate) and $v$ (the error term). 
+
+2. estimate the coefficient on $x$ vis OLS, and return the estimate. 
+
+3. repeat this process $1,000$ times to understand the property of the OLS estimators under the data generating process.
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=600px></html>
+
+This Monte Carlo simulation is embarrassingly parallel because each process is independent of any other.
+
+]
+ 
+  ]
+
+.panel[.panel-name[function]
+
+.left-full[
+
+Here is a function that implements the steps described in the previous slide:
+
+```{r }
+#--- repeat steps 1-3 B times ---#
+MC_sim <- function(i){
+
+  N <- 50000 # sample size
+
+  #--- steps 1 and 2:  ---#
+  mu <- rnorm(N) # the common term shared by both x and u
+  x <- rnorm(N) + mu # independent variable
+  v <- rnorm(N) + mu # error
+  y <- 1 + x + v # dependent variable
+  data <- data.table(y = y, x = x)
+
+  #--- OLS ---# 
+  reg <- lm(y~x, data = data) # OLS
+
+  #--- return the coef ---#
+  return(reg$coef['x'])
+}  
+```
+
+]
+
+  ] 
+
+.panel[.panel-name[performance]
+
+.left-full[
+
+**Single run**:
+
+```{r s-run}
+tic()
+single_res <- MC_sim(1)
+toc()
+```
+
+**Not parallelized (sequential)**:
+
+```{r np-run}
+tic()
+MC_results <- lapply(1:1000, MC_sim)
+toc() 
+```
+
+**Parallelized**:
+
+```{r p-run}
+tic()
+MC_results <- future_lapply(1:1000, MC_sim)
+toc() 
+```
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+.panel[.panel-name[Mac/Linux]
+
+.left-full[
+
++ For Mac or Linux users, `parallel::mclapply()` is just as compelling (or `pbmclapply::pbmclapply()` if you want to have a nice progress report, which is very helpful particularly when the process is long). 
+
++ It is just as easy to use as `future_lapply()` because its syntax is the same as `lapply()`. 
+
++ You can control the number of cores to employ by adding `mc.cores` option. Here is an example code that does the same MC simulations we conducted above: 
+
+```{r mclapply, eval = F}
+#--- mclapply ---#
+library(parallel)
+MC_results <- mclapply(1:1000, MC_sim, mc.cores = detectCores() - 1)
+
+#--- or with progress bar ---#
+library(pbmclapply)
+MC_results <- pbmclapply(1:1000, MC_sim, mc.cores = detectCores() - 1)
+``` 
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
