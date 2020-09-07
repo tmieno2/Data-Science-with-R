@@ -1,0 +1,82 @@
+.important {
+  background-color: lightpink;
+  border: 2px solid blue;
+  font-weight: bold;
+} 
+
+.remark-code {
+  display: block;
+  overflow-x: auto;
+  padding: .5em;
+  background: #ffe7e7;
+} 
+
+.hljs-github .hljs {
+  background: #f2f2fd;
+}
+
+.remark-inline-code {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: #e6e6e6;
+}
+
+.left-full {
+  width: 80%;
+  height: 92%;
+  float: left;
+}
+
+.left-code {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left5 {
+  width: 49%;
+  height: 92%;
+  float: left;
+}
+
+.right5 {
+  width: 49%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left4 {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right6 {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+ul li{
+  margin: 7px;
+}
+
+ul, li{
+  margin-left: 9px; 
+  padding-left: 0px; 
+}
+
+ol li{
+  margin: 7px;
+}
+
+ol, li{
+  margin-left: 9px; 
+  padding-left: 0px; 
+}
