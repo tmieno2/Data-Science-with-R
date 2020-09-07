@@ -897,7 +897,7 @@ Here,
 
   ]
 
-.panel[.panel-name[g_fig_scatter]
+.panel[.panel-name[Output]
 
 .left-code[
 
@@ -910,7 +910,7 @@ g_fig_scatter
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-4-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/scatter-plot-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -1013,7 +1013,7 @@ g_fig +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-8-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/hist-ex-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -1033,7 +1033,7 @@ g_fig +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-9-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/density-ex-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -1067,7 +1067,7 @@ ggplot(data = mean_yield) +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-11-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/line-ex-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -1088,7 +1088,7 @@ ggplot(data = county_yield) +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-12-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/box-ex-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
   ]
 
@@ -1112,7 +1112,7 @@ ggplot(data = mean_yield) +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-13-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/bar-ex-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
   ]
 
@@ -1766,7 +1766,7 @@ For example, suppose you are interested in comparing the history of irrigated co
 So, you want to create a line for each state and make the lines distinguishable so the readers know which line is for which state like this:   
 
    
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-14-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/more-info-1.png" width="60%" style="display: block; margin: auto;" /&gt;
 
   ]
 
@@ -1809,14 +1809,21 @@ county_yield_mean &lt;- county_yield %&gt;%
 Create a plot:
 
 
-
-
-&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_mean) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_line(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;y = corn_yield, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;x = year, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;color = state_name&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;)&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
+```r
+ggplot(data = county_yield_mean) +
+  geom_line(
+    aes(
+      y = corn_yield, 
+      x = year, 
+*     color = state_name
+    )
+  )
+```
 
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-17-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/do-it-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -2153,7 +2160,7 @@ Too much information in one panel?
 
 On separate panels (faceting)?
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-18-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/box-faceted-1-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -2267,11 +2274,16 @@ Two-way faceting will
 + create a plot for each group
 
 
+```r
+ggplot(data = county_yield) + 
+  geom_histogram(
+    aes(x = corn_yield)
+  ) +
+* facet_wrap(state_name ~ year)
+```
 
 This code will create a histogram of corn yield for each of the unique state-year combination.
 
-
-&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield) + &lt;br&gt;&amp;nbsp;&amp;nbsp;geom_histogram(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;aes(x = corn_yield)&lt;br&gt;&amp;nbsp;&amp;nbsp;) +&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;facet_wrap(state_name ~ year)&lt;/span&gt;&lt;/code&gt;
 ]
 
 
@@ -2302,7 +2314,7 @@ ggplot(data = county_yield_s) +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-22-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/two-ex-fig-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -2329,7 +2341,7 @@ ggplot(data = county_yield_s) +
   facet_wrap(state_name ~ year)  
 ```
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-23-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/wrap-ex-1-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 .right5[
@@ -2343,7 +2355,7 @@ ggplot(data = county_yield_s) +
   facet_grid(state_name ~ year)  
 ```
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-24-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/frig-ex-1-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -2369,7 +2381,7 @@ In the code above, `state_name` values become the rows, and `year` values become
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-25-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/grid-matter-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -2384,7 +2396,7 @@ ggplot(data = county_yield_s) +
   facet_grid(state_name ~ year)
 ```
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-26-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/wrap-left-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 .right5[
@@ -2395,7 +2407,7 @@ ggplot(data = county_yield_s) +
   facet_grid(year ~ state_name) 
 ```
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-27-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/grid-right-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -2419,13 +2431,19 @@ ggplot(data = county_yield_s) +
 
 .left-code[
 
+```r
+ggplot(data = county_yield_s) + 
+  geom_histogram(aes(x = corn_yield)) +
+  facet_grid(
+    state_name ~ year, 
+*   scales = "free_x"
+  )
+```
 
-
-&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_s) + &lt;br&gt;&amp;nbsp;&amp;nbsp;geom_histogram(aes(x = corn_yield)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;facet_grid(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;state_name ~ year, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;scales = "free_x"&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-29-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/free-x-fig-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -2434,13 +2452,19 @@ ggplot(data = county_yield_s) +
 
 .left-code[
 
+```r
+ggplot(data = county_yield_s) + 
+  geom_histogram(aes(x = corn_yield)) +
+  facet_grid(
+    state_name ~ year, 
+*   scales = "free_y"
+  )  
+```
 
-
-&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_s) + &lt;br&gt;&amp;nbsp;&amp;nbsp;geom_histogram(aes(x = corn_yield)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;facet_grid(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;state_name ~ year, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;scales = "free_y"&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-31-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/free-y-fig-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -2450,13 +2474,19 @@ ggplot(data = county_yield_s) +
 
 .left-code[
 
+```r
+ggplot(data = county_yield_s) + 
+  geom_histogram(aes(x = corn_yield)) +
+  facet_grid(
+    state_name ~ year, 
+*   scales = "free"
+  )  
+```
 
-
-&lt;code class ='r hljs remark-code'&gt;ggplot(data = county_yield_s) + &lt;br&gt;&amp;nbsp;&amp;nbsp;geom_histogram(aes(x = corn_yield)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;facet_grid(&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;state_name ~ year, &lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;scales = "free"&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;)&lt;/code&gt;
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-33-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/both-free-fig-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -2549,7 +2579,7 @@ g_fig_scatter +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-34-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/hv-line-fig-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -2579,7 +2609,7 @@ g_fig_scatter +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-35-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/ab-line-fig-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -2615,7 +2645,7 @@ g_fig_scatter +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-37-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/smooth-fig-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -2646,7 +2676,7 @@ Useful when drawing confidence intervals.
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-38-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/ribbon-fig-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -2671,7 +2701,7 @@ g_fig_scatter +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-39-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/text-ex-fig-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -2701,7 +2731,7 @@ g_fig_scatter +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-40-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/annotate-fig-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -2974,14 +3004,14 @@ The content itself does not change when theme is altered.
 
 Original
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-45-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/original-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 .right5[
 
 Altered
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-46-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/altered-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -2993,14 +3023,14 @@ Altered
 
 Original
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-47-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/t-original-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 .right5[
 
 Altered
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-48-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/t-altered-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -3053,7 +3083,7 @@ g_box &lt;- ggplot(data = county_yield_s_b2010) +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-49-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/g-box-f-a-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -3108,7 +3138,7 @@ g_box +
 ]
 
 .right5[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-51-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-17-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3146,7 +3176,7 @@ You can filter the data first and then use the filtered data.
 ]
 
 .right5[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-53-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-19-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -3177,7 +3207,7 @@ g_box +
 ]
 
 .right5[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-54-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-20-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -3212,7 +3242,7 @@ g_axis &lt;- g_box +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-55-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/start-leg-content-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
  
@@ -3243,7 +3273,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-57-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-22-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
   ] &lt;!-- panel ends here --&gt;
 
@@ -3265,7 +3295,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-58-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-23-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -3289,7 +3319,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-59-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-24-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -3314,7 +3344,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-60-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-25-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt; 
@@ -3405,7 +3435,7 @@ g_axis
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-61-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/start-axis-theme-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3424,7 +3454,7 @@ g_axis +
 ]
 
 .right5[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-62-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/at-font-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3445,7 +3475,7 @@ g_axis +
 ]
 
 .right5[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-63-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/at-line-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3466,7 +3496,7 @@ g_axis +
 ]
 
 .right5[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-64-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/at-ticks-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -3523,7 +3553,7 @@ g_l &lt;- g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-65-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/starting-point-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] 
@@ -3543,7 +3573,7 @@ g_l +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-66-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/l-position-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3565,7 +3595,7 @@ g_l +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-67-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/l-key-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3595,7 +3625,7 @@ g_l +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-68-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/l-font-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3629,7 +3659,7 @@ g_l +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-69-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/l-bcg-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
   ] &lt;!-- panel ends here --&gt;
 
@@ -3675,7 +3705,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-71-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/bw-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3691,7 +3721,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-72-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/void-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3707,7 +3737,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-73-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/stata-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3723,7 +3753,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-74-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/gdocs-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3739,7 +3769,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-75-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/economist-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3755,7 +3785,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-76-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/excel-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3803,7 +3833,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-78-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/start-panel-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -3825,7 +3855,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-79-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/panel-grid-minor-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3853,7 +3883,7 @@ See [here](http://sape.inf.usi.ch/quick-reference/ggplot2/linetype) for the line
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-80-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/panel-grid-major-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3902,7 +3932,7 @@ Create a faceted figure we will build on:
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-82-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/f-prep-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] 
@@ -3930,7 +3960,7 @@ g_f +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-83-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/st-text-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3962,7 +3992,7 @@ g_f +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-84-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/st-background-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] 
@@ -3997,7 +4027,7 @@ g_f +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-85-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/p-spacing-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -4058,7 +4088,7 @@ g_f +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-88-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/f-fam-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -4109,7 +4139,7 @@ You can use HEX color codes for any color-related elements in a figure.
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-89-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/color-hex-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -4143,6 +4173,7 @@ We use `scale_A_B()` functions to for color specification:
 .left-full[
 
 For example, consider the following code:
+
 
 
 
@@ -4226,7 +4257,7 @@ ggplot(data = filter(county_yield, corn_yield &gt; 50)) +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-91-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/viridis-ex-1-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -4250,7 +4281,7 @@ ggplot(data = filter(county_yield, corn_yield &gt; 50)) +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-92-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/viridis-ex-2-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -4277,7 +4308,7 @@ ggplot(data = filter(county_yield, corn_yield &gt; 50)) +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-93-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/viridis-reverse-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -4321,7 +4352,7 @@ We use two types of scale functions for the palettes:
 display.brewer.all(type = "seq")  
 ```
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-94-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/seq-s-1.png" width="60%" style="display: block; margin: auto;" /&gt;
 
   ]
 
@@ -4332,7 +4363,7 @@ display.brewer.all(type = "seq")
 display.brewer.all(type = "div")  
 ```
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-95-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/div-s-1.png" width="60%" style="display: block; margin: auto;" /&gt;
 
   ]
 
@@ -4343,7 +4374,7 @@ display.brewer.all(type = "div")
 display.brewer.all(type = "qual")  
 ```
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-96-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/qua-s-1.png" width="60%" style="display: block; margin: auto;" /&gt;
 
   ]
 
@@ -4378,7 +4409,7 @@ ggplot(data = county_yield_s_b2010) +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-98-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/rb-ex-1-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -4403,7 +4434,7 @@ ggplot(data = filter(county_yield, corn_yield &gt; 50)) +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-99-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/rb-ex-2-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -4480,7 +4511,7 @@ ggplot(data = county_yield_s_b2010) +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-103-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/manu-ex-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -4515,7 +4546,7 @@ See the [`patchwork` package website](https://patchwork.data-imaginist.com/index
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-105-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/patch-1-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -4558,7 +4589,7 @@ Note: `mean_yield` for `g_4` is created in the **Line Plot** tab in slide 9.
 g_1 + g_2 
 ```
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-106-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/plus-1-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
   ] &lt;!-- panel ends here --&gt;
 
@@ -4569,7 +4600,7 @@ g_1 + g_2
 g_1 + g_2 + g_3 + g_4 
 ```
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-107-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/pp-1-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
   ] &lt;!-- panel ends here --&gt;
 
@@ -4580,7 +4611,7 @@ g_1 + g_2 + g_3 + g_4
 g_1 / g_2
 ```
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-108-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/v-1-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
   ] &lt;!-- panel ends here --&gt;
 
@@ -4591,7 +4622,7 @@ g_1 / g_2
 g_1 | g_2
 ```
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-109-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/h-1-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
   ] &lt;!-- panel ends here --&gt;
 
@@ -4602,7 +4633,7 @@ g_1 | g_2
 g_1 | g_2 | g_3 | g_4
 ```
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-110-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/hh-1-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
   ] &lt;!-- panel ends here --&gt;
 
@@ -4613,7 +4644,7 @@ g_1 | g_2 | g_3 | g_4
 g_1 | (g_3 / g_4)
 ```
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-111-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/group-p-1-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
   ] &lt;!-- panel ends here --&gt;
 
@@ -4701,7 +4732,7 @@ g_f &lt;- ggplot(data = county_yield_f) +
 
 + But, by default, `ggplot2` orders panels in alphabetical order
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-114-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/problem-f-1.png" width="70%" style="display: block; margin: auto;" /&gt;
 
   ]
 
@@ -4744,7 +4775,7 @@ county_yield_f$state_name_f %&gt;% head()
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-118-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/problem-f-s-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -4779,7 +4810,7 @@ county_yield_s_b2010 &lt;- county_yield %&gt;%
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-121-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/box-disc-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -4805,7 +4836,7 @@ county_yield_s_b2010 &lt;- county_yield %&gt;%
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-124-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/box-num-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -4831,7 +4862,7 @@ county_yield_s_b2010 &lt;- county_yield %&gt;%
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-127-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/box-char-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -4863,7 +4894,7 @@ Create a box plot of temperature by month:
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-130-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/weather-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -4889,7 +4920,7 @@ Create a box plot of temperature by month:
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-133-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/weather-2-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -4947,7 +4978,7 @@ ggplot(data = weather) +
 * theme_economist()
 ```
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-136-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/t-econ-f-1.png" width="80%" style="display: block; margin: auto;" /&gt;
 ]
 
 .right5[
@@ -4961,7 +4992,7 @@ ggplot(data = weather) +
 * my_theme
 ```
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-137-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/t-econ-custom-f-1.png" width="80%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -5099,7 +5130,7 @@ share_data %&gt;%
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-141-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/pie-chart-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] 
@@ -5166,7 +5197,7 @@ weather %&gt;%
 ]
 
 .right6[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-143-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/cor-plot-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -5214,7 +5245,7 @@ county_yield %&gt;%
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-144-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/diverging2-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -5253,7 +5284,7 @@ county_yield %&gt;%
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-145-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/area-chart-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -5289,7 +5320,7 @@ Salaries %&gt;%
 ]
 
 .right5[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-146-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/mean-se-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -5332,7 +5363,7 @@ ggplot(data = yield_group) +
 ]
 
 .right5[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-148-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/encircle-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -5358,7 +5389,7 @@ ggplot(data = yield_group) +
 ]
 
 .right5[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-149-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/segment-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -5384,7 +5415,7 @@ ggplot(data = yield_group) +
 ]
 
 .right5[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-150-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/curve-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -5479,7 +5510,7 @@ weather %&gt;%
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-154-1.gif" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/animate-f-1-1.gif" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -5501,7 +5532,7 @@ weather %&gt;%
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-155-1.gif" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/animate-2-f-1.gif" width="90%" style="display: block; margin: auto;" /&gt;
 ]
   ]
 
