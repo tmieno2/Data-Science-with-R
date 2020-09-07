@@ -1,0 +1,151 @@
+```{r setup-knitr, include = FALSE}
+
+library(knitr)
+options(htmltools.dir.version = FALSE)
+options(knitr.duplicate.label = "allow")
+
+opts_chunk$set(
+  fig.align = "center", 
+  fig.retina = 5,
+  fig.dim = c(4, 3.5), 
+  out.width = "100%", 
+  warning = F, 
+  message = F,
+  #fig.path='Figs/',
+  cache = T
+  #, echo=F, warning=F, message=F
+  )
+
+# setwd("~/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-4-DataVisualization") 
+
+library(flipbookr)
+library(flair)
+```
+
+```{r xaringanExtra, echo=FALSE, cache = F}
+library(xaringanExtra)
+xaringanExtra::use_xaringan_extra(c("tile_view", "animate_css", "tachyons"))
+xaringanExtra::use_tile_view()
+xaringanExtra::use_panelset()
+xaringanExtra::use_clipboard()
+```
+
+```{r xaringan-themer, include = FALSE, warning = FALSE, cache = F}
+library(xaringanthemer)
+style_duo_accent(
+  header_h1_font_size = "2.1rem",
+  header_h2_font_size = "1.5rem",
+  code_inline_background_color = "#e6e6e6", 
+  text_font_size = "0.7rem",
+  code_font_size = "0.6rem",
+  link_color = "#ff005a"
+)
+```
+
+```{r libraries, include = F, cache = F}
+#--- load packages ---#
+suppressMessages(library(data.table))
+suppressMessages(library(exactextractr))
+suppressMessages(library(prism))
+suppressMessages(library(sf))
+suppressMessages(library(raster))
+suppressMessages(library(DT))
+suppressMessages(library(future.apply))
+suppressMessages(library(parallel))
+suppressMessages(library(tictoc))
+suppressMessages(library(tmap))
+suppressMessages(library(extrafont))
+suppressMessages(library(patchwork))
+suppressMessages(library(plotly))
+suppressMessages(library(ggthemes))
+suppressMessages(library(RColorBrewer))
+suppressMessages(library(parallel))
+suppressMessages(library(maps))
+suppressMessages(library(tidyverse))
+````
+
+```{css css-setup, echo = F}
+.important {
+  background-color: lightpink;
+  border: 2px solid blue;
+  font-weight: bold;
+} 
+
+.remark-code {
+  display: block;
+  overflow-x: auto;
+  padding: .5em;
+  background: #ffe7e7;
+} 
+
+.hljs-github .hljs {
+  background: #f2f2fd;
+}
+
+.remark-inline-code {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: #e6e6e6;
+}
+
+.left-full {
+  width: 80%;
+  height: 92%;
+  float: left;
+}
+
+.left-code {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left5 {
+  width: 49%;
+  height: 92%;
+  float: left;
+}
+
+.right5 {
+  width: 49%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left4 {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right6 {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+ul li{
+  margin: 7px;
+}
+
+ul, li{
+  margin-left: 9px; 
+  padding-left: 0px; 
+}
+
+ol li{
+  margin: 7px;
+}
+
+ol, li{
+  margin-left: 9px; 
+  padding-left: 0px; 
+}
+
+```
