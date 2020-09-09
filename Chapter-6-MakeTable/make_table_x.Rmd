@@ -128,9 +128,29 @@ sp500_data %>% #BREAK
   )
 `
   
+<!-- 
+#=========================================
+# Create or Modify Parts  
+#=========================================
+-->
+  
 ---
 
-# Data preparation
+class: inverse, center, middle
+name: dif-geoms
+
+# Create table and modify Parts  
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+
+
+# Initiate a table 
+
+.panelset[ 
+
+.panel[.panel-name[Data Preparation]
 
 .left4[
 ```{r results = "hide"}
@@ -171,13 +191,57 @@ tab_data
 ```
 ]
 
+  ] 
+
+  <!-- panel ends here -->
+.panel[.panel-name[Instruction]
+
+You can apply the `gt()` function to a `data.frame()` (or `tibble`) to create a basic table:
+
+.left-code[
+```{r default-table, eval = F}  
+gt(tab_data)
+```
+]
+
+.right-plot[
+```{r default-table-f, ref.label = "default-table", echo = F}  
+
+```
+]
+
+  ]
+  <!-- panel ends here -->
+
+.panel[.panel-name[Options]
+
+.left-full[
+
+Several useful options you might want to use when initiating a table with `gt()` are:
+
++ `rowname_col =`: specify which variable of the dataset becomes the row names 
++ `groupname_col =`: specify which variable of the dataset defines the groups each of the rows belong to  
+
+We will see how they are used later in a demonstration.
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
+
+
 ---
 
 # Create or Modify Parts 
 
 .panelset[ 
 
-.panel[.panel-name[Instruction]
+
+.panel[.panel-name[Modify parts]
 
 .left-full[
 
@@ -602,8 +666,22 @@ gt_3 <- gt_2 %>%
   )
 `
 
+<!-- 
+#=========================================
+# Formatting
+#=========================================
+-->
+  
 ---
 
+class: inverse, center, middle
+name: dif-geoms
+
+# Formatting 
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
 
 # Formatting 
 
@@ -638,7 +716,27 @@ Using these function, you can do things like
 
 <!-- panel ends here -->
 
-.panel[.panel-name[]
+.panel[.panel-name[How]
+
+.left-full[
+
+`fmt_*` functions work just like `tab_style`.
+
++ specify **actions** 
++ specify **locations** using `columns =` and `rows =`
+
+**Example**
+
+```{r eval = F}
+fmt_currency(
+  columns = vars(y_2005),
+  currency = "USD"
+) 
+```
+
+This will add `$` (action) in front of the numbers in the cells in `y_2005` column.
+
+]
 
   ]
 
@@ -666,7 +764,7 @@ gt_4 <- gt_3 %>% #BREAK
   ) %>% #BREAK
   fmt_currency(
     columns = vars(y_2005),
-    currency = "dollar"
+    currency = "USD"
   ) %>% #BREAK
   fmt_date(
     columns = "date",
@@ -676,22 +774,212 @@ gt_4 <- gt_3 %>% #BREAK
 
 `r chunk_reveal(
   chunk_name = "format", 
-  title = "# ",
+  title = "# Demonstrations: Formatting cell values",
   break_type = "user", 
   display_type = "both", 
   left_assign = TRUE,
-  width = c(45, 55)
+  width = c(40, 60)
   )
 `
+
+<!-- 
+#=========================================
+# Modify Columns
+#=========================================
+-->
+  
+---
+
+class: inverse, center, middle
+name: dif-geoms
+
+# Modify Columns 
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
 
 ---
   
 # Modify Columns 
  
+.panelset[ 
 
- 
+.panel[.panel-name[Instruction]
+
+The cols_*() functions allow for modifications that act on entire columns, instead of working on particular target cells within columns using `tab_style()`.
+
+Here are the list of `cols_*()` functions:
+
++ `cols_align()`: Set the alignment of columns
++ `cols_width()`: Set the widths of columns
++ `cols_label()`: Relabel one or more columns
++ `cols_move_to_start()`: Move one or more columns to the start
++ `cols_move_to_end()`: Move one or more columns to the end
++ `cols_move()`: Move one or more columns
++ `cols_hide()`: Hide one or more columns
++ `cols_merge_range()`: Merge two columns to a value range column
++ `cols_merge_uncert()`: Merge two columns to a value & uncertainty column
++ `cols_merge()`: Merge data from two or more columns to a single column
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[How]
+
+some
+
+  ]
+
+<!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
 ---
-  
+
+
+```{r columns-format, cache = F, include = F}
+gt_5 <- gt_4 %>% #BREAK
+  cols_align( # this is not reflected 
+    align = "left", 
+    columns = vars(y_1995)
+  ) %>% #BREAK 
+  cols_label(
+    "y_1995" = 1995,
+    "pop_ratio_10_15" = md("*Ratio*") 
+  ) %>% #BREAK
+  cols_move_to_start(
+    columns = vars(pop_ratio_10_15, date)
+  ) %>% #BREAK
+  cols_move(
+    columns = vars(y_2005),
+    after = vars(date)
+  ) %>% #BREAK
+  cols_hide(
+    columns = vars(date)
+  ) %>% #BREAK
+  cols_merge(
+    columns = vars(y_1995, pop_ratio_10_15),
+    hide_columns = vars(pop_ratio_10_15),
+    pattern = "{1}/{2}"
+  ) %>% #BREAK
+  cols_width(
+    vars(y_1995) ~ px(400)
+  )
+```
+
+`r chunk_reveal(
+  chunk_name = "columns-format", 
+  title = "# Demonstrations: Modify column styles",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = TRUE,
+  width = c(40, 60)
+  )
+`
+
+---
+
+
+# Placing figures in table cells 
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+You can put figures in table cells instead of texts using `text_transform()` in conjunction with `*_image()` functions:
+
++ `web_image()`: Helper function for adding an image from the web
++ `local_image()`: Helper function for adding a local image
++ `ggplot_image()`: Helper function for adding a ggplot
+
+Inside `text_transform()`, you 
+
++ specify the figure you add using one of the `*_image()` functions 
++ specify the location of the figure using `cells_*()` with `columns =` and `rows =` options 
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[How]
+
+**Syntax**
+
+```{r eval = F}
+text_transform(
+  locations = cells_*(),
+  fn = function(x) {
+    *_image()
+  }
+) 
+```
+
+**Example**
+
+The following code will place `g_ex` (a ggplot object) of 50 px height in the cell located at [3, y_1995] of the table cell body.
+
+```{r eval = F}
+text_transform(
+  locations = cells_body(
+    columns = vars(y_1995), #<<
+    rows = 3 #<<
+  ),
+  fn = function(x) {
+    ggplot_image(g_ex, height = px(50)) #<<
+  } 
+)  
+```
+
+  ]
+
+<!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+
+
+---
+
+```{r ggplot-added-flip, include = F}
+gt_1 %>% #BREAK
+  text_transform(
+    locations = cells_body(
+      columns = vars(y_1995),
+      rows = 3
+    ),
+    fn = function(x) {
+      ggplot_image(g_ex, height = px(50))
+    }
+  ) %>%  #BREAK 
+  text_transform(
+    locations = cells_body(
+      columns = vars(y_1995),
+      rows = 4
+    ),
+    fn = function(x) {
+      local_image(
+        filename = "gt_gg.png",
+        height = px(50)
+      )
+    }
+  )
+```
+
+`r chunk_reveal(
+  chunk_name = "ggplot-added-flip", 
+  title = "# Demonstration: Adding figures",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+---
 
 # Save
 
