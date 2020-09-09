@@ -10,6 +10,6 @@ This is the repository for AECN 396/AECN896-002 at University of Nebraska Lincol
 + Lecture 3: Data Wrangling ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-3-DataWrangling/data_wrangling_x.html))
 + Lecture 4: Data Visualization ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-4-DataVisualization/data_visualization_x.html))
 + Lecture 5: Function, Loop, and Parallel Computation ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-5-Functions-Loop-Parallel/function_loop_parallel_x.html))
-+ Make Tables with the `gt` package ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-6-MakeTable/make_table_x.html))
++ Make Tables ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-6-MakeTable/make_table_x.html))
 
 ## Datasets
