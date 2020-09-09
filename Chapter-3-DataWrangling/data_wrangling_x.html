@@ -36,15 +36,23 @@ class: center, middle, inverse, title-slide
 
 
 
-
-
 &lt;style type="text/css"&gt;
+.important {
+  background-color: lightpink;
+  border: 2px solid blue;
+  font-weight: bold;
+} 
+
 .remark-code {
   display: block;
   overflow-x: auto;
-  padding: .3em;
+  padding: .5em;
   background: #ffe7e7;
 } 
+
+.hljs-github .hljs {
+  background: #f2f2fd;
+}
 
 .remark-inline-code {
   padding-top: 0px;
@@ -52,10 +60,15 @@ class: center, middle, inverse, title-slide
   background-color: #e6e6e6;
 }
 
-.hljs-github .hljs {
-  background: #F6F6FF;
+.r.hljs.remark-code.remark-inline-code{
+  font-size: 0.9em
 }
 
+.left-full {
+  width: 80%;
+  height: 92%;
+  float: left;
+}
 
 .left-code {
   width: 38%;
@@ -69,25 +82,32 @@ class: center, middle, inverse, title-slide
   padding-left: 1%;
 }
 
-.left-plot5 {
-  width: 48%;
+.left5 {
+  width: 49%;
   height: 92%;
   float: left;
 }
 
-.right-plot5 {
-  width: 48%;
+.right5 {
+  width: 49%;
   float: right;
   padding-left: 1%;
 }
 
-.full-code {
-  width: 100%;
+.left4 {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right6 {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
 }
 
 ul li{
   margin: 7px;
-  
 }
 
 ul, li{
@@ -103,7 +123,154 @@ ol, li{
   margin-left: 9px; 
   padding-left: 0px; 
 }
+
 &lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+.content-box { 
+    box-sizing: border-box;
+    background-color: #e2e2e2;
+}
+.content-box-blue,
+.content-box-gray,
+.content-box-grey,
+.content-box-army,
+.content-box-green,
+.content-box-purple,
+.content-box-red,
+.content-box-yellow {
+  box-sizing: border-box;
+  border-radius: 15px;
+  margin: 0 0 15px;
+  overflow: hidden;
+  padding: 0px 20px 0px 20px;
+  width: 100%;
+}
+.content-box-blue { background-color: #F0F8FF; }
+.content-box-gray { background-color: #e2e2e2; }
+.content-box-grey { background-color: #F5F5F5; }
+.content-box-army { background-color: #737a36; }
+.content-box-green { background-color: #d9edc2; }
+.content-box-purple { background-color: #e2e2f9; }
+.content-box-red { background-color: #ffcccc; }
+.content-box-yellow { background-color: #fef5c4; }
+.content-box-blue .remark-inline-code,
+.content-box-blue .remark-inline-code,
+.content-box-gray .remark-inline-code,
+.content-box-grey .remark-inline-code,
+.content-box-army .remark-inline-code,
+.content-box-green .remark-inline-code,
+.content-box-purple .remark-inline-code,
+.content-box-red .remark-inline-code,
+.content-box-yellow .remark-inline-code { 
+  background: none;
+}
+
+.full-width {
+    display: flex;
+    width: 100%;
+    flex: 1 1 auto;
+}
+&lt;/style&gt;
+
+
+&lt;style type="text/css"&gt;
+blockquote, .blockquote {
+  display: block;
+  margin-top: 0.1em;
+  margin-bottom: 0.2em;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-left: solid 10px #0148A4;
+  border-top: solid 2px #0148A4;
+  border-bottom: solid 2px #0148A4;
+  border-right: solid 2px #0148A4;
+  box-shadow: 0 0 6px rgba(0,0,0,0.5);
+  /* background-color: #e64626; */
+  color: #e64626;
+  padding: 0.5em;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+
+.blockquote p {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h1:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h2:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h3:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h4:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+.text-shadow {
+  text-shadow: 0 0 4px #424242;
+}
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+/******************
+ * Slide scrolling
+ * (non-functional)
+ * not sure if it is a good idea anyway
+slides &gt; slide {
+  overflow: scroll;
+ padding: 5px 40px;
+}
+.scrollable-slide .remark-slide {
+  height: 400px;
+  overflow: scroll !important;
+}
+ ******************/
+
+.scroll-box-8 {
+  height:8em;
+  overflow-y: scroll;
+}
+.scroll-box-10 {
+  height:10em;
+  overflow-y: scroll;
+}
+.scroll-box-12 {
+  height:12em;
+  overflow-y: scroll;
+}
+.scroll-box-14 {
+  height:14em;
+  overflow-y: scroll;
+}
+.scroll-box-16 {
+  height:16em;
+  overflow-y: scroll;
+}
+.scroll-box-18 {
+  height:18em;
+  overflow-y: scroll;
+}
+.scroll-box-20 {
+  height:20em;
+  overflow-y: scroll;
+}
+.scroll-output {
+  height: 90%;
+  overflow-y: scroll;
+}
+
+ 
+&lt;/style&gt;
+
+
 
 # Table of contents
 
@@ -285,7 +452,7 @@ class(HousePrices_tbl)
 
 # `data.frame` and `tibble`: display method
 
-.left-plot5[
+.left5[
 
 `data.frame`
 
@@ -383,7 +550,7 @@ HousePrices
 ```
 ]
 
-.right-plot5[
+.right5[
 
 `tibble`
 
@@ -432,7 +599,7 @@ matrix[rows of interest, columns of interest]
 
 2nd to 8th rows, the 3rd and 5th columns
 
-.left-plot5[
+.left5[
 
 `data.frame`
 
@@ -453,7 +620,7 @@ HousePrices[2:8, c(3,5)]
 ```
 ]
 
-.right-plot5[
+.right5[
 
 `tibble`
 
@@ -493,7 +660,7 @@ data[, c("variable 1", "variable 2", ...)]
 
 ## Examples:
 
-.left-plot5[
+.left5[
 `data.frame`
 
 
@@ -506,7 +673,7 @@ head(HousePrices[, "price"])
 ```
 ]
 
-.right-plot5[
+.right5[
 `tibble`
 
 
@@ -537,7 +704,7 @@ Alternatively, to access a column (variable) from a dataset, you can use `$` lik
 
 ## Examples:
 
-.left-plot5[
+.left5[
 
 `data.frame`
 
@@ -551,7 +718,7 @@ head(HousePrices$price)
 ```
 ]
 
-.right-plot5[
+.right5[
 `tibble`
 
 ```r
@@ -755,7 +922,7 @@ getwd()
 ```
 
 ```
-## [1] "/Users/tmieno2/Dropbox/TeachingUNL/DataScience/Datasets/Chapter_3_data_wrangling"
+## [1] "/Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-3-DataWrangling"
 ```
 
   ]
@@ -1074,18 +1241,18 @@ readRDS("a_list.rds")
 ## 
 ## $b
 ## # A tibble: 161 x 9
-##     Year State  FIPS County_name State_name Commodity `Data item`                                           Irrigated Yield
-##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;                                                     &lt;int&gt; &lt;int&gt;
-##  1  2008    31 31019 BUFFALO     NEBRASKA   CORN      CORN, GRAIN - YIELD, MEASURED IN BU / ACRE                    0   173
-##  2  2008    31 31019 BUFFALO     NEBRASKA   CORN      CORN, GRAIN, IRRIGATED - YIELD, MEASURED IN BU / ACRE         1   182
-##  3  2008    31 31041 CUSTER      NEBRASKA   CORN      CORN, GRAIN - YIELD, MEASURED IN BU / ACRE                    0   163
-##  4  2008    31 31041 CUSTER      NEBRASKA   CORN      CORN, GRAIN, IRRIGATED - YIELD, MEASURED IN BU / ACRE         1   182
-##  5  2008    31 31047 DAWSON      NEBRASKA   CORN      CORN, GRAIN - YIELD, MEASURED IN BU / ACRE                    0   177
-##  6  2008    31 31047 DAWSON      NEBRASKA   CORN      CORN, GRAIN, IRRIGATED - YIELD, MEASURED IN BU / ACRE         1   180
-##  7  2008    31 31077 GREELEY     NEBRASKA   CORN      CORN, GRAIN - YIELD, MEASURED IN BU / ACRE                    0   172
-##  8  2008    31 31077 GREELEY     NEBRASKA   CORN      CORN, GRAIN, IRRIGATED - YIELD, MEASURED IN BU / ACRE         1   184
-##  9  2008    31 31079 HALL        NEBRASKA   CORN      CORN, GRAIN - YIELD, MEASURED IN BU / ACRE                    0   171
-## 10  2008    31 31079 HALL        NEBRASKA   CORN      CORN, GRAIN, IRRIGATED - YIELD, MEASURED IN BU / ACRE         1   175
+##     Year State  FIPS County_name State_name Commodity `Data item`                           Irrigated Yield
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;     &lt;chr&gt;                                     &lt;int&gt; &lt;int&gt;
+##  1  2008    31 31019 BUFFALO     NEBRASKA   CORN      CORN, GRAIN - YIELD, MEASURED IN BU …         0   173
+##  2  2008    31 31019 BUFFALO     NEBRASKA   CORN      CORN, GRAIN, IRRIGATED - YIELD, MEAS…         1   182
+##  3  2008    31 31041 CUSTER      NEBRASKA   CORN      CORN, GRAIN - YIELD, MEASURED IN BU …         0   163
+##  4  2008    31 31041 CUSTER      NEBRASKA   CORN      CORN, GRAIN, IRRIGATED - YIELD, MEAS…         1   182
+##  5  2008    31 31047 DAWSON      NEBRASKA   CORN      CORN, GRAIN - YIELD, MEASURED IN BU …         0   177
+##  6  2008    31 31047 DAWSON      NEBRASKA   CORN      CORN, GRAIN, IRRIGATED - YIELD, MEAS…         1   180
+##  7  2008    31 31077 GREELEY     NEBRASKA   CORN      CORN, GRAIN - YIELD, MEASURED IN BU …         0   172
+##  8  2008    31 31077 GREELEY     NEBRASKA   CORN      CORN, GRAIN, IRRIGATED - YIELD, MEAS…         1   184
+##  9  2008    31 31079 HALL        NEBRASKA   CORN      CORN, GRAIN - YIELD, MEASURED IN BU …         0   171
+## 10  2008    31 31079 HALL        NEBRASKA   CORN      CORN, GRAIN, IRRIGATED - YIELD, MEAS…         1   175
 ## # … with 151 more rows
 ```
 
@@ -1151,20 +1318,20 @@ flights_mini &lt;- distinct(flights,month,day,.keep_all=TRUE) %&gt;%
 
 ```
 ## # A tibble: 24 x 19
-##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin
-##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; 
-##  1  2013     1     1      517            515         2      830            819        11 UA        1545 N14228  EWR   
-##  2  2013     1     2       42           2359        43      518            442        36 B6         707 N580JB  JFK   
-##  3  2013     2     1      456            500        -4      652            648         4 US        1117 N197UW  EWR   
-##  4  2013     2     2        3           2359         4      513            444        29 B6         739 N569JB  JFK   
-##  5  2013     3     1        4           2159       125      318             56       142 B6          11 N706JB  JFK   
-##  6  2013     3     2       43           2355        48      605            440        85 B6         739 N623JB  JFK   
-##  7  2013     4     1      454            500        -6      636            640        -4 US        1843 N566UW  EWR   
-##  8  2013     4     2        9           2355        14      346            345         1 B6         739 N519JB  JFK   
-##  9  2013     5     1        9           1655       434      308           2020       408 VX         413 N628VA  JFK   
-## 10  2013     5     2        3           1905       298      241           2224       257 B6         111 N603JB  JFK   
-## # … with 14 more rows, and 6 more variables: dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;,
-## #   time_hour &lt;dttm&gt;
+##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515         2      830            819        11 UA        1545
+##  2  2013     1     2       42           2359        43      518            442        36 B6         707
+##  3  2013     2     1      456            500        -4      652            648         4 US        1117
+##  4  2013     2     2        3           2359         4      513            444        29 B6         739
+##  5  2013     3     1        4           2159       125      318             56       142 B6          11
+##  6  2013     3     2       43           2355        48      605            440        85 B6         739
+##  7  2013     4     1      454            500        -6      636            640        -4 US        1843
+##  8  2013     4     2        9           2355        14      346            345         1 B6         739
+##  9  2013     5     1        9           1655       434      308           2020       408 VX         413
+## 10  2013     5     2        3           1905       298      241           2224       257 B6         111
+## # … with 14 more rows, and 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;,
+## #   distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
 ---
@@ -1200,11 +1367,12 @@ filter(flights_mini, month == 4)
 
 ```
 ## # A tibble: 2 x 19
-##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin dest 
-##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;
-## 1  2013     4     1      454            500        -6      636            640        -4 US        1843 N566UW  EWR    CLT  
-## 2  2013     4     2        9           2355        14      346            345         1 B6         739 N519JB  JFK    PSE  
-## # … with 5 more variables: air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+## 1  2013     4     1      454            500        -6      636            640        -4 US        1843
+## 2  2013     4     2        9           2355        14      346            345         1 B6         739
+## # … with 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
   ]
@@ -1220,20 +1388,20 @@ filter(flights_mini, month != 4)
 
 ```
 ## # A tibble: 22 x 19
-##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin
-##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; 
-##  1  2013     1     1      517            515         2      830            819        11 UA        1545 N14228  EWR   
-##  2  2013     1     2       42           2359        43      518            442        36 B6         707 N580JB  JFK   
-##  3  2013     2     1      456            500        -4      652            648         4 US        1117 N197UW  EWR   
-##  4  2013     2     2        3           2359         4      513            444        29 B6         739 N569JB  JFK   
-##  5  2013     3     1        4           2159       125      318             56       142 B6          11 N706JB  JFK   
-##  6  2013     3     2       43           2355        48      605            440        85 B6         739 N623JB  JFK   
-##  7  2013     5     1        9           1655       434      308           2020       408 VX         413 N628VA  JFK   
-##  8  2013     5     2        3           1905       298      241           2224       257 B6         111 N603JB  JFK   
-##  9  2013     6     1        2           2359         3      341            350        -9 B6         739 N618JB  JFK   
-## 10  2013     6     2       14           2359        15      339            341        -2 B6         727 N558JB  JFK   
-## # … with 12 more rows, and 6 more variables: dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;,
-## #   time_hour &lt;dttm&gt;
+##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515         2      830            819        11 UA        1545
+##  2  2013     1     2       42           2359        43      518            442        36 B6         707
+##  3  2013     2     1      456            500        -4      652            648         4 US        1117
+##  4  2013     2     2        3           2359         4      513            444        29 B6         739
+##  5  2013     3     1        4           2159       125      318             56       142 B6          11
+##  6  2013     3     2       43           2355        48      605            440        85 B6         739
+##  7  2013     5     1        9           1655       434      308           2020       408 VX         413
+##  8  2013     5     2        3           1905       298      241           2224       257 B6         111
+##  9  2013     6     1        2           2359         3      341            350        -9 B6         739
+## 10  2013     6     2       14           2359        15      339            341        -2 B6         727
+## # … with 12 more rows, and 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;,
+## #   distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
   ]
@@ -1249,15 +1417,16 @@ filter(flights_mini, month &lt; 4)
 
 ```
 ## # A tibble: 6 x 19
-##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin dest 
-##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;
-## 1  2013     1     1      517            515         2      830            819        11 UA        1545 N14228  EWR    IAH  
-## 2  2013     1     2       42           2359        43      518            442        36 B6         707 N580JB  JFK    SJU  
-## 3  2013     2     1      456            500        -4      652            648         4 US        1117 N197UW  EWR    CLT  
-## 4  2013     2     2        3           2359         4      513            444        29 B6         739 N569JB  JFK    PSE  
-## 5  2013     3     1        4           2159       125      318             56       142 B6          11 N706JB  JFK    FLL  
-## 6  2013     3     2       43           2355        48      605            440        85 B6         739 N623JB  JFK    PSE  
-## # … with 5 more variables: air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+## 1  2013     1     1      517            515         2      830            819        11 UA        1545
+## 2  2013     1     2       42           2359        43      518            442        36 B6         707
+## 3  2013     2     1      456            500        -4      652            648         4 US        1117
+## 4  2013     2     2        3           2359         4      513            444        29 B6         739
+## 5  2013     3     1        4           2159       125      318             56       142 B6          11
+## 6  2013     3     2       43           2355        48      605            440        85 B6         739
+## # … with 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
   ]
@@ -1282,15 +1451,16 @@ filter(flights_mini, month &gt;= 9 &amp; month &lt;= 11)
 
 ```
 ## # A tibble: 6 x 19
-##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin dest 
-##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;
-## 1  2013     9     1        9           2359        10      343            340         3 B6         839 N663JB  JFK    BQN  
-## 2  2013     9     2        8           2255        73      126             19        67 B6        2002 N231JB  JFK    BUF  
-## 3  2013    10     1      447            500       -13      614            648       -34 US        1877 N538UW  EWR    CLT  
-## 4  2013    10     2      449            500       -11      620            648       -28 US        1877 N193UW  EWR    CLT  
-## 5  2013    11     1        5           2359         6      352            345         7 B6         745 N568JB  JFK    PSE  
-## 6  2013    11     2      453            500        -7      644            651        -7 US        1895 N190UW  EWR    CLT  
-## # … with 5 more variables: air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+## 1  2013     9     1        9           2359        10      343            340         3 B6         839
+## 2  2013     9     2        8           2255        73      126             19        67 B6        2002
+## 3  2013    10     1      447            500       -13      614            648       -34 US        1877
+## 4  2013    10     2      449            500       -11      620            648       -28 US        1877
+## 5  2013    11     1        5           2359         6      352            345         7 B6         745
+## 6  2013    11     2      453            500        -7      644            651        -7 US        1895
+## # … with 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
 ```r
@@ -1309,15 +1479,16 @@ filter(flights_mini, month &gt;= 11 | month &lt;= 1)
 
 ```
 ## # A tibble: 6 x 19
-##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin dest 
-##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;
-## 1  2013     1     1      517            515         2      830            819        11 UA        1545 N14228  EWR    IAH  
-## 2  2013     1     2       42           2359        43      518            442        36 B6         707 N580JB  JFK    SJU  
-## 3  2013    11     1        5           2359         6      352            345         7 B6         745 N568JB  JFK    PSE  
-## 4  2013    11     2      453            500        -7      644            651        -7 US        1895 N190UW  EWR    CLT  
-## 5  2013    12     1       13           2359        14      446            445         1 B6         745 N715JB  JFK    PSE  
-## 6  2013    12     2       12           2250        82      103           2356        67 B6        1816 N316JB  JFK    SYR  
-## # … with 5 more variables: air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+## 1  2013     1     1      517            515         2      830            819        11 UA        1545
+## 2  2013     1     2       42           2359        43      518            442        36 B6         707
+## 3  2013    11     1        5           2359         6      352            345         7 B6         745
+## 4  2013    11     2      453            500        -7      644            651        -7 US        1895
+## 5  2013    12     1       13           2359        14      446            445         1 B6         745
+## 6  2013    12     2       12           2250        82      103           2356        67 B6        1816
+## # … with 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
   ]
@@ -1331,15 +1502,16 @@ filter(flights_mini, month %in% c(1, 2, 3))
 
 ```
 ## # A tibble: 6 x 19
-##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin dest 
-##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;
-## 1  2013     1     1      517            515         2      830            819        11 UA        1545 N14228  EWR    IAH  
-## 2  2013     1     2       42           2359        43      518            442        36 B6         707 N580JB  JFK    SJU  
-## 3  2013     2     1      456            500        -4      652            648         4 US        1117 N197UW  EWR    CLT  
-## 4  2013     2     2        3           2359         4      513            444        29 B6         739 N569JB  JFK    PSE  
-## 5  2013     3     1        4           2159       125      318             56       142 B6          11 N706JB  JFK    FLL  
-## 6  2013     3     2       43           2355        48      605            440        85 B6         739 N623JB  JFK    PSE  
-## # … with 5 more variables: air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+## 1  2013     1     1      517            515         2      830            819        11 UA        1545
+## 2  2013     1     2       42           2359        43      518            442        36 B6         707
+## 3  2013     2     1      456            500        -4      652            648         4 US        1117
+## 4  2013     2     2        3           2359         4      513            444        29 B6         739
+## 5  2013     3     1        4           2159       125      318             56       142 B6          11
+## 6  2013     3     2       43           2355        48      605            440        85 B6         739
+## # … with 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
 ```r
@@ -1376,11 +1548,12 @@ flights_mini_filtered
 
 ```
 ## # A tibble: 2 x 19
-##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin dest 
-##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;
-## 1  2013     4     1      454            500        -6      636            640        -4 US        1843 N566UW  EWR    CLT  
-## 2  2013     4     2        9           2355        14      346            345         1 B6         739 N519JB  JFK    PSE  
-## # … with 5 more variables: air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+## 1  2013     4     1      454            500        -6      636            640        -4 US        1843
+## 2  2013     4     2        9           2355        14      346            345         1 B6         739
+## # … with 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
 ---
@@ -1404,13 +1577,14 @@ Here is the output you should get:
 
 ```
 ## # A tibble: 4 x 19
-##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin dest 
-##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;
-## 1  2013     6     1        2           2359         3      341            350        -9 B6         739 N618JB  JFK    PSE  
-## 2  2013     6     2       14           2359        15      339            341        -2 B6         727 N558JB  JFK    BQN  
-## 3  2013     7     1        1           2029       212      236           2359       157 B6         915 N653JB  JFK    SFO  
-## 4  2013     7     2       12           2245        87      117              4        73 B6         108 N318JB  JFK    PWM  
-## # … with 5 more variables: air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+## 1  2013     6     1        2           2359         3      341            350        -9 B6         739
+## 2  2013     6     2       14           2359        15      339            341        -2 B6         727
+## 3  2013     7     1        1           2029       212      236           2359       157 B6         915
+## 4  2013     7     2       12           2245        87      117              4        73 B6         108
+## # … with 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
   ]
@@ -1430,19 +1604,20 @@ Here is the output you should get:
 
 ```
 ## # A tibble: 10 x 19
-##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin
-##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; 
-##  1  2013     1     1      517            515         2      830            819        11 UA        1545 N14228  EWR   
-##  2  2013     1     2       42           2359        43      518            442        36 B6         707 N580JB  JFK   
-##  3  2013     4     1      454            500        -6      636            640        -4 US        1843 N566UW  EWR   
-##  4  2013     4     2        9           2355        14      346            345         1 B6         739 N519JB  JFK   
-##  5  2013     6     1        2           2359         3      341            350        -9 B6         739 N618JB  JFK   
-##  6  2013     6     2       14           2359        15      339            341        -2 B6         727 N558JB  JFK   
-##  7  2013     9     1        9           2359        10      343            340         3 B6         839 N663JB  JFK   
-##  8  2013     9     2        8           2255        73      126             19        67 B6        2002 N231JB  JFK   
-##  9  2013    12     1       13           2359        14      446            445         1 B6         745 N715JB  JFK   
-## 10  2013    12     2       12           2250        82      103           2356        67 B6        1816 N316JB  JFK   
-## # … with 6 more variables: dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515         2      830            819        11 UA        1545
+##  2  2013     1     2       42           2359        43      518            442        36 B6         707
+##  3  2013     4     1      454            500        -6      636            640        -4 US        1843
+##  4  2013     4     2        9           2355        14      346            345         1 B6         739
+##  5  2013     6     1        2           2359         3      341            350        -9 B6         739
+##  6  2013     6     2       14           2359        15      339            341        -2 B6         727
+##  7  2013     9     1        9           2359        10      343            340         3 B6         839
+##  8  2013     9     2        8           2255        73      126             19        67 B6        2002
+##  9  2013    12     1       13           2359        14      446            445         1 B6         745
+## 10  2013    12     2       12           2250        82      103           2356        67 B6        1816
+## # … with 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
   ]
@@ -1462,14 +1637,15 @@ Here is the output you should get:
 
 ```
 ## # A tibble: 5 x 19
-##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin dest 
-##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;
-## 1  2013     2     1      456            500        -4      652            648         4 US        1117 N197UW  EWR    CLT  
-## 2  2013     4     1      454            500        -6      636            640        -4 US        1843 N566UW  EWR    CLT  
-## 3  2013    10     1      447            500       -13      614            648       -34 US        1877 N538UW  EWR    CLT  
-## 4  2013    10     2      449            500       -11      620            648       -28 US        1877 N193UW  EWR    CLT  
-## 5  2013    11     2      453            500        -7      644            651        -7 US        1895 N190UW  EWR    CLT  
-## # … with 5 more variables: air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+## 1  2013     2     1      456            500        -4      652            648         4 US        1117
+## 2  2013     4     1      454            500        -6      636            640        -4 US        1843
+## 3  2013    10     1      447            500       -13      614            648       -34 US        1877
+## 4  2013    10     2      449            500       -11      620            648       -28 US        1877
+## 5  2013    11     2      453            500        -7      644            651        -7 US        1895
+## # … with 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
   ]
@@ -1570,19 +1746,20 @@ select(flights_mini, - year, - month)
 
 ```
 ## # A tibble: 24 x 17
-##      day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin dest  air_time
-##    &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;    &lt;dbl&gt;
-##  1     1      517            515         2      830            819        11 UA        1545 N14228  EWR    IAH        227
-##  2     2       42           2359        43      518            442        36 B6         707 N580JB  JFK    SJU        189
-##  3     1      456            500        -4      652            648         4 US        1117 N197UW  EWR    CLT         98
-##  4     2        3           2359         4      513            444        29 B6         739 N569JB  JFK    PSE        206
-##  5     1        4           2159       125      318             56       142 B6          11 N706JB  JFK    FLL        166
-##  6     2       43           2355        48      605            440        85 B6         739 N623JB  JFK    PSE        219
-##  7     1      454            500        -6      636            640        -4 US        1843 N566UW  EWR    CLT         84
-##  8     2        9           2355        14      346            345         1 B6         739 N519JB  JFK    PSE        197
-##  9     1        9           1655       434      308           2020       408 VX         413 N628VA  JFK    LAX        341
-## 10     2        3           1905       298      241           2224       257 B6         111 N603JB  JFK    FLL        135
-## # … with 14 more rows, and 4 more variables: distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##      day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin
+##    &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; 
+##  1     1      517            515         2      830            819        11 UA        1545 N14228  EWR   
+##  2     2       42           2359        43      518            442        36 B6         707 N580JB  JFK   
+##  3     1      456            500        -4      652            648         4 US        1117 N197UW  EWR   
+##  4     2        3           2359         4      513            444        29 B6         739 N569JB  JFK   
+##  5     1        4           2159       125      318             56       142 B6          11 N706JB  JFK   
+##  6     2       43           2355        48      605            440        85 B6         739 N623JB  JFK   
+##  7     1      454            500        -6      636            640        -4 US        1843 N566UW  EWR   
+##  8     2        9           2355        14      346            345         1 B6         739 N519JB  JFK   
+##  9     1        9           1655       434      308           2020       408 VX         413 N628VA  JFK   
+## 10     2        3           1905       298      241           2224       257 B6         111 N603JB  JFK   
+## # … with 14 more rows, and 6 more variables: dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
   ]
@@ -1611,19 +1788,20 @@ Here is the output you should get:
 
 ```
 ## # A tibble: 24 x 18
-##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time carrier flight tailnum origin dest  air_time
-##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;    &lt;dbl&gt;
-##  1  2013     1     1      517            515         2      830            819 UA        1545 N14228  EWR    IAH        227
-##  2  2013     1     2       42           2359        43      518            442 B6         707 N580JB  JFK    SJU        189
-##  3  2013     2     1      456            500        -4      652            648 US        1117 N197UW  EWR    CLT         98
-##  4  2013     2     2        3           2359         4      513            444 B6         739 N569JB  JFK    PSE        206
-##  5  2013     3     1        4           2159       125      318             56 B6          11 N706JB  JFK    FLL        166
-##  6  2013     3     2       43           2355        48      605            440 B6         739 N623JB  JFK    PSE        219
-##  7  2013     4     1      454            500        -6      636            640 US        1843 N566UW  EWR    CLT         84
-##  8  2013     4     2        9           2355        14      346            345 B6         739 N519JB  JFK    PSE        197
-##  9  2013     5     1        9           1655       434      308           2020 VX         413 N628VA  JFK    LAX        341
-## 10  2013     5     2        3           1905       298      241           2224 B6         111 N603JB  JFK    FLL        135
-## # … with 14 more rows, and 4 more variables: distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time carrier flight tailnum
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;  
+##  1  2013     1     1      517            515         2      830            819 UA        1545 N14228 
+##  2  2013     1     2       42           2359        43      518            442 B6         707 N580JB 
+##  3  2013     2     1      456            500        -4      652            648 US        1117 N197UW 
+##  4  2013     2     2        3           2359         4      513            444 B6         739 N569JB 
+##  5  2013     3     1        4           2159       125      318             56 B6          11 N706JB 
+##  6  2013     3     2       43           2355        48      605            440 B6         739 N623JB 
+##  7  2013     4     1      454            500        -6      636            640 US        1843 N566UW 
+##  8  2013     4     2        9           2355        14      346            345 B6         739 N519JB 
+##  9  2013     5     1        9           1655       434      308           2020 VX         413 N628VA 
+## 10  2013     5     2        3           1905       298      241           2224 B6         111 N603JB 
+## # … with 14 more rows, and 7 more variables: origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
   ]
@@ -1678,20 +1856,20 @@ relocate(flights_mini, dep_time, dep_delay)
 
 ```
 ## # A tibble: 24 x 19
-##    dep_time dep_delay  year month   day sched_dep_time arr_time sched_arr_time arr_delay carrier flight tailnum origin
-##       &lt;int&gt;     &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;          &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; 
-##  1      517         2  2013     1     1            515      830            819        11 UA        1545 N14228  EWR   
-##  2       42        43  2013     1     2           2359      518            442        36 B6         707 N580JB  JFK   
-##  3      456        -4  2013     2     1            500      652            648         4 US        1117 N197UW  EWR   
-##  4        3         4  2013     2     2           2359      513            444        29 B6         739 N569JB  JFK   
-##  5        4       125  2013     3     1           2159      318             56       142 B6          11 N706JB  JFK   
-##  6       43        48  2013     3     2           2355      605            440        85 B6         739 N623JB  JFK   
-##  7      454        -6  2013     4     1            500      636            640        -4 US        1843 N566UW  EWR   
-##  8        9        14  2013     4     2           2355      346            345         1 B6         739 N519JB  JFK   
-##  9        9       434  2013     5     1           1655      308           2020       408 VX         413 N628VA  JFK   
-## 10        3       298  2013     5     2           1905      241           2224       257 B6         111 N603JB  JFK   
-## # … with 14 more rows, and 6 more variables: dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;,
-## #   time_hour &lt;dttm&gt;
+##    dep_time dep_delay  year month   day sched_dep_time arr_time sched_arr_time arr_delay carrier flight
+##       &lt;int&gt;     &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;          &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+##  1      517         2  2013     1     1            515      830            819        11 UA        1545
+##  2       42        43  2013     1     2           2359      518            442        36 B6         707
+##  3      456        -4  2013     2     1            500      652            648         4 US        1117
+##  4        3         4  2013     2     2           2359      513            444        29 B6         739
+##  5        4       125  2013     3     1           2159      318             56       142 B6          11
+##  6       43        48  2013     3     2           2355      605            440        85 B6         739
+##  7      454        -6  2013     4     1            500      636            640        -4 US        1843
+##  8        9        14  2013     4     2           2355      346            345         1 B6         739
+##  9        9       434  2013     5     1           1655      308           2020       408 VX         413
+## 10        3       298  2013     5     2           1905      241           2224       257 B6         111
+## # … with 14 more rows, and 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;,
+## #   distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
 Chosen variables come front with the order of the rest of the variable unchanged.
@@ -1929,13 +2107,14 @@ mutate(flights_mini, gain = arr_delay - dep_delay) %&gt;%
 
 ```
 ## # A tibble: 4 x 20
-##    gain  year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin
-##   &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; 
-## 1     9  2013     1     1      517            515         2      830            819        11 UA        1545 N14228  EWR   
-## 2    -7  2013     1     2       42           2359        43      518            442        36 B6         707 N580JB  JFK   
-## 3     8  2013     2     1      456            500        -4      652            648         4 US        1117 N197UW  EWR   
-## 4    25  2013     2     2        3           2359         4      513            444        29 B6         739 N569JB  JFK   
-## # … with 6 more variables: dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##    gain  year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier
+##   &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;  
+## 1     9  2013     1     1      517            515         2      830            819        11 UA     
+## 2    -7  2013     1     2       42           2359        43      518            442        36 B6     
+## 3     8  2013     2     1      456            500        -4      652            648         4 US     
+## 4    25  2013     2     2        3           2359         4      513            444        29 B6     
+## # … with 9 more variables: flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;,
+## #   distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
   ]
@@ -1956,14 +2135,14 @@ You can create a new variable based on the variables that have been just created
 
 ```
 ## # A tibble: 4 x 21
-##    gain gain_per_hour  year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
-##   &lt;dbl&gt;         &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
-## 1     9          2.38  2013     1     1      517            515         2      830            819        11 UA        1545
-## 2    -7         -2.22  2013     1     2       42           2359        43      518            442        36 B6         707
-## 3     8          4.90  2013     2     1      456            500        -4      652            648         4 US        1117
-## 4    25          7.28  2013     2     2        3           2359         4      513            444        29 B6         739
-## # … with 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
-## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##    gain gain_per_hour  year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay
+##   &lt;dbl&gt;         &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;
+## 1     9          2.38  2013     1     1      517            515         2      830            819        11
+## 2    -7         -2.22  2013     1     2       42           2359        43      518            442        36
+## 3     8          4.90  2013     2     1      456            500        -4      652            648         4
+## 4    25          7.28  2013     2     2        3           2359         4      513            444        29
+## # … with 10 more variables: carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,
+## #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
   ]
@@ -1982,12 +2161,12 @@ You can apply functions to variables when creating new variables:
 
 ```
 ## # A tibble: 2 x 20
-##   avg_arr_delay  year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
-##           &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
-## 1          61.1  2013     1     1      517            515         2      830            819        11 UA        1545
-## 2          61.1  2013     1     2       42           2359        43      518            442        36 B6         707
-## # … with 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
-## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##   avg_arr_delay  year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay
+##           &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;
+## 1          61.1  2013     1     1      517            515         2      830            819        11
+## 2          61.1  2013     1     2       42           2359        43      518            442        36
+## # … with 10 more variables: carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,
+## #   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
 Note: the function you apply has to accept a vector (a variable column).
@@ -2048,16 +2227,16 @@ rename(flights_mini,
 
 ```
 ## # A tibble: 6 x 19
-##    year month   day departure_time sched_dep_time departure_delay arr_time sched_arr_time arr_delay carrier flight tailnum
-##   &lt;int&gt; &lt;int&gt; &lt;int&gt;          &lt;int&gt;          &lt;int&gt;           &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;  
-## 1  2013     1     1            517            515               2      830            819        11 UA        1545 N14228 
-## 2  2013     1     2             42           2359              43      518            442        36 B6         707 N580JB 
-## 3  2013     2     1            456            500              -4      652            648         4 US        1117 N197UW 
-## 4  2013     2     2              3           2359               4      513            444        29 B6         739 N569JB 
-## 5  2013     3     1              4           2159             125      318             56       142 B6          11 N706JB 
-## 6  2013     3     2             43           2355              48      605            440        85 B6         739 N623JB 
-## # … with 7 more variables: origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;,
-## #   time_hour &lt;dttm&gt;
+##    year month   day departure_time sched_dep_time departure_delay arr_time sched_arr_time arr_delay carrier
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;          &lt;int&gt;          &lt;int&gt;           &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;  
+## 1  2013     1     1            517            515               2      830            819        11 UA     
+## 2  2013     1     2             42           2359              43      518            442        36 B6     
+## 3  2013     2     1            456            500              -4      652            648         4 US     
+## 4  2013     2     2              3           2359               4      513            444        29 B6     
+## 5  2013     3     1              4           2159             125      318             56       142 B6     
+## 6  2013     3     2             43           2355              48      605            440        85 B6     
+## # … with 9 more variables: flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;,
+## #   distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
   ]
@@ -2141,15 +2320,16 @@ arrange(flights_mini, dep_delay) %&gt;% head()
 
 ```
 ## # A tibble: 6 x 19
-##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin dest 
-##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt;  &lt;chr&gt;
-## 1  2013    10     1      447            500       -13      614            648       -34 US        1877 N538UW  EWR    CLT  
-## 2  2013    10     2      449            500       -11      620            648       -28 US        1877 N193UW  EWR    CLT  
-## 3  2013    11     2      453            500        -7      644            651        -7 US        1895 N190UW  EWR    CLT  
-## 4  2013     4     1      454            500        -6      636            640        -4 US        1843 N566UW  EWR    CLT  
-## 5  2013     2     1      456            500        -4      652            648         4 US        1117 N197UW  EWR    CLT  
-## 6  2013     1     1      517            515         2      830            819        11 UA        1545 N14228  EWR    IAH  
-## # … with 5 more variables: air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+## 1  2013    10     1      447            500       -13      614            648       -34 US        1877
+## 2  2013    10     2      449            500       -11      620            648       -28 US        1877
+## 3  2013    11     2      453            500        -7      644            651        -7 US        1895
+## 4  2013     4     1      454            500        -6      636            640        -4 US        1843
+## 5  2013     2     1      456            500        -4      652            648         4 US        1117
+## 6  2013     1     1      517            515         2      830            819        11 UA        1545
+## # … with 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
 As you can see, the default is the ascending order. 
@@ -2170,20 +2350,20 @@ To arrange in the descending order, you use `desc()` function:
 ```
 
 ## # A tibble: 24 x 19
-##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin
-##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; 
-##  1  2013     5     1        9           1655       434      308           2020       408 VX         413 N628VA  JFK   
-##  2  2013     5     2        3           1905       298      241           2224       257 B6         111 N603JB  JFK   
-##  3  2013     7     1        1           2029       212      236           2359       157 B6         915 N653JB  JFK   
-##  4  2013     8     1       12           2130       162      257             14       163 B6        1371 N618JB  LGA   
-##  5  2013     3     1        4           2159       125      318             56       142 B6          11 N706JB  JFK   
-##  6  2013     7     2       12           2245        87      117              4        73 B6         108 N318JB  JFK   
-##  7  2013    12     2       12           2250        82      103           2356        67 B6        1816 N316JB  JFK   
-##  8  2013     9     2        8           2255        73      126             19        67 B6        2002 N231JB  JFK   
-##  9  2013     3     2       43           2355        48      605            440        85 B6         739 N623JB  JFK   
-## 10  2013     1     2       42           2359        43      518            442        36 B6         707 N580JB  JFK   
-## # … with 14 more rows, and 6 more variables: dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;,
-## #   time_hour &lt;dttm&gt;
+##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+##  1  2013     5     1        9           1655       434      308           2020       408 VX         413
+##  2  2013     5     2        3           1905       298      241           2224       257 B6         111
+##  3  2013     7     1        1           2029       212      236           2359       157 B6         915
+##  4  2013     8     1       12           2130       162      257             14       163 B6        1371
+##  5  2013     3     1        4           2159       125      318             56       142 B6          11
+##  6  2013     7     2       12           2245        87      117              4        73 B6         108
+##  7  2013    12     2       12           2250        82      103           2356        67 B6        1816
+##  8  2013     9     2        8           2255        73      126             19        67 B6        2002
+##  9  2013     3     2       43           2355        48      605            440        85 B6         739
+## 10  2013     1     2       42           2359        43      518            442        36 B6         707
+## # … with 14 more rows, and 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;,
+## #   distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 
 ```
 
@@ -2212,7 +2392,7 @@ To arrange in the descending order, you use `desc()` function:
 + (left): `flights_mini` has two observations per month (left). 
 + (right): Only one observation per month (12 unique values) after applying `distinct()` 
 
-.left-plot5[
+.left5[
 
 
 ```r
@@ -2221,24 +2401,24 @@ flights_mini
 
 ```
 ## # A tibble: 24 x 19
-##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin
-##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; 
-##  1  2013     1     1      517            515         2      830            819        11 UA        1545 N14228  EWR   
-##  2  2013     1     2       42           2359        43      518            442        36 B6         707 N580JB  JFK   
-##  3  2013     2     1      456            500        -4      652            648         4 US        1117 N197UW  EWR   
-##  4  2013     2     2        3           2359         4      513            444        29 B6         739 N569JB  JFK   
-##  5  2013     3     1        4           2159       125      318             56       142 B6          11 N706JB  JFK   
-##  6  2013     3     2       43           2355        48      605            440        85 B6         739 N623JB  JFK   
-##  7  2013     4     1      454            500        -6      636            640        -4 US        1843 N566UW  EWR   
-##  8  2013     4     2        9           2355        14      346            345         1 B6         739 N519JB  JFK   
-##  9  2013     5     1        9           1655       434      308           2020       408 VX         413 N628VA  JFK   
-## 10  2013     5     2        3           1905       298      241           2224       257 B6         111 N603JB  JFK   
-## # … with 14 more rows, and 6 more variables: dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;,
-## #   time_hour &lt;dttm&gt;
+##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515         2      830            819        11 UA        1545
+##  2  2013     1     2       42           2359        43      518            442        36 B6         707
+##  3  2013     2     1      456            500        -4      652            648         4 US        1117
+##  4  2013     2     2        3           2359         4      513            444        29 B6         739
+##  5  2013     3     1        4           2159       125      318             56       142 B6          11
+##  6  2013     3     2       43           2355        48      605            440        85 B6         739
+##  7  2013     4     1      454            500        -6      636            640        -4 US        1843
+##  8  2013     4     2        9           2355        14      346            345         1 B6         739
+##  9  2013     5     1        9           1655       434      308           2020       408 VX         413
+## 10  2013     5     2        3           1905       298      241           2224       257 B6         111
+## # … with 14 more rows, and 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;,
+## #   distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 ]
 
-.right-plot5[
+.right5[
 
 
 ```r
@@ -2279,21 +2459,22 @@ distinct(flights_mini, month, .keep_all = TRUE)
 
 ```
 ## # A tibble: 12 x 19
-##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin
-##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; 
-##  1  2013     1     1      517            515         2      830            819        11 UA        1545 N14228  EWR   
-##  2  2013     2     1      456            500        -4      652            648         4 US        1117 N197UW  EWR   
-##  3  2013     3     1        4           2159       125      318             56       142 B6          11 N706JB  JFK   
-##  4  2013     4     1      454            500        -6      636            640        -4 US        1843 N566UW  EWR   
-##  5  2013     5     1        9           1655       434      308           2020       408 VX         413 N628VA  JFK   
-##  6  2013     6     1        2           2359         3      341            350        -9 B6         739 N618JB  JFK   
-##  7  2013     7     1        1           2029       212      236           2359       157 B6         915 N653JB  JFK   
-##  8  2013     8     1       12           2130       162      257             14       163 B6        1371 N618JB  LGA   
-##  9  2013     9     1        9           2359        10      343            340         3 B6         839 N663JB  JFK   
-## 10  2013    10     1      447            500       -13      614            648       -34 US        1877 N538UW  EWR   
-## 11  2013    11     1        5           2359         6      352            345         7 B6         745 N568JB  JFK   
-## 12  2013    12     1       13           2359        14      446            445         1 B6         745 N715JB  JFK   
-## # … with 6 more variables: dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515         2      830            819        11 UA        1545
+##  2  2013     2     1      456            500        -4      652            648         4 US        1117
+##  3  2013     3     1        4           2159       125      318             56       142 B6          11
+##  4  2013     4     1      454            500        -6      636            640        -4 US        1843
+##  5  2013     5     1        9           1655       434      308           2020       408 VX         413
+##  6  2013     6     1        2           2359         3      341            350        -9 B6         739
+##  7  2013     7     1        1           2029       212      236           2359       157 B6         915
+##  8  2013     8     1       12           2130       162      257             14       163 B6        1371
+##  9  2013     9     1        9           2359        10      343            340         3 B6         839
+## 10  2013    10     1      447            500       -13      614            648       -34 US        1877
+## 11  2013    11     1        5           2359         6      352            345         7 B6         745
+## 12  2013    12     1       13           2359        14      446            445         1 B6         745
+## # … with 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
+## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
   ]
@@ -2351,20 +2532,20 @@ flights_carrier
 ```
 ## # A tibble: 336,776 x 19
 ## # Groups:   carrier [16]
-##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight tailnum origin
-##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; 
-##  1  2013     1     1      517            515         2      830            819        11 UA        1545 N14228  EWR   
-##  2  2013     1     1      533            529         4      850            830        20 UA        1714 N24211  LGA   
-##  3  2013     1     1      542            540         2      923            850        33 AA        1141 N619AA  JFK   
-##  4  2013     1     1      544            545        -1     1004           1022       -18 B6         725 N804JB  JFK   
-##  5  2013     1     1      554            600        -6      812            837       -25 DL         461 N668DN  LGA   
-##  6  2013     1     1      554            558        -4      740            728        12 UA        1696 N39463  EWR   
-##  7  2013     1     1      555            600        -5      913            854        19 B6         507 N516JB  EWR   
-##  8  2013     1     1      557            600        -3      709            723       -14 EV        5708 N829AS  LGA   
-##  9  2013     1     1      557            600        -3      838            846        -8 B6          79 N593JB  JFK   
-## 10  2013     1     1      558            600        -2      753            745         8 AA         301 N3ALAA  LGA   
-## # … with 336,766 more rows, and 6 more variables: dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;,
-## #   time_hour &lt;dttm&gt;
+##     year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515         2      830            819        11 UA        1545
+##  2  2013     1     1      533            529         4      850            830        20 UA        1714
+##  3  2013     1     1      542            540         2      923            850        33 AA        1141
+##  4  2013     1     1      544            545        -1     1004           1022       -18 B6         725
+##  5  2013     1     1      554            600        -6      812            837       -25 DL         461
+##  6  2013     1     1      554            558        -4      740            728        12 UA        1696
+##  7  2013     1     1      555            600        -5      913            854        19 B6         507
+##  8  2013     1     1      557            600        -3      709            723       -14 EV        5708
+##  9  2013     1     1      557            600        -3      838            846        -8 B6          79
+## 10  2013     1     1      558            600        -2      753            745         8 AA         301
+## # … with 336,766 more rows, and 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;,
+## #   distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
 There are no apparent differences in `flights_carrier` from `flights`. The only thing you did by `group_by()` was to tell R that whatever we will do to the new dataset is going to be done by group, which is reflected in "Groups" of the printed data.
@@ -2567,20 +2748,20 @@ flights_new
 ```
 ## # A tibble: 336,776 x 20
 ## # Groups:   carrier, month [185]
-##    mean_arr_delay  year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay carrier flight
-##             &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;int&gt;
-##  1          3.18   2013     1     1      517            515         2      830            819        11 UA        1545
-##  2          3.18   2013     1     1      533            529         4      850            830        20 UA        1714
-##  3          0.982  2013     1     1      542            540         2      923            850        33 AA        1141
-##  4          4.72   2013     1     1      544            545        -1     1004           1022       -18 B6         725
-##  5         -4.40   2013     1     1      554            600        -6      812            837       -25 DL         461
-##  6          3.18   2013     1     1      554            558        -4      740            728        12 UA        1696
-##  7          4.72   2013     1     1      555            600        -5      913            854        19 B6         507
-##  8         25.2    2013     1     1      557            600        -3      709            723       -14 EV        5708
-##  9          4.72   2013     1     1      557            600        -3      838            846        -8 B6          79
-## 10          0.982  2013     1     1      558            600        -2      753            745         8 AA         301
-## # … with 336,766 more rows, and 8 more variables: tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;,
-## #   hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+##    mean_arr_delay  year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay
+##             &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;
+##  1          3.18   2013     1     1      517            515         2      830            819        11
+##  2          3.18   2013     1     1      533            529         4      850            830        20
+##  3          0.982  2013     1     1      542            540         2      923            850        33
+##  4          4.72   2013     1     1      544            545        -1     1004           1022       -18
+##  5         -4.40   2013     1     1      554            600        -6      812            837       -25
+##  6          3.18   2013     1     1      554            558        -4      740            728        12
+##  7          4.72   2013     1     1      555            600        -5      913            854        19
+##  8         25.2    2013     1     1      557            600        -3      709            723       -14
+##  9          4.72   2013     1     1      557            600        -3      838            846        -8
+## 10          0.982  2013     1     1      558            600        -2      753            745         8
+## # … with 336,766 more rows, and 10 more variables: carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
 ```
 
 ---
@@ -2617,19 +2798,19 @@ weather
 
 ```
 ## # A tibble: 4,980 x 15
-##    origin  year month   day  hour  temp  dewp humid wind_dir wind_speed wind_gust precip pressure visib time_hour          
-##    &lt;chr&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dttm&gt;             
-##  1 EWR     2013     1     1    16  37.0  19.9  49.6      300       13.8      20.7      0    1012.    10 2013-01-01 16:00:00
-##  2 EWR     2013     1     1    18  34.0  15.1  45.4      310       12.7      25.3      0    1014.    10 2013-01-01 18:00:00
-##  3 EWR     2013     1     1    21  30.0  12.9  48.5      320       18.4      26.5      0    1016     10 2013-01-01 21:00:00
-##  4 EWR     2013     1     1    22  28.9  12.0  48.7      320       18.4      25.3      0    1016.    10 2013-01-01 22:00:00
-##  5 EWR     2013     1     2     0  27.0  10.9  50.3      310       15.0      25.3      0    1016.    10 2013-01-02 00:00:00
-##  6 EWR     2013     1     2     1  26.1  10.9  52.2      330       12.7      24.2      0    1016.    10 2013-01-02 01:00:00
-##  7 EWR     2013     1     2    11  30.9  12.0  44.9      300       15.0      25.3      0    1018.    10 2013-01-02 11:00:00
-##  8 EWR     2013     1     2    12  32    12.9  44.7      290       12.7      23.0      0    1017.    10 2013-01-02 12:00:00
-##  9 EWR     2013     1     2    13  34.0  12.9  41.3      290       16.1      25.3      0    1017.    10 2013-01-02 13:00:00
-## 10 EWR     2013     1     2    14  34.0  10.9  37.9      310       17.3      26.5      0    1018.    10 2013-01-02 14:00:00
-## # … with 4,970 more rows
+##    origin  year month   day  hour  temp  dewp humid wind_dir wind_speed wind_gust precip pressure visib
+##    &lt;chr&gt;  &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;
+##  1 EWR     2013     1     1    16  37.0  19.9  49.6      300       13.8      20.7      0    1012.    10
+##  2 EWR     2013     1     1    18  34.0  15.1  45.4      310       12.7      25.3      0    1014.    10
+##  3 EWR     2013     1     1    21  30.0  12.9  48.5      320       18.4      26.5      0    1016     10
+##  4 EWR     2013     1     1    22  28.9  12.0  48.7      320       18.4      25.3      0    1016.    10
+##  5 EWR     2013     1     2     0  27.0  10.9  50.3      310       15.0      25.3      0    1016.    10
+##  6 EWR     2013     1     2     1  26.1  10.9  52.2      330       12.7      24.2      0    1016.    10
+##  7 EWR     2013     1     2    11  30.9  12.0  44.9      300       15.0      25.3      0    1018.    10
+##  8 EWR     2013     1     2    12  32    12.9  44.7      290       12.7      23.0      0    1017.    10
+##  9 EWR     2013     1     2    13  34.0  12.9  41.3      290       16.1      25.3      0    1017.    10
+## 10 EWR     2013     1     2    14  34.0  10.9  37.9      310       17.3      26.5      0    1018.    10
+## # … with 4,970 more rows, and 1 more variable: time_hour &lt;dttm&gt;
 ```
 
   ]
@@ -2798,15 +2979,15 @@ Applying the same function to all numeric variables using `where(is.numeric)`:
 
 ```
 ## # A tibble: 6 x 15
-##   carrier  year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay flight air_time distance
-##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;    &lt;dbl&gt;
-## 1 9E       2013  6.56  15.6    1487.          1472.     16.7     1639.          1671.     7.38  3567.      86.8     530.
-## 2 AA       2013  6.48  15.7    1297.          1290.      8.59    1521.          1545.     0.364  916.     189.     1340.
-## 3 AS       2013  6.41  15.8    1295.          1285.      5.80    1565.          1595.    -9.93    12.2    326.     2402 
-## 4 B6       2013  6.52  15.8    1381.          1397.     13.0     1406.          1469.     9.46   671.     151.     1069.
-## 5 DL       2013  6.57  15.8    1351.          1346.      9.26    1573.          1596.     1.64  1375.     174.     1237.
-## 6 EV       2013  6.58  15.7    1369.          1354.     20.0     1488.          1532.    15.8   4624.      90.1     563.
-## # … with 2 more variables: hour &lt;dbl&gt;, minute &lt;dbl&gt;
+##   carrier  year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time arr_delay flight
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;          &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;
+## 1 9E       2013  6.56  15.6    1487.          1472.     16.7     1639.          1671.     7.38  3567. 
+## 2 AA       2013  6.48  15.7    1297.          1290.      8.59    1521.          1545.     0.364  916. 
+## 3 AS       2013  6.41  15.8    1295.          1285.      5.80    1565.          1595.    -9.93    12.2
+## 4 B6       2013  6.52  15.8    1381.          1397.     13.0     1406.          1469.     9.46   671. 
+## 5 DL       2013  6.57  15.8    1351.          1346.      9.26    1573.          1596.     1.64  1375. 
+## 6 EV       2013  6.58  15.7    1369.          1354.     20.0     1488.          1532.    15.8   4624. 
+## # … with 4 more variables: air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;
 ```
 
   ] 
@@ -3313,9 +3494,9 @@ This is &lt;span style="color:red"&gt; too long for your analysis.&lt;/span&gt;
 
 .panel[.panel-name[Exercise 1]
 
-+ Using `flights` data, calculate the total number of flights by carrier-month, which in the long format
++ Using `flights` data, calculate the total number of flights by carrier-month, which is in the long format
 
-+ Reshape the data into a long format so that you have number of flights per month in columns 
++ Reshape the data into a wide format so that you have number of flights per month in columns 
 
 Here is the output you are supposed to get if done correctly:
 
@@ -3323,24 +3504,25 @@ Here is the output you are supposed to get if done correctly:
 ```
 ## # A tibble: 16 x 13
 ## # Groups:   carrier [16]
-##    carrier month_1 month_2 month_3 month_4 month_5 month_6 month_7 month_8 month_9 month_10 month_11 month_12
-##    &lt;chr&gt;     &lt;int&gt;   &lt;int&gt;   &lt;int&gt;   &lt;int&gt;   &lt;int&gt;   &lt;int&gt;   &lt;int&gt;   &lt;int&gt;   &lt;int&gt;    &lt;int&gt;    &lt;int&gt;    &lt;int&gt;
-##  1 9E         1573    1459    1627    1511    1462    1437    1494    1456    1540     1673     1595     1633
-##  2 AA         2794    2517    2787    2722    2803    2757    2882    2856    2614     2715     2577     2705
-##  3 AS           62      56      62      60      62      60      62      62      60       62       52       54
-##  4 B6         4427    4103    4772    4517    4576    4622    4984    4952    4291     4361     4289     4741
-##  5 DL         3690    3444    4189    4092    4082    4126    4251    4318    3883     4093     3849     4093
-##  6 EV         4171    3827    4726    4561    4817    4456    4641    4563    4725     4908     4471     4307
-##  7 F9           59      49      57      57      58      55      58      55      58       57       61       61
-##  8 FL          328     296     316     311     325     252     263     263     255      236      202      213
-##  9 HA           31      28      31      30      31      30      31      31      25       21       25       28
-## 10 MQ         2271    2044    2256    2211    2284    2178    2261    2263    2206     2228     2056     2139
-## 11 OO            1      NA      NA      NA      NA       2      NA       4      20       NA        5       NA
-## 12 UA         4637    4346    4971    5047    4960    4975    5066    5124    4694     5060     4854     4931
-## 13 US         1602    1552    1721    1727    1785    1736    1786    1779    1698     1846     1699     1605
-## 14 VX          316     271     303     466     496     480     489     489     453      472      451      476
-## 15 WN          996     911     998     980    1006    1028    1076    1047    1010     1091     1033     1099
-## 16 YV           46      48      18      38      49      49      81      65      42       66       49       50
+##    carrier month_1 month_2 month_3 month_4 month_5 month_6 month_7 month_8 month_9 month_10 month_11
+##    &lt;chr&gt;     &lt;int&gt;   &lt;int&gt;   &lt;int&gt;   &lt;int&gt;   &lt;int&gt;   &lt;int&gt;   &lt;int&gt;   &lt;int&gt;   &lt;int&gt;    &lt;int&gt;    &lt;int&gt;
+##  1 9E         1573    1459    1627    1511    1462    1437    1494    1456    1540     1673     1595
+##  2 AA         2794    2517    2787    2722    2803    2757    2882    2856    2614     2715     2577
+##  3 AS           62      56      62      60      62      60      62      62      60       62       52
+##  4 B6         4427    4103    4772    4517    4576    4622    4984    4952    4291     4361     4289
+##  5 DL         3690    3444    4189    4092    4082    4126    4251    4318    3883     4093     3849
+##  6 EV         4171    3827    4726    4561    4817    4456    4641    4563    4725     4908     4471
+##  7 F9           59      49      57      57      58      55      58      55      58       57       61
+##  8 FL          328     296     316     311     325     252     263     263     255      236      202
+##  9 HA           31      28      31      30      31      30      31      31      25       21       25
+## 10 MQ         2271    2044    2256    2211    2284    2178    2261    2263    2206     2228     2056
+## 11 OO            1      NA      NA      NA      NA       2      NA       4      20       NA        5
+## 12 UA         4637    4346    4971    5047    4960    4975    5066    5124    4694     5060     4854
+## 13 US         1602    1552    1721    1727    1785    1736    1786    1779    1698     1846     1699
+## 14 VX          316     271     303     466     496     480     489     489     453      472      451
+## 15 WN          996     911     998     980    1006    1028    1076    1047    1010     1091     1033
+## 16 YV           46      48      18      38      49      49      81      65      42       66       49
+## # … with 1 more variable: month_12 &lt;int&gt;
 ```
 
   ]
@@ -3416,7 +3598,7 @@ Now suppose, you have collected price and production data for Lancaster and Doug
 
 Here is what the datasets look like (these are made-up numbers).
 
-.left-plot5[
+.left5[
 
 ```
 ##      price
@@ -3427,7 +3609,7 @@ Here is what the datasets look like (these are made-up numbers).
 ```
 ]
 
-.right-plot5[
+.right5[
 
 ```
 ##      yield
@@ -3450,7 +3632,7 @@ Question: Can you merge the two?
 
 Let's display one more variable from each of the datasets.
 
-.left-plot5[
+.left5[
 
 ```
 ##      price    county
@@ -3461,7 +3643,7 @@ Let's display one more variable from each of the datasets.
 ```
 ]
 
-.right-plot5[
+.right5[
 
 ```
 ##      yield    county
@@ -3487,7 +3669,7 @@ Question: Can you merge the two now?
 
 Let's display one more variable from each of the datasets.
 
-.left-plot5[
+.left5[
 
 ```
 ##      price    county year
@@ -3498,7 +3680,7 @@ Let's display one more variable from each of the datasets.
 ```
 ]
 
-.right-plot5[
+.right5[
 
 ```
 ##      yield    county year
@@ -3730,7 +3912,7 @@ left_join(yield_data, weather_data, by = c("county", "year"))
 
 &lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
 
-&lt;span style="color:blue"&gt; Remember: &lt;/span&gt;If there are multiple matches between `data_x` and `data_y`, all combinations of the matches are returned 
+.blue[Remember:] If there are multiple matches between `data_x` and `data_y`, all combinations of the matches are returned 
 
 ---
 
@@ -3861,7 +4043,6 @@ Each flight (single row in `flights_Jan`) now has multiple rows. Was this expect
   ]
 
 ]
-
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

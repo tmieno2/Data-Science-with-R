@@ -120,7 +120,7 @@ ul li{
 }
 
 ul, li{
-  margin-left: 9px; 
+  margin-left: 15px; 
   padding-left: 0px; 
 }
 
@@ -129,10 +129,154 @@ ol li{
 }
 
 ol, li{
-  margin-left: 9px; 
+  margin-left: 15px; 
   padding-left: 0px; 
 }
 
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+.content-box { 
+    box-sizing: border-box;
+    background-color: #e2e2e2;
+}
+.content-box-blue,
+.content-box-gray,
+.content-box-grey,
+.content-box-army,
+.content-box-green,
+.content-box-purple,
+.content-box-red,
+.content-box-yellow {
+  box-sizing: border-box;
+  border-radius: 15px;
+  margin: 0 0 15px;
+  overflow: hidden;
+  padding: 0px 20px 0px 20px;
+  width: 100%;
+}
+.content-box-blue { background-color: #F0F8FF; }
+.content-box-gray { background-color: #e2e2e2; }
+.content-box-grey { background-color: #F5F5F5; }
+.content-box-army { background-color: #737a36; }
+.content-box-green { background-color: #d9edc2; }
+.content-box-purple { background-color: #e2e2f9; }
+.content-box-red { background-color: #ffcccc; }
+.content-box-yellow { background-color: #fef5c4; }
+.content-box-blue .remark-inline-code,
+.content-box-blue .remark-inline-code,
+.content-box-gray .remark-inline-code,
+.content-box-grey .remark-inline-code,
+.content-box-army .remark-inline-code,
+.content-box-green .remark-inline-code,
+.content-box-purple .remark-inline-code,
+.content-box-red .remark-inline-code,
+.content-box-yellow .remark-inline-code { 
+  background: none;
+}
+
+.full-width {
+    display: flex;
+    width: 100%;
+    flex: 1 1 auto;
+}
+&lt;/style&gt;
+
+
+&lt;style type="text/css"&gt;
+blockquote, .blockquote {
+  display: block;
+  margin-top: 0.1em;
+  margin-bottom: 0.2em;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-left: solid 10px #0148A4;
+  border-top: solid 2px #0148A4;
+  border-bottom: solid 2px #0148A4;
+  border-right: solid 2px #0148A4;
+  box-shadow: 0 0 6px rgba(0,0,0,0.5);
+  /* background-color: #e64626; */
+  color: #e64626;
+  padding: 0.5em;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+
+.blockquote p {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h1:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h2:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h3:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h4:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+.text-shadow {
+  text-shadow: 0 0 4px #424242;
+}
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+/******************
+ * Slide scrolling
+ * (non-functional)
+ * not sure if it is a good idea anyway
+slides &gt; slide {
+  overflow: scroll;
+ padding: 5px 40px;
+}
+.scrollable-slide .remark-slide {
+  height: 400px;
+  overflow: scroll !important;
+}
+ ******************/
+
+.scroll-box-8 {
+  height:8em;
+  overflow-y: scroll;
+}
+.scroll-box-10 {
+  height:10em;
+  overflow-y: scroll;
+}
+.scroll-box-12 {
+  height:12em;
+  overflow-y: scroll;
+}
+.scroll-box-14 {
+  height:14em;
+  overflow-y: scroll;
+}
+.scroll-box-16 {
+  height:16em;
+  overflow-y: scroll;
+}
+.scroll-box-18 {
+  height:18em;
+  overflow-y: scroll;
+}
+.scroll-box-20 {
+  height:20em;
+  overflow-y: scroll;
+}
+.scroll-output {
+  height: 90%;
+  overflow-y: scroll;
+}
+
+ 
 &lt;/style&gt;
 
 
@@ -193,7 +337,7 @@ library(tidyverse)
 .panelset[ 
 
 .panel[.panel-name[Instruction]
-Go [here]() and download **county_yield.rds** and then read the file onto R:
+Go [here](https://www.dropbox.com/sh/63rlp4ydmyjm1ui/AACYSeN0f_WAgKPQKzgpGVe0a?dl=0) and download **county_yield.rds** and then read the file onto R:
   ]
 
 .panel[.panel-name[R Code]
@@ -240,11 +384,11 @@ county_yield &lt;- readRDS("county_yield.rds") %&gt;%
 .panel[.panel-name[Variable Definitions]
 + `soy_yield`: soybean yield (bu/acre)
 + `corn_yield`: corn yield (bu/acre)
-+ `d0_5_9`: 
-+ `d1_5_9`: 
-+ `d2_5_9`: 
-+ `d3_5_9`: 
-+ `d4_5_9`: 
++ `d0_5_9`: ratio of weeks under drought severity of 0 from May to September
++ `d1_5_9`: ~ drought severity of 1 from May to September   
++ `d2_5_9`: ~ drought severity of 2 from May to September   
++ `d3_5_9`: ~ drought severity of 3 from May to September   
++ `d4_5_9`: ~ drought severity of 4 from May to September   
   ]
 ]
 
@@ -4072,8 +4216,8 @@ Next time around, just run `library(extrafont)`.
 
 .panel[.panel-name[font families]
 
-<div id="htmlwidget-673201d49cdc18626f29" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-673201d49cdc18626f29">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72"],["-Keyboard","-SFNSDisplay","-SFNSText","-SFNSText-Italic","AndaleMono","AppleBraille","AppleBraille-Outline6Dot","AppleBraille-Outline8Dot","AppleBraille-Pinpoint6Dot","AppleBraille-Pinpoint8Dot","AppleMyungjo","Arial-Black","Arial-BoldItalicMT","Arial-BoldMT","Arial-ItalicMT","ArialMT","ArialNarrow","ArialNarrow-Bold","ArialNarrow-BoldItalic","ArialNarrow-Italic","ArialRoundedMTBold","ArialUnicodeMS","BodoniOrnamentsITCTT","BodoniSvtyTwoSCITCTT-Book","Bradley-Hand-Bold","BrushScriptMT","ComicSansMS","ComicSansMS-Bold","CourierNewPS-BoldItalicMT","CourierNewPS-BoldMT","CourierNewPS-ItalicMT","CourierNewPSMT","DINAlternate-Bold","DINCondensed-Bold","Georgia","Georgia-Bold","Georgia-BoldItalic","Georgia-Italic","Impact","KhmerSangamMN","LaoSangamMN","Luminari-Regular","MicrosoftSansSerif","Tahoma","Tahoma-Bold","TimesNewRomanPS-BoldItalicMT","TimesNewRomanPS-BoldMT","TimesNewRomanPS-ItalicMT","TimesNewRomanPSMT","Trattatello","Trebuchet-BoldItalic","TrebuchetMS","TrebuchetMS-Bold","TrebuchetMS-Italic","Verdana","Verdana-Bold","Verdana-BoldItalic","Verdana-Italic","Webdings","Wingdings-Regular","Wingdings2","Wingdings3","OpenSans-Bold","OpenSans-BoldItalic","OpenSans-ExtraBold","OpenSans-ExtraBoldItalic","OpenSans-Italic","OpenSans-Light","OpenSans-LightItalic","OpenSans-Regular","OpenSans-SemiBold","OpenSans-SemiBoldItalic"],[false,false,false,false,false,false,false,false,false,false,false,false,true,true,false,false,false,true,true,false,false,false,false,false,true,false,false,true,true,true,false,false,true,true,false,true,true,false,false,false,false,false,false,false,true,true,true,false,false,false,true,false,true,false,false,true,true,false,false,false,false,false,true,true,false,false,false,false,false,false,false,false],[false,false,false,true,false,false,false,false,false,false,false,false,true,false,true,false,false,false,true,true,false,false,false,false,false,true,false,false,true,false,true,false,false,false,false,false,true,true,false,false,false,false,false,false,false,true,false,true,false,false,true,false,false,true,false,false,true,true,false,false,false,false,false,true,false,true,true,false,true,false,false,true]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>FontName<\/th>\n      <th>Bold<\/th>\n      <th>Italic<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-6556ded433c966150601" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6556ded433c966150601">{"x":{"filter":"none","data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65","66","67","68","69","70","71","72"],["-Keyboard","-SFNSDisplay","-SFNSText","-SFNSText-Italic","AndaleMono","AppleBraille","AppleBraille-Outline6Dot","AppleBraille-Outline8Dot","AppleBraille-Pinpoint6Dot","AppleBraille-Pinpoint8Dot","AppleMyungjo","Arial-Black","Arial-BoldItalicMT","Arial-BoldMT","Arial-ItalicMT","ArialMT","ArialNarrow","ArialNarrow-Bold","ArialNarrow-BoldItalic","ArialNarrow-Italic","ArialRoundedMTBold","ArialUnicodeMS","BodoniOrnamentsITCTT","BodoniSvtyTwoSCITCTT-Book","Bradley-Hand-Bold","BrushScriptMT","ComicSansMS","ComicSansMS-Bold","CourierNewPS-BoldItalicMT","CourierNewPS-BoldMT","CourierNewPS-ItalicMT","CourierNewPSMT","DINAlternate-Bold","DINCondensed-Bold","Georgia","Georgia-Bold","Georgia-BoldItalic","Georgia-Italic","Impact","KhmerSangamMN","LaoSangamMN","Luminari-Regular","MicrosoftSansSerif","Tahoma","Tahoma-Bold","TimesNewRomanPS-BoldItalicMT","TimesNewRomanPS-BoldMT","TimesNewRomanPS-ItalicMT","TimesNewRomanPSMT","Trattatello","Trebuchet-BoldItalic","TrebuchetMS","TrebuchetMS-Bold","TrebuchetMS-Italic","Verdana","Verdana-Bold","Verdana-BoldItalic","Verdana-Italic","Webdings","Wingdings-Regular","Wingdings2","Wingdings3","OpenSans-Bold","OpenSans-BoldItalic","OpenSans-ExtraBold","OpenSans-ExtraBoldItalic","OpenSans-Italic","OpenSans-Light","OpenSans-LightItalic","OpenSans-Regular","OpenSans-SemiBold","OpenSans-SemiBoldItalic"],[false,false,false,false,false,false,false,false,false,false,false,false,true,true,false,false,false,true,true,false,false,false,false,false,true,false,false,true,true,true,false,false,true,true,false,true,true,false,false,false,false,false,false,false,true,true,true,false,false,false,true,false,true,false,false,true,true,false,false,false,false,false,true,true,false,false,false,false,false,false,false,false],[false,false,false,true,false,false,false,false,false,false,false,false,true,false,true,false,false,false,true,true,false,false,false,false,false,true,false,false,true,false,true,false,false,false,false,false,true,true,false,false,false,false,false,false,false,true,false,true,false,false,true,false,false,true,false,false,true,true,false,false,false,false,false,true,false,true,true,false,true,false,false,true]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>FontName<\/th>\n      <th>Bold<\/th>\n      <th>Italic<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"order":[],"autoWidth":false,"orderClasses":false,"columnDefs":[{"orderable":false,"targets":0}]}},"evals":[],"jsHooks":[]}</script>
 
   ]
 

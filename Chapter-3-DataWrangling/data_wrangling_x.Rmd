@@ -12,51 +12,7 @@ output:
       countIncrementalSlides: false
 ---
 
-```{r setup, include = FALSE}
-options(htmltools.dir.version = FALSE)
-```
-
-
-```{r , include = FALSE}
-library(knitr)
-opts_chunk$set(
-  fig.align = "center", 
-  #fig.width=6, fig.height=4.5, 
-  # out.width="748px", #out.length="520.75px",
-  # dpi = 100, #fig.path='Figs/',
-  cache = T,
-  warning = F, 
-  message = F
-  #, echo=F, 
-  )
-
-opts_knit$set(root.dir = "~/Dropbox/TeachingUNL/DataScience/Datasets/Chapter_3_data_wrangling")
-# setwd("~/Dropbox/TeachingUNL/DataScience/Datasets/Chapter_3_data_wrangling") 
-
-library(flipbookr)
-library(flair)
-```
-
-```{r xaringan-themer, include = FALSE, warning = FALSE, eval = F}
-library(xaringanthemer)
-style_duo_accent(
-  header_h1_font_size = "1.6rem",
-  header_h2_font_size = "1.3rem",
-  header_h3_font_size = "1rem",
-  code_inline_font_size = "0.7em",
-  code_inline_background_color = "#e6e6e6", 
-  text_font_size = "0.7rem",
-  code_font_size = "0.6rem",
-  link_color = "#ff005a"
-)
-```
-
-```{r xaringanExtra, echo=FALSE}
-library(xaringanExtra)
-xaringanExtra::use_xaringan_extra(c("tile_view", "animate_css", "tachyons"))
-xaringanExtra::use_tile_view()
-xaringanExtra::use_panelset()
-xaringanExtra::use_clipboard()
+```{r, child = './../setup.Rmd'}
 ```
 
 ```{r, include = F}
@@ -64,73 +20,6 @@ xaringanExtra::use_clipboard()
 suppressMessages(library(data.table))
 suppressMessages(library(parallel))
 ````
-
-```{css, echo = F}
-.remark-code {
-  display: block;
-  overflow-x: auto;
-  padding: .3em;
-  background: #ffe7e7;
-} 
-
-.remark-inline-code {
-  padding-top: 0px;
-  padding-bottom: 0px;
-  background-color: #e6e6e6;
-}
-
-.hljs-github .hljs {
-  background: #F6F6FF;
-}
-
-
-.left-code {
-  width: 38%;
-  height: 92%;
-  float: left;
-}
-
-.right-plot {
-  width: 60%;
-  float: right;
-  padding-left: 1%;
-}
-
-.left-plot5 {
-  width: 48%;
-  height: 92%;
-  float: left;
-}
-
-.right-plot5 {
-  width: 48%;
-  float: right;
-  padding-left: 1%;
-}
-
-.full-code {
-  width: 100%;
-}
-
-ul li{
-  margin: 7px;
-  
-}
-
-ul, li{
-  margin-left: 9px; 
-  padding-left: 0px; 
-}
-
-ol li{
-  margin: 7px;
-}
-
-ol, li{
-  margin-left: 9px; 
-  padding-left: 0px; 
-}
-```
 
 # Table of contents
 
@@ -298,7 +187,7 @@ class(HousePrices_tbl)
 
 # `data.frame` and `tibble`: display method
 
-.left-plot5[
+.left5[
 
 `data.frame`
 
@@ -307,7 +196,7 @@ HousePrices
 ```
 ]
 
-.right-plot5[
+.right5[
 
 `tibble`
 
@@ -337,7 +226,7 @@ matrix[rows of interest, columns of interest]
 
 2nd to 8th rows, the 3rd and 5th columns
 
-.left-plot5[
+.left5[
 
 `data.frame`
 
@@ -346,7 +235,7 @@ HousePrices[2:8, c(3,5)]
 ```
 ]
 
-.right-plot5[
+.right5[
 
 `tibble`
 
@@ -371,7 +260,7 @@ data[, c("variable 1", "variable 2", ...)]
 
 ## Examples:
 
-.left-plot5[
+.left5[
 `data.frame`
 
 ```{r, cache=TRUE}
@@ -379,7 +268,7 @@ head(HousePrices[, "price"])
 ```
 ]
 
-.right-plot5[
+.right5[
 `tibble`
 
 ```{r, cache=TRUE}
@@ -397,7 +286,7 @@ Alternatively, to access a column (variable) from a dataset, you can use `$` lik
 
 ## Examples:
 
-.left-plot5[
+.left5[
 
 `data.frame`
 
@@ -406,7 +295,7 @@ head(HousePrices$price)
 ```
 ]
 
-.right-plot5[
+.right5[
 `tibble`
 ```{r, cache=TRUE}
 head(HousePrices_tbl$price)
@@ -1660,14 +1549,14 @@ decorate("arrange-desc") %>%
 + (left): `flights_mini` has two observations per month (left). 
 + (right): Only one observation per month (12 unique values) after applying `distinct()` 
 
-.left-plot5[
+.left5[
 
 ```{r }
 flights_mini
 ```
 ]
 
-.right-plot5[
+.right5[
 
 ```{r }
 distinct(flights_mini, month)
@@ -2454,9 +2343,9 @@ data.frame(
 
 .panel[.panel-name[Exercise 1]
 
-+ Using `flights` data, calculate the total number of flights by carrier-month, which in the long format
++ Using `flights` data, calculate the total number of flights by carrier-month, which is in the long format
 
-+ Reshape the data into a long format so that you have number of flights per month in columns 
++ Reshape the data into a wide format so that you have number of flights per month in columns 
 
 Here is the output you are supposed to get if done correctly:
 
@@ -2555,13 +2444,13 @@ Now suppose, you have collected price and production data for Lancaster and Doug
 
 Here is what the datasets look like (these are made-up numbers).
 
-.left-plot5[
+.left5[
 ```{r echo = F, dependson = "data_gen"}  
 select(price_data, price)
 ```
 ]
 
-.right-plot5[
+.right5[
 ```{r echo = F, dependson = "data_gen"}  
 select(yield_data, yield)
 ```
@@ -2579,13 +2468,13 @@ Question: Can you merge the two?
 
 Let's display one more variable from each of the datasets.
 
-.left-plot5[
+.left5[
 ```{r echo = F, dependson = "data_gen"}  
 select(price_data, price, county)
 ```
 ]
 
-.right-plot5[
+.right5[
 ```{r echo = F, dependson = "data_gen"}  
 select(yield_data, yield, county)
 ```
@@ -2606,13 +2495,13 @@ Question: Can you merge the two now?
 
 Let's display one more variable from each of the datasets.
 
-.left-plot5[
+.left5[
 ```{r echo = F, dependson = "data_gen"}  
 select(price_data, price, county, year)
 ```
 ]
 
-.right-plot5[
+.right5[
 ```{r echo = F, dependson = "data_gen"}  
 select(yield_data, yield, county, year)
 ```
@@ -2764,7 +2653,7 @@ left_join(yield_data, weather_data, by = c("county", "year"))
 
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
-<span style="color:blue"> Remember: </span>If there are multiple matches between `data_x` and `data_y`, all combinations of the matches are returned 
+.blue[Remember:] If there are multiple matches between `data_x` and `data_y`, all combinations of the matches are returned 
 
 ---
 
@@ -2851,5 +2740,4 @@ Each flight (single row in `flights_Jan`) now has multiple rows. Was this expect
   ]
 
 ]
-
 

@@ -74,7 +74,7 @@ library(ggplot2) #<<
 .panelset[ 
 
 .panel[.panel-name[Instruction]
-Go [here]() and download **county_yield.rds** and then read the file onto R:
+Go [here](https://www.dropbox.com/sh/63rlp4ydmyjm1ui/AACYSeN0f_WAgKPQKzgpGVe0a?dl=0) and download **county_yield.rds** and then read the file onto R:
   ]
 
 .panel[.panel-name[R Code]
@@ -96,11 +96,11 @@ county_yield
 .panel[.panel-name[Variable Definitions]
 + `soy_yield`: soybean yield (bu/acre)
 + `corn_yield`: corn yield (bu/acre)
-+ `d0_5_9`: 
-+ `d1_5_9`: 
-+ `d2_5_9`: 
-+ `d3_5_9`: 
-+ `d4_5_9`: 
++ `d0_5_9`: ratio of weeks under drought severity of 0 from May to September
++ `d1_5_9`: ~ drought severity of 1 from May to September   
++ `d2_5_9`: ~ drought severity of 2 from May to September   
++ `d3_5_9`: ~ drought severity of 3 from May to September   
++ `d4_5_9`: ~ drought severity of 4 from May to September   
   ]
 ]
 
