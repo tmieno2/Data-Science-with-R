@@ -1445,7 +1445,7 @@ rename(flights_mini,
 Let’s create a dataset with variables that have a white space in their names:
 
 ```{r }
-df <- data_frame(
+df <- tibble(
   'County ID' = c(1,2,3),
   'County Name' = c('Dundy','Chase','Perkins')
 ) 
@@ -2312,7 +2312,7 @@ is in a <span style="color:red"> long </span> format.
 
 # Wide or long?
 
-This is <span style="color:red"> too long for your analysis.</span> 
+This is ".red[too long]" for your analysis. 
 
 ```{r echo = F}
 data.frame(
@@ -2519,54 +2519,83 @@ The variables that let you merge two datasets are called <span style="color:blue
 What are the keys here?
 
   ]
-]
 
+.panel[.panel-name[How]
 
----
++ You can use the `left_join()` function from the `dplyr` package to merge two datasets.
 
-# Merging multiple datasets 
++ There are different types of join functions:
+  * `right_join()` (you never need to use this one)
+  * `inner_join()`
+  * `full_join()`
+  * `semi_join()`
+  * `nest_join()` 
 
-You can use the `left_join()` function from the `dplyr` package to merge two datasets.
++ But, 99% of the time, `left_join()` is sufficient. 
 
---
++ Try to learn other functions when you encounter a case where `left_join()` is not sufficient. Do not waster your time until then. 
 
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+  ] 
 
-There are different types of join functions:
+  <!-- panel ends here -->
 
-+ `right_join()` (you never need to use this one)
-+ `inner_join()`
-+ `full_join()`
-+ `semi_join()`
-+ `nest_join()`
+.panel[.panel-name[left_join()]
 
---
-
-But, 99% of the time, `left_join()` is sufficient. Try to learn other functions when you encounter a case where `left_join()` is not sufficient. Do not waster your time until then. 
-
----
-
-# `left_join()` 
+**Syntax**
 
 ```{r eval = F}
 #--- Syntax (NOT RUN) ---#
 left_join(data_x, data_y, by = keys)  
 ```
 
---
+**Rules to remember**
 
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
++ .blue[Rule 1]: It returns all rows from `data_x`, and all columns from `data_x` and `data_y`
++ .blue[Rule 2]: Rows in `data_x` with no match in `data_y` will have NA values in the new columns 
++ .blue[Rule 3]: If there are multiple matches between `data_x` and `data_y`, all combinations of the matches are returned
 
-`left_join()` 
+.content-box-red[Note: The order of datasets matter.]
 
-+ It returns all rows from `data_x`, and all columns from `data_x` and `data_y`
-+ Rows in `data_x` with no match in `data_y` will have NA values in the new columns 
-+ If there are multiple matches between `data_x` and `data_y`, all combinations of the matches are returned
+  ]
+
+]
 
 ---
 
-# `left_join()`: 1 to 1
+# `left_join()` demonstration: 1 to 1
 
+.panelset[ 
+
+<!-- panel ends here -->
+
+.panel[.panel-name[Data prep]
+
+Run the following code to run the merging demonstration later:
+
+```{r data_gen_disp, eval = F}
+N <- 2
+T <- 2
+
+set.seed(582374)
+
+price_data <- data.frame(
+  price = runif(N * T, min = 2, max = 6),
+  county = c(rep('Lancaster',2),rep('Douglas',2)),
+  year = c(2015, 2016, 2015, 2016)
+  )
+
+yield_data <- data.frame(
+  yield = runif(N * T, min = 180, max = 280),
+  county = c('Lancaster','Douglas','Lancaster','Douglas'),
+  year = c(2015, 2015, 2016, 2016)
+  )
+```
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[Demo 1]
 
 The keys are `county` and `year`, so
 
@@ -2574,16 +2603,21 @@ The keys are `county` and `year`, so
 left_join(yield_data, price_data, by = c("county", "year"))  
 ```
 
---
+Switching the two?
 
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+```{r }
+left_join(price_data, yield_data, by = c("county", "year"))  
+```
 
-In this instance, which comes first does not matter because all of the rows in `yield_data` have exactly one match in `price_data`.  
+<br>
 
+Note: In this instance, .red[which comes first does not matter] because all the individual rows in `yield_data` (left data) have exactly one match in `price_data` (right data) without fail, and vice versa.  
 
----
+  ] 
 
-# `left_join()`: 1 to 1 
+  <!-- panel ends here -->
+
+.panel[.panel-name[Data prep 2]
 
 Let's expand the `yield_data`:
 
@@ -2597,36 +2631,43 @@ yield_data <- data.frame(
 yield_data
 ```
 
----
+  ] 
 
-# `left_join()`: 1 to 1  
+  <!-- panel ends here -->
 
+.panel[.panel-name[Demo 2]
 
-`yield_data` on the right:
+**`yield_data` on the right**:
 
 ```{r }
 left_join(price_data, yield_data, by = c("county", "year"))  
 ```
 
---
-
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
-
-`yield_data` on the left:
+**`yield_data` on the left**:
 
 ```{r }
 left_join(yield_data, price_data, by = c("county", "year"))  
 ```
 
---
+.red[Remember?]
 
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
++ .blue[Rule 1]: `left_join()` returns all rows from `data_x`, and all columns from `data_x` and `data_y`
++ .blue[Rule 2]: Rows in `data_x` with no match in `data_y` will have NA values in the new columns 
+  ] 
 
-Remember: Rows in `data_x` with no match in `data_y` will have NA values in the new columns 
- 
+  <!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
+
 ---
 
-# `left_join`: 1 to m
+# `left_join` demonstration: 1 to m
+
+
+.panelset[ 
+
+.panel[.panel-name[Data prep]
 
 Let's create a weather dataset where you have more than one observations per county-year:
 
@@ -2641,35 +2682,27 @@ weather_data <- data.frame(
 weather_data
 ```
 
----
+  ]
 
-# `left_join`: 1 to m
+<!-- panel ends here -->
+
+.panel[.panel-name[Demo]
 
 ```{r }
 left_join(yield_data, weather_data, by = c("county", "year"))  
 ```
 
---
+.red[Remember?] 
 
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
++ .blue[Rule 3]: If there are multiple matches between `data_x` and `data_y`, all combinations of the matches are returned
 
-.blue[Remember:] If there are multiple matches between `data_x` and `data_y`, all combinations of the matches are returned 
+  ]
 
----
+  <!-- panel ends here -->
+]
 
-# `left_join`: 1 to m
+<!-- panel set ends here -->
 
-You can turn it into a wide format:
-
-```{r }
-left_join(yield_data, weather_data, by = c("county", "year")) %>% 
-  pivot_wider(
-    names_from = month, 
-    names_prefix = "rain_m_", 
-    values_from = rainfall
-  ) %>% 
-  arrange(county, year)
-```
 
 ---
 
@@ -2679,7 +2712,7 @@ left_join(yield_data, weather_data, by = c("county", "year")) %>%
 
 .panel[.panel-name[Preparation]
 
-Create the following datasets and take a look at them to understand their contents:
+Create the following datasets and take a look at them to understand what's in them:
 
 **Flights in January**:
 
@@ -2712,7 +2745,11 @@ hourly_temp_Jan <- weather %>%
 
 + You are interested in learning the impact of **daily** temperature on departure delay for the flights in January. To do so, you need to have them in a single dataset.  
 
++ Is this going to be a 1-to-1 matching or 1-to-m matching?
+
 + Merge `daily_temp_Jan` to `flights_Jan` using `left_join()`
+
+<br>
 
 Here is the output you are supposed to get if done correctly:
 
@@ -2726,7 +2763,11 @@ left_join(flights_Jan, daily_temp_Jan, by = c("origin", "month", "day"))
 
 + You are interested in learning the impact of **hourly** temperature on departure delay for the flights in January. To do so, you need to have them in a single dataset.  
 
++ Is this going to be a 1-to-1 matching or 1-to-m matching?
+
 + Merge `hourly_temp_Jan` to `flights_Jan` using `left_join()`
+
+<br>
 
 Here is the output you are supposed to get if done correctly:
 
@@ -2735,7 +2776,6 @@ left_join(flights_Jan, hourly_temp_Jan, by = c("origin", "month", "day"))
 ```
 
 Each flight (single row in `flights_Jan`) now has multiple rows. Was this expected. 
-
 
   ]
 
