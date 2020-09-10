@@ -2531,7 +2531,7 @@ What are the keys here?
   * `semi_join()`
   * `nest_join()` 
 
-+ But, 99% of the time, `left_join()` is sufficient. 
++ But, most of the time, `left_join()` is sufficient. 
 
 + Try to learn other functions when you encounter a case where `left_join()` is not sufficient. Do not waster your time until then. 
 
@@ -2656,8 +2656,22 @@ left_join(yield_data, price_data, by = c("county", "year"))
   ] 
 
   <!-- panel ends here -->
-]
 
+.panel[.panel-name[keeping all rows]
+
+We saw in the previous slide having `price_data` (as `data_x`) and `yield_data` as (`data_y`), `left_join()` discarded rows in `yield_data` (`data_y`).
+
+If you would like to keep unmatched rows in `data_y`, you can use `full_join()`.
+
+```{r }
+full_join(price_data, yield_data, by = c("county", "year"))  
+```
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
 <!-- panel set ends here -->
 
 ---
@@ -2699,6 +2713,7 @@ left_join(yield_data, weather_data, by = c("county", "year"))
   ]
 
   <!-- panel ends here -->
+
 ]
 
 <!-- panel set ends here -->
