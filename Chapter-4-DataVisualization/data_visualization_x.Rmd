@@ -71,6 +71,10 @@ library(ggplot2) #<<
 
 # The datasets we use
 
+```{r eval = F, echo = F}
+setwd("~/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-4-DataVisualization") 
+```
+
 .panelset[ 
 
 .panel[.panel-name[Instruction]
@@ -1209,7 +1213,82 @@ ggplot(data = county_yield_s) +
 
   ] <!-- panel ends here -->
 
+.panel[.panel-name[strip label]
+
+.left-code[
+
+You can change strip labels using the `labeller = ` option inside `facet_grid()` (or `facet_wrap()`). 
+
+To do this, you need to create a vector of labels you want where its element names are the corresponding values of the faceting variables.
+
+Define labels first:
+
+```{r }
+#--- the vector values are new strip labels ---#
+year_labels <- paste("Year = ", c(2017, 2018))
+
+#--- the element names are the values to replace  ---#
+names(year_labels) <- c("2017", "2018")
+```
+
+Create a faceted figure with new labels:
+
+```{r strip-label, eval = F}  
+ggplot(data = county_yield_s) + 
+  geom_histogram(aes(x = corn_yield)) +
+  facet_grid(
+    state_name ~ year, 
+    labeller = labeller(year = year_labels) #<<
+  )  
+```
+
+By `year = year_labels`, you are applying `year_labels` to the faceting variable `year`.
+
 ]
+
+.right-plot[
+```{r strip-label-fig, ref.label = "strip-label", echo = F, out.width = "90%"}  
+
+```
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[or]
+
+
+.left-code[
+Or, you could just create a variable that has the values you want to use as labels and use it as a faceting variable:
+
+```{r alt-strip-label, eval = F}  
+county_yield_s %>% 
+  mutate(
+    year_text = paste0("Year = ", year) #<<
+  ) %>% 
+  ggplot(data = .) + 
+    geom_histogram(aes(x = corn_yield)) +
+    facet_grid(
+      state_name ~ year_text #<<
+    ) 
+```
+
+]
+
+.right-plot[
+```{r alt-strip-label-f, ref.label = "alt-strip-label", echo = F, out.width = "90%"}  
+
+```
+]
+
+
+
+  ] 
+
+  <!-- panel ends here -->
+]
+
 
 ---
 

@@ -442,7 +442,7 @@ class(corn_yields_tbl)
 
 So, a code like this works:
 
-```{r eval = F}
+```{r csv-read, eval = F}
 corn_yield <- read.csv("corn_yields.csv")
 ```
 
@@ -568,10 +568,15 @@ read_excel(path to the file, sheet = x)
 
 Import a sheet of an **xls(x)** file using `read_excel()`:
 
-```{r}
+```{r eval = F}
 corn_08 <- read_excel("corn_yields.xls", sheet = 1) # 1st sheet 
 corn_09 <- read_excel("corn_yields.xls", sheet = 2) # 2nd sheet
 ```
+
+```{r echo = F}
+corn_08 <- read_excel("~/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-3-DataWrangling/corn_yields.xls", sheet = 1)  
+```
+
 
   ]
 
@@ -1304,7 +1309,7 @@ a3 <- flights_mini %>%
 ---
 
 
-# `mutate()`: define new variables  
+# `mutate()`: define new (or update) variables  
 
 .panelset[ 
 
@@ -1386,10 +1391,98 @@ flights_mini %>%
 
 Note: the function you apply has to accept a vector (a variable column).
 
+  ] 
+
+  <!-- panel ends here -->
+]
+
+---
+
+# More on `mutate()` 
+
+.panelset[ 
+
+.panel[.panel-name[selective mutation]
+
+Sometimes, you want to to alter the values of a variable for specific rows that satisfy certain conditions.
+
+**Example**:
+Suppose you found out that `dep_time` for all the flights from `JFK` was misreported so that `dep_time` is 10 minutes earlier than the true departure times. 
+
+So, we would like to add 10 minutes to all the flights by `JFK`.
+
+You can use `ifelse()` like this:
+
+.scroll-box-18[
+```{r }
+flights_mini %>% 
+  mutate(
+    dep_time_correct = ifelse(origin == "JFK", dep_time + 10, dep_time) #<<
+  ) %>% 
+  relocate(origin, dep_time, dep_time_correct) %>% arrange(origin) 
+```
+]
 
   ] 
 
+.panel[.panel-name[dichotomous]
+
+Suppose you want to label flights with `arr_delay > 0` to be `time-loss` and `time-gain` otherwise:
+
+You can use `ifelse()` for defining a dichotomous variable like this:
+
+.scroll-box-20[
+```{r }
+flights_mini %>% 
+  mutate(
+    loss_or_gain = ifelse(arr_delay > 0, "time-loss", "time-gain") #<<
+  ) %>% 
+  relocate(arr_delay, loss_or_gain)
+```
 ]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[More than two cases]
+
+The `case_when()` function is useful if you have more than two cases.
+
+**Syntax**:
+
+```{r eval = F}
+case_when(
+  condition 1 ~ value to assign,
+  condition 2 ~ value to assign,
+  condition 3 ~ value to assign,
+  ...
+)  
+```
+
+**Example**:
+
+.scroll-box-16[
+```{r }
+flights_mini %>% 
+  mutate(origin = case_when(
+    origin == "JFK" ~ "John F. Kennedy",
+    origin == "EWR" ~ "Newark Liberty International", 
+    origin == "LGA" ~ "LaGuardia" 
+    )
+  ) %>% relocate(origin)
+```
+]
+
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
 
 ---
 
