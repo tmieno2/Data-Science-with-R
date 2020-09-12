@@ -306,19 +306,14 @@ slides &gt; slide {
 
 ## Learning objectives
 
-The objectives of this chapter is to learn how to use the `ggplot2` package to create figures for effective communication 
+The objectives of this chapter is to learn how to use the `gt` package to create publication-quality tables.
 
 ## Table of contents
 
-1. [`ggplot2` basics](#ggplot2-basics)
-2. [Different types of figures](#dif-geoms)
-3. [Placing more information in one figure](#more-info)
-4. [Faceted figures](#faceting)
-5. [Other supplementary `geom_*()`](#other-geoms)
-6. [Make your figures presentable to others](#fine-tune)
-7. [Tips](#tips)
-7. [Gallery of other type of figures](#gallery)
-7. [Animated figures](#animated)
+1. [Create and modify tables: the basics](#create-modify)
+2. [Formatting values in tables](#formating)
+3. [Modify by column](#columns)
+4. [Save tables as a file](#save)
 
 &lt;br&gt;
 
@@ -334,9 +329,8 @@ The objectives of this chapter is to learn how to use the `ggplot2` package to c
 ---
 
 class: inverse, center, middle
-name: more-info
 
-# Create awesome tables with the `gt` package 
+# Create tables with the `gt` package 
 
 &lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
 
@@ -4167,7 +4161,7 @@ sp500_data %&gt;%
 ---
 
 class: inverse, center, middle
-name: dif-geoms
+name: create-modify
 
 # Create table and modify Parts  
 
@@ -4723,6 +4717,15 @@ We will see how they are used later in a demonstration.
 
 ---
 
+
+# Table structure and the name of its parts 
+
+&lt;img src="gt_structure.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+source: &lt;https://gt.rstudio.com/&gt;
+
+---
+
 # Create or Modify Parts 
 
 .panelset[ 
@@ -4771,394 +4774,6 @@ tab_header(
 .left5[
 
 Before:
-
-<style>html {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
-}
-
-#poahczfngl .gt_table {
-  display: table;
-  border-collapse: collapse;
-  margin-left: auto;
-  margin-right: auto;
-  color: #333333;
-  font-size: 16px;
-  font-weight: normal;
-  font-style: normal;
-  background-color: #FFFFFF;
-  width: auto;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #A8A8A8;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #A8A8A8;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-}
-
-#poahczfngl .gt_heading {
-  background-color: #FFFFFF;
-  text-align: center;
-  border-bottom-color: #FFFFFF;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#poahczfngl .gt_title {
-  color: #333333;
-  font-size: 125%;
-  font-weight: initial;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  border-bottom-color: #FFFFFF;
-  border-bottom-width: 0;
-}
-
-#poahczfngl .gt_subtitle {
-  color: #333333;
-  font-size: 85%;
-  font-weight: initial;
-  padding-top: 0;
-  padding-bottom: 4px;
-  border-top-color: #FFFFFF;
-  border-top-width: 0;
-}
-
-#poahczfngl .gt_bottom_border {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#poahczfngl .gt_col_headings {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-}
-
-#poahczfngl .gt_col_heading {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 6px;
-  padding-left: 5px;
-  padding-right: 5px;
-  overflow-x: hidden;
-}
-
-#poahczfngl .gt_column_spanner_outer {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: normal;
-  text-transform: inherit;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-left: 4px;
-  padding-right: 4px;
-}
-
-#poahczfngl .gt_column_spanner_outer:first-child {
-  padding-left: 0;
-}
-
-#poahczfngl .gt_column_spanner_outer:last-child {
-  padding-right: 0;
-}
-
-#poahczfngl .gt_column_spanner {
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: bottom;
-  padding-top: 5px;
-  padding-bottom: 6px;
-  overflow-x: hidden;
-  display: inline-block;
-  width: 100%;
-}
-
-#poahczfngl .gt_group_heading {
-  padding: 8px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-}
-
-#poahczfngl .gt_empty_group_heading {
-  padding: 0.5px;
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  vertical-align: middle;
-}
-
-#poahczfngl .gt_from_md > :first-child {
-  margin-top: 0;
-}
-
-#poahczfngl .gt_from_md > :last-child {
-  margin-bottom: 0;
-}
-
-#poahczfngl .gt_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  margin: 10px;
-  border-top-style: solid;
-  border-top-width: 1px;
-  border-top-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 1px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 1px;
-  border-right-color: #D3D3D3;
-  vertical-align: middle;
-  overflow-x: hidden;
-}
-
-#poahczfngl .gt_stub {
-  color: #333333;
-  background-color: #FFFFFF;
-  font-size: 100%;
-  font-weight: initial;
-  text-transform: inherit;
-  border-right-style: solid;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-  padding-left: 12px;
-}
-
-#poahczfngl .gt_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#poahczfngl .gt_first_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-}
-
-#poahczfngl .gt_grand_summary_row {
-  color: #333333;
-  background-color: #FFFFFF;
-  text-transform: inherit;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-#poahczfngl .gt_first_grand_summary_row {
-  padding-top: 8px;
-  padding-bottom: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-  border-top-style: double;
-  border-top-width: 6px;
-  border-top-color: #D3D3D3;
-}
-
-#poahczfngl .gt_striped {
-  background-color: rgba(128, 128, 128, 0.05);
-}
-
-#poahczfngl .gt_table_body {
-  border-top-style: solid;
-  border-top-width: 2px;
-  border-top-color: #D3D3D3;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-}
-
-#poahczfngl .gt_footnotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#poahczfngl .gt_footnote {
-  margin: 0px;
-  font-size: 90%;
-  padding: 4px;
-}
-
-#poahczfngl .gt_sourcenotes {
-  color: #333333;
-  background-color: #FFFFFF;
-  border-bottom-style: none;
-  border-bottom-width: 2px;
-  border-bottom-color: #D3D3D3;
-  border-left-style: none;
-  border-left-width: 2px;
-  border-left-color: #D3D3D3;
-  border-right-style: none;
-  border-right-width: 2px;
-  border-right-color: #D3D3D3;
-}
-
-#poahczfngl .gt_sourcenote {
-  font-size: 90%;
-  padding: 4px;
-}
-
-#poahczfngl .gt_left {
-  text-align: left;
-}
-
-#poahczfngl .gt_center {
-  text-align: center;
-}
-
-#poahczfngl .gt_right {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-#poahczfngl .gt_font_normal {
-  font-weight: normal;
-}
-
-#poahczfngl .gt_font_bold {
-  font-weight: bold;
-}
-
-#poahczfngl .gt_font_italic {
-  font-style: italic;
-}
-
-#poahczfngl .gt_super {
-  font-size: 65%;
-}
-
-#poahczfngl .gt_footnote_marks {
-  font-style: italic;
-  font-size: 65%;
-}
-</style>
-<div id="poahczfngl" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
-  
-  <thead class="gt_col_headings">
-    <tr>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">country_name</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">y_1995</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">y_2005</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">y_2015</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr>
-      <td class="gt_row gt_left">Australia</td>
-      <td class="gt_row gt_center">18072000</td>
-      <td class="gt_row gt_center">20394800</td>
-      <td class="gt_row gt_center">23850784</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">New Zealand</td>
-      <td class="gt_row gt_center">3673400</td>
-      <td class="gt_row gt_center">4133900</td>
-      <td class="gt_row gt_center">4595700</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">Papua New Guinea</td>
-      <td class="gt_row gt_center">4894276</td>
-      <td class="gt_row gt_center">6314709</td>
-      <td class="gt_row gt_center">7919825</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">Solomon Islands</td>
-      <td class="gt_row gt_center">359225</td>
-      <td class="gt_row gt_center">469885</td>
-      <td class="gt_row gt_center">587482</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">New Caledonia</td>
-      <td class="gt_row gt_center">193816</td>
-      <td class="gt_row gt_center">232250</td>
-      <td class="gt_row gt_center">272400</td>
-    </tr>
-  </tbody>
-  
-  
-</table></div>
-
-]
-
-.right5[
-
-After:
 
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -5497,14 +5112,7 @@ After:
 }
 </style>
 <div id="kbwojinlfb" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
-  <thead class="gt_header">
-    <tr>
-      <th colspan="4" class="gt_heading gt_title gt_font_normal" style>A</th>
-    </tr>
-    <tr>
-      <th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>B</th>
-    </tr>
-  </thead>
+  
   <thead class="gt_col_headings">
     <tr>
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">country_name</th>
@@ -5551,27 +5159,9 @@ After:
 
 ]
 
-  ] 
+.right5[
 
-&lt;!-- panel ends here --&gt;
-
-.panel[.panel-name[Ex 2]
-
-This adds a footnote label to the right of the `y_2015` column label and put the footnote text `"This is a footnote"` at the bottom of the table.
-
-
-```r
-tab_footnote(
-  #--- action ---#
-  footnote = "This is a footnote", 
-  #--- location ---#
-  locations = cells_column_labels(columns = vars(y_2015))
-  )
-```
-
-.left5[
-
-Before:
+After:
 
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -5910,7 +5500,14 @@ Before:
 }
 </style>
 <div id="zswrxcyrxn" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
-  
+  <thead class="gt_header">
+    <tr>
+      <th colspan="4" class="gt_heading gt_title gt_font_normal" style>A</th>
+    </tr>
+    <tr>
+      <th colspan="4" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>B</th>
+    </tr>
+  </thead>
   <thead class="gt_col_headings">
     <tr>
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">country_name</th>
@@ -5957,9 +5554,27 @@ Before:
 
 ]
 
-.right5[
+  ] 
 
-After:
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Ex 2]
+
+This adds a footnote label to the right of the `y_2015` column label and put the footnote text `"This is a footnote"` at the bottom of the table.
+
+
+```r
+tab_footnote(
+  #--- action ---#
+  footnote = "This is a footnote", 
+  #--- location ---#
+  locations = cells_column_labels(columns = vars(y_2015))
+  )
+```
+
+.left5[
+
+Before:
 
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
@@ -6298,6 +5913,394 @@ After:
 }
 </style>
 <div id="tgsibbctsa" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
+  
+  <thead class="gt_col_headings">
+    <tr>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1">country_name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">y_1995</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">y_2005</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1">y_2015</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr>
+      <td class="gt_row gt_left">Australia</td>
+      <td class="gt_row gt_center">18072000</td>
+      <td class="gt_row gt_center">20394800</td>
+      <td class="gt_row gt_center">23850784</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">New Zealand</td>
+      <td class="gt_row gt_center">3673400</td>
+      <td class="gt_row gt_center">4133900</td>
+      <td class="gt_row gt_center">4595700</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Papua New Guinea</td>
+      <td class="gt_row gt_center">4894276</td>
+      <td class="gt_row gt_center">6314709</td>
+      <td class="gt_row gt_center">7919825</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">Solomon Islands</td>
+      <td class="gt_row gt_center">359225</td>
+      <td class="gt_row gt_center">469885</td>
+      <td class="gt_row gt_center">587482</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">New Caledonia</td>
+      <td class="gt_row gt_center">193816</td>
+      <td class="gt_row gt_center">232250</td>
+      <td class="gt_row gt_center">272400</td>
+    </tr>
+  </tbody>
+  
+  
+</table></div>
+
+]
+
+.right5[
+
+After:
+
+<style>html {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
+}
+
+#doffqbpdlk .gt_table {
+  display: table;
+  border-collapse: collapse;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#doffqbpdlk .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#doffqbpdlk .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#doffqbpdlk .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 0;
+  padding-bottom: 4px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#doffqbpdlk .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#doffqbpdlk .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#doffqbpdlk .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#doffqbpdlk .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#doffqbpdlk .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#doffqbpdlk .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#doffqbpdlk .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#doffqbpdlk .gt_group_heading {
+  padding: 8px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#doffqbpdlk .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#doffqbpdlk .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#doffqbpdlk .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#doffqbpdlk .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#doffqbpdlk .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 12px;
+}
+
+#doffqbpdlk .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#doffqbpdlk .gt_first_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+}
+
+#doffqbpdlk .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#doffqbpdlk .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#doffqbpdlk .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#doffqbpdlk .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#doffqbpdlk .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#doffqbpdlk .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding: 4px;
+}
+
+#doffqbpdlk .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#doffqbpdlk .gt_sourcenote {
+  font-size: 90%;
+  padding: 4px;
+}
+
+#doffqbpdlk .gt_left {
+  text-align: left;
+}
+
+#doffqbpdlk .gt_center {
+  text-align: center;
+}
+
+#doffqbpdlk .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#doffqbpdlk .gt_font_normal {
+  font-weight: normal;
+}
+
+#doffqbpdlk .gt_font_bold {
+  font-weight: bold;
+}
+
+#doffqbpdlk .gt_font_italic {
+  font-style: italic;
+}
+
+#doffqbpdlk .gt_super {
+  font-size: 65%;
+}
+
+#doffqbpdlk .gt_footnote_marks {
+  font-style: italic;
+  font-size: 65%;
+}
+</style>
+<div id="doffqbpdlk" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   
   <thead class="gt_col_headings">
     <tr>
@@ -16072,7 +16075,7 @@ gt_3
 ---
 
 class: inverse, center, middle
-name: dif-geoms
+name: formating
 
 # Formatting 
 
@@ -18671,7 +18674,7 @@ gt_4
 ---
 
 class: inverse, center, middle
-name: dif-geoms
+name: columns
 
 # Modify Columns 
 
@@ -24295,24 +24298,78 @@ gt_1 %&gt;%
 
 
 
+&lt;!-- 
+#=========================================
+# Modify Columns
+#=========================================
+--&gt;
+  
 ---
 
-# Save
+class: inverse, center, middle
+name: save
 
+# Save tables 
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+
+# Save tables
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+Tables generated by `gt` can be saved as a file in various formats:
+
++ html
++ tex
++ lxt
++ pdf (uses the `webshot`package)
++ png
++ rtf
+
+**Syntax**:
 
 ```r
-gtsave(gt_4, "gt4.html") 
+gtsave(gt_tbl object, file name)  
 ```
+
+**Example**:
 
 
 ```r
 gtsave(gt_4, "gt4.tex") 
 ```
 
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[pdf]
+
+By default, you have lots of white space around the table when saved as a pdf file. Run the following code to confirm this.
+
 
 ```r
-gtsave(gt_4, "LectureNotes/Chapter-6-MakeTable/gt4.pdf", zoom = 0.9, vwidth = 800) 
+gtsave(gt_4, "gt4_default.pdf") 
 ```
+
+Use the `zoom` and `vwidth` options to control the white space and the size of the table:
+
+
+```r
+gtsave(gt_4, "gt4.pdf", zoom = 0.9, vwidth = 800) 
+```
+
+  ]
+
+]
+
+&lt;!-- panel set ends here --&gt;
+
+
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
