@@ -994,3 +994,4 @@ gtsave(gt_4, "gt4.tex")
 ```{r eval = F}
 gtsave(gt_4, "LectureNotes/Chapter-6-MakeTable/gt4.pdf", zoom = 0.9, vwidth = 800) 
 ```
+

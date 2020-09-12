@@ -1,0 +1,354 @@
+---
+title: "Data wrangling with `tidyverse`"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r, child = './../setup.Rmd'}
+```
+
+```{r, include = F}
+#--- load packages ---#
+suppressMessages(library(tidyverse))
+suppressMessages(library(data.table))
+suppressMessages(library(parallel))
+````
+
+# Table of contents
+
+2. [`data.frame` and `tibble`](#df_tbl)
+3. [Data manipulation with `dplyr`: the Basics](#dplyr)
+4. [Grouped operations](#grouped)
+5. [Extensions](#extensions)
+6. [Reshaping data](#reshaping)
+7. [Merging datasets](#merging)
+
+---
+
+# Learning objectives
+
+The objectives of this chapter is to learn how to use the `data.table` package to 
+
++ manipulate data 
++ reshape a dataset
++ merge multiple datasets 
+
+---
+
+#  `data.table` package
+
+.panelset[ 
+
+.panel[.panel-name[What is it?]
+
+The `data.table` package is a popular alternative to `dplyr` that is **much faster** than `dplyr` for most data operations.
+
+See [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping) for the speed comparison of `dplyr` and `data.table`.
+
+[`dply` vs `data.table`](https://atrebas.github.io/post/2019-03-03-datatable-dplyr/)
+
+Install the package if you have not.
+
+```{r, eval = FALSE}
+install.packages("data.table")
+```
+
+```{r, message = TRUE}
+library(data.table)
+```
+
+  ]
+
+.panel[.panel-name[Preparation]
+
+
+We use `HousePrices` dataset from the `AER` package.
+
+```{r}
+#--- load the AER package ---#
+library(AER)
+
+#--- load the HousePrices data ---#
+data(HousePrices) 
+
+#--- convert to tibble ---#
+hp_tbl <- tibble(HousePrices)
+```
+
+  ]
+
+.panel[.panel-name[conversion]
+
+The `data.table` offers a different class of two-dimensional data called `data.table`. 
+
+Unlike `dplyr`, `data.table` functionalities for data wrangling can only be applied to a `data.table` object.
+
+You can use `data.table()` to convert a `data.frame` (or `tibble`) into a `data.table`
+
+```{r }
+hp_dt <- data.table(hp_tbl)  
+```
+
+Check the class:
+
+```{r }
+class(hp_dt)  
+```
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[display]
+
+.left5[
+```{r }
+hp_tbl
+```
+
+<br>
+
+.red[Note]: unlike `tibble`, all the columns are printed for the first and last 5 rows when you evaluate a `data.table` object. 
+]
+
+.right5[
+
+.scroll-box-30[
+```{r eval = F}
+hp_dt
+```
+```{r echo = F}
+hp_dt
+```
+ ] 
+
+]
+
+
+  ] 
+
+  <!-- panel ends here -->
+]
+
+
+---
+
+# Accessing parts of the data 
+
+.panelset[ 
+
+.panel[.panel-name[Numerical index]
+
+The ways you access parts of `tibble` and `data.table` are very different!
+
+Numerical indexing does not even work!!
+
+.left5[
+
+`data.frame`
+
+```{r, cache=TRUE}
+hp_tbl[2:8, c(3,5)]
+```
+]
+
+.right5[
+
+`tibble`
+
+```{r, cache=TRUE}
+hp_dt[2:8, c(3,5)]
+```
+]
+
+  ]
+
+]
+
+<!-- panel set ends here -->
+
+---
+
+# Before we start
+
+For illustrations, we will use `flights_mini` that we create below:
+
+```{r eval = F}
+library(nycflights13)
+
+(
+flights_dt <- distinct(flights,month,day,.keep_all=TRUE) %>% 
+  filter(day %in% c(1,2)) %>% 
+  arrange(month) %>% 
+  data.table()
+)
+
+```
+
+.scroll-box-20[
+```{r echo = F}
+(
+flights_dt <- distinct(flights,month,day,.keep_all=TRUE) %>% 
+  filter(day %in% c(1,2)) %>% 
+  arrange(month) %>% 
+  data.table()
+) 
+```
+]
+
+
+
+---
+
+# Filter 
+ 
+
+.panelset[ 
+ 
+.panel[.panel-name[]
+
+Instead of explicit verbs, you do everything inside `[]`.
+
+```{r eval = F}
+data[condition,]  
+```
+
+where `data` is a `data.table` object.
+  ]
+ 
+ <!-- panel ends here -->
+ 
+.panel[.panel-name[]
+
+```{r month-l-4, eval = F}
+flights_dt[month <= 4,]
+```
+
+.scroll-box-24[
+```{r ref.label = "month-l-4", echo = F}
+flights_dt[month <= 4,]
+```
+]
+
+ ]
+
+ <!-- panel ends here -->
+
+.panel[.panel-name[]
+
+```{r month-l-4, eval = F}
+flights_dt[month <= 4 | month >= 11,]
+```
+
+.scroll-box-24[
+```{r ref.label = "month-l-4", echo = F}
+flights_dt[month <= 4 | month >= 11,]
+```
+]
+
+  ] 
+
+.panel[.panel-name[]
+
+```{r }
+flights_dt[month <= 4 & month >= 3,]
+```
+
+  ] 
+
+  <!-- panel ends here -->
+  <!-- panel ends here -->
+ 
+]
+ 
+ <!-- panel set ends here -->
+  
+ 
+---
+  
+# Selecting columns
+
+.panelset[ 
+
+.panel[.panel-name[quoted]
+
+```{r }
+flights_dt[, c("year", "dep_time")]
+```
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[non-quoted]
+
+```{r }
+flights_dt[, .(year, dep_time)]
+```
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[except]
+
+```{r }
+flights_dt[, !c("year", "dep_time")]
+```
+
+  ] 
+
+  <!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
+
+---
+
+# Piping with `%>%`
+
+It is possible to pipe a `data.table` object using `.` like below:
+
+```{r }
+flights_dt %>% 
+  .[, .(year, month, day, arr_time)] %>% 
+  .[month <= 4,] %>% 
+  .[day <= 15, ]
+```
+
+---
+
+# Create a new (or update) variable
+
+To create a new variable, you use `:=` operator instead of `=`
+
+```{r }
+copy(flights_dt)[, gain := arr_delay - dep_delay]
+```
+ 
+
+```{r }
+copy(flights_dt)[, `:=`(gain = arr_delay - dep_delay, flight_time = dep_time-arr_time)]
+```
+
+This does not work:
+
+```{r }
+flights_dt[, `:=`(gain = arr_delay - dep_delay, gain_per_hour = gain/(arr_time/60))]
+```
+
+```{r }
+flights_dt[arr_delay > 0, loss_or_gain := "time_loss"]
+```
+
+---
+
+

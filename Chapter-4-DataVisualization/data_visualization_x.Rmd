@@ -4624,3 +4624,34 @@ name: inputoutput
 
 
 
+<!-- 
+```{r }
+
+data <- fread("N_Response_total_ordered-1.csv") %>% 
+  select(x, matches("_BL_"), matches("_ML_"), matches("_TL_")) %>% 
+  pivot_longer(-x, names_to = "gene", values_to = "value") %>% 
+  mutate(group = case_when(
+    str_detect(gene, "_BL_") ~ "BL",
+    str_detect(gene, "_ML_") ~ "ML",
+    str_detect(gene, "_TL_") ~ "TL"
+  )) %>% 
+  mutate(gene_txt = gsub("_BL_", "", gene)) %>% 
+  mutate(gene_txt = gsub("_ML_", "", gene_txt)) %>% 
+  mutate(gene_txt = gsub("_TL_", "", gene_txt)) %>% 
+  #--- I am drawing random numbers here  ---#
+  # But, this is where you normalize the value with log and z
+  mutate(value = runif(nrow(.)))
+
+ggplot(data) + 
+  geom_tile(aes(gene_txt, x, fill= value)) +
+  scale_fill_gradient(low="white", high="blue") +
+  facet_grid(. ~ group) +
+  theme(
+    axis.ticks.y = element_blank(),
+    axis.title = element_blank(),
+    axis.text.y = element_blank(),
+    axis.text.x = element_text(angle = 90),
+  )
+
+```
+ -->

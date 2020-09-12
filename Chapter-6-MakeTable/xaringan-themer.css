@@ -176,18 +176,15 @@ blockquote {
 }
 .remark-slide table {
   margin: auto;
-  border-top: 1px solid #666;
-  border-bottom: 1px solid #666;
+  border-top: 2px solid #666;
 }
-.remark-slide table thead th {
-  border-bottom: 1px solid #ddd;
-}
+
 th, td {
   padding: 5px;
 }
-.remark-slide thead, .remark-slide tfoot, .remark-slide tr:nth-child(even) {
+/*.remark-slide thead, .remark-slide tfoot, .remark-slide tr:nth-child(even) {
   background: #CCEDEA;
-}
+}*/
 table.dataTable tbody {
   background-color: var(--background-color);
   color: var(--text-color);

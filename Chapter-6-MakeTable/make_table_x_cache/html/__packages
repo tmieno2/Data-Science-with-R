@@ -49,3 +49,5 @@ gapminder
 gganimate
 ggforce
 microbenchmark
+modelsummary
+kableExtra

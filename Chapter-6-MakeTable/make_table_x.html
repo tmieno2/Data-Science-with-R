@@ -37,6 +37,28 @@ class: center, middle, inverse, title-slide
 
 
 &lt;style type="text/css"&gt;
+
+.remark-slide th {
+  border-bottom: 1px solid #ddd;
+}
+
+.remark-slide thead {
+  border-bottom: 0px;
+}
+
+.gt_footnote {
+  padding: 2px;  
+}
+
+.remark-slide table {
+  border-collapse: collapse;
+}
+
+.remark-slide tbody {
+  border-bottom: 2px solid #666;
+}
+
+
 .important {
   background-color: lightpink;
   border: 2px solid blue;
@@ -260,6 +282,14 @@ slides &gt; slide {
 }
 .scroll-box-20 {
   height:20em;
+  overflow-y: scroll;
+}
+.scroll-box-24 {
+  height:24em;
+  overflow-y: scroll;
+}
+.scroll-box-30 {
+  height:30em;
   overflow-y: scroll;
 }
 .scroll-output {
@@ -4672,12 +4702,16 @@ gt(tab_data)
 
 .panel[.panel-name[Options]
 
+.left-full[
+
 Several useful options you might want to use when initiating a table with `gt()` are:
 
 + `rowname_col =`: specify which variable of the dataset becomes the row names 
 + `groupname_col =`: specify which variable of the dataset defines the groups each of the rows belong to  
 
-We will see how they are used later in a demonstration. 
+We will see how they are used later in a demonstration.
+
+]
 
   ] 
 
@@ -24279,6 +24313,7 @@ gtsave(gt_4, "gt4.tex")
 ```r
 gtsave(gt_4, "LectureNotes/Chapter-6-MakeTable/gt4.pdf", zoom = 0.9, vwidth = 800) 
 ```
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
