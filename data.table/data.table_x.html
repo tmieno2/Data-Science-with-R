@@ -37,6 +37,61 @@ class: center, middle, inverse, title-slide
 
 
 &lt;style type="text/css"&gt;
+
+.remark-slide-content.hljs-github h1 {
+  margin-top: 5px;  
+  margin-bottom: 25px;  
+}
+
+.remark-slide-content.hljs-github {
+  padding-top: 10px;  
+  padding-left: 30px;  
+  padding-right: 30px;  
+}
+
+.panel-tabs {
+  &lt;!-- color: #062A00; --&gt;
+  color: #841F27;
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panel-tab {
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 3px;  
+  margin-right: 3px;  
+  padding-top: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panelset .panel-tabs .panel-tab {
+  min-height: 40px;
+}
+
+.remark-slide th {
+  border-bottom: 1px solid #ddd;
+}
+
+.remark-slide thead {
+  border-bottom: 0px;
+}
+
+.gt_footnote {
+  padding: 2px;  
+}
+
+.remark-slide table {
+  border-collapse: collapse;
+}
+
+.remark-slide tbody {
+  border-bottom: 2px solid #666;
+}
+
+
 .important {
   background-color: lightpink;
   border: 2px solid blue;
@@ -307,9 +362,11 @@ The objectives of this chapter is to learn how to use the `data.table` package t
 
 .panel[.panel-name[What is it?]
 
-The `data.table` package is a popular alternative to `dplyr` that is **much faster** than `dplyr` for most data operations.
+The `data.table` package is a popular alternative to `dplyr` that is **much faster** than `dplyr` for most data operations particularly when the dataset is large.
 
 See [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping) for the speed comparison of `dplyr` and `data.table`.
+
+[`dply` vs `data.table`](https://atrebas.github.io/post/2019-03-03-datatable-dplyr/)
 
 Install the package if you have not.
 
@@ -328,196 +385,629 @@ library(data.table)
 .panel[.panel-name[Preparation]
 
 
-We use `HousePrices` dataset from the `AER` package.
+We use `weather` dataset from the `nycflights13` package.
 
 
 ```r
-#--- load the AER package ---#
-library(AER)
+(
+flights &lt;- fread("https://raw.githubusercontent.com/Rdatatable/data.table/master/vignettes/flights14.csv")  
+)
+```
 
-#--- load the HousePrices data ---#
-data(HousePrices) 
-
-#--- convert to tibble ---#
-hp_tbl &lt;- tibble(HousePrices)
+```
+##         year month day dep_delay arr_delay carrier origin dest air_time distance hour
+##      1: 2014     1   1        14        13      AA    JFK  LAX      359     2475    9
+##      2: 2014     1   1        -3        13      AA    JFK  LAX      363     2475   11
+##      3: 2014     1   1         2         9      AA    JFK  LAX      351     2475   19
+##      4: 2014     1   1        -8       -26      AA    LGA  PBI      157     1035    7
+##      5: 2014     1   1         2         1      AA    JFK  LAX      350     2475   13
+##     ---                                                                              
+## 253312: 2014    10  31         1       -30      UA    LGA  IAH      201     1416   14
+## 253313: 2014    10  31        -5       -14      UA    EWR  IAH      189     1400    8
+## 253314: 2014    10  31        -8        16      MQ    LGA  RDU       83      431   11
+## 253315: 2014    10  31        -4        15      MQ    LGA  DTW       75      502   11
+## 253316: 2014    10  31        -5         1      MQ    LGA  SDF      110      659    8
 ```
 
   ]
 
-.panel[.panel-name[conversion]
-
-The `data.table` offers a different class of two-dimensional data called `data.table`. 
-
-Unlike `dplyr`, `data.table` functionalities for data wrangling can only be applied to a `data.table` object.
-
-You can use `data.table()` to convert a `data.frame` (or `tibble`) into a `data.table`
-
-
-```r
-hp_dt &lt;- data.table(hp_tbl)  
-```
-
-Check the class:
-
-
-```r
-class(hp_dt)  
-```
-
-```
-## [1] "data.table" "data.frame"
-```
-
-  ] 
-
   &lt;!-- panel ends here --&gt;
+]
 
-.panel[.panel-name[display]
+---
 
-.left5[
+# How it works: general form
+
+
+
 
 ```r
-hp_tbl
+data.table[i, j, by]
 ```
 
-```
-## # A tibble: 546 x 12
-##    price lotsize bedrooms bathrooms stories driveway
-##    &lt;dbl&gt;   &lt;dbl&gt;    &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;fct&gt;   
-##  1 42000    5850        3         1       2 yes     
-##  2 38500    4000        2         1       1 yes     
-##  3 49500    3060        3         1       1 yes     
-##  4 60500    6650        3         1       2 yes     
-##  5 61000    6360        2         1       1 yes     
-##  6 66000    4160        3         1       1 yes     
-##  7 66000    3880        3         2       2 yes     
-##  8 69000    4160        3         1       3 yes     
-##  9 83800    4800        3         1       1 yes     
-## 10 88500    5500        3         2       4 yes     
-## # … with 536 more rows, and 6 more variables:
-## #   recreation &lt;fct&gt;, fullbase &lt;fct&gt;, gasheat &lt;fct&gt;,
-## #   aircon &lt;fct&gt;, garage &lt;dbl&gt;, prefer &lt;fct&gt;
++ `i`: specify which rows (like `dplyr::filter`)  
++ `j`: specify the operations on selected columns   
++ `by`: specify the variable to be used as groups by which operations specified in `j` are implemented     
+
+or
+
+.content-box-red[Take `data.table`, subset/reorder rows using `i`, then calculate `j`, grouped by `by`.]
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=850px&gt;&lt;/html&gt;
+
+**Key difference 1**: You can do all three in a single statement unlike `dplyr`:
+
+For example, they will give the same results (the number of flights by American Airline by origin-month):
+
+&lt;br&gt;
+
+**data.table** way:
+
+
+```r
+flights[carrier == "AA", .(.N), by = .(origin, month)] %&gt;% head()
 ```
 
 &lt;br&gt;
 
-.red[Note]: unlike `tibble`, all the columns are printed for the first and last 5 rows when you evaluate a `data.table` object. 
+**`dplyr`** way :
+
+
+```r
+flights %&gt;% 
+  filter(carrier == "AA") %&gt;% 
+  group_by(origin, month) %&gt;% 
+  summarize(n()) %&gt;%
+  head()
+```
+
+
+---
+
+# Filter rows
+
+
+```r
+flights[origin == "JFK" &amp; month == 6L, ] %&gt;% head()
+```
+
+```
+##    year month day dep_delay arr_delay carrier origin dest air_time distance hour
+## 1: 2014     6   1        -9        -5      AA    JFK  LAX      324     2475    8
+## 2: 2014     6   1       -10       -13      AA    JFK  LAX      329     2475   12
+## 3: 2014     6   1        18        -1      AA    JFK  LAX      326     2475    7
+## 4: 2014     6   1        -6       -16      AA    JFK  LAX      320     2475   10
+## 5: 2014     6   1        -4       -45      AA    JFK  LAX      326     2475   18
+## 6: 2014     6   1        -6       -23      AA    JFK  LAX      329     2475   14
+```
+
++ `i`: `origin == "JFK" &amp; month == 6L` 
++ `j`: no action (all columns)
++ `by`: non
+
+---
+
+# Select columns
+
+
+.left5[
+**single column as a vector**
+
+
+```r
+flights[, arr_delay] %&gt;% head()
+```
+
+```
+## [1]  13  13   9 -26   1   0
+```
+
++ `i`: no action (all rows) 
++ `j`: get `arr_delay` itself as it is
++ `by`: non 
+
+**single column as a data.table**
+
+
+```r
+flights[, .(arr_delay)] %&gt;% head()
+```
+
+```
+##    arr_delay
+## 1:        13
+## 2:        13
+## 3:         9
+## 4:       -26
+## 5:         1
+## 6:         0
+```
+
+.content-box-blue[`.` here is a short hand for `list`]
+
+]
+
+.right5[
+**multiple column as a data.table**
+
+
+```r
+flights[, .(arr_delay, dep_delay)] %&gt;% head()
+```
+
+```
+##    arr_delay dep_delay
+## 1:        13        14
+## 2:        13        -3
+## 3:         9         2
+## 4:       -26        -8
+## 5:         1         2
+## 6:         0         4
+```
+
+**select and rename multiple column as a data.table**
+
+
+```r
+flights[, .(a = arr_delay, b = dep_delay)] %&gt;% head()
+```
+
+```
+##      a  b
+## 1:  13 14
+## 2:  13 -3
+## 3:   9  2
+## 4: -26 -8
+## 5:   1  2
+## 6:   0  4
+```
+
+.red[Important Rule]: As long as j-expression returns a list, each element of the list will be converted to a column in the resulting data.table. 
+]
+
+---
+
+# Operations in `j`
+
+**An operation in `j`**
+
+
+```r
+flights[, (arr_delay + dep_delay) &lt; 0] %&gt;% head()
+```
+
+```
+## [1] FALSE FALSE FALSE  TRUE FALSE FALSE
+```
+
+**row-wise subset and operation in `j` at the same time**  
+
+
+```r
+flights[
+  origin == "JFK" &amp; month == 6L, # i
+  .(m_arr = mean(arr_delay), m_dep = mean(dep_delay)) # j
+  ]  
+```
+
+```
+##       m_arr    m_dep
+## 1: 5.839349 9.807884
+```
+
+Remember the rule? `.(m_arr = mean(arr_delay), m_dep = mean(dep_delay))` is a list, so the output is a `data.table`.
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=850px&gt;&lt;/html&gt;
+
+**`dplyr` way**:
+
+
+```r
+filter(flights, origin == "JFK" &amp; month == 6L) %&gt;% 
+  summarize(m_arr = mean(arr_delay), m_dep = mean(dep_delay))
+```
+
+```
+##      m_arr    m_dep
+## 1 5.839349 9.807884
+```
+
+---
+
+# `data.frame`-like column selection and dropping columns
+
+**select variables (like `data.frame`)**
+
+Another way to select particular columns is to provide a concatenated list of variable names in double quotes (just like a `data.frame`):   
+
+
+```r
+flights[, c("arr_delay", "dep_delay")] %&gt;% head(3)
+```
+
+```
+##    arr_delay dep_delay
+## 1:        13        14
+## 2:        13        -3
+## 3:         9         2
+```
+
+**Dropping variables**
+
+You can drop variables by using `-` or `!` in front of the list of the variables to drop:
+
+
+```r
+flights[, !c("arr_delay", "dep_delay")] %&gt;% head(3)
+```
+
+```
+##    year month day carrier origin dest air_time distance hour
+## 1: 2014     1   1      AA    JFK  LAX      359     2475    9
+## 2: 2014     1   1      AA    JFK  LAX      363     2475   11
+## 3: 2014     1   1      AA    JFK  LAX      351     2475   19
+```
+
+```r
+#--- or ---#
+# flights[, !c("arr_delay", "dep_delay")] %&gt;% head(3)
+```
+---
+
+
+# Grouped operations
+
+.left5[
+**group by one variable**
+
+The number of flights by `origin`.
+
+
+```r
+flights[, .(.N), by = .(origin)]
+```
+
+```
+##    origin     N
+## 1:    JFK 81483
+## 2:    LGA 84433
+## 3:    EWR 87400
+```
+
++ `i`: no action (all rows) 
++ `j`: the number of observations
++ `by`: group by `origin` 
+
+**Note**: `.N` is a special symbol from the `data.table` package that means .red[the number of observations].
+
+
 ]
 
 .right5[
 
-.scroll-box-30[
+**group by multiple variables**
+
 
 ```r
-hp_dt
+flights[, .(.N), by = .(origin, month)] %&gt;% 
+  head()
 ```
 
 ```
-##       price lotsize bedrooms bathrooms stories
-##   1:  42000    5850        3         1       2
-##   2:  38500    4000        2         1       1
-##   3:  49500    3060        3         1       1
-##   4:  60500    6650        3         1       2
-##   5:  61000    6360        2         1       1
-##  ---                                          
-## 542:  91500    4800        3         2       4
-## 543:  94000    6000        3         2       4
-## 544: 103000    6000        3         2       4
-## 545: 105000    6000        3         2       2
-## 546: 105000    6000        3         1       2
-##      driveway recreation fullbase gasheat aircon
-##   1:      yes         no      yes      no     no
-##   2:      yes         no       no      no     no
-##   3:      yes         no       no      no     no
-##   4:      yes        yes       no      no     no
-##   5:      yes         no       no      no     no
-##  ---                                            
-## 542:      yes        yes       no      no    yes
-## 543:      yes         no       no      no    yes
-## 544:      yes        yes       no      no    yes
-## 545:      yes        yes       no      no    yes
-## 546:      yes         no       no      no    yes
-##      garage prefer
-##   1:      1     no
-##   2:      0     no
-##   3:      0     no
-##   4:      0     no
-##   5:      0     no
-##  ---              
-## 542:      0     no
-## 543:      0     no
-## 544:      1     no
-## 545:      1     no
-## 546:      1     no
+##    origin month    N
+## 1:    JFK     1 7105
+## 2:    LGA     1 7494
+## 3:    EWR     1 8197
+## 4:    JFK     2 6779
+## 5:    LGA     2 6814
+## 6:    EWR     2 7220
 ```
- ] 
+
+The number of flights by `origin` and `month`.
+
+&lt;br&gt;
+
+**sorted `by`** using `keyby()`
+
+
+```r
+flights[, .(.N), keyby = .(origin, month)] %&gt;% 
+  head()
+```
+
+```
+##    origin month    N
+## 1:    EWR     1 8197
+## 2:    EWR     2 7220
+## 3:    EWR     3 9478
+## 4:    EWR     4 8601
+## 5:    EWR     5 8525
+## 6:    EWR     6 9349
+```
 
 ]
+
+---
+
+# Grouped operations for select observations  
+
+
+```r
+flights[carrier == "AA", .(.N), by = .(origin, month)] %&gt;% head()
+```
+
+```
+##    origin month    N
+## 1:    JFK     1 1064
+## 2:    LGA     1 1173
+## 3:    EWR     1  278
+## 4:    JFK     2  988
+## 5:    LGA     2 1038
+## 6:    EWR     2  241
+```
+
+The number of flights by `origin` and `month` for `carrier == "AA"`
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=850px&gt;&lt;/html&gt;
+
+**`dplyr`** way :
+
+
+```r
+flights %&gt;% 
+  filter(carrier == "AA") %&gt;% 
+  group_by(origin, month) %&gt;% 
+  summarize(n()) %&gt;%
+  head()
+```
+
+```
+## # A tibble: 6 x 3
+## # Groups:   origin [1]
+##   origin month `n()`
+##   &lt;chr&gt;  &lt;int&gt; &lt;int&gt;
+## 1 EWR        1   278
+## 2 EWR        2   241
+## 3 EWR        3   258
+## 4 EWR        4   254
+## 5 EWR        5   257
+## 6 EWR        6   256
+```
+
+---
+
+# Create new (or update) variables
+
+.panelset[ 
+
+.panel[.panel-name[preparation]
+
+Create the following dataset we are going to use in this slide:
+
+
+```r
+(
+flights_mini &lt;- flights[month &lt;= 4,head(.SD, 2), by = month] %&gt;% 
+  .[, .(year, month, day, dep_delay, arr_delay, distance, air_time)] 
+)
+```
+
+```
+##    year month day dep_delay arr_delay distance air_time
+## 1: 2014     1   1        14        13     2475      359
+## 2: 2014     1   1        -3        13     2475      363
+## 3: 2014     2   1        -1         1     2475      358
+## 4: 2014     2   1        -5         3     2475      358
+## 5: 2014     3   1       -11        36     2475      375
+## 6: 2014     3   1        -3        14     2475      368
+## 7: 2014     4   1        -8       -23      764      113
+## 8: 2014     4   1        -8       -11      431       71
+```
+  
+`flights_mini` has two observations per month.
+
 
 
   ] 
 
   &lt;!-- panel ends here --&gt;
-]
 
+.panel[.panel-name[a variable]
 
----
-
-# Accessing parts of the data 
-
-.panelset[ 
-
-.panel[.panel-name[Numerical index]
-
-The ways you access parts of `tibble` and `data.table` are very different!
-
-Numerical indexing does not even work!!
-
-.left5[
-
-`data.frame`
+In `data.table`, you use `:=` to create a new variable instead of `=`.
 
 
 ```r
-hp_tbl[2:8, c(3,5)]
+#--- example ---#
+flights_mini[, speed := distance / air_time]
+
+#--- see what's inside now ---#
+flights_mini
 ```
 
 ```
-## # A tibble: 7 x 2
-##   bedrooms stories
-##      &lt;dbl&gt;   &lt;dbl&gt;
-## 1        2       1
-## 2        3       1
-## 3        3       2
-## 4        2       1
-## 5        3       1
-## 6        3       2
-## 7        3       3
+##    year month day dep_delay arr_delay distance air_time    speed
+## 1: 2014     1   1        14        13     2475      359 6.894150
+## 2: 2014     1   1        -3        13     2475      363 6.818182
+## 3: 2014     2   1        -1         1     2475      358 6.913408
+## 4: 2014     2   1        -5         3     2475      358 6.913408
+## 5: 2014     3   1       -11        36     2475      375 6.600000
+## 6: 2014     3   1        -3        14     2475      368 6.725543
+## 7: 2014     4   1        -8       -23      764      113 6.761062
+## 8: 2014     4   1        -8       -11      431       71 6.070423
+```
+
+
+.red[Important]: 
++ `:=` operator updates data.table columns in-place (by reference), meaning the original data is altered. 
++ Evaluate `flights` and confirm that `speed` is indeed in `flights_mini`.
++ This holds true for any operations involving `:=`. 
++ This is different from `dply.r::mutate()` which does not alter the original dataset
+
+
+  ]
+
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[multiple]
+
+Here are how you define multiple variables at the same time.
+
+**Multiple variable 1**
+
+
+```r
+#--- example ---#
+flights_mini[, c("total_delay", "carrier_origin") := list(arr_delay + dep_delay, distance/air_time)]
+```
+
+The results of the `n`th expression is assigned to `n`th variable name on the left.
+
+**Multiple variable 2**
+
+
+```r
+#--- example ---#
+flights_mini[, `:=`(total_delay = arr_delay + dep_delay, speed = distance/air_time)]
+```
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+Confirm that `flights_mini` was updated to have the new variables defined just above.
+
+
+```r
+flights_mini
+```
+
+```
+##    year month day dep_delay arr_delay distance air_time    speed total_delay carrier_origin
+## 1: 2014     1   1        14        13     2475      359 6.894150          27       6.894150
+## 2: 2014     1   1        -3        13     2475      363 6.818182          10       6.818182
+## 3: 2014     2   1        -1         1     2475      358 6.913408           0       6.913408
+## 4: 2014     2   1        -5         3     2475      358 6.913408          -2       6.913408
+## 5: 2014     3   1       -11        36     2475      375 6.600000          25       6.600000
+## 6: 2014     3   1        -3        14     2475      368 6.725543          11       6.725543
+## 7: 2014     4   1        -8       -23      764      113 6.761062         -31       6.761062
+## 8: 2014     4   1        -8       -11      431       71 6.070423         -19       6.070423
+```
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+.panel[.panel-name[selective update]
+
+You can update column values for some rows that satisfy certain conditions by using logical evaluations in `i` and `:=` in `j`.
+
+**Example**
+
+
+```r
+flights_mini[month == 4, arr_delay := arr_delay + 10]
+```
+
+.left5[
+Before:
+
+```
+##    month arr_delay
+## 1:     1        13
+## 2:     1        13
+## 3:     2         1
+## 4:     2         3
+## 5:     3        36
+## 6:     3        14
+## 7:     4       -23
+## 8:     4       -11
 ```
 ]
 
 .right5[
-
-`tibble`
-
-
-```r
-hp_dt[2:8, c(3,5)]
-```
+After
 
 ```
-##    bedrooms stories
-## 1:        2       1
-## 2:        3       1
-## 3:        3       2
-## 4:        2       1
-## 5:        3       1
-## 6:        3       2
-## 7:        3       3
+##    month arr_delay
+## 1:     1        13
+## 2:     1        13
+## 3:     2         1
+## 4:     2         3
+## 5:     3        36
+## 6:     3        14
+## 7:     4       -13
+## 8:     4        -1
 ```
 ]
 
   ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[assign summary]
+
+You can calculate grouped summary and assign the values to a variable by grouping in `by` and `:=` with summary expressions in `j`.
+
+**Example**
+
+
+```r
+flights_mini[, mean_arr_delay := mean(arr_delay, na.rm = TRUE), by = month]
+
+#--- see what's inside ---#
+flights_mini[, .(month, arr_delay, mean_arr_delay)]
+```
+
+```
+##    month arr_delay mean_arr_delay
+## 1:     1        13             13
+## 2:     1        13             13
+## 3:     2         1              2
+## 4:     2         3              2
+## 5:     3        36             25
+## 6:     3        14             25
+## 7:     4       -13             -7
+## 8:     4        -1             -7
+```
+
+Of course, all the rows in the same month will have the same value (mean of the `arr_delay` of the group).
+
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[copy]
+
+If you have a reason to now wanting the original data to be altered after `:=` operations. You can create a `deep copy` of the dataset using `data.table::copy()` function.
+
+The object created by `copy()` is independent of the original dataset in the sense that actions on one of them do not affect the other.
+
+
+```r
+#--- create a copy ---#
+flights_mini_copy &lt;- copy(flights_mini)
+
+#--- create a variable ---#
+flights_mini[, constant := 1]
+
+#--- see what's inside of the copy ---#
+flights_mini_copy
+```
+
+```
+##    year month day dep_delay arr_delay distance air_time
+## 1: 2014     1   1        14        13     2475      359
+## 2: 2014     1   1        -3        13     2475      363
+## 3: 2014     2   1        -1         1     2475      358
+## 4: 2014     2   1        -5         3     2475      358
+## 5: 2014     3   1       -11        36     2475      375
+## 6: 2014     3   1        -3        14     2475      368
+## 7: 2014     4   1        -8       -23      764      113
+## 8: 2014     4   1        -8       -11      431       71
+```
+]
+
+  &lt;!-- panel ends here --&gt;
 
 ]
 
@@ -525,301 +1015,321 @@ hp_dt[2:8, c(3,5)]
 
 ---
 
-# Before we start
+# Sort  
 
-For illustrations, we will use `flights_mini` that we create below:
+**sort** using `order()`
 
 
 ```r
-library(nycflights13)
+flights[order(month, origin),] %&gt;% head()
+```
 
+```
+##    year month day dep_delay arr_delay carrier origin dest air_time distance hour
+## 1: 2014     1   1         4         0      AA    EWR  LAX      339     2454   18
+## 2: 2014     1   1        -5       -17      AA    EWR  MIA      161     1085   16
+## 3: 2014     1   1       191       185      AA    EWR  DFW      214     1372   16
+## 4: 2014     1   1        -1        -2      AA    EWR  DFW      214     1372   14
+## 5: 2014     1   1        -3       -10      AA    EWR  MIA      154     1085    6
+## 6: 2014     1   1         4       -17      AA    EWR  DFW      215     1372    9
+```
+
+---
+
+# Piping 
+
+You can use `%&gt;%` to chain piped operations just like `dplyr` using `.` to refer to the `data.table` generated through the preceding actions. 
+
+**Example:**
+
+
+```r
+flights[, .(.N), by = .(origin, month)] %&gt;% 
+  .[i, j, by] %&gt;% 
+  .[i, j, by] %&gt;% 
+  .[i, j, by]  
+```
+
+---
+
+# .SD
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+`.SD` (which stands for **S**ubset **D**ata) is a special symbol that allows you to do many cool things.
+
+Let's create a small `data.table` that will help us understand what `.SD` does (we will come back to the code later).
+
+
+```r
 (
-flights_dt &lt;- distinct(flights,month,day,.keep_all=TRUE) %&gt;% 
-  filter(day %in% c(1,2)) %&gt;% 
-  arrange(month) %&gt;% 
-  data.table()
+flights_mini &lt;- flights[,head(.SD, 2), by = month] %&gt;% 
+  .[, .(year, month, dep_delay, arr_delay)]
 )
+```
+
+```
+##     year month dep_delay arr_delay
+##  1: 2014     1        14        13
+##  2: 2014     1        -3        13
+##  3: 2014     2        -1         1
+##  4: 2014     2        -5         3
+##  5: 2014     3       -11        36
+##  6: 2014     3        -3        14
+##  7: 2014     4        -8       -23
+##  8: 2014     4        -8       -11
+##  9: 2014     5        43         5
+## 10: 2014     5        -1       -38
+## 11: 2014     6        -9        -5
+## 12: 2014     6       -10       -13
+## 13: 2014     7        -3        -2
+## 14: 2014     7        -6       -14
+## 15: 2014     8        -3        -5
+## 16: 2014     8        19        55
+## 17: 2014     9        -9       -26
+## 18: 2014     9        -7       -21
+## 19: 2014    10        -5       -15
+## 20: 2014    10        -7       -21
+```
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[What is it?]
+
+Without grouping specified in `by`, `.SD` is the `data.table` itself. So, `flights_mini[, .SD]` is the same as `flights_mini` 
+
+But, when grouped, it becomes the subset (grouped) of the `data.table`.
+
+**Example**:
+
+
+```r
+flights_mini[, print(.SD), by = month]
 ```
 
 .scroll-box-20[
 
 ```
-##     year month day dep_time sched_dep_time dep_delay
-##  1: 2013     1   1      517            515         2
-##  2: 2013     1   2       42           2359        43
-##  3: 2013     2   1      456            500        -4
-##  4: 2013     2   2        3           2359         4
-##  5: 2013     3   1        4           2159       125
-##  6: 2013     3   2       43           2355        48
-##  7: 2013     4   1      454            500        -6
-##  8: 2013     4   2        9           2355        14
-##  9: 2013     5   1        9           1655       434
-## 10: 2013     5   2        3           1905       298
-## 11: 2013     6   1        2           2359         3
-## 12: 2013     6   2       14           2359        15
-## 13: 2013     7   1        1           2029       212
-## 14: 2013     7   2       12           2245        87
-## 15: 2013     8   1       12           2130       162
-## 16: 2013     8   2        6           2359         7
-## 17: 2013     9   1        9           2359        10
-## 18: 2013     9   2        8           2255        73
-## 19: 2013    10   1      447            500       -13
-## 20: 2013    10   2      449            500       -11
-## 21: 2013    11   1        5           2359         6
-## 22: 2013    11   2      453            500        -7
-## 23: 2013    12   1       13           2359        14
-## 24: 2013    12   2       12           2250        82
-##     year month day dep_time sched_dep_time dep_delay
-##     arr_time sched_arr_time arr_delay carrier flight
-##  1:      830            819        11      UA   1545
-##  2:      518            442        36      B6    707
-##  3:      652            648         4      US   1117
-##  4:      513            444        29      B6    739
-##  5:      318             56       142      B6     11
-##  6:      605            440        85      B6    739
-##  7:      636            640        -4      US   1843
-##  8:      346            345         1      B6    739
-##  9:      308           2020       408      VX    413
-## 10:      241           2224       257      B6    111
-## 11:      341            350        -9      B6    739
-## 12:      339            341        -2      B6    727
-## 13:      236           2359       157      B6    915
-## 14:      117              4        73      B6    108
-## 15:      257             14       163      B6   1371
-## 16:      420            340        40      B6    839
-## 17:      343            340         3      B6    839
-## 18:      126             19        67      B6   2002
-## 19:      614            648       -34      US   1877
-## 20:      620            648       -28      US   1877
-## 21:      352            345         7      B6    745
-## 22:      644            651        -7      US   1895
-## 23:      446            445         1      B6    745
-## 24:      103           2356        67      B6   1816
-##     arr_time sched_arr_time arr_delay carrier flight
-##     tailnum origin dest air_time distance hour
-##  1:  N14228    EWR  IAH      227     1400    5
-##  2:  N580JB    JFK  SJU      189     1598   23
-##  3:  N197UW    EWR  CLT       98      529    5
-##  4:  N569JB    JFK  PSE      206     1617   23
-##  5:  N706JB    JFK  FLL      166     1069   21
-##  6:  N623JB    JFK  PSE      219     1617   23
-##  7:  N566UW    EWR  CLT       84      529    5
-##  8:  N519JB    JFK  PSE      197     1617   23
-##  9:  N628VA    JFK  LAX      341     2475   16
-## 10:  N603JB    JFK  FLL      135     1069   19
-## 11:  N618JB    JFK  PSE      200     1617   23
-## 12:  N558JB    JFK  BQN      187     1576   23
-## 13:  N653JB    JFK  SFO      315     2586   20
-## 14:  N318JB    JFK  PWM       45      273   22
-## 15:  N618JB    LGA  FLL      149     1076   21
-## 16:  N608JB    JFK  BQN      193     1576   23
-## 17:  N663JB    JFK  BQN      196     1576   23
-## 18:  N231JB    JFK  BUF       55      301   22
-## 19:  N538UW    EWR  CLT       69      529    5
-## 20:  N193UW    EWR  CLT       73      529    5
-## 21:  N568JB    JFK  PSE      205     1617   23
-## 22:  N190UW    EWR  CLT       97      529    5
-## 23:  N715JB    JFK  PSE      195     1617   23
-## 24:  N316JB    JFK  SYR       35      209   22
-##     tailnum origin dest air_time distance hour
-##     minute           time_hour
-##  1:     15 2013-01-01 05:00:00
-##  2:     59 2013-01-02 23:00:00
-##  3:      0 2013-02-01 05:00:00
-##  4:     59 2013-02-02 23:00:00
-##  5:     59 2013-03-01 21:00:00
-##  6:     55 2013-03-02 23:00:00
-##  7:      0 2013-04-01 05:00:00
-##  8:     55 2013-04-02 23:00:00
-##  9:     55 2013-05-01 16:00:00
-## 10:      5 2013-05-02 19:00:00
-## 11:     59 2013-06-01 23:00:00
-## 12:     59 2013-06-02 23:00:00
-## 13:     29 2013-07-01 20:00:00
-## 14:     45 2013-07-02 22:00:00
-## 15:     30 2013-08-01 21:00:00
-## 16:     59 2013-08-02 23:00:00
-## 17:     59 2013-09-01 23:00:00
-## 18:     55 2013-09-02 22:00:00
-## 19:      0 2013-10-01 05:00:00
-## 20:      0 2013-10-02 05:00:00
-## 21:     59 2013-11-01 23:00:00
-## 22:      0 2013-11-02 05:00:00
-## 23:     59 2013-12-01 23:00:00
-## 24:     50 2013-12-02 22:00:00
-##     minute           time_hour
+##    year dep_delay arr_delay
+## 1: 2014        14        13
+## 2: 2014        -3        13
+##    year dep_delay arr_delay
+## 1: 2014        -1         1
+## 2: 2014        -5         3
+##    year dep_delay arr_delay
+## 1: 2014       -11        36
+## 2: 2014        -3        14
+##    year dep_delay arr_delay
+## 1: 2014        -8       -23
+## 2: 2014        -8       -11
+##    year dep_delay arr_delay
+## 1: 2014        43         5
+## 2: 2014        -1       -38
+##    year dep_delay arr_delay
+## 1: 2014        -9        -5
+## 2: 2014       -10       -13
+##    year dep_delay arr_delay
+## 1: 2014        -3        -2
+## 2: 2014        -6       -14
+##    year dep_delay arr_delay
+## 1: 2014        -3        -5
+## 2: 2014        19        55
+##    year dep_delay arr_delay
+## 1: 2014        -9       -26
+## 2: 2014        -7       -21
+##    year dep_delay arr_delay
+## 1: 2014        -5       -15
+## 2: 2014        -7       -21
+```
+
+```
+## Empty data.table (0 rows and 1 cols): month
 ```
 ]
 
 
++ `.SD` contains all the columns except the grouping columns by default.
++ The original order is preserved by `origin`
 
----
-
-# Filter 
- 
-
-.panelset[ 
- 
-.panel[.panel-name[]
-
-Instead of explicit verbs, you do everything inside `[]`.
-
-
-```r
-data[condition,]  
-```
-
-where `data` is a `data.table` object.
   ]
- 
- &lt;!-- panel ends here --&gt;
- 
-.panel[.panel-name[]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[example 1]
+
+Apply the same function across all the variables:
 
 
 ```r
-flights_dt[month &lt;= 4,]
+flights_mini[, lapply(.SD, mean)]
 ```
 
-.scroll-box-24[
-
 ```
-##    year month day dep_time sched_dep_time dep_delay
-## 1: 2013     1   1      517            515         2
-## 2: 2013     1   2       42           2359        43
-## 3: 2013     2   1      456            500        -4
-## 4: 2013     2   2        3           2359         4
-## 5: 2013     3   1        4           2159       125
-## 6: 2013     3   2       43           2355        48
-## 7: 2013     4   1      454            500        -6
-## 8: 2013     4   2        9           2355        14
-##    arr_time sched_arr_time arr_delay carrier flight
-## 1:      830            819        11      UA   1545
-## 2:      518            442        36      B6    707
-## 3:      652            648         4      US   1117
-## 4:      513            444        29      B6    739
-## 5:      318             56       142      B6     11
-## 6:      605            440        85      B6    739
-## 7:      636            640        -4      US   1843
-## 8:      346            345         1      B6    739
-##    tailnum origin dest air_time distance hour minute
-## 1:  N14228    EWR  IAH      227     1400    5     15
-## 2:  N580JB    JFK  SJU      189     1598   23     59
-## 3:  N197UW    EWR  CLT       98      529    5      0
-## 4:  N569JB    JFK  PSE      206     1617   23     59
-## 5:  N706JB    JFK  FLL      166     1069   21     59
-## 6:  N623JB    JFK  PSE      219     1617   23     55
-## 7:  N566UW    EWR  CLT       84      529    5      0
-## 8:  N519JB    JFK  PSE      197     1617   23     55
-##              time_hour
-## 1: 2013-01-01 05:00:00
-## 2: 2013-01-02 23:00:00
-## 3: 2013-02-01 05:00:00
-## 4: 2013-02-02 23:00:00
-## 5: 2013-03-01 21:00:00
-## 6: 2013-03-02 23:00:00
-## 7: 2013-04-01 05:00:00
-## 8: 2013-04-02 23:00:00
+##    year month dep_delay arr_delay
+## 1: 2014   5.5     -1.15      -2.7
 ```
-]
 
- ]
-
- &lt;!-- panel ends here --&gt;
-
-.panel[.panel-name[]
+Of course, you could get the same results by this, but the output is a list, not a data.table.
 
 
 ```r
-flights_dt[month &lt;= 4 | month &gt;= 11,]
+lapply(flights_mini, mean)
 ```
 
-.scroll-box-24[
-
 ```
-##    year month day dep_time sched_dep_time dep_delay
-## 1: 2013     1   1      517            515         2
-## 2: 2013     1   2       42           2359        43
-## 3: 2013     2   1      456            500        -4
-## 4: 2013     2   2        3           2359         4
-## 5: 2013     3   1        4           2159       125
-## 6: 2013     3   2       43           2355        48
-## 7: 2013     4   1      454            500        -6
-## 8: 2013     4   2        9           2355        14
-##    arr_time sched_arr_time arr_delay carrier flight
-## 1:      830            819        11      UA   1545
-## 2:      518            442        36      B6    707
-## 3:      652            648         4      US   1117
-## 4:      513            444        29      B6    739
-## 5:      318             56       142      B6     11
-## 6:      605            440        85      B6    739
-## 7:      636            640        -4      US   1843
-## 8:      346            345         1      B6    739
-##    tailnum origin dest air_time distance hour minute
-## 1:  N14228    EWR  IAH      227     1400    5     15
-## 2:  N580JB    JFK  SJU      189     1598   23     59
-## 3:  N197UW    EWR  CLT       98      529    5      0
-## 4:  N569JB    JFK  PSE      206     1617   23     59
-## 5:  N706JB    JFK  FLL      166     1069   21     59
-## 6:  N623JB    JFK  PSE      219     1617   23     55
-## 7:  N566UW    EWR  CLT       84      529    5      0
-## 8:  N519JB    JFK  PSE      197     1617   23     55
-##              time_hour
-## 1: 2013-01-01 05:00:00
-## 2: 2013-01-02 23:00:00
-## 3: 2013-02-01 05:00:00
-## 4: 2013-02-02 23:00:00
-## 5: 2013-03-01 21:00:00
-## 6: 2013-03-02 23:00:00
-## 7: 2013-04-01 05:00:00
-## 8: 2013-04-02 23:00:00
+## $year
+## [1] 2014
+## 
+## $month
+## [1] 5.5
+## 
+## $dep_delay
+## [1] -1.15
+## 
+## $arr_delay
+## [1] -2.7
 ```
-]
 
-  ] 
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=850px&gt;&lt;/html&gt;
 
-.panel[.panel-name[]
+**dplyr** way:
 
 
 ```r
-flights_dt[month &lt;= 4 &amp; month &gt;= 3,]
+summarize(flights_mini, across(everything(), mean))
 ```
 
 ```
-##    year month day dep_time sched_dep_time dep_delay
-## 1: 2013     3   1        4           2159       125
-## 2: 2013     3   2       43           2355        48
-## 3: 2013     4   1      454            500        -6
-## 4: 2013     4   2        9           2355        14
-##    arr_time sched_arr_time arr_delay carrier flight
-## 1:      318             56       142      B6     11
-## 2:      605            440        85      B6    739
-## 3:      636            640        -4      US   1843
-## 4:      346            345         1      B6    739
-##    tailnum origin dest air_time distance hour minute
-## 1:  N706JB    JFK  FLL      166     1069   21     59
-## 2:  N623JB    JFK  PSE      219     1617   23     55
-## 3:  N566UW    EWR  CLT       84      529    5      0
-## 4:  N519JB    JFK  PSE      197     1617   23     55
-##              time_hour
-## 1: 2013-03-01 21:00:00
-## 2: 2013-03-02 23:00:00
-## 3: 2013-04-01 05:00:00
-## 4: 2013-04-02 23:00:00
+##   year month dep_delay arr_delay
+## 1 2014   5.5     -1.15      -2.7
 ```
 
   ] 
 
   &lt;!-- panel ends here --&gt;
-  &lt;!-- panel ends here --&gt;
- 
+
+.panel[.panel-name[example 2]
+
+Apply the same function across all the variables by group:
+
+
+```r
+flights_mini[, lapply(.SD, mean), by = month] %&gt;% head()
+```
+
+```
+##    month year dep_delay arr_delay
+## 1:     1 2014       5.5      13.0
+## 2:     2 2014      -3.0       2.0
+## 3:     3 2014      -7.0      25.0
+## 4:     4 2014      -8.0     -17.0
+## 5:     5 2014      21.0     -16.5
+## 6:     6 2014      -9.5      -9.0
+```
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=850px&gt;&lt;/html&gt;
+
+**dplyr** way:
+
+
+```r
+flights_mini %&gt;% 
+  group_by(month) %&gt;% 
+  summarize(across(everything(), mean)) %&gt;% head()
+```
+
+```
+## # A tibble: 6 x 4
+##   month  year dep_delay arr_delay
+##   &lt;int&gt; &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1     1  2014       5.5      13  
+## 2     2  2014      -3         2  
+## 3     3  2014      -7        25  
+## 4     4  2014      -8       -17  
+## 5     5  2014      21       -16.5
+## 6     6  2014      -9.5      -9
+```
+
 ]
- 
- &lt;!-- panel set ends here --&gt;
-  
- 
+
+
+  &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[columns of choice]
+
+Instead of let `.SD` contain all the columns, you can use `.SDcols` to pick variables to be included in `.SD` after `by,`.
+
+**Example**
+
+
+```r
+flights_mini[, lapply(.SD, mean), by = month, .SDcols = c("arr_delay", "dep_delay")]
+```
+
+```
+##     month arr_delay dep_delay
+##  1:     1      13.0       5.5
+##  2:     2       2.0      -3.0
+##  3:     3      25.0      -7.0
+##  4:     4     -17.0      -8.0
+##  5:     5     -16.5      21.0
+##  6:     6      -9.0      -9.5
+##  7:     7      -8.0      -4.5
+##  8:     8      25.0       8.0
+##  9:     9     -23.5      -8.0
+## 10:    10     -18.0      -6.0
+```
+
+&lt;br&gt;
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=850px&gt;&lt;/html&gt;
+
+&lt;br&gt;
+
+You cannot use `.(variable name 1, variable name 1, ...)` for `.SDcols`. This would fail:
+
+
+```r
+flights_mini[, lapply(.SD, mean), by = month, .SDcols = .(arr_delay, dep_delay)]
+```
+
+```
+## Error in .(arr_delay, dep_delay): could not find function "."
+```
+
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+]
+
+&lt;!-- panel set ends here --&gt;
+
+
+
+&lt;!-- 
+#=========================================
+# Reshaping  
+#=========================================
+--&gt;
+
 ---
-  
+
+class: inverse, center, middle
+name: reshaping
+
+# Reshaping datasets 
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+
+
+
 
 
 

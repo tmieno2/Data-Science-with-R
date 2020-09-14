@@ -140,7 +140,6 @@ list(
   )
 `
 
-
 ---
 
 ```{r basics-ms-gt, cache = F, include = F}

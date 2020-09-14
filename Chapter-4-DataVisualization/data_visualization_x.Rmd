@@ -18,6 +18,7 @@ output:
 
 ```{r, include = F, cache = F}
 suppressMessages(library(nycflights13)) 
+suppressMessages(library(extrafont)) 
 ```
 
 # Before you start
@@ -2835,7 +2836,14 @@ library(extrafont)
 font_import()
 ```
 
-Next time around, just run `library(extrafont)`.
+Next time around, just run 
+
+```{r }
+library(extrafont)
+
+#--- load fonts ---#
+loadfonts()
+````
 
 ]
 
@@ -2843,7 +2851,7 @@ Next time around, just run `library(extrafont)`.
 
 .panel[.panel-name[font families]
 
-```{r echo = F}
+```{r echo = F, cache = F}
 fonttable() %>% 
   select(FontName, Bold,  Italic) %>% 
   datatable()
