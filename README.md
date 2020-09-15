@@ -14,4 +14,10 @@ This is the repository for AECN 396/AECN896-002 at University of Nebraska Lincol
     * Create tables with `gt` ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-6-MakeTable/make_table_x.html))
     * Create regression and summary tables with `modelsummary` ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-6-MakeTable/modelsummary_x.html))
 
+## Assignments
+
++ Assignment 1
+    * Rmd template and datasets ([here](https://www.dropbox.com/sh/lz1035evu56hhs1/AADCrtdXPIJ-2aHopTTKhLkga?dl=0))
+    * Submission link ([here](https://www.dropbox.com/request/RJ72YQjh4XZ4ZrcbPbaw))
+
 ## Datasets

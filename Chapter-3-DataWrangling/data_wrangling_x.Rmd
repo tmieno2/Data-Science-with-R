@@ -15,12 +15,6 @@ output:
 ```{r, child = './../setup.Rmd'}
 ```
 
-```{r, include = F}
-#--- load packages ---#
-suppressMessages(library(data.table))
-suppressMessages(library(parallel))
-````
-
 # Table of contents
 
 1. [Importing and exporting data](#inputoutput)
@@ -2181,11 +2175,13 @@ name: reshaping
 
 # Long and wide formats
 
+.left5[
+
 ## Long format
 
 A single column representing a single variable 
 
-```{r echo = F}
+```{r long-data-gen-1, echo = F}
 (
 yield_data_long <- data.frame(
   state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
@@ -2193,10 +2189,10 @@ yield_data_long <- data.frame(
   yield = c(200, 240, 210, 220, 220, 230, 190, 150)
   )
 )
-
 ```
+]
 
---
+.right5[
 
 ## Wide format
 
@@ -2208,9 +2204,38 @@ Multiple column representing a single variable
 )
 ```
 
+Note: there is nothing in the dataset that tells you what the data values represent in the wide format.
+
+]
+
 ---
 
-# Long to wide
+# Long to wide 
+
+.panelset[ 
+
+<!-- panel ends here -->
+
+.panel[.panel-name[prepare]
+
+Create the following dataset in long format:
+
+```{r long-data-gen-1}
+yield_data_long <- data.frame(
+  state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
+  year = c(2019, 2020) %>% rep(4),
+  yield = c(200, 240, 210, 220, 220, 230, 190, 150)
+  )
+```
+
+  ]
+
+<!-- panel ends here -->
+.panel[.panel-name[how and example]
+
+.left5[
+
+## How
 
 To convert a long-formatted `data.frame` into a wide-formatted `data.frame`, you can use `pivot_wider()` function from the `tidyr` package.
 
@@ -2225,16 +2250,11 @@ pivot_wider(
 
 + the value of `variable 1` becomes the name the new variables
 + the value of `variable 2` becomes the value of the new variables
+]
 
---
+.right5[
 
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
-
-Note: there is nothing in the dataset that tells you what the data values represent
-
----
-
-# Long to wide
+## Example
 
 ```{r }
 yield_data_wide <- pivot_wider(
@@ -2249,9 +2269,87 @@ yield_data_wide
 + the value of `year` becomes the name the new variables
 + the value of `yield` becomes the value of the new variables
 
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+
+.panel[.panel-name[prefix]
+
+You can append a character string to the new variable names. The previous example had `2019` and `2010` as the name of the new variables.
+
+```{r }
+yield_data_long %>%
+  pivot_wider(
+    #--- let R know what the prefix is ---#
+    names_prefix = "yield_",
+    names_from = "year",
+    values_from = "yield"
+  )
+
+```
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[multiple columns]
+
+.left5[
+
+## Prepare a dataset 
+
+Create the following data in long format;
+
+```{r wide-data-gen}
+yield_data_long <- data.frame(
+  state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
+  year = c(2019, 2020) %>% rep(4),
+  yield = c(200, 240, 210, 220, 220, 230, 190, 150),
+  rainfall = c(14, 15, 15, 16, 20, 21, 24, 15)
+  ) 
+```
+
+```{r echo = F}
+yield_data_long
+```
+]
+
+.right5[
+
+## Example
+
+You can simply supply multiple variables to be made wide like this:
+
+```{r }
+yield_data_long %>%  
+  pivot_wider(
+    names_from = "year",
+    values_from = c("yield", "rainfall")
+  )  
+```
+]
+  ] 
+
+  <!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
+
 ---
 
 # Wide to long
+
+.panelset[ 
+
+.panel[.panel-name[how]
+
+
+.left5[
+
+## How
 
 To convert a long-formatted `data.frame` into a wide-formatted `data.frame`, you can use `pivot_longer()` function from the `tidyr` package.
 
@@ -2267,10 +2365,11 @@ pivot_longer(
 + `x`: list of the name of the columns to pivot into longer format
 + `y`: what the name of `x` represents
 + `z`: what the values stored in `x` represents
+]
 
----
+.right5[
 
-# Wide to long
+## Example
 
 ```{r }
 yield_data_wide %>% 
@@ -2285,89 +2384,193 @@ yield_data_wide %>%
 + `y`: "year"
 + `z`: "yield"
 
----
+]
+
+  ]
+
+<!-- panel ends here -->
 
 
-# Wide to long 
+<!-- panel ends here -->
 
-Create the following data in long format;
+.panel[.panel-name[prefix]
+
+You do not want `year_` in front of the year numbers in the new `year` variable? You can use the `names_prefix` option as follows:
 
 ```{r }
+yield_data_wide %>%  
+  pivot_longer(
+    - state,
+    #--- let R know what the prefix is ---#
+    names_prefix = "yield_",
+    names_to = "year",
+    values_to = "yield"
+  )
+```
+
+Notice `year` is character. Convert it to numeric using `as.numeric()` if you use is as a numeric variable.
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+---
+
+# Wide to long: multiple sets of columns
+
+.panelset[ 
+
+.panel[.panel-name[Prep]
+
+
+.left5[
+
+## Long
+
+Create the following dataset in the long format;
+
+```{r wide-data-gen}
 yield_data_long <- data.frame(
   state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
   year = c(2019, 2020) %>% rep(4),
   yield = c(200, 240, 210, 220, 220, 230, 190, 150),
   rainfall = c(14, 15, 15, 16, 20, 21, 24, 15)
-  )
+  ) 
 ```
 
-Make it wide:
+```{r echo = F}
+yield_data_long
+```
+
+]
+
+.right5[
+
+## Wide
+
+Convert the long dataset into the wide format: 
 
 ```{r }
 yield_data_wide <- yield_data_long %>% 
   pivot_wider(
     names_from = year, 
     values_from = c(yield, rainfall)
-  )
+  ) 
 ```
 
----
+```{r echo = F}
+yield_data_wide 
+```
 
-# Wide to long 
+.red[Objective]: We would like to convert the wide data back to the original long data.
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[one-step?]
 
 You cannot revert this data back to the original long-formatted data in one step. 
 
 ```{r }
 yield_data_wide %>% 
+  pivot_longer(
+    - state,
+    names_to = "year",
+    values_to = "yield"
+  )
+```
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[separate()]
+
+However, you take advantage of `dplyr::separate()` function, which separate a variable of type character by a user-specified separator into two variables in the dataset.
+
+```{r eval = F}
+#--- syntax ---#
+separate(data, variable name, the name of variables, separator)  
+```
+
+.left5[
+
+Before separation: 
+
+```{r sep-demo-b, eval = F}
+yield_data_wide %>% 
   #--- select only state and yield variables ---#
-  select(c(state, starts_with("yield_"))) %>% 
   pivot_longer(
-    starts_with("yield_"),
-    names_to = "year",
-    values_to = "yield"
-  )
+    - state,
+    names_to = "type_year",
+    values_to = "value"
+  ) 
 ```
 
----
+.scroll-box-12[
+```{r ref.label = "sep-demo-b", echo = F}
+```
+]
 
-# Wide to long 
+]
 
-You do not want `yield_` in front of the year values for the `year` variable?
+.right5[
 
-```{r }
-yield_data_wide %>% select(c(state, starts_with("yield_"))) %>% 
+After separation: 
+
+```{r sep-demo-a, eval = F}
+yield_data_wide %>% 
+  #--- select only state and yield variables ---#
   pivot_longer(
-    starts_with("yield_"),
-    #--- let R know what the prefix is ---#
-    names_prefix = "yield_",
-    names_to = "year",
-    values_to = "yield"
-  )
-
+    - state,
+    names_to = "type_year",
+    values_to = "value"
+  ) %>% separate(type_year, c("type", "year"), sep = "_") #<<
 ```
 
---
+.scroll-box-12[
+```{r ref.label = "sep-demo-a", echo = F}
+```
+]
+]
+  ]
 
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+<!-- panel ends here -->
 
-Notice `year` is character.
+.panel[.panel-name[three-step]
 
----
-
-# Wide to long 
+After separating `type_year` to `type` and `year`, all you have to do is to apply `pivot_wider()` to have the desired long-formatted data.
 
 ```{r }
-yield_data_wide %>% select(c(state, starts_with("yield_"))) %>% 
+yield_data_wide %>% 
+  #--- select only state and yield variables ---#
   pivot_longer(
-    starts_with("yield_"),
-    #--- let R know what the prefix is ---#
-    names_prefix = "yield_",
-    names_to = "year",
-    values_to = "yield"
+    - state,
+    names_to = "type_year",
+    values_to = "value"
   ) %>% 
-  #--- convert year to numeric ---#
-  mutate(year = as.numeric(year))
+  separate(type_year, c("type", "year"), sep = "_") %>% 
+  pivot_wider( #<<
+    names_from = "type", #<<
+    values_from = "value" #<<
+  ) #<<
 ```
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
 
 ---
 

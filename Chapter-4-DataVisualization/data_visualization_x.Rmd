@@ -19,6 +19,8 @@ output:
 ```{r, include = F, cache = F}
 suppressMessages(library(nycflights13)) 
 suppressMessages(library(extrafont)) 
+suppressMessages(library(patchwork))
+suppressMessages(library(plotly))
 ```
 
 # Before you start

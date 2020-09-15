@@ -13,9 +13,15 @@ output:
       countIncrementalSlides: false
 ---
 
-
 ```{r, child = './../setup.Rmd'}
 ```
+
+```{r, include = F}
+#--- load packages ---#
+suppressMessages(library(future.apply))
+suppressMessages(library(parallel))
+````
+
 
 ## Learning objectives
 

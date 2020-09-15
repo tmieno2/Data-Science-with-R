@@ -633,6 +633,146 @@ name: reshaping
 
 ---
 
+
+# Reshaping datasets 
+
+.panelset[ 
+
+.panel[.panel-name[Preparation]
+
+Create the following data in the long format:
+
+```{r echo = F}
+(
+yield_data_long <- data.table(
+  state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
+  year = c(2019, 2020) %>% rep(4),
+  yield = c(200, 240, 210, 220, 220, 230, 190, 150)
+  )
+)
+```
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[long to wide]
+
+You can use `dcast()` function to make `yield_data_long` wide:
+
+
+```{r }
+(
+yield_data_wide <- dcast(yield_data_long, state ~ year, value.var = "yield")
+)
+```
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[wide to long]
+
+```{r }
+(
+yield_data_long <- melt(yield_data_wide, id.vars = "state")
+)
+```
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[multiple groups]
+
+```{r }
+yield_data_wide <- data.frame(
+  state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
+  year = c(2019, 2020) %>% rep(4),
+  yield = c(200, 240, 210, 220, 220, 230, 190, 150),
+  rainfall = c(14, 15, 15, 16, 20, 21, 24, 15)
+  ) %>% 
+  pivot_wider(
+    names_from = year, 
+    values_from = c(yield, rainfall)
+  ) %>% 
+  data.table()  
+
+```
+
+```{r }
+colA <- paste("yield_", 2019:2020, sep = "")
+colB <- paste("rainfall_", 2019:2020, sep = "")
+yield_data_long <- melt(yield_data_wide, measure = list(colA, colB), value.name = c("yield", "rainfall")) 
+
+```
+
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[caveat]
+
+```{r }
+yield_data_wide_odd <- data.frame(
+  state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
+  year = c(2019, 2020) %>% rep(4),
+  yield = c(200, 240, 210, 220, 220, 230, 190, 150),
+  rainfall = c(14, 15, 15, 16, 20, 21, 24, 15)
+  ) %>% 
+  pivot_wider(
+    names_from = year, 
+    values_from = c(yield, rainfall)
+  ) %>% 
+  data.table() %>% 
+  setnames("yield_2019", "yield_2022")
+
+```
+
+```{r }
+colA <- paste("yield_", c(2022, 2020), sep = "")
+colB <- paste("rainfall_", 2019:2020, sep = "")
+melt(yield_data_wide_odd, measure = list(colA, colB), value.name = c("yield", "rainfall")) 
+
+```
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[two step]
+
+```{r }
+(
+yield_data_long <- yield_data_wide %>% 
+  melt(id.var = "state") %>% 
+  separate(variable, c("type", "year"), sep = "_") %>% 
+  dcast(state + year ~ type, value.var = "value")
+)
+```
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[multiple columns]
+  
+```{r }
+yield_data_long %>% 
+  dcast(state ~ year, value.var = c("yield", "rainfall"))   
+```
+    ] 
+  
+<!-- panel ends here -->  
+
+]
+
+<!-- panel set ends here -->
+
+
+
+---
+
 # Merging
 
 
