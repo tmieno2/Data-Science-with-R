@@ -868,13 +868,20 @@ mtcars %&gt;% head()
 ```
 
 ```
-##                    mpg cyl disp  hp drat    wt  qsec vs am gear carb
-## Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
-## Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
-## Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
-## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
-## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
-## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+##                    mpg cyl disp  hp drat    wt  qsec vs am
+## Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1
+## Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1
+## Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1
+## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0
+## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0
+## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0
+##                   gear carb
+## Mazda RX4            4    4
+## Mazda RX4 Wag        4    4
+## Datsun 710           4    1
+## Hornet 4 Drive       3    1
+## Hornet Sportabout    3    2
+## Valiant              3    1
 ```
 ]
 
@@ -1424,9 +1431,12 @@ microbenchmark(
 
 ```
 ## Unit: milliseconds
-##            expr      min       lq       mean    median        uq      max neval
-##      vectorized 0.002659 0.002970 0.00436763 0.0034565 0.0044865 0.013626   100
-##  not vectorized 0.523389 0.535097 0.58277273 0.5417825 0.5571450 2.876945   100
+##            expr      min        lq       mean    median
+##      vectorized 0.002670 0.0029020 0.00332205 0.0030575
+##  not vectorized 0.521603 0.5350715 0.57428186 0.5434425
+##         uq      max neval
+##  0.0033825 0.006123   100
+##  0.5623340 2.418464   100
 ```
 
 + As you can see, the vectorized version is faster. 
@@ -1513,9 +1523,12 @@ microbenchmark(
 
 ```
 ## Unit: milliseconds
-##            expr      min       lq     mean   median       uq       max neval
-##      vectorized 1.289307 1.433532 1.792503 1.589651 1.740843 14.871959   100
-##  not vectorized 2.169743 2.230602 2.414556 2.328387 2.530919  3.036096   100
+##            expr      min       lq     mean   median       uq
+##      vectorized 1.176487 1.299032 1.571367 1.376863 1.590174
+##  not vectorized 1.983590 2.196995 2.432169 2.305153 2.574434
+##       max neval
+##  7.615930   100
+##  3.309377   100
 ```
 
   ] 
@@ -1657,12 +1670,12 @@ microbenchmark(
 
 ```
 ## Unit: milliseconds
-##              expr        min         lq        mean      median         uq       max
-##      parallelized 100.048702 106.930572 114.0053786 111.0467445 117.575473 162.46950
-##  not parallelized   0.405226   0.437662   0.7444272   0.4520505   0.480531  14.02159
-##  neval
-##    100
-##    100
+##              expr        min          lq        mean
+##      parallelized 100.543601 109.1986490 114.7588535
+##  not parallelized   0.396592   0.4356345   0.4716946
+##       median         uq        max neval
+##  113.8126880 120.265579 140.874669   100
+##    0.4511255   0.479751   1.551099   100
 ```
 
 ]
@@ -1778,7 +1791,7 @@ toc()
 ```
 
 ```
-## 0.023 sec elapsed
+## 0.021 sec elapsed
 ```
 
 **Not parallelized (sequential)**:
@@ -1791,7 +1804,7 @@ toc()
 ```
 
 ```
-## 26.155 sec elapsed
+## 25.922 sec elapsed
 ```
 
 **Parallelized**:
@@ -1804,7 +1817,7 @@ toc()
 ```
 
 ```
-## 2.809 sec elapsed
+## 2.718 sec elapsed
 ```
 
 ]
@@ -1840,6 +1853,459 @@ MC_results &lt;- pbmclapply(1:1000, MC_sim, mc.cores = detectCores() - 1)
   &lt;!-- panel ends here --&gt;
 
 ]
+
+---
+
+# Exercise 
+
+
+
+.panelset[ 
+
+.panel[.panel-name[Exercise 1]
+
++ Using the `list.files()` function get the name of all the files inside the `experiment_data` and assign it to `file_names`.
+
+
+
++ Using `future_lapply()` read all the files (this is not a good use case of parallelized processing)
++ Combine all the `data.frame`s saved in a list into one `data.frame` 
++ Find the average `corn_yield` by field
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[]
+
++ Write a function that 
+  * reads "corn_experiment_1.rds"
+  * run OLS of `corn_yield` on `log(N_rate)`
+  * 
+ 
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+]
+
+&lt;!-- panel set ends here --&gt;
+
+---
+class: inverse, center, middle
+name: opt
+
+# Low-dimensional optimization 
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+
+# Low-dimensional optimization
+
+.panelset[ 
+
+.panel[.panel-name[setup and method]
+
+## Setup
+
+Suppose you have ran an randomized nitrogen experiment for corn production on a field, collected data, and run a regression to find the following quantitative relationship between corn yield (bu/acre) and nitrogen rate (lb/acre):
+
+$$
+\mbox{corn yield} = 120 + 25 \times log(\mbox{nitrogen rate})
+$$
+
+Your are interested in finding the best nitrogen rates that maximize profit at different combinations of corn and nitrogen prices for this field.
+
+$$
+Max_{N} P_C \times Y(N) - P_N \times N
+$$
+
++ `N`: corn yield (lb/acre)
++ `Y(N)`: corn yield (bu/acre) as a function of `N` as described above
++ `P_C`: corn price ($/bu)
++ `P_N`: nitrogen price ($/lb)
+
+Here, `N` is a decision variable, and `P_C` and `P_N` are parameters.
+
+## Grid search
+
+Grid search is a very inefficient yet effective tool for finding solutions to optimization problems as long as the dimension of the optimization problem is low (1 or 2 variables).
+
+Grid search basically evaluates the objective function (profit here) at many levels of decision variables (nitrogen here) and pick the one that maximizes the objective function (profit).
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[example]
+
+Let's define a function that takes `N`, `P_C`, and `P_N` values and returns profits.
+
+
+```r
+get_profit &lt;- function(N, P_C, P_N) {
+
+  yield &lt;- 120 + 25 * log(N) 
+  profit &lt;- P_C * yield - P_N * N
+  return(profit)
+
+}
+```
+
+Let's create a sequence of `N` values at which we evaluate the profit, and then calculate profit at each level of `N`.
+
+
+```r
+data_main &lt;- tibble(N = seq(0.1, 300, by = 0.1)) %&gt;% 
+  mutate(profit = get_profit(N, 3.5, 0.4))
+```
+
+
+```
+## # A tibble: 3,000 x 2
+##        N profit
+##    &lt;dbl&gt;  &lt;dbl&gt;
+##  1   0.1   218.
+##  2   0.2   279.
+##  3   0.3   315.
+##  4   0.4   340.
+##  5   0.5   359.
+##  6   0.6   375.
+##  7   0.7   389.
+##  8   0.8   400.
+##  9   0.9   410.
+## 10   1     420.
+## # … with 2,990 more rows
+```
+
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+
+
+  &lt;!-- panel ends here --&gt;
+.panel[.panel-name[example (cont.)]
+
+Here is the visualization of profit-N relationship:
+
+
+
+&lt;img src="function_loop_parallel_x_files/figure-html/gg-data-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+You can use `filter()` combined with `max()` to identify the optimal N rate.
+
+
+```r
+filter(data_main, profit == max(profit))
+```
+
+```
+## # A tibble: 1 x 2
+##       N profit
+##   &lt;dbl&gt;  &lt;dbl&gt;
+## 1  219.   804.
+```
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+]
+
+&lt;!-- panel set ends here --&gt;
+
+---
+
+# Coding strategy 1: looping
+
+.panelset[ 
+
+.panel[.panel-name[loop]
+
+Now that you have written codes to find the optimal N at a given combination of corn and nitrogen prices.
+
+We can move on to the next step of finding the optimal N rates at many various combinations of corn and nitrogen prices.
+
+Here is the coding strategy:
+
+1. Define a set of all the combinations of corn and nitrogen prices you want to analyze as a `data.frame`.
+
+2. Define a function that extract corn and nitrogen prices from the parameter `data.frame` and find the optimal N rate at the given combination of price and nitrogen combination.
+
+3. Loop over the set of parameters.
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Step 1]
+
+Here, we define a `data.frame` of parameters to be explored. We will be looping over the rows of the parameter `data.frame`.
+
+
+```r
+P_C_seq &lt;- seq(2.5, 4.5, by = 1)
+P_N_seq &lt;- seq(0.2, 0.6, by = 0.2)
+
+price_parameters &lt;- expand.grid(P_C = P_C_seq, P_N = P_N_seq) %&gt;% 
+  tibble()
+```
+
+Take a look:  
+
+
+```r
+head(price_parameters) 
+```
+
+```
+## # A tibble: 6 x 2
+##     P_C   P_N
+##   &lt;dbl&gt; &lt;dbl&gt;
+## 1   2.5   0.2
+## 2   3.5   0.2
+## 3   4.5   0.2
+## 4   2.5   0.4
+## 5   3.5   0.4
+## 6   4.5   0.4
+```
+  ]
+
+&lt;!-- panel ends here --&gt;
+.panel[.panel-name[Step 2]
+
+Now, we will define a function that extract a combination of corn and nitrogen prices from `price_parameters` (extract a row from `price_parameters`), and then find the optimal N.
+
+
+```r
+get_opt_N &lt;- function(i) {
+
+  P_C &lt;- price_parameters[i, ]$P_C
+  P_N &lt;- price_parameters[i, ]$P_N
+
+  N_data &lt;- tibble(N = seq(0.1, 300, by = 0.1))
+
+  opt_N &lt;- mutate(N_data, profit = get_profit(N, P_C, P_N)) %&gt;% 
+    filter(profit == max(profit)) %&gt;% 
+    mutate(P_C = P_C) %&gt;% 
+    mutate(P_N = P_N)
+
+  return(opt_N)
+
+}  
+```
+
+Check if this function works:
+
+
+```r
+get_opt_N(1)  
+```
+
+```
+## # A tibble: 1 x 4
+##       N profit   P_C   P_N
+##   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1   300   596.   2.5   0.2
+```
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Step 3]
+
+
+```r
+opt_N_all_ls &lt;- future_lapply(1:nrow(price_parameters), get_opt_N)
+```
+
+
+```r
+opt_N_all_ls[[1]] 
+```
+
+```
+## # A tibble: 1 x 4
+##       N profit   P_C   P_N
+##   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1   300   596.   2.5   0.2
+```
+
+Combine the list of `data.frame`s into a single `data.frame` using `bind_rows()`.
+
+
+```r
+opt_N_all &lt;- bind_rows(opt_N_all_ls)
+```
+
+
+```r
+head(opt_N_all) 
+```
+
+```
+## # A tibble: 6 x 4
+##       N profit   P_C   P_N
+##   &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1  300    596.   2.5   0.2
+## 2  300    859.   3.5   0.2
+## 3  300   1122.   4.5   0.2
+## 4  156.   553.   2.5   0.4
+## 5  219.   804.   3.5   0.4
+## 6  281.  1062.   4.5   0.4
+```
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+]
+
+&lt;!-- panel set ends here --&gt;
+
+
+---
+
+
+# Coding strategy 2: vectorized
+
+.panelset[ 
+
+.panel[.panel-name[vectorized]
+
+Instead of writing a loop like above, we can actually vectorize the process. Here are the steps:
+
+1. Define a set of all the combinations of **nitrogen rate**, corn price, and nitrogen price you want to analyze as a `data.frame`.
+
+2. Calculate profits for all the combinations of **nitrogen rate**, corn price, and nitrogen price inside the `data.frame`
+
+3. Find the optimal N rate for each of the combinations of **nitrogen rate**, corn price, and nitrogen price 
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Step 1]
+
+Here, we define all the combinations of **nitrogen rate**, corn price, and nitrogen price you want to analyze as a `data.frame`.
+
+
+```r
+P_C_seq &lt;- seq(2.5, 4.5, by = 1)
+P_N_seq &lt;- seq(0.3, 0.6, by = 0.3)
+N_seq &lt;- seq(100, 300, by = 100) 
+
+(
+price_parameters &lt;- expand.grid(P_C = P_C_seq, P_N = P_N_seq, N = N_seq) %&gt;% 
+  tibble() %&gt;% 
+  arrange(P_C, P_N)
+)
+```
+
+```
+## # A tibble: 18 x 3
+##      P_C   P_N     N
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+*##  1   2.5   0.3   100
+*##  2   2.5   0.3   200
+*##  3   2.5   0.3   300
+##  4   2.5   0.6   100
+##  5   2.5   0.6   200
+##  6   2.5   0.6   300
+##  7   3.5   0.3   100
+##  8   3.5   0.3   200
+##  9   3.5   0.3   300
+## 10   3.5   0.6   100
+## 11   3.5   0.6   200
+## 12   3.5   0.6   300
+## 13   4.5   0.3   100
+## 14   4.5   0.3   200
+## 15   4.5   0.3   300
+## 16   4.5   0.6   100
+## 17   4.5   0.6   200
+## 18   4.5   0.6   300
+```
+
+.red[Note]: Highlighted rows represent a single set of `P_C`-`P_N` combination with all the N rate values being explored. 
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+.panel[.panel-name[Steps 2 and 3]
+
+Now, we will calculate profit for all the rows in `price_parameters`.
+
+
+```r
+profit_data &lt;- mutate(price_parameters, profit = get_profit(N, P_C, P_N))  
+```
+
+.scroll-box-12[
+
+```
+## # A tibble: 18 x 4
+##      P_C   P_N     N profit
+##    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+##  1   2.5   0.3   100   558.
+##  2   2.5   0.3   200   571.
+##  3   2.5   0.3   300   566.
+##  4   2.5   0.6   100   528.
+##  5   2.5   0.6   200   511.
+##  6   2.5   0.6   300   476.
+##  7   3.5   0.3   100   793.
+##  8   3.5   0.3   200   824.
+##  9   3.5   0.3   300   829.
+## 10   3.5   0.6   100   763.
+## 11   3.5   0.6   200   764.
+## 12   3.5   0.6   300   739.
+## 13   4.5   0.3   100  1028.
+## 14   4.5   0.3   200  1076.
+## 15   4.5   0.3   300  1092.
+## 16   4.5   0.6   100   998.
+## 17   4.5   0.6   200  1016.
+## 18   4.5   0.6   300  1002.
+```
+]
+
+Now, we can identify the optimal N rate at each of the corn and nitrogen combinations:
+
+
+```r
+profit_data %&gt;% 
+  group_by(P_C, P_N) %&gt;% 
+  filter(profit == max(profit))
+```
+
+```
+## # A tibble: 6 x 4
+## # Groups:   P_C, P_N [6]
+##     P_C   P_N     N profit
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1   2.5   0.3   200   571.
+## 2   2.5   0.6   100   528.
+## 3   3.5   0.3   300   829.
+## 4   3.5   0.6   200   764.
+## 5   4.5   0.3   300  1092.
+## 6   4.5   0.6   200  1016.
+```
+
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+]
+
+&lt;!-- panel set ends here --&gt;
+
+
+---
+
+
+
+
+
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

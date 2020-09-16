@@ -213,7 +213,7 @@ square_multiply_it(10)
 
 You can set default values for function arguments by `argument = value` like below: 
 
-```{r square-multiply-it-fcn}
+```{r square-it-fcn}
 square_it <- function(a = 5) {
 
   #--- 1. do something on a ---# 
@@ -245,7 +245,7 @@ square_it()
 
 It is easy to create a function with multiple arguments. You just simply add more arguments within `function()` like below:
 
-```{r square-multiply-it-fcn}
+```{r square-them-add-fcn}
 #--- define a function with two arguments ---#
 square_them_add <- function(a = 5, b = 2) {
 
@@ -1223,4 +1223,352 @@ MC_results <- pbmclapply(1:1000, MC_sim, mc.cores = detectCores() - 1)
   <!-- panel ends here -->
 
 ]
+
+---
+
+# Exercise 
+
+```{r gen-files-def, echo = F, eval = F}
+
+gen_data <- function(i) {
+  
+  data <- tibble(
+    N_rate = runif(1000, min = 150, max = 250) ,
+    v = rnorm(1000) * 50,
+    corn_yield = 100 + log(N_rate),
+    field_id = 1
+  )     
+
+  saveRDS(data, paste0("../../Datasets/Chapter_5/experiment_data/corn_experiment_", i, ".rds")) 
+
+}
+
+lapply(1:100, gen_data)
+
+```
+
+.panelset[ 
+
+.panel[.panel-name[Exercise 1]
+
++ Using the `list.files()` function get the name of all the files inside the `experiment_data` and assign it to `file_names`.
+
+```{r get-file-names, echo = F}
+file_names <- list.files("../../Datasets/Chapter_5/experiment_data")  
+```
+
++ Using `future_lapply()` read all the files (this is not a good use case of parallelized processing)
++ Combine all the `data.frame`s saved in a list into one `data.frame` 
++ Find the average `corn_yield` by field
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[]
+
++ Write a function that 
+  * reads "corn_experiment_1.rds"
+  * run OLS of `corn_yield` on `log(N_rate)`
+  * 
+ 
+  ]
+
+<!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+---
+class: inverse, center, middle
+name: opt
+
+# Low-dimensional optimization 
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+
+# Low-dimensional optimization
+
+.panelset[ 
+
+.panel[.panel-name[setup and method]
+
+## Setup
+
+Suppose you have ran an randomized nitrogen experiment for corn production on a field, collected data, and run a regression to find the following quantitative relationship between corn yield (bu/acre) and nitrogen rate (lb/acre):
+
+$$
+\mbox{corn yield} = 120 + 25 \times log(\mbox{nitrogen rate})
+$$
+
+Your are interested in finding the best nitrogen rates that maximize profit at different combinations of corn and nitrogen prices for this field.
+
+$$
+Max_{N} P_C \times Y(N) - P_N \times N
+$$
+
++ `N`: corn yield (lb/acre)
++ `Y(N)`: corn yield (bu/acre) as a function of `N` as described above
++ `P_C`: corn price ($/bu)
++ `P_N`: nitrogen price ($/lb)
+
+Here, `N` is a decision variable, and `P_C` and `P_N` are parameters.
+
+## Grid search
+
+Grid search is a very inefficient yet effective tool for finding solutions to optimization problems as long as the dimension of the optimization problem is low (1 or 2 variables).
+
+Grid search basically evaluates the objective function (profit here) at many levels of decision variables (nitrogen here) and pick the one that maximizes the objective function (profit).
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[example]
+
+Let's define a function that takes `N`, `P_C`, and `P_N` values and returns profits.
+
+```{r def-get-pi}
+get_profit <- function(N, P_C, P_N) {
+
+  yield <- 120 + 25 * log(N) 
+  profit <- P_C * yield - P_N * N
+  return(profit)
+
+}
+```
+
+Let's create a sequence of `N` values at which we evaluate the profit, and then calculate profit at each level of `N`.
+
+```{r data-main}
+data_main <- tibble(N = seq(0.1, 300, by = 0.1)) %>% 
+  mutate(profit = get_profit(N, 3.5, 0.4))
+```
+
+```{r show-data-main, echo = F}
+data_main 
+```
+
+
+  ]
+
+<!-- panel ends here -->
+
+
+
+  <!-- panel ends here -->
+.panel[.panel-name[example (cont.)]
+
+Here is the visualization of profit-N relationship:
+
+```{r get-opt-n, include = F}
+opt_N <- filter(data_main, profit == max(profit))$N
+```  
+
+```{r gg-data, echo = F, out.width = "60%", fig.dim = c(4,2)}
+ggplot(data_main) +
+  geom_line(aes(y = profit, x = N)) +
+  geom_vline(xintercept = opt_N, linetype = 2, color = "red") +
+  annotate('text', x = opt_N - 40, y = 450, label = "Optimal N rate", size = 3)
+```
+
+You can use `filter()` combined with `max()` to identify the optimal N rate.
+
+```{r show-opt-N}
+filter(data_main, profit == max(profit))
+```
+
+  ] 
+
+  <!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
+
+---
+
+# Coding strategy 1: looping
+
+.panelset[ 
+
+.panel[.panel-name[loop]
+
+Now that you have written codes to find the optimal N at a given combination of corn and nitrogen prices.
+
+We can move on to the next step of finding the optimal N rates at many various combinations of corn and nitrogen prices.
+
+Here is the coding strategy:
+
+1. Define a set of all the combinations of corn and nitrogen prices you want to analyze as a `data.frame`.
+
+2. Define a function that extract corn and nitrogen prices from the parameter `data.frame` and find the optimal N rate at the given combination of price and nitrogen combination.
+
+3. Loop over the set of parameters.
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[Step 1]
+
+Here, we define a `data.frame` of parameters to be explored. We will be looping over the rows of the parameter `data.frame`.
+
+```{r define-par-data}
+P_C_seq <- seq(2.5, 4.5, by = 1)
+P_N_seq <- seq(0.2, 0.6, by = 0.2)
+
+price_parameters <- expand.grid(P_C = P_C_seq, P_N = P_N_seq) %>% 
+  tibble()
+```
+
+Take a look:  
+
+```{r take-a-look}
+head(price_parameters) 
+```
+  ]
+
+<!-- panel ends here -->
+.panel[.panel-name[Step 2]
+
+Now, we will define a function that extract a combination of corn and nitrogen prices from `price_parameters` (extract a row from `price_parameters`), and then find the optimal N.
+
+```{r }
+get_opt_N <- function(i) {
+
+  P_C <- price_parameters[i, ]$P_C
+  P_N <- price_parameters[i, ]$P_N
+
+  N_data <- tibble(N = seq(0.1, 300, by = 0.1))
+
+  opt_N <- mutate(N_data, profit = get_profit(N, P_C, P_N)) %>% 
+    filter(profit == max(profit)) %>% 
+    mutate(P_C = P_C) %>% 
+    mutate(P_N = P_N)
+
+  return(opt_N)
+
+}  
+```
+
+Check if this function works:
+
+```{r check-fcn}
+get_opt_N(1)  
+```
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[Step 3]
+
+```{r parallelized-opt-N}
+opt_N_all_ls <- future_lapply(1:nrow(price_parameters), get_opt_N)
+```
+
+```{r take-a-look-opt-N}
+opt_N_all_ls[[1]] 
+```
+
+Combine the list of `data.frame`s into a single `data.frame` using `bind_rows()`.
+
+```{r combine-all}
+opt_N_all <- bind_rows(opt_N_all_ls)
+```
+
+```{r take-a-look-final}
+head(opt_N_all) 
+```
+  ] 
+
+  <!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
+
+
+---
+
+
+# Coding strategy 2: vectorized
+
+.panelset[ 
+
+.panel[.panel-name[vectorized]
+
+Instead of writing a loop like above, we can actually vectorize the process. Here are the steps:
+
+1. Define a set of all the combinations of **nitrogen rate**, corn price, and nitrogen price you want to analyze as a `data.frame`.
+
+2. Calculate profits for all the combinations of **nitrogen rate**, corn price, and nitrogen price inside the `data.frame`
+
+3. Find the optimal N rate for each of the combinations of **nitrogen rate**, corn price, and nitrogen price 
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[Step 1]
+
+Here, we define all the combinations of **nitrogen rate**, corn price, and nitrogen price you want to analyze as a `data.frame`.
+
+```{r define-par-data-three, highlight.output = 4:6}
+P_C_seq <- seq(2.5, 4.5, by = 1)
+P_N_seq <- seq(0.3, 0.6, by = 0.3)
+N_seq <- seq(100, 300, by = 100) 
+
+(
+price_parameters <- expand.grid(P_C = P_C_seq, P_N = P_N_seq, N = N_seq) %>% 
+  tibble() %>% 
+  arrange(P_C, P_N)
+)
+```
+
+.red[Note]: Highlighted rows represent a single set of `P_C`-`P_N` combination with all the N rate values being explored. 
+
+  ]
+
+<!-- panel ends here -->
+.panel[.panel-name[Steps 2 and 3]
+
+Now, we will calculate profit for all the rows in `price_parameters`.
+
+```{r find-pi-vec}
+profit_data <- mutate(price_parameters, profit = get_profit(N, P_C, P_N))  
+```
+
+.scroll-box-12[
+```{r show-pi-vec, echo = F}
+profit_data 
+```
+]
+
+Now, we can identify the optimal N rate at each of the corn and nitrogen combinations:
+
+```{r show-N-vec}
+profit_data %>% 
+  group_by(P_C, P_N) %>% 
+  filter(profit == max(profit))
+```
+
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+
+---
+
+
+
+
+
 
