@@ -385,7 +385,7 @@ library(data.table)
 .panel[.panel-name[Preparation]
 
 
-We use `weather` dataset from the `nycflights13` package.
+We use the following `weather` dataset.
 
 
 ```r
@@ -395,18 +395,54 @@ flights &lt;- fread("https://raw.githubusercontent.com/Rdatatable/data.table/mas
 ```
 
 ```
-##         year month day dep_delay arr_delay carrier origin dest air_time distance hour
-##      1: 2014     1   1        14        13      AA    JFK  LAX      359     2475    9
-##      2: 2014     1   1        -3        13      AA    JFK  LAX      363     2475   11
-##      3: 2014     1   1         2         9      AA    JFK  LAX      351     2475   19
-##      4: 2014     1   1        -8       -26      AA    LGA  PBI      157     1035    7
-##      5: 2014     1   1         2         1      AA    JFK  LAX      350     2475   13
-##     ---                                                                              
-## 253312: 2014    10  31         1       -30      UA    LGA  IAH      201     1416   14
-## 253313: 2014    10  31        -5       -14      UA    EWR  IAH      189     1400    8
-## 253314: 2014    10  31        -8        16      MQ    LGA  RDU       83      431   11
-## 253315: 2014    10  31        -4        15      MQ    LGA  DTW       75      502   11
-## 253316: 2014    10  31        -5         1      MQ    LGA  SDF      110      659    8
+##         year month day dep_delay
+##      1: 2014     1   1        14
+##      2: 2014     1   1        -3
+##      3: 2014     1   1         2
+##      4: 2014     1   1        -8
+##      5: 2014     1   1         2
+##     ---                         
+## 253312: 2014    10  31         1
+## 253313: 2014    10  31        -5
+## 253314: 2014    10  31        -8
+## 253315: 2014    10  31        -4
+## 253316: 2014    10  31        -5
+##         arr_delay carrier origin
+##      1:        13      AA    JFK
+##      2:        13      AA    JFK
+##      3:         9      AA    JFK
+##      4:       -26      AA    LGA
+##      5:         1      AA    JFK
+##     ---                         
+## 253312:       -30      UA    LGA
+## 253313:       -14      UA    EWR
+## 253314:        16      MQ    LGA
+## 253315:        15      MQ    LGA
+## 253316:         1      MQ    LGA
+##         dest air_time distance
+##      1:  LAX      359     2475
+##      2:  LAX      363     2475
+##      3:  LAX      351     2475
+##      4:  PBI      157     1035
+##      5:  LAX      350     2475
+##     ---                       
+## 253312:  IAH      201     1416
+## 253313:  IAH      189     1400
+## 253314:  RDU       83      431
+## 253315:  DTW       75      502
+## 253316:  SDF      110      659
+##         hour
+##      1:    9
+##      2:   11
+##      3:   19
+##      4:    7
+##      5:   13
+##     ---     
+## 253312:   14
+## 253313:    8
+## 253314:   11
+## 253315:   11
+## 253316:    8
 ```
 
   ]
@@ -472,13 +508,27 @@ flights[origin == "JFK" &amp; month == 6L, ] %&gt;% head()
 ```
 
 ```
-##    year month day dep_delay arr_delay carrier origin dest air_time distance hour
-## 1: 2014     6   1        -9        -5      AA    JFK  LAX      324     2475    8
-## 2: 2014     6   1       -10       -13      AA    JFK  LAX      329     2475   12
-## 3: 2014     6   1        18        -1      AA    JFK  LAX      326     2475    7
-## 4: 2014     6   1        -6       -16      AA    JFK  LAX      320     2475   10
-## 5: 2014     6   1        -4       -45      AA    JFK  LAX      326     2475   18
-## 6: 2014     6   1        -6       -23      AA    JFK  LAX      329     2475   14
+##    year month day dep_delay
+## 1: 2014     6   1        -9
+## 2: 2014     6   1       -10
+## 3: 2014     6   1        18
+## 4: 2014     6   1        -6
+## 5: 2014     6   1        -4
+## 6: 2014     6   1        -6
+##    arr_delay carrier origin dest
+## 1:        -5      AA    JFK  LAX
+## 2:       -13      AA    JFK  LAX
+## 3:        -1      AA    JFK  LAX
+## 4:       -16      AA    JFK  LAX
+## 5:       -45      AA    JFK  LAX
+## 6:       -23      AA    JFK  LAX
+##    air_time distance hour
+## 1:      324     2475    8
+## 2:      329     2475   12
+## 3:      326     2475    7
+## 4:      320     2475   10
+## 5:      326     2475   18
+## 6:      329     2475   14
 ```
 
 + `i`: `origin == "JFK" &amp; month == 6L` 
@@ -577,7 +627,8 @@ flights[, (arr_delay + dep_delay) &lt; 0] %&gt;% head()
 ```
 
 ```
-## [1] FALSE FALSE FALSE  TRUE FALSE FALSE
+## [1] FALSE FALSE FALSE  TRUE FALSE
+## [6] FALSE
 ```
 
 **row-wise subset and operation in `j` at the same time**  
@@ -642,10 +693,14 @@ flights[, !c("arr_delay", "dep_delay")] %&gt;% head(3)
 ```
 
 ```
-##    year month day carrier origin dest air_time distance hour
-## 1: 2014     1   1      AA    JFK  LAX      359     2475    9
-## 2: 2014     1   1      AA    JFK  LAX      363     2475   11
-## 3: 2014     1   1      AA    JFK  LAX      351     2475   19
+##    year month day carrier origin
+## 1: 2014     1   1      AA    JFK
+## 2: 2014     1   1      AA    JFK
+## 3: 2014     1   1      AA    JFK
+##    dest air_time distance hour
+## 1:  LAX      359     2475    9
+## 2:  LAX      363     2475   11
+## 3:  LAX      351     2475   19
 ```
 
 ```r
@@ -793,15 +848,24 @@ flights_mini &lt;- flights[month &lt;= 4,head(.SD, 2), by = month] %&gt;%
 ```
 
 ```
-##    year month day dep_delay arr_delay distance air_time
-## 1: 2014     1   1        14        13     2475      359
-## 2: 2014     1   1        -3        13     2475      363
-## 3: 2014     2   1        -1         1     2475      358
-## 4: 2014     2   1        -5         3     2475      358
-## 5: 2014     3   1       -11        36     2475      375
-## 6: 2014     3   1        -3        14     2475      368
-## 7: 2014     4   1        -8       -23      764      113
-## 8: 2014     4   1        -8       -11      431       71
+##    year month day dep_delay
+## 1: 2014     1   1        14
+## 2: 2014     1   1        -3
+## 3: 2014     2   1        -1
+## 4: 2014     2   1        -5
+## 5: 2014     3   1       -11
+## 6: 2014     3   1        -3
+## 7: 2014     4   1        -8
+## 8: 2014     4   1        -8
+##    arr_delay distance air_time
+## 1:        13     2475      359
+## 2:        13     2475      363
+## 3:         1     2475      358
+## 4:         3     2475      358
+## 5:        36     2475      375
+## 6:        14     2475      368
+## 7:       -23      764      113
+## 8:       -11      431       71
 ```
   
 `flights_mini` has two observations per month.
@@ -826,15 +890,33 @@ flights_mini
 ```
 
 ```
-##    year month day dep_delay arr_delay distance air_time    speed
-## 1: 2014     1   1        14        13     2475      359 6.894150
-## 2: 2014     1   1        -3        13     2475      363 6.818182
-## 3: 2014     2   1        -1         1     2475      358 6.913408
-## 4: 2014     2   1        -5         3     2475      358 6.913408
-## 5: 2014     3   1       -11        36     2475      375 6.600000
-## 6: 2014     3   1        -3        14     2475      368 6.725543
-## 7: 2014     4   1        -8       -23      764      113 6.761062
-## 8: 2014     4   1        -8       -11      431       71 6.070423
+##    year month day dep_delay
+## 1: 2014     1   1        14
+## 2: 2014     1   1        -3
+## 3: 2014     2   1        -1
+## 4: 2014     2   1        -5
+## 5: 2014     3   1       -11
+## 6: 2014     3   1        -3
+## 7: 2014     4   1        -8
+## 8: 2014     4   1        -8
+##    arr_delay distance air_time
+## 1:        13     2475      359
+## 2:        13     2475      363
+## 3:         1     2475      358
+## 4:         3     2475      358
+## 5:        36     2475      375
+## 6:        14     2475      368
+## 7:       -23      764      113
+## 8:       -11      431       71
+##       speed
+## 1: 6.894150
+## 2: 6.818182
+## 3: 6.913408
+## 4: 6.913408
+## 5: 6.600000
+## 6: 6.725543
+## 7: 6.761062
+## 8: 6.070423
 ```
 
 
@@ -876,22 +958,51 @@ flights_mini[, `:=`(total_delay = arr_delay + dep_delay, speed = distance/air_ti
 
 Confirm that `flights_mini` was updated to have the new variables defined just above.
 
+.scroll-box-16[
 
 ```r
 flights_mini
 ```
 
 ```
-##    year month day dep_delay arr_delay distance air_time    speed total_delay carrier_origin
-## 1: 2014     1   1        14        13     2475      359 6.894150          27       6.894150
-## 2: 2014     1   1        -3        13     2475      363 6.818182          10       6.818182
-## 3: 2014     2   1        -1         1     2475      358 6.913408           0       6.913408
-## 4: 2014     2   1        -5         3     2475      358 6.913408          -2       6.913408
-## 5: 2014     3   1       -11        36     2475      375 6.600000          25       6.600000
-## 6: 2014     3   1        -3        14     2475      368 6.725543          11       6.725543
-## 7: 2014     4   1        -8       -23      764      113 6.761062         -31       6.761062
-## 8: 2014     4   1        -8       -11      431       71 6.070423         -19       6.070423
+##    year month day dep_delay
+## 1: 2014     1   1        14
+## 2: 2014     1   1        -3
+## 3: 2014     2   1        -1
+## 4: 2014     2   1        -5
+## 5: 2014     3   1       -11
+## 6: 2014     3   1        -3
+## 7: 2014     4   1        -8
+## 8: 2014     4   1        -8
+##    arr_delay distance air_time
+## 1:        13     2475      359
+## 2:        13     2475      363
+## 3:         1     2475      358
+## 4:         3     2475      358
+## 5:        36     2475      375
+## 6:        14     2475      368
+## 7:       -23      764      113
+## 8:       -11      431       71
+##       speed total_delay
+## 1: 6.894150          27
+## 2: 6.818182          10
+## 3: 6.913408           0
+## 4: 6.913408          -2
+## 5: 6.600000          25
+## 6: 6.725543          11
+## 7: 6.761062         -31
+## 8: 6.070423         -19
+##    carrier_origin
+## 1:       6.894150
+## 2:       6.818182
+## 3:       6.913408
+## 4:       6.913408
+## 5:       6.600000
+## 6:       6.725543
+## 7:       6.761062
+## 8:       6.070423
 ```
+]
 
   ] 
 
@@ -995,15 +1106,42 @@ flights_mini_copy
 ```
 
 ```
-##    year month day dep_delay arr_delay distance air_time
-## 1: 2014     1   1        14        13     2475      359
-## 2: 2014     1   1        -3        13     2475      363
-## 3: 2014     2   1        -1         1     2475      358
-## 4: 2014     2   1        -5         3     2475      358
-## 5: 2014     3   1       -11        36     2475      375
-## 6: 2014     3   1        -3        14     2475      368
-## 7: 2014     4   1        -8       -23      764      113
-## 8: 2014     4   1        -8       -11      431       71
+##    year month day dep_delay
+## 1: 2014     1   1        14
+## 2: 2014     1   1        -3
+## 3: 2014     2   1        -1
+## 4: 2014     2   1        -5
+## 5: 2014     3   1       -11
+## 6: 2014     3   1        -3
+## 7: 2014     4   1        -8
+## 8: 2014     4   1        -8
+##    arr_delay distance air_time
+## 1:        13     2475      359
+## 2:        13     2475      363
+## 3:         1     2475      358
+## 4:         3     2475      358
+## 5:        36     2475      375
+## 6:        14     2475      368
+## 7:       -13      764      113
+## 8:        -1      431       71
+##       speed total_delay
+## 1: 6.894150          27
+## 2: 6.818182          10
+## 3: 6.913408           0
+## 4: 6.913408          -2
+## 5: 6.600000          25
+## 6: 6.725543          11
+## 7: 6.761062         -31
+## 8: 6.070423         -19
+##    carrier_origin mean_arr_delay
+## 1:       6.894150             13
+## 2:       6.818182             13
+## 3:       6.913408              2
+## 4:       6.913408              2
+## 5:       6.600000             25
+## 6:       6.725543             25
+## 7:       6.761062             -7
+## 8:       6.070423             -7
 ```
 ]
 
@@ -1015,24 +1153,273 @@ flights_mini_copy
 
 ---
 
-# Sort  
+# Other useful functions  
 
-**sort** using `order()`
+.panelset[ 
+
+.panel[.panel-name[sorting]
+
+You can use `order()` from the base package to sort a `data.table`.
+
+Sorting is about shuffling rows, so you will be working on `i`. 
+
+**Syntax**
 
 
 ```r
-flights[order(month, origin),] %&gt;% head()
+#--- NOT RUN ---#
+data.table[order(variable 1, vairable 2, ..), ]  
+```
+
+.left5[
+
+**Before sorting**
+
+
+```r
+flights %&gt;% head()
 ```
 
 ```
-##    year month day dep_delay arr_delay carrier origin dest air_time distance hour
-## 1: 2014     1   1         4         0      AA    EWR  LAX      339     2454   18
-## 2: 2014     1   1        -5       -17      AA    EWR  MIA      161     1085   16
-## 3: 2014     1   1       191       185      AA    EWR  DFW      214     1372   16
-## 4: 2014     1   1        -1        -2      AA    EWR  DFW      214     1372   14
-## 5: 2014     1   1        -3       -10      AA    EWR  MIA      154     1085    6
-## 6: 2014     1   1         4       -17      AA    EWR  DFW      215     1372    9
+##    year month day dep_delay
+## 1: 2014     1   1        14
+## 2: 2014     1   1        -3
+## 3: 2014     1   1         2
+## 4: 2014     1   1        -8
+## 5: 2014     1   1         2
+## 6: 2014     1   1         4
+##    arr_delay carrier origin dest
+## 1:        13      AA    JFK  LAX
+## 2:        13      AA    JFK  LAX
+## 3:         9      AA    JFK  LAX
+## 4:       -26      AA    LGA  PBI
+## 5:         1      AA    JFK  LAX
+## 6:         0      AA    EWR  LAX
+##    air_time distance hour
+## 1:      359     2475    9
+## 2:      363     2475   11
+## 3:      351     2475   19
+## 4:      157     1035    7
+## 5:      350     2475   13
+## 6:      339     2454   18
 ```
+
+]
+
+.right5[
+
+**After sorting `order()`**
+
+
+```r
+flights[order(origin, distance),] %&gt;% head()
+```
+
+```
+##    year month day dep_delay
+## 1: 2014     1  30         9
+## 2: 2014     1  30       -13
+## 3: 2014     1  31        -8
+## 4: 2014     1  31        -7
+## 5: 2014     1  31        16
+## 6: 2014     2   1         5
+##    arr_delay carrier origin dest
+## 1:        17      US    EWR  PHL
+## 2:       -25      US    EWR  PHL
+## 3:       -25      US    EWR  PHL
+## 4:        14      US    EWR  PHL
+## 5:        17      US    EWR  PHL
+## 6:         2      US    EWR  PHL
+##    air_time distance hour
+## 1:       46       80   15
+## 2:       34       80   17
+## 3:       23       80    5
+## 4:       36       80   17
+## 5:       34       80   15
+## 6:       31       80    7
+```
+
+]
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[rename]
+
+You can use `setnames()` to rename variables.
+
+
+```r
+flights %&gt;% 
+  setnames(c("dest", "hour"), c("destination", "Hour"))
+```
+
+.scroll-box-16[
+
+```r
+flights   
+```
+
+```
+##         year month day dep_delay
+##      1: 2014     1   1        14
+##      2: 2014     1   1        -3
+##      3: 2014     1   1         2
+##      4: 2014     1   1        -8
+##      5: 2014     1   1         2
+##     ---                         
+## 253312: 2014    10  31         1
+## 253313: 2014    10  31        -5
+## 253314: 2014    10  31        -8
+## 253315: 2014    10  31        -4
+## 253316: 2014    10  31        -5
+##         arr_delay carrier origin
+##      1:        13      AA    JFK
+##      2:        13      AA    JFK
+##      3:         9      AA    JFK
+##      4:       -26      AA    LGA
+##      5:         1      AA    JFK
+##     ---                         
+## 253312:       -30      UA    LGA
+## 253313:       -14      UA    EWR
+## 253314:        16      MQ    LGA
+## 253315:        15      MQ    LGA
+## 253316:         1      MQ    LGA
+##         destination air_time
+##      1:         LAX      359
+##      2:         LAX      363
+##      3:         LAX      351
+##      4:         PBI      157
+##      5:         LAX      350
+##     ---                     
+## 253312:         IAH      201
+## 253313:         IAH      189
+## 253314:         RDU       83
+## 253315:         DTW       75
+## 253316:         SDF      110
+##         distance Hour
+##      1:     2475    9
+##      2:     2475   11
+##      3:     2475   19
+##      4:     1035    7
+##      5:     2475   13
+##     ---              
+## 253312:     1416   14
+## 253313:     1400    8
+## 253314:      431   11
+## 253315:      502   11
+## 253316:      659    8
+```
+]
+  
+
+Note: `setnames()` is one of the `data.table` operations that updates the dataset in-place (by reference) just like `:=`.
+
+Rename `Hour` back to `hour` for the subsequent R operations 
+
+
+```r
+flights %&gt;% setnames("Hour", "hour") 
+```
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[shift]
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[duplicated]
+
+`duplicated()` checks whether each of the observations have other observations that are identical in values of the user-specified variables, and returns a TRUE/FALSE vector of length equal to the number of rows of the data.
+
+The following code checks if there are any other flights that fly on the same hour of the same day.
+
+
+```r
+flights %&gt;% 
+  duplicated(by = c("year", "month", "day", "hour")) %&gt;% 
+  head(10)
+```
+
+```
+##  [1] FALSE FALSE FALSE FALSE FALSE
+##  [6] FALSE FALSE FALSE  TRUE  TRUE
+```
+
+
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[fcase]
+
+`fcase()` is like `case_when()` in `dplyr`. 
+
+
+```r
+fcase(
+  condition 1, value 1,  
+  condition 2, value 2,  
+  condition 3, value 3,  
+  .
+  .
+  .
+) 
+```
+
+**Example**
+
+
+```r
+flights[, above_average_dealy := fcase(
+  arr_delay &lt; mean(arr_delay), FALSE,  
+  arr_delay &gt;= mean(arr_delay), TRUE  
+)]  
+
+flights[, .(arr_delay, above_average_dealy)]
+```
+
+```
+##         arr_delay
+##      1:        13
+##      2:        13
+##      3:         9
+##      4:       -26
+##      5:         1
+##     ---          
+## 253312:       -30
+## 253313:       -14
+## 253314:        16
+## 253315:        15
+## 253316:         1
+##         above_average_dealy
+##      1:                TRUE
+##      2:                TRUE
+##      3:                TRUE
+##      4:               FALSE
+##      5:               FALSE
+##     ---                    
+## 253312:               FALSE
+## 253313:               FALSE
+## 253314:                TRUE
+## 253315:                TRUE
+## 253316:               FALSE
+```
+
+Note: for this example, we could have just used `fifelse()` as the created variable is dichotomous.
+
+]
+
+  &lt;!-- panel ends here --&gt;
+]
+
+&lt;!-- panel set ends here --&gt;
 
 ---
 
@@ -1071,27 +1458,48 @@ flights_mini &lt;- flights[,head(.SD, 2), by = month] %&gt;%
 ```
 
 ```
-##     year month dep_delay arr_delay
-##  1: 2014     1        14        13
-##  2: 2014     1        -3        13
-##  3: 2014     2        -1         1
-##  4: 2014     2        -5         3
-##  5: 2014     3       -11        36
-##  6: 2014     3        -3        14
-##  7: 2014     4        -8       -23
-##  8: 2014     4        -8       -11
-##  9: 2014     5        43         5
-## 10: 2014     5        -1       -38
-## 11: 2014     6        -9        -5
-## 12: 2014     6       -10       -13
-## 13: 2014     7        -3        -2
-## 14: 2014     7        -6       -14
-## 15: 2014     8        -3        -5
-## 16: 2014     8        19        55
-## 17: 2014     9        -9       -26
-## 18: 2014     9        -7       -21
-## 19: 2014    10        -5       -15
-## 20: 2014    10        -7       -21
+##     year month dep_delay
+##  1: 2014     1        14
+##  2: 2014     1        -3
+##  3: 2014     2        -1
+##  4: 2014     2        -5
+##  5: 2014     3       -11
+##  6: 2014     3        -3
+##  7: 2014     4        -8
+##  8: 2014     4        -8
+##  9: 2014     5        43
+## 10: 2014     5        -1
+## 11: 2014     6        -9
+## 12: 2014     6       -10
+## 13: 2014     7        -3
+## 14: 2014     7        -6
+## 15: 2014     8        -3
+## 16: 2014     8        19
+## 17: 2014     9        -9
+## 18: 2014     9        -7
+## 19: 2014    10        -5
+## 20: 2014    10        -7
+##     arr_delay
+##  1:        13
+##  2:        13
+##  3:         1
+##  4:         3
+##  5:        36
+##  6:        14
+##  7:       -23
+##  8:       -11
+##  9:         5
+## 10:       -38
+## 11:        -5
+## 12:       -13
+## 13:        -2
+## 14:       -14
+## 15:        -5
+## 16:        55
+## 17:       -26
+## 18:       -21
+## 19:       -15
+## 20:       -21
 ```
 
   ]
@@ -1305,11 +1713,91 @@ flights_mini[, lapply(.SD, mean), by = month, .SDcols = .(arr_delay, dep_delay)]
   ] 
 
   &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[maximum]
+
+A very important use case of `.SD` is identifying the observation with the maximum value of a variable by group. 
+
+**Example**: suppose you are trying to identify the optimal nitrogen rate that maximize the profit of corn production at different corn prices. 
+
+Here, let's identify the flight that had the longest arrival delay by month-carrier. 
+
+
+```r
+flights[, .SD[which.max(arr_delay), ], by = .(carrier, month)]
+```
+
+```
+##      carrier month year day
+##   1:      AA     1 2014   8
+##   2:      AS     1 2014  11
+##   3:      B6     1 2014   2
+##   4:      DL     1 2014   2
+##   5:      EV     1 2014  15
+##  ---                       
+## 130:      WN    10 2014   6
+## 131:      UA    10 2014  31
+## 132:      OO    10 2014  10
+## 133:      US    10 2014  10
+## 134:      HA    10 2014  23
+##      dep_delay arr_delay origin
+##   1:       358       367    EWR
+##   2:       102        62    EWR
+##   3:       577       626    JFK
+##   4:       973       996    LGA
+##   5:       475       499    EWR
+##  ---                           
+## 130:       326       300    EWR
+## 131:       427       393    EWR
+## 132:       207       221    LGA
+## 133:       441       457    EWR
+## 134:        58        27    JFK
+##      destination air_time
+##   1:         MIA      175
+##   2:         SEA      329
+##   3:         RDU       86
+##   4:         MIA      156
+##   5:         JAX      142
+##  ---                     
+## 130:         BNA      116
+## 131:         ORD      100
+## 132:         ORD      122
+## 133:         CLT       85
+## 134:         HNL      599
+##      distance hour
+##   1:     1085   12
+##   2:     2402   20
+##   3:      427    3
+##   4:     1096   11
+##   5:      820   19
+##  ---              
+## 130:      748   23
+## 131:      719   21
+## 132:      733   17
+## 133:      529   17
+## 134:     4983   10
+##      above_average_dealy
+##   1:                TRUE
+##   2:                TRUE
+##   3:                TRUE
+##   4:                TRUE
+##   5:                TRUE
+##  ---                    
+## 130:                TRUE
+## 131:                TRUE
+## 132:                TRUE
+## 133:                TRUE
+## 134:                TRUE
+```
+
+Remember that `.SD` is a list of `data.table`s grouped by carrier and month. `.SD[which.max(arr_dealy), ]` will find the row where the `arr_delay` is the highest by group (month-carrier).
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
 ]
 
 &lt;!-- panel set ends here --&gt;
-
-
 
 &lt;!-- 
 #=========================================
@@ -1329,8 +1817,259 @@ name: reshaping
 ---
 
 
+# Reshaping datasets 
+
+.panelset[ 
+
+.panel[.panel-name[prep]
+
+Create the following datasets in the long format:
 
 
+```r
+(
+yield_data_long &lt;- data.table(
+  state = c("Kansas", "Nebraska", "Iowa", "Illinois") %&gt;% rep(each = 2),
+  year = c(2019, 2020) %&gt;% rep(4),
+  yield = c(200, 240, 210, 220, 220, 230, 190, 150)
+  )
+)
+```
+
+```
+##       state year yield
+## 1:   Kansas 2019   200
+## 2:   Kansas 2020   240
+## 3: Nebraska 2019   210
+## 4: Nebraska 2020   220
+## 5:     Iowa 2019   220
+## 6:     Iowa 2020   230
+## 7: Illinois 2019   190
+## 8: Illinois 2020   150
+```
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[long to wide]
+
+You can use `dcast()` function to make `yield_data_long` wide:
+
+
+
+```r
+(
+yield_data_wide &lt;- dcast(yield_data_long, state ~ year, value.var = "yield")
+)
+```
+
+```
+##       state 2019 2020
+## 1: Illinois  190  150
+## 2:     Iowa  220  230
+## 3:   Kansas  200  240
+## 4: Nebraska  210  220
+```
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[wide to long]
+
+
+```r
+(
+yield_data_long &lt;- melt(yield_data_wide, id.vars = "state")
+)
+```
+
+```
+##       state variable value
+## 1: Illinois     2019   190
+## 2:     Iowa     2019   220
+## 3:   Kansas     2019   200
+## 4: Nebraska     2019   210
+## 5: Illinois     2020   150
+## 6:     Iowa     2020   230
+## 7:   Kansas     2020   240
+## 8: Nebraska     2020   220
+```
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+]
+
+---
+
+# Reshaping datasets
+
+.panelset[ 
+
+.panel[.panel-name[prep]
+
+.left5[
+
+**Long data**
+
+
+```r
+yield_data_long &lt;- data.table(
+  state = c("Kansas", "Nebraska", "Iowa", "Illinois") %&gt;% rep(each = 2),
+  year = c(2019, 2020) %&gt;% rep(4),
+  yield = c(200, 240, 210, 220, 220, 230, 190, 150),
+  rainfall = c(14, 15, 15, 16, 20, 21, 24, 15)
+  ) 
+```
+
+
+```
+##      state year yield rainfall
+## 1   Kansas 2019   200       14
+## 2   Kansas 2020   240       15
+## 3 Nebraska 2019   210       15
+## 4 Nebraska 2020   220       16
+## 5     Iowa 2019   220       20
+## 6     Iowa 2020   230       21
+## 7 Illinois 2019   190       24
+## 8 Illinois 2020   150       15
+```
+
+This data has multiple rows to be spread: `yield` and `rainfall`.
+
+]
+
+.right5[
+
+**Wide data**
+
+
+```r
+yield_data_wide &lt;- yield_data_long %&gt;% 
+  pivot_wider(
+    names_from = year, 
+    values_from = c(yield, rainfall)
+  ) %&gt;% 
+  data.table()  
+```
+
+
+```
+##       state yield_2019 yield_2020
+## 1:   Kansas        200        240
+## 2: Nebraska        210        220
+## 3:     Iowa        220        230
+## 4: Illinois        190        150
+##    rainfall_2019 rainfall_2020
+## 1:            14            15
+## 2:            15            16
+## 3:            20            21
+## 4:            24            15
+```
+
+This data has multiple sets of columns to be melted: `yield_*` and `rainfall_*`.
+
+]
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[long to wide]
+
+It is easy to cast multiple variables to make a long data wide. You just need to give a list of variable names to the `value.var` option.
+
+
+
+```r
+yield_data_long %&gt;% 
+  dcast(state ~ year, value.var = c("yield", "rainfall"))   
+```
+
+```
+##       state yield_2019 yield_2020
+## 1: Illinois        190        150
+## 2:     Iowa        220        230
+## 3:   Kansas        200        240
+## 4: Nebraska        210        220
+##    rainfall_2019 rainfall_2020
+## 1:            24            15
+## 2:            20            21
+## 3:            14            15
+## 4:            15            16
+```
+    ] 
+  
+&lt;!-- panel ends here --&gt;  
+
+.panel[.panel-name[wide to long]
+
+It is not as simple to make a wide data with multiple sets of columns to long.
+
+You can provide a list of sets of variables names to `melt()` to tell R which variables are belong to the same group using the `measure()` option.
+
+
+```r
+#--- yield group ---#
+colA &lt;- paste("yield_", 2019:2020, sep = "")
+
+#--- rainfall group ---#
+colB &lt;- paste("rainfall_", 2019:2020, sep = "")
+
+#--- wide to long ---#
+yield_data_long &lt;- melt(yield_data_wide, measure = list(colA, colB), value.name = c("yield", "rainfall")) 
+```
+
+Note however that year information from the variable names are lost. In the resulting dataset, `variable == 1` and `variable == 2` correspond to 2019 and 2020, respectively. So, you need an additional step to recover the original long data format. 
+
+Alternatively, it is probably better to follow the multi-step approach we took we used when we use `pivot_*()` in `dplyr`.
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[better alternative]
+
+The strategy here is to 
++ first make the data long ignoring the fact we want `yield_*` and `rainfall_*` to be separate variables eventually
++ split variable names into two: variable meaning and year  
++ and then use `dcast()` to make it wider
+
+
+```r
+(
+yield_data_wide %&gt;% 
+  melt(id.var = "state") %&gt;% 
+  .[, c("type", "year") := tstrsplit(variable, "_", fixed = TRUE)] %&gt;% 
+  .[, variable := NULL] %&gt;% 
+  dcast(state + year ~ type, value.var = "value")
+)
+```
+
+```
+##       state year rainfall yield
+## 1: Illinois 2019       24   190
+## 2: Illinois 2020       15   150
+## 3:     Iowa 2019       20   220
+## 4:     Iowa 2020       21   230
+## 5:   Kansas 2019       14   200
+## 6:   Kansas 2020       15   240
+## 7: Nebraska 2019       15   210
+## 8: Nebraska 2020       16   220
+```
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+]
+
+&lt;!-- panel set ends here --&gt;
+
+---
+
+# Merging
 
 
     </textarea>

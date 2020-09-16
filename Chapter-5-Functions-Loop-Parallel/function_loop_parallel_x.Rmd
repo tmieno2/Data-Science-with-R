@@ -22,7 +22,6 @@ suppressMessages(library(future.apply))
 suppressMessages(library(parallel))
 ````
 
-
 ## Learning objectives
 
 + Learn how to write functions yourself
@@ -414,7 +413,7 @@ for (bluh_bluh_bluh in 1:5){
 
 <br>
 
-Write a loop that cubes each element of the sequence of numbers that starts from 5 and increases up to 50 with the incremental step of 5.
+Write a for loop that cubes each element of the sequence of numbers that starts from 5 and increases up to 50 with the incremental step of 5.
 
   ] 
 
@@ -441,9 +440,16 @@ lapply(A, B)
 
 + `A` is the list of values 
 + `B` is the function you would like to apply to each of the values in `A` 
-  ] 
 
-.panel[.panel-name[Example]
+**Note**:  
+
++ `A` is a vector, `lapply()` works on each of the vector elements
++ `A` is a list, `lapply()` works on each of the list elements whatever they may be 
++ `A` is a `data.frame`, `lapply()` works on each of the columns (`data.frame` is a list of columns of equal length)
+
+]
+
+.panel[.panel-name[Example 1] 
 
 <br>
 
@@ -457,13 +463,36 @@ lapply(1:5, function(x){x^2})
 
 The key difference from a for loop is the object class of the output after the loop. 
 
-<span style="color:red"> Important</span>: 
-
-+ the output type of `lappy()` is always a `list`
-+ the output type of a for loop is flexible (it is your decision) 
+<span style="color:red"> Important</span>: the output type of `lappy()` is always a `list` (that's why it is called `lapply`)
 
   ] 
 
+.panel[.panel-name[Example 2]
+
+.left5[
+
+**`data.frame` to use**
+
+```{r }
+mtcars %>% head()
+```
+]
+
+.right5[
+The code below calculate the mean of each of the variables in the `mtcars` dataset. 
+
+.scroll-box-30[
+```{r }
+lapply(mtcars, mean)  
+```
+]
+
+]
+
+
+  ] 
+
+  <!-- panel ends here -->
 .panel[.panel-name[define a function]
 
 It is often the case that you want to write a function of the action you intend to repeat first and then loop.
@@ -502,9 +531,11 @@ square_them_add <- function(a, b) {
 
 Then you can do this:
 
+.scroll-box-16[
 ```{r }
 lapply(1:10, function(x) square_them_add(x, b = 5)) 
 ```
+]
 
 As you can see, this function try each of `1:10` (called internally `x`), give it to `square_them_add()` as its first argument while `b` is fixed at 5.
 
@@ -513,6 +544,39 @@ As you can see, this function try each of `1:10` (called internally `x`), give i
   <!-- panel ends here -->
 
 ]
+
+---
+
+# Exercises:
+
+.panelset[ 
+
+.panel[.panel-name[Exercise 1]
+
+Use `lapply()` to cube each element of the sequence of numbers that starts from 5 and increases up to 50 with the incremental step of 5.
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[Exercise 2]
+
+Define a function that takes a nitrogen rate as an argument and calculate the estimated yield based on the following equation:
+
+$$
+\mbox{corn yield} = 120 + 25 \times log(\mbox{nitrogen rate})
+$$ 
+
+At each value of the corn price sequence of `seq(2.5, 4.0, by = 0.1)`, calculate the revenue using `lapply()` where nitrogen rate is fixed at 200 (lb/acre).
+
+  ]
+
+<!-- panel ends here -->
+
+
+]
+
+<!-- panel set ends here -->
 
 ---
 
@@ -654,7 +718,6 @@ final_results <- bind_rows(rev_data)
 
 ]
 
-
 ---
 
 
@@ -686,6 +749,27 @@ data_to_return <- data.frame(
 ```
 
 After you confirm the code you write gives you desired outcomes, make it a function by replacing `1` with `i`.
+
+---
+
+# Exercise 
+
+Define a function that takes nitrogen rates, corn prices, and nitrogen prices and calculate profit per acre based on the following equation:
+
+$$
+\mbox{corn yield} = 120 + 25 \times log(\mbox{nitrogen rate})
+$$ 
+
+$$
+\mbox{profit} = \mbox{corn price} \times \mbox{corn yield} - \mbox{nitrogen price} \times \mbox{nitrogen rate}
+$$ 
+
++ Fix the nitrogen rate at 200 (lb/acre)
++ Define the following sequences of numbers
+  * corn price: `seq(2.5, 4.0, by = 0.05)`
+  * nitrogen price: `seq(0.2, 0.6, by = 0.01)`
++ For each of the unique combination of corn price and nitrogen price, calculate the profit 
+  
 
 ---
 
@@ -862,25 +946,6 @@ microbenchmark(
 
 ---
 
-
-# Exercises 
-
-.panelset[ 
-
-.panel[.panel-name[Exercise 1]
-
-Write a loop that 
-
-  ]
-
-.panel[.panel-name[Exercise 2]
-
-  ]
-
-]
-
----
-
 class: inverse, center, middle
 name: par
 
@@ -1024,7 +1089,7 @@ microbenchmark(
 ---
 
 
-# Parallel processing: less trivial example 
+# Parallel processing: a less trivial example 
 
 .panelset[ 
 
@@ -1050,13 +1115,16 @@ $$
  y = 1 + x + v
 $$
 
-where $\mu \sim N(0,1)$, $x \sim N(0,1) + \mu$, and $v \sim N(0,1) + \mu$. The $\mu$ term cause correlation between $x$ (the covariate) and $v$ (the error term). 
+where 
++ $\mu \sim N(0,1)$
++ $x \sim N(0,1) + \mu$
++ $v \sim N(0,1) + \mu$. 
+ 
+The $\mu$ term cause correlation between $x$ (the covariate) and $v$ (the error term). 
 
 2. estimate the coefficient on $x$ vis OLS, and return the estimate. 
 
 3. repeat this process $1,000$ times to understand the property of the OLS estimators under the data generating process.
-
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=600px></html>
 
 This Monte Carlo simulation is embarrassingly parallel because each process is independent of any other.
 
@@ -1155,30 +1223,4 @@ MC_results <- pbmclapply(1:1000, MC_sim, mc.cores = detectCores() - 1)
   <!-- panel ends here -->
 
 ]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

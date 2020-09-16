@@ -70,7 +70,7 @@ library(data.table)
 .panel[.panel-name[Preparation]
 
 
-We use `weather` dataset from the `nycflights13` package.
+We use the following `weather` dataset.
 
 ```{r, cache = TRUE}
 (
@@ -377,9 +377,11 @@ flights_mini[, `:=`(total_delay = arr_delay + dep_delay, speed = distance/air_ti
 
 Confirm that `flights_mini` was updated to have the new variables defined just above.
 
+.scroll-box-16[
 ```{r }
 flights_mini
 ```
+]
 
   ] 
 
@@ -458,13 +460,133 @@ flights_mini_copy
 
 ---
 
-# Sort  
+# Other useful functions  
 
-**sort** using `order()`
+.panelset[ 
+
+.panel[.panel-name[sorting]
+
+You can use `order()` from the base package to sort a `data.table`.
+
+Sorting is about shuffling rows, so you will be working on `i`. 
+
+**Syntax**
+
+```{r eval = F}
+#--- NOT RUN ---#
+data.table[order(variable 1, vairable 2, ..), ]  
+```
+
+.left5[
+
+**Before sorting**
 
 ```{r }
-flights[order(month, origin),] %>% head()
+flights %>% head()
 ```
+
+]
+
+.right5[
+
+**After sorting `order()`**
+
+```{r }
+flights[order(origin, distance),] %>% head()
+```
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[rename]
+
+You can use `setnames()` to rename variables.
+
+```{r }
+flights %>% 
+  setnames(c("dest", "hour"), c("destination", "Hour"))
+```
+
+.scroll-box-16[
+```{r }
+flights   
+```
+]
+  
+
+Note: `setnames()` is one of the `data.table` operations that updates the dataset in-place (by reference) just like `:=`.
+
+Rename `Hour` back to `hour` for the subsequent R operations 
+
+```{r }
+flights %>% setnames("Hour", "hour") 
+```
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[shift]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[duplicated]
+
+`duplicated()` checks whether each of the observations have other observations that are identical in values of the user-specified variables, and returns a TRUE/FALSE vector of length equal to the number of rows of the data.
+
+The following code checks if there are any other flights that fly on the same hour of the same day.
+
+```{r }
+flights %>% 
+  duplicated(by = c("year", "month", "day", "hour")) %>% 
+  head(10)
+```
+
+
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[fcase]
+
+`fcase()` is like `case_when()` in `dplyr`. 
+
+```{r eval = F}
+fcase(
+  condition 1, value 1,  
+  condition 2, value 2,  
+  condition 3, value 3,  
+  .
+  .
+  .
+) 
+```
+
+**Example**
+
+```{r }
+flights[, above_average_dealy := fcase(
+  arr_delay < mean(arr_delay), FALSE,  
+  arr_delay >= mean(arr_delay), TRUE  
+)]  
+
+flights[, .(arr_delay, above_average_dealy)]
+```
+
+Note: for this example, we could have just used `fifelse()` as the created variable is dichotomous.
+
+]
+
+  <!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
 
 ---
 
@@ -480,11 +602,6 @@ flights[, .(.N), by = .(origin, month)] %>%
   .[i, j, by] %>% 
   .[i, j, by]  
 ```
-
----
- 
-# Set names 
-  
 
 ---
 
@@ -610,11 +727,27 @@ flights_mini[, lapply(.SD, mean), by = month, .SDcols = .(arr_delay, dep_delay)]
   ] 
 
   <!-- panel ends here -->
+
+.panel[.panel-name[maximum]
+
+A very important use case of `.SD` is identifying the observation with the maximum value of a variable by group. 
+
+**Example**: suppose you are trying to identify the optimal nitrogen rate that maximize the profit of corn production at different corn prices. 
+
+Here, let's identify the flight that had the longest arrival delay by month-carrier. 
+
+```{r }
+flights[, .SD[which.max(arr_delay), ], by = .(carrier, month)]
+```
+
+Remember that `.SD` is a list of `data.table`s grouped by carrier and month. `.SD[which.max(arr_dealy), ]` will find the row where the `arr_delay` is the highest by group (month-carrier).
+
+  ] 
+
+  <!-- panel ends here -->
 ]
 
 <!-- panel set ends here -->
-
-
 
 <!-- 
 #=========================================
@@ -638,11 +771,11 @@ name: reshaping
 
 .panelset[ 
 
-.panel[.panel-name[Preparation]
+.panel[.panel-name[prep]
 
-Create the following data in the long format:
+Create the following datasets in the long format:
 
-```{r echo = F}
+```{r }
 (
 yield_data_long <- data.table(
   state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
@@ -682,16 +815,43 @@ yield_data_long <- melt(yield_data_wide, id.vars = "state")
   ] 
 
   <!-- panel ends here -->
+]
 
-.panel[.panel-name[multiple groups]
+---
+
+# Reshaping datasets
+
+.panelset[ 
+
+.panel[.panel-name[prep]
+
+.left5[
+
+**Long data**
 
 ```{r }
-yield_data_wide <- data.frame(
+yield_data_long <- data.table(
   state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
   year = c(2019, 2020) %>% rep(4),
   yield = c(200, 240, 210, 220, 220, 230, 190, 150),
   rainfall = c(14, 15, 15, 16, 20, 21, 24, 15)
-  ) %>% 
+  ) 
+```
+
+```{r echo = F}
+yield_data_long
+```
+
+This data has multiple rows to be spread: `yield` and `rainfall`.
+
+]
+
+.right5[
+
+**Wide data**
+
+```{r }
+yield_data_wide <- yield_data_long %>% 
   pivot_wider(
     names_from = year, 
     values_from = c(yield, rainfall)
@@ -700,63 +860,23 @@ yield_data_wide <- data.frame(
 
 ```
 
-```{r }
-colA <- paste("yield_", 2019:2020, sep = "")
-colB <- paste("rainfall_", 2019:2020, sep = "")
-yield_data_long <- melt(yield_data_wide, measure = list(colA, colB), value.name = c("yield", "rainfall")) 
-
+```{r echo = F}
+yield_data_wide
 ```
 
+This data has multiple sets of columns to be melted: `yield_*` and `rainfall_*`.
+
+]
 
   ] 
 
   <!-- panel ends here -->
 
-.panel[.panel-name[caveat]
+.panel[.panel-name[long to wide]
 
-```{r }
-yield_data_wide_odd <- data.frame(
-  state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
-  year = c(2019, 2020) %>% rep(4),
-  yield = c(200, 240, 210, 220, 220, 230, 190, 150),
-  rainfall = c(14, 15, 15, 16, 20, 21, 24, 15)
-  ) %>% 
-  pivot_wider(
-    names_from = year, 
-    values_from = c(yield, rainfall)
-  ) %>% 
-  data.table() %>% 
-  setnames("yield_2019", "yield_2022")
+It is easy to cast multiple variables to make a long data wide. You just need to give a list of variable names to the `value.var` option.
 
-```
 
-```{r }
-colA <- paste("yield_", c(2022, 2020), sep = "")
-colB <- paste("rainfall_", 2019:2020, sep = "")
-melt(yield_data_wide_odd, measure = list(colA, colB), value.name = c("yield", "rainfall")) 
-
-```
-
-  ] 
-
-  <!-- panel ends here -->
-
-.panel[.panel-name[two step]
-
-```{r }
-(
-yield_data_long <- yield_data_wide %>% 
-  melt(id.var = "state") %>% 
-  separate(variable, c("type", "year"), sep = "_") %>% 
-  dcast(state + year ~ type, value.var = "value")
-)
-```
-  ] 
-
-  <!-- panel ends here -->
-
-.panel[.panel-name[multiple columns]
-  
 ```{r }
 yield_data_long %>% 
   dcast(state ~ year, value.var = c("yield", "rainfall"))   
@@ -765,14 +885,58 @@ yield_data_long %>%
   
 <!-- panel ends here -->  
 
+.panel[.panel-name[wide to long]
+
+It is not as simple to make a wide data with multiple sets of columns to long.
+
+You can provide a list of sets of variables names to `melt()` to tell R which variables are belong to the same group using the `measure()` option.
+
+```{r }
+#--- yield group ---#
+colA <- paste("yield_", 2019:2020, sep = "")
+
+#--- rainfall group ---#
+colB <- paste("rainfall_", 2019:2020, sep = "")
+
+#--- wide to long ---#
+yield_data_long <- melt(yield_data_wide, measure = list(colA, colB), value.name = c("yield", "rainfall")) 
+```
+
+Note however that year information from the variable names are lost. In the resulting dataset, `variable == 1` and `variable == 2` correspond to 2019 and 2020, respectively. So, you need an additional step to recover the original long data format. 
+
+Alternatively, it is probably better to follow the multi-step approach we took we used when we use `pivot_*()` in `dplyr`.
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[better alternative]
+
+The strategy here is to 
++ first make the data long ignoring the fact we want `yield_*` and `rainfall_*` to be separate variables eventually
++ split variable names into two: variable meaning and year  
++ and then use `dcast()` to make it wider
+
+```{r }
+(
+yield_data_wide %>% 
+  melt(id.var = "state") %>% 
+  .[, c("type", "year") := tstrsplit(variable, "_", fixed = TRUE)] %>% 
+  .[, variable := NULL] %>% 
+  dcast(state + year ~ type, value.var = "value")
+)
+```
+  ] 
+
+  <!-- panel ends here -->
+
 ]
 
 <!-- panel set ends here -->
-
-
 
 ---
 
 # Merging
 
 
+# Key

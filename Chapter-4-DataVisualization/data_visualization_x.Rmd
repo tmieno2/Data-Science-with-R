@@ -20,7 +20,6 @@ output:
 suppressMessages(library(nycflights13)) 
 suppressMessages(library(extrafont)) 
 suppressMessages(library(patchwork))
-suppressMessages(library(plotly))
 ```
 
 # Before you start
@@ -2010,8 +2009,6 @@ g_axis +
   scale_fill_brewer(name = "State") #<<
 ```
 
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=350px></html>
-
 Or,
 
 ```{r , eval = F}  
@@ -2117,8 +2114,6 @@ g_axis +
 
 When specifying the theme of figure elements, it is good to know the naming convention of figure elements:
 
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
-
 For example:
 
 + `axis.title` 
@@ -2128,8 +2123,6 @@ This refers to the title of both x- and y-axis. Any aesthetic theme you apply to
 + `axis.title.x` 
 
 This refers to the title of only x-axis. Any aesthetic theme you apply to this element will be reflected on the title of only x-axis.
-
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
 So, basically appending `.name` narrows down the scope of the figure elements the element name refers to.
 
@@ -2142,8 +2135,6 @@ So, basically appending `.name` narrows down the scope of the figure elements th
 .left-full[
 
 There are common functions we use to specify the aesthetic nature of figure elements based on the type of the elements:
-
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
 <br>
 
@@ -2845,7 +2836,7 @@ library(extrafont)
 
 #--- load fonts ---#
 loadfonts()
-````
+```
 
 ]
 
@@ -2853,10 +2844,12 @@ loadfonts()
 
 .panel[.panel-name[font families]
 
-```{r echo = F, cache = F}
+You can use `fonttable()` to see the list of fonts available:
+
+```{r }
 fonttable() %>% 
   select(FontName, Bold,  Italic) %>% 
-  datatable()
+  head(20)  
 ```
 
   ]
@@ -2903,8 +2896,6 @@ Instead of naming the color you want to use, you can use **HEX color codes** ins
 + Click on any color you like
 + Then you will see two sets of color gradients (thicker and lighter from the color you picked)
 + Pick the color you like from the color bar and copy the HEX color code beneath the color you picked
-
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
 You could alternatively use the RGB codes, but I do not see any reasons to do so because the use of HEX codes is sufficient. 
 
@@ -3264,16 +3255,14 @@ Sometimes, you just want to pick colors yourself. In that case, you can use
 + `scale_color_manual()`
 + `scale_fill_manual()`
 
-You specify a sequence of colors and supply it to the `scale` function via the `values` option.
-
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
-
-It is recommended that you use a named vector like.
+Inside the `scale_*_manual()` function, you provide a named vector where a sequence of group names and their corresponding colors are specified to the `scale` function via the `values` option.
 
 For example, consider the box plot of corn yield for four states: Colorado, Kansas, Nebraska, and South Dakota. Then, a sample named vector looks like this:
 
 ```{r eval = F}
+(
 cols <- c("Colorado" = "red", "Nebraska" = "blue", "Kansas" = "orange", "South Dakota" = "#ff0080")
+)
 ```
 
 Now that a named vector is created, you can do the following to impose the color scheme you just defined.
@@ -3284,7 +3273,6 @@ scale_fill_manual(values = cols)
 
 ]
  
-
   ]
 
 .panel[.panel-name[Example]
@@ -3442,17 +3430,17 @@ g_1 | (g_3 / g_4)
 The difference between faceted figures and panel of independent figures
 
 + `facet_*()`: faceted figures share the same legend   
-+ `patchwork`: panel of independent figures can clearly have independent legends    
++ `patchwork`: individual figures can clearly have independent legends    
 
 Faceting is not suitable for presenting multiple distinct variables as they need to share the same legend.
 
 Imagine plotting temperature (in Celsius) and precipitation (in mm) as faceted figures.
 
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+<br>
 
 <span style="color:red"> Note: </span>
 
-+ Before you use the `patchwork` packages to do figure arrangement, think a bit if you really need to do it. Can't you just arrange figures in WORD or latex? 
++ Before you use the `patchwork` packages to arrange figures, think a bit if you really need to do it. Can't you just arrange individual figures in WORD or latex? 
 + It is very useful if the destination of the panels of figures is html (e.g., shiny, flex dashboard) because it is not trivial to arrange figures the way the `patchwork` allows you to (you certainly need to know how **css** works).
 
 ]
@@ -4393,6 +4381,10 @@ weather %>%
 
 You can also use the `plotly` package to create an animated figure. 
 
+```{r include = F}
+suppressMessages(library(plotly))
+```
+
 ```{r eval = F}
 install.packages(plotly)  
 
@@ -4425,7 +4417,7 @@ library(plotly)
 
 ```{r eval = F}
 #--- create a ggplot object ---#
-county_yield %>% 
+g_box <- county_yield %>% 
   filter(state_name %in% c("Nebraska", "Colorado", "Kansas")) %>% 
   ggplot(data = .) + 
   geom_boxplot(
@@ -4458,10 +4450,7 @@ Then, add this in your Rmd file:
 .panel[.panel-name[time-series box plot]
 
 ```{r echo = F, eval = F}
-county_yield_3 <- county_yield %>% 
-  filter(state_name %in% c("Nebraska", "Colorado", "Kansas"))
-
-g_box <- ggplot(data = county_yield_3) + 
+g_box <- ggplot(data = county_yield) + 
   geom_boxplot(
     aes(
       y = corn_yield, 

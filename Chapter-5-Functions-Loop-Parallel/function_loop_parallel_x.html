@@ -36,8 +36,62 @@ class: center, middle, inverse, title-slide
 
 
 
-
 &lt;style type="text/css"&gt;
+
+.remark-slide-content.hljs-github h1 {
+  margin-top: 5px;  
+  margin-bottom: 25px;  
+}
+
+.remark-slide-content.hljs-github {
+  padding-top: 10px;  
+  padding-left: 30px;  
+  padding-right: 30px;  
+}
+
+.panel-tabs {
+  &lt;!-- color: #062A00; --&gt;
+  color: #841F27;
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panel-tab {
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 3px;  
+  margin-right: 3px;  
+  padding-top: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panelset .panel-tabs .panel-tab {
+  min-height: 40px;
+}
+
+.remark-slide th {
+  border-bottom: 1px solid #ddd;
+}
+
+.remark-slide thead {
+  border-bottom: 0px;
+}
+
+.gt_footnote {
+  padding: 2px;  
+}
+
+.remark-slide table {
+  border-collapse: collapse;
+}
+
+.remark-slide tbody {
+  border-bottom: 2px solid #666;
+}
+
+
 .important {
   background-color: lightpink;
   border: 2px solid blue;
@@ -112,7 +166,7 @@ ul li{
 }
 
 ul, li{
-  margin-left: 9px; 
+  margin-left: 15px; 
   padding-left: 0px; 
 }
 
@@ -121,11 +175,165 @@ ol li{
 }
 
 ol, li{
-  margin-left: 9px; 
+  margin-left: 15px; 
   padding-left: 0px; 
 }
 
 &lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+.content-box { 
+    box-sizing: border-box;
+    background-color: #e2e2e2;
+}
+.content-box-blue,
+.content-box-gray,
+.content-box-grey,
+.content-box-army,
+.content-box-green,
+.content-box-purple,
+.content-box-red,
+.content-box-yellow {
+  box-sizing: border-box;
+  border-radius: 15px;
+  margin: 0 0 15px;
+  overflow: hidden;
+  padding: 0px 20px 0px 20px;
+  width: 100%;
+}
+.content-box-blue { background-color: #F0F8FF; }
+.content-box-gray { background-color: #e2e2e2; }
+.content-box-grey { background-color: #F5F5F5; }
+.content-box-army { background-color: #737a36; }
+.content-box-green { background-color: #d9edc2; }
+.content-box-purple { background-color: #e2e2f9; }
+.content-box-red { background-color: #ffcccc; }
+.content-box-yellow { background-color: #fef5c4; }
+.content-box-blue .remark-inline-code,
+.content-box-blue .remark-inline-code,
+.content-box-gray .remark-inline-code,
+.content-box-grey .remark-inline-code,
+.content-box-army .remark-inline-code,
+.content-box-green .remark-inline-code,
+.content-box-purple .remark-inline-code,
+.content-box-red .remark-inline-code,
+.content-box-yellow .remark-inline-code { 
+  background: none;
+}
+
+.full-width {
+    display: flex;
+    width: 100%;
+    flex: 1 1 auto;
+}
+&lt;/style&gt;
+
+
+&lt;style type="text/css"&gt;
+blockquote, .blockquote {
+  display: block;
+  margin-top: 0.1em;
+  margin-bottom: 0.2em;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-left: solid 10px #0148A4;
+  border-top: solid 2px #0148A4;
+  border-bottom: solid 2px #0148A4;
+  border-right: solid 2px #0148A4;
+  box-shadow: 0 0 6px rgba(0,0,0,0.5);
+  /* background-color: #e64626; */
+  color: #e64626;
+  padding: 0.5em;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+
+.blockquote p {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h1:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h2:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h3:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h4:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+.text-shadow {
+  text-shadow: 0 0 4px #424242;
+}
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+/******************
+ * Slide scrolling
+ * (non-functional)
+ * not sure if it is a good idea anyway
+slides &gt; slide {
+  overflow: scroll;
+ padding: 5px 40px;
+}
+.scrollable-slide .remark-slide {
+  height: 400px;
+  overflow: scroll !important;
+}
+ ******************/
+
+.scroll-box-8 {
+  height:8em;
+  overflow-y: scroll;
+}
+.scroll-box-10 {
+  height:10em;
+  overflow-y: scroll;
+}
+.scroll-box-12 {
+  height:12em;
+  overflow-y: scroll;
+}
+.scroll-box-14 {
+  height:14em;
+  overflow-y: scroll;
+}
+.scroll-box-16 {
+  height:16em;
+  overflow-y: scroll;
+}
+.scroll-box-18 {
+  height:18em;
+  overflow-y: scroll;
+}
+.scroll-box-20 {
+  height:20em;
+  overflow-y: scroll;
+}
+.scroll-box-24 {
+  height:24em;
+  overflow-y: scroll;
+}
+.scroll-box-30 {
+  height:30em;
+  overflow-y: scroll;
+}
+.scroll-output {
+  height: 90%;
+  overflow-y: scroll;
+}
+
+ 
+&lt;/style&gt;
+
+
 
 ## Learning objectives
 
@@ -575,7 +783,7 @@ for (bluh_bluh_bluh in 1:5){
 
 &lt;br&gt;
 
-Write a loop that cubes each element of the sequence of numbers that starts from 5 and increases up to 50 with the incremental step of 5.
+Write a for loop that cubes each element of the sequence of numbers that starts from 5 and increases up to 50 with the incremental step of 5.
 
   ] 
 
@@ -603,9 +811,16 @@ lapply(A, B)
 
 + `A` is the list of values 
 + `B` is the function you would like to apply to each of the values in `A` 
-  ] 
 
-.panel[.panel-name[Example]
+**Note**:  
+
++ `A` is a vector, `lapply()` works on each of the vector elements
++ `A` is a list, `lapply()` works on each of the list elements whatever they may be 
++ `A` is a `data.frame`, `lapply()` works on each of the columns (`data.frame` is a list of columns of equal length)
+
+]
+
+.panel[.panel-name[Example 1] 
 
 &lt;br&gt;
 
@@ -637,13 +852,104 @@ lapply(1:5, function(x){x^2})
 
 The key difference from a for loop is the object class of the output after the loop. 
 
-&lt;span style="color:red"&gt; Important&lt;/span&gt;: 
-
-+ the output type of `lappy()` is always a `list`
-+ the output type of a for loop is flexible (it is your decision) 
+&lt;span style="color:red"&gt; Important&lt;/span&gt;: the output type of `lappy()` is always a `list` (that's why it is called `lapply`)
 
   ] 
 
+.panel[.panel-name[Example 2]
+
+.left5[
+
+**`data.frame` to use**
+
+
+```r
+mtcars %&gt;% head()
+```
+
+```
+##                    mpg cyl disp
+## Mazda RX4         21.0   6  160
+## Mazda RX4 Wag     21.0   6  160
+## Datsun 710        22.8   4  108
+## Hornet 4 Drive    21.4   6  258
+## Hornet Sportabout 18.7   8  360
+## Valiant           18.1   6  225
+##                    hp drat    wt
+## Mazda RX4         110 3.90 2.620
+## Mazda RX4 Wag     110 3.90 2.875
+## Datsun 710         93 3.85 2.320
+## Hornet 4 Drive    110 3.08 3.215
+## Hornet Sportabout 175 3.15 3.440
+## Valiant           105 2.76 3.460
+##                    qsec vs am
+## Mazda RX4         16.46  0  1
+## Mazda RX4 Wag     17.02  0  1
+## Datsun 710        18.61  1  1
+## Hornet 4 Drive    19.44  1  0
+## Hornet Sportabout 17.02  0  0
+## Valiant           20.22  1  0
+##                   gear carb
+## Mazda RX4            4    4
+## Mazda RX4 Wag        4    4
+## Datsun 710           4    1
+## Hornet 4 Drive       3    1
+## Hornet Sportabout    3    2
+## Valiant              3    1
+```
+]
+
+.right5[
+The code below calculate the mean of each of the variables in the `mtcars` dataset. 
+
+.scroll-box-30[
+
+```r
+lapply(mtcars, mean)  
+```
+
+```
+## $mpg
+## [1] 20.09062
+## 
+## $cyl
+## [1] 6.1875
+## 
+## $disp
+## [1] 230.7219
+## 
+## $hp
+## [1] 146.6875
+## 
+## $drat
+## [1] 3.596563
+## 
+## $wt
+## [1] 3.21725
+## 
+## $qsec
+## [1] 17.84875
+## 
+## $vs
+## [1] 0.4375
+## 
+## $am
+## [1] 0.40625
+## 
+## $gear
+## [1] 3.6875
+## 
+## $carb
+## [1] 2.8125
+```
+]
+
+]
+
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
 .panel[.panel-name[define a function]
 
 It is often the case that you want to write a function of the action you intend to repeat first and then loop.
@@ -702,6 +1008,7 @@ square_them_add &lt;- function(a, b) {
 
 Then you can do this:
 
+.scroll-box-16[
 
 ```r
 lapply(1:10, function(x) square_them_add(x, b = 5)) 
@@ -738,6 +1045,7 @@ lapply(1:10, function(x) square_them_add(x, b = 5))
 ## [[10]]
 ## [1] 125
 ```
+]
 
 As you can see, this function try each of `1:10` (called internally `x`), give it to `square_them_add()` as its first argument while `b` is fixed at 5.
 
@@ -746,6 +1054,39 @@ As you can see, this function try each of `1:10` (called internally `x`), give i
   &lt;!-- panel ends here --&gt;
 
 ]
+
+---
+
+# Exercises:
+
+.panelset[ 
+
+.panel[.panel-name[Exercise 1]
+
+Use `lapply()` to cube each element of the sequence of numbers that starts from 5 and increases up to 50 with the incremental step of 5.
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Exercise 2]
+
+Define a function that takes a nitrogen rate as an argument and calculate the estimated yield based on the following equation:
+
+$$
+\mbox{corn yield} = 120 + 25 \times log(\mbox{nitrogen rate})
+$$ 
+
+At each value of the corn price sequence of `seq(2.5, 4.0, by = 0.1)`, calculate the revenue using `lapply()` where nitrogen rate is fixed at 200 (lb/acre).
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+
+]
+
+&lt;!-- panel set ends here --&gt;
 
 ---
 
@@ -949,7 +1290,6 @@ final_results &lt;- bind_rows(rev_data)
 
 ]
 
-
 ---
 
 
@@ -982,6 +1322,27 @@ data_to_return &lt;- data.frame(
 ```
 
 After you confirm the code you write gives you desired outcomes, make it a function by replacing `1` with `i`.
+
+---
+
+# Exercise 
+
+Define a function that takes nitrogen rates, corn prices, and nitrogen prices and calculate profit per acre based on the following equation:
+
+$$
+\mbox{corn yield} = 120 + 25 \times log(\mbox{nitrogen rate})
+$$ 
+
+$$
+\mbox{profit} = \mbox{corn price} \times \mbox{corn yield} - \mbox{nitrogen price} \times \mbox{nitrogen rate}
+$$ 
+
++ Fix the nitrogen rate at 200 (lb/acre)
++ Define the following sequences of numbers
+  * corn price: `seq(2.5, 4.0, by = 0.05)`
+  * nitrogen price: `seq(0.2, 0.6, by = 0.01)`
++ For each of the unique combination of corn price and nitrogen price, calculate the profit 
+  
 
 ---
 
@@ -1084,9 +1445,15 @@ microbenchmark(
 
 ```
 ## Unit: milliseconds
-##            expr      min       lq       mean    median        uq      max neval
-##      vectorized 0.002399 0.002721 0.00306662 0.0028360 0.0030060 0.013592   100
-##  not vectorized 0.487216 0.502691 0.55210194 0.5294265 0.5466765 2.449147   100
+##            expr      min       lq
+##      vectorized 0.002584 0.002756
+##  not vectorized 0.482780 0.525189
+##        mean    median        uq
+##  0.00311478 0.0029690 0.0031685
+##  0.55698342 0.5348805 0.5412880
+##       max neval
+##  0.008011   100
+##  2.772965   100
 ```
 
 + As you can see, the vectorized version is faster. 
@@ -1173,33 +1540,20 @@ microbenchmark(
 
 ```
 ## Unit: milliseconds
-##            expr      min       lq     mean   median       uq      max neval
-##      vectorized 1.272873 1.353482 1.571433 1.433167 1.630985 6.666610   100
-##  not vectorized 2.049693 2.217229 2.582428 2.294928 2.384482 9.737198   100
+##            expr      min       lq
+##      vectorized 1.199407 1.291661
+##  not vectorized 2.035565 2.190532
+##      mean   median       uq
+##  1.409041 1.331756 1.371374
+##  2.371876 2.282393 2.372582
+##        max neval
+##   7.669263   100
+##  10.783663   100
 ```
 
   ] 
 
   &lt;!-- panel ends here --&gt;
-
-]
-
----
-
-
-# Exercises 
-
-.panelset[ 
-
-.panel[.panel-name[Exercise 1]
-
-Write a loop that 
-
-  ]
-
-.panel[.panel-name[Exercise 2]
-
-  ]
 
 ]
 
@@ -1336,9 +1690,18 @@ microbenchmark(
 
 ```
 ## Unit: milliseconds
-##              expr        min         lq        mean    median          uq        max neval
-##      parallelized 101.065357 108.922310 115.7754681 113.98218 118.3657985 292.310849   100
-##  not parallelized   0.418513   0.440038   0.5527968   0.45106   0.4903135   7.524695   100
+##              expr        min
+##      parallelized 100.969698
+##  not parallelized   0.411077
+##           lq        mean
+##  109.6662740 116.1953816
+##    0.4381145   0.4855539
+##       median          uq
+##  115.7313535 121.0808905
+##    0.4688975   0.4880275
+##         max neval
+##  159.588206   100
+##    1.941772   100
 ```
 
 ]
@@ -1391,7 +1754,12 @@ $$
  y = 1 + x + v
 $$
 
-where `\(\mu \sim N(0,1)\)`, `\(x \sim N(0,1) + \mu\)`, and `\(v \sim N(0,1) + \mu\)`. The `\(\mu\)` term cause correlation between `\(x\)` (the covariate) and `\(v\)` (the error term). 
+where 
++ `\(\mu \sim N(0,1)\)`
++ `\(x \sim N(0,1) + \mu\)`
++ `\(v \sim N(0,1) + \mu\)`. 
+ 
+The `\(\mu\)` term cause correlation between `\(x\)` (the covariate) and `\(v\)` (the error term). 
 
 2. estimate the coefficient on `\(x\)` vis OLS, and return the estimate. 
 
@@ -1451,7 +1819,7 @@ toc()
 ```
 
 ```
-## 0.021 sec elapsed
+## 0.025 sec elapsed
 ```
 
 **Not parallelized (sequential)**:
@@ -1464,7 +1832,7 @@ toc()
 ```
 
 ```
-## 26.031 sec elapsed
+## 22.01 sec elapsed
 ```
 
 **Parallelized**:
@@ -1477,7 +1845,7 @@ toc()
 ```
 
 ```
-## 2.672 sec elapsed
+## 2.697 sec elapsed
 ```
 
 ]
