@@ -868,34 +868,13 @@ mtcars %&gt;% head()
 ```
 
 ```
-##                    mpg cyl disp
-## Mazda RX4         21.0   6  160
-## Mazda RX4 Wag     21.0   6  160
-## Datsun 710        22.8   4  108
-## Hornet 4 Drive    21.4   6  258
-## Hornet Sportabout 18.7   8  360
-## Valiant           18.1   6  225
-##                    hp drat    wt
-## Mazda RX4         110 3.90 2.620
-## Mazda RX4 Wag     110 3.90 2.875
-## Datsun 710         93 3.85 2.320
-## Hornet 4 Drive    110 3.08 3.215
-## Hornet Sportabout 175 3.15 3.440
-## Valiant           105 2.76 3.460
-##                    qsec vs am
-## Mazda RX4         16.46  0  1
-## Mazda RX4 Wag     17.02  0  1
-## Datsun 710        18.61  1  1
-## Hornet 4 Drive    19.44  1  0
-## Hornet Sportabout 17.02  0  0
-## Valiant           20.22  1  0
-##                   gear carb
-## Mazda RX4            4    4
-## Mazda RX4 Wag        4    4
-## Datsun 710           4    1
-## Hornet 4 Drive       3    1
-## Hornet Sportabout    3    2
-## Valiant              3    1
+##                    mpg cyl disp  hp drat    wt  qsec vs am gear carb
+## Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
+## Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
+## Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
+## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
+## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
+## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
 ```
 ]
 
@@ -1445,15 +1424,9 @@ microbenchmark(
 
 ```
 ## Unit: milliseconds
-##            expr      min       lq
-##      vectorized 0.002584 0.002756
-##  not vectorized 0.482780 0.525189
-##        mean    median        uq
-##  0.00311478 0.0029690 0.0031685
-##  0.55698342 0.5348805 0.5412880
-##       max neval
-##  0.008011   100
-##  2.772965   100
+##            expr      min       lq       mean    median        uq      max neval
+##      vectorized 0.002659 0.002970 0.00436763 0.0034565 0.0044865 0.013626   100
+##  not vectorized 0.523389 0.535097 0.58277273 0.5417825 0.5571450 2.876945   100
 ```
 
 + As you can see, the vectorized version is faster. 
@@ -1540,15 +1513,9 @@ microbenchmark(
 
 ```
 ## Unit: milliseconds
-##            expr      min       lq
-##      vectorized 1.199407 1.291661
-##  not vectorized 2.035565 2.190532
-##      mean   median       uq
-##  1.409041 1.331756 1.371374
-##  2.371876 2.282393 2.372582
-##        max neval
-##   7.669263   100
-##  10.783663   100
+##            expr      min       lq     mean   median       uq       max neval
+##      vectorized 1.289307 1.433532 1.792503 1.589651 1.740843 14.871959   100
+##  not vectorized 2.169743 2.230602 2.414556 2.328387 2.530919  3.036096   100
 ```
 
   ] 
@@ -1690,18 +1657,12 @@ microbenchmark(
 
 ```
 ## Unit: milliseconds
-##              expr        min
-##      parallelized 100.969698
-##  not parallelized   0.411077
-##           lq        mean
-##  109.6662740 116.1953816
-##    0.4381145   0.4855539
-##       median          uq
-##  115.7313535 121.0808905
-##    0.4688975   0.4880275
-##         max neval
-##  159.588206   100
-##    1.941772   100
+##              expr        min         lq        mean      median         uq       max
+##      parallelized 100.048702 106.930572 114.0053786 111.0467445 117.575473 162.46950
+##  not parallelized   0.405226   0.437662   0.7444272   0.4520505   0.480531  14.02159
+##  neval
+##    100
+##    100
 ```
 
 ]
@@ -1728,7 +1689,7 @@ microbenchmark(
 ---
 
 
-# Parallel processing: less trivial example 
+# Parallel processing: a less trivial example 
 
 .panelset[ 
 
@@ -1764,8 +1725,6 @@ The `\(\mu\)` term cause correlation between `\(x\)` (the covariate) and `\(v\)`
 2. estimate the coefficient on `\(x\)` vis OLS, and return the estimate. 
 
 3. repeat this process `\(1,000\)` times to understand the property of the OLS estimators under the data generating process.
-
-&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=600px&gt;&lt;/html&gt;
 
 This Monte Carlo simulation is embarrassingly parallel because each process is independent of any other.
 
@@ -1819,7 +1778,7 @@ toc()
 ```
 
 ```
-## 0.025 sec elapsed
+## 0.023 sec elapsed
 ```
 
 **Not parallelized (sequential)**:
@@ -1832,7 +1791,7 @@ toc()
 ```
 
 ```
-## 22.01 sec elapsed
+## 26.155 sec elapsed
 ```
 
 **Parallelized**:
@@ -1845,7 +1804,7 @@ toc()
 ```
 
 ```
-## 2.697 sec elapsed
+## 2.809 sec elapsed
 ```
 
 ]
@@ -1881,32 +1840,6 @@ MC_results &lt;- pbmclapply(1:1000, MC_sim, mc.cores = detectCores() - 1)
   &lt;!-- panel ends here --&gt;
 
 ]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
