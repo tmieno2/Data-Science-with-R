@@ -3497,6 +3497,97 @@ g_box +
 
 ---
 
+# Exercise 
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.left-code[
+
+Run the following code to create `gg_delay`, which you will build on.
+
+
+```r
+library(nycflights13)
+
+gg_delay &lt;- flights %&gt;% 
+  group_by(origin, month) %&gt;% 
+  summarize(mean_arr_delay = mean(arr_delay, na.rm = TRUE)) %&gt;% 
+  ggplot(.) +
+    geom_line(aes(y = mean_arr_delay, x = month, color = origin))
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/prep-ex-axes-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Exercise 1]
+
+.left5[
+
+Change the axes content to create the figure on the right using `scale_x_continuous()` and `scale_y_continuous()`. 
+
+Here are the list of changes you need to make:
+
++ x-axis 
+  * change the x-axis title to "Month"
+  * change the limit of the x-axis title to 4 through 8
+  * change the the breaks and their labels of the x-axis ticks (breaks) to 4 through 8 
++ y-axis 
+  * change the y-axis title to "Average Arrival Delay (minutes)"
+  * change the limit of the y-axis title to 0 through 25
+
+]
+
+.right5[
+
+&lt;img src="data_visualization_x_files/figure-html/g-ex-1-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+]
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Exercise 2]
+
+.left5[
+
+Change the axes content to create the figure on the right. But, use `scale_x_continuous()` only for changing the x-axis breaks. 
+
+Here are the list of changes you need to make:
+
++ x-axis 
+  * change the x-axis title to "Month"
+  * change the limit of the x-axis title to 4 through 8
+  * change the the breaks and their labels of the x-axis ticks (breaks) to 4 through 8 
++ y-axis 
+  * change the y-axis title to "Average Arrival Delay (minutes)"
+  * change the limit of the y-axis title to 0 through 25
+
+]
+
+.right5[
+
+&lt;img src="data_visualization_x_files/figure-html/g-ex-2-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+]
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+]
+
+&lt;!-- panel set ends here --&gt;
+
+
+---
+
 # Legends content
 
 .panelset[ 
@@ -3627,6 +3718,67 @@ g_axis +
 
   ] &lt;!-- panel ends here --&gt; 
 ]
+
+---
+
+# Exercise   
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.left-code[
+
+Run the following code to create `gg_delay`, which you will build on.
+
+
+```r
+library(nycflights13)
+
+gg_delay &lt;- flights %&gt;% 
+  group_by(origin, month) %&gt;% 
+  summarize(mean_arr_delay = mean(arr_delay, na.rm = TRUE)) %&gt;% 
+  ggplot(.) +
+    geom_line(aes(y = mean_arr_delay, x = month, color = origin))
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/prep-ex-legends-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[]
+
+.left5[
+
+Change the legend contents to create the figure on the right. Using `scale_*_brewer()`. You need to identify what goes into `*` in `scale_*_brewer()`.
+
+Here are the list of changes you need to make:
+
++ x-axis 
+  * change the legend title to "Airports in NY"
+  * change the the legend title position to "bottom"
+  * change the legend items to be spread in 3 columns
+
+]
+
+.right5[
+
+&lt;img src="data_visualization_x_files/figure-html/g-ex-legend-1-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+]
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+]
+
+&lt;!-- panel set ends here --&gt;
+
 
 ---
 

@@ -1352,12 +1352,9 @@ data_main <- tibble(N = seq(0.1, 300, by = 0.1)) %>%
 data_main 
 ```
 
-
   ]
 
 <!-- panel ends here -->
-
-
 
   <!-- panel ends here -->
 .panel[.panel-name[example (cont.)]
