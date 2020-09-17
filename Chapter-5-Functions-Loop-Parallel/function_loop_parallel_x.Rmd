@@ -1031,6 +1031,14 @@ detectCores()
 plan(multiprocess, workers = detectCores() - 1)
 ```
 
+Other backend processes are:
+
++ `sequential`: this is just a regular loop
++ `multicore`: forked sessions (not available on Windows)
++ `multisession`: multiple sessions (less performant thana `multicore`)
+
+With the `multiprocess` option, R figure out which `multicore` or `multisession` should be used (or can be used) and automatically redirect the backend process to the appropriate (available) one.
+
 ]
 
   ] 
@@ -1247,38 +1255,15 @@ lapply(1:100, gen_data)
 
 ```
 
-.panelset[ 
-
-.panel[.panel-name[Exercise 1]
-
-+ Using the `list.files()` function get the name of all the files inside the `experiment_data` and assign it to `file_names`.
++ Using the `list.files()` function, get the name of all the files inside the `experiment_data` and assign it to `file_names`.
 
 ```{r get-file-names, echo = F}
 file_names <- list.files("../../Datasets/Chapter_5/experiment_data")  
 ```
 
-+ Using `future_lapply()` read all the files (this is not a good use case of parallelized processing)
++ Using `future_lapply()`, read all the files (this is not a good use case of parallelized processing because each iteration is super fast in practice)
 + Combine all the `data.frame`s saved in a list into one `data.frame` 
 + Find the average `corn_yield` by field
-
-  ]
-
-<!-- panel ends here -->
-
-.panel[.panel-name[]
-
-+ Write a function that 
-  * reads "corn_experiment_1.rds"
-  * run OLS of `corn_yield` on `log(N_rate)`
-  * 
- 
-  ]
-
-<!-- panel ends here -->
-
-]
-
-<!-- panel set ends here -->
 
 ---
 class: inverse, center, middle

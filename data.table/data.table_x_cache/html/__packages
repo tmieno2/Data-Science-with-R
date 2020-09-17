@@ -21,6 +21,10 @@ purrr
 dplyr
 stringr
 forcats
+future
+future.apply
+microbenchmark
+nycflights13
 carData
 car
 zoo
@@ -30,14 +34,11 @@ survival
 AER
 readxl
 readstata13
-nycflights13
 exactextractr
 prism
 sf
 sp
 raster
-future
-future.apply
 patchwork
 plotly
 maps
@@ -48,6 +49,5 @@ ggalt
 gapminder
 gganimate
 ggforce
-microbenchmark
 modelsummary
 kableExtra

@@ -37,8 +37,8 @@ The objectives of this chapter is to learn how to use the `ggplot2` package to c
 5. [Other supplementary `geom_*()`](#other-geoms)
 6. [Make your figures presentable to others](#fine-tune)
 7. [Tips](#tips)
-7. [Gallery of other type of figures](#gallery)
-7. [Animated figures](#animated)
+8. [Gallery of other type of figures](#gallery)
+9. [Animated figures](#animated)
 
 <br>
 
@@ -1327,6 +1327,34 @@ ggplot(data=premium) +
   ]
 
 ]
+
+---
+
+# Preparing datasets 
+
+We have seen 
+
++ figures where its main body are made color differentiated (e.g., with `aes(color = var)` inside the `geom_*()` function)
++  faceted figures  
+
+.content-box-blue[.red[Important]: the dataset has to be in long format to create these types of figures!!]
+
+<br>
+
+For example consider the following dataset in a wide format:
+
+```{r echo = F}
+county_yield[, .(county_code, corn_yield, year, state_name)] %>% 
+  filter(year %in% c(2000, 2001)) %>% 
+  dcast(county_code + state_name ~ year, value.var = "corn_yield")  
+```
+
+This dataset has county-level yields for Nebraska, Colorado, and Kansas stored in variables named `2000` and `2001` (they themselves represent years).
+
+Imagine creating boxplots of corn yield fill color-differentiated by state and faceted by year.
+
+You will have trouble with specifying `facet_grid()` because you do not have a single variable that represents `year`.
+
 
 <!-- 
 #=========================================
@@ -3317,9 +3345,9 @@ ggplot(data = filter(county_yield, corn_yield > 50)) +
 .left-full[
 `RColorBrewer` package provides a number of color palettes of three types:
 
-+ sequential: suitable for a variable that has ordinal meaning (e.g., temperature, precipitation)
-+ diverging: suitable for variables that take both negative and positive values (e.g., changes in groundwater level)
-+ qualitative: suitable for qualitative or categorical variable
++ **sequential**: suitable for a variable that has ordinal meaning (e.g., temperature, precipitation)
++ **diverging**: suitable for variables that take both negative and positive values (e.g., changes in groundwater level)
++ **qualitative**: suitable for qualitative or categorical variable
 
 These palettes are particularly suitable for maps.
 
@@ -3924,27 +3952,22 @@ library(nycflights13)
 ```
 
 Create a box plot of temperature by month:
-```{r weather-2, eval = F, echo = F}
+```{r weather-2, eval = F}
 ggplot(data = weather) +
   geom_boxplot(
     aes(
       y = temp, 
-      x = factor(month)
+      x = factor(month) #<<
     )
   )
 ```
 
-```{r echo = F}
-decorate("weather-2", eval = F) %>% 
-  flair('x = factor(month)') %>%
-  knit_print.with_flair()
-```
+When a factor object is created using `factor()`, the order of its levels are set in alphabetical order for a character variable and in numeric order for a numeric variable (that's why it worked).
 
 ]
 
 .right-plot[
 ```{r weather-2-f, ref.label = "weather-2", echo = F, out.width = "90%"}  
-
 ```
 ]
 
@@ -4219,8 +4242,7 @@ weather %>%
 
 # Diverging chart (variant of a bar chart)
 
-.left-code[
-```{r diverging2, eval = F}  
+```{r diverging2, echo = F, out.width = "60%"}  
 county_yield %>% 
   filter(state_name == "Nebraska") %>% 
   filter(!is.na(corn_yield)) %>% 
@@ -4230,13 +4252,17 @@ county_yield %>%
     yield_norm = (corn_yield - mean(corn_yield))/sd(corn_yield),
     below_above = ifelse(yield_norm < 0, "below", "above")
   ) %>% 
+  head(20) %>% 
   arrange(yield_norm) %>% 
   mutate(
     county_code_f = factor(county_code, levels = .$county_code)
   ) %>% 
   ggplot(data = .) +
   geom_bar(
-    aes(fill = below_above, x = county_code_f, y = yield_norm, label = county_code_f), 
+    aes(
+      fill = below_above, x = county_code_f, 
+      y = yield_norm, label = county_code_f
+    ), 
     stat = 'identity', 
     width = 0.5
   )  +
@@ -4253,23 +4279,60 @@ county_yield %>%
   )
 
 ```
-]
 
-.right-plot[
-```{r diverging2-f, ref.label = "diverging2", echo = F, fig.dim = c(4, 4.3), out.width = "90%", dependson = "diverging"}  
+---
 
+```{r divergin-plot, cache = F, include = F}
+county_yield %>% #BREAK
+  filter(state_name == "Nebraska") %>% 
+  filter(!is.na(corn_yield)) %>% 
+  group_by(county_code) %>% 
+  summarize(corn_yield = mean(corn_yield)) %>% #BREAK 
+  mutate(
+    yield_norm = (corn_yield - mean(corn_yield))/sd(corn_yield),
+    below_above = ifelse(yield_norm < 0, "below", "above")
+  ) %>% #BREAK
+  head(20) %>% #BREAK 
+  arrange(yield_norm) %>% #BREAK
+  mutate(
+    county_code_f = factor(county_code, levels = .$county_code)
+  ) %>% #BREAK
+  ggplot(data = .) + #BREAK
+  geom_bar(
+    aes(fill = below_above, x = county_code_f, y = yield_norm, label = county_code_f), 
+    stat = 'identity', 
+    width = 0.5
+  )  + #BREAK
+  scale_fill_manual(
+    name = "Productivity", 
+    labels = c("Above Average", "Below Average"), 
+    values = c("above" = "#00ba38", "below" = "#f8766d")
+  ) + #BREAK
+  coord_flip() + #BREAK
+  labs(x = "Normalized Yield", y = "County Code") + #BREAK
+  theme(
+    legend.position = "bottom",
+    axis.text.y = element_text(size = 6)
+  )
 ```
-]
+
+`r chunk_reveal(
+  chunk_name = "divergin-plot", 
+  title = "# Diverging chart: little by little",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(40, 60)
+  )
+`
 
 ---
 
 # Area chart 
 
-.left-code[
-
 Area charts are useful when comparing a variable across multiple groups over time.
 
-```{r area-chart, eval = F}  
+```{r area-chart, echo = F, out.width = "60%"}  
 county_yield %>% 
   filter(!is.na(corn_yield)) %>% 
   group_by(state_name, year) %>% 
@@ -4292,25 +4355,49 @@ county_yield %>%
 
 ```
 
-+ Do not forget `stat = "identity"`
+---
 
-]
 
-.right-plot[
-```{r area-chart-f, ref.label = "area-chart", echo = F, out.width = "90%"}  
+```{r area-chart-flip, cache = F, include = F}
+county_yield %>% #BREAK
+  filter(!is.na(corn_yield)) %>% #BREAK 
+  group_by(state_name, year) %>% #BREAK
+  summarize(corn_yield = mean(corn_yield)) %>% #BREAK 
+  group_by(year) %>% 
+  mutate(corn_yield_p = corn_yield / sum(corn_yield)) %>% #BREAK
+  ggplot(data = .) + #BREAK
+  geom_area(
+    aes(
+      y = corn_yield_p, 
+      x = year, 
+      fill = state_name
+    ), 
+    stat = "identity"
+  ) + #BREAK
+  labs(x = "Year", y = "Corn Yield Ratio") + #BREAK
+  scale_fill_viridis_d(name = "State") + #BREAK 
+  theme_bw() + #BREAK
+  theme(legend.position = "bottom")
 ```
-]
 
+`r chunk_reveal(
+  chunk_name = "area-chart-flip", 
+  title = "# Area chart: little by little",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
 
 ---
 
 # Mean and SE chart
 
-.left5[
-```{r mean-se, eval = F}
+```{r mean-se, echo = F, out.width = "60%"}
 data(Salaries, package="carData")
 
-Salaries %>%
+tibble(Salaries) %>%
   group_by(rank) %>% #BREAK
   summarize(
     n = n(),
@@ -4331,12 +4418,44 @@ Salaries %>%
   ) #>>
 
 ```
-]
 
-.right5[
-```{r mean-se-f, ref.label = "mean-se", echo = F}  
+---
+
+
+```{r mean-se-flip, cache = F, include = F}
+data(Salaries, package="carData")
+
+Salaries %>% #BREAK
+  group_by(rank) %>% 
+  summarize(
+    n = n(),
+    mean_salary = mean(salary),
+    sd = sd(salary),
+    se = sd / sqrt(n),
+    ci = qt(0.975, df = n - 1) * sd / sqrt(n)
+  ) %>% #BREAK
+  ggplot(data = .) + #BREAK
+  aes(x = rank, y = mean_salary) + #BREAK
+  geom_point(size = 3) + #BREAK
+  geom_errorbar( 
+    aes( 
+      ymin = mean_salary - 1.96 * se, 
+      ymax = mean_salary + 1.96 * se 
+      ), 
+    width = .1 
+  ) 
+
 ```
-]
+
+`r chunk_reveal(
+  chunk_name = "mean-se-flip", 
+  title = "# Mean and SE chart: little by little",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
 
 
 ---

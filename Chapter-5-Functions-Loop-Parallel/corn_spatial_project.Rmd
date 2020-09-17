@@ -1,0 +1,457 @@
+---
+title: "Corn Spatial Project"
+author: "Badri Khanal"
+date: "9/16/2020"
+output: html_document
+---
+
+---
+title: "corn_spatial_1"
+author: "Badri Khanal"
+date: "8/26/2020"
+output: 
+  html_document:
+    number_sections : yes
+    theme: flatly
+    toc: yes
+  word document:
+    toc : yes
+editor_options: 
+  chunk_output_type: inline
+---
+## Including Plots
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 1. packages loading
+``` {r eval=TRUE, echo=FALSE}
+library(sf) # to encode spatial vector data
+library(sp) # Classes and methods for spatial data
+library(GWmodel) # geographically-weighted (GW) models           
+library(here) # Constructs paths to your project's files
+library(data.table) # Fast aggregation of large data
+library(ggplot2) # creating graphics, based on "The Grammar of Graphics"
+library(viridis) # color scales  to make plots
+library(dplyr) #A fast, consistent tool for working with data frame like objects
+library("RColorBrewer")
+library(microbenchmark)
+```
+
+# 2. Load data
+```{r  , echo=FALSE}
+mydata <- st_read("/Users/badrikhanal/Box/1. Analysis_folder_Dissertation/Spatial_project/OFPE/Bohnhoff_Tims_2019 Processed Data.gpkg") %>%
+  mutate(S = tgts) %>% 
+  mutate(N = n)%>%
+  mutate(S2 = (S**2), N2 = (N**2),SN = (S*N),SN2 = (S*N^2),S2N = (S**2*N),
+        S2N2 = (S**2 * N**2) ) %>% 
+  cbind(., st_coordinates(st_centroid(.)))
+  
+#summary(mydata)
+#mydata$S2N2
+mydata2<- na.omit(mydata)
+mydata_sp <- as(mydata2, 'Spatial')
+mydata_sp_not_cleaned <- as(mydata, 'Spatial')
+
+```
+
+# 3. visualization 
+```{r, echo=FALSE}
+library("RColorBrewer")
+map.na = list("SpatialPolygonsRescale", layout.north.arrow(),
+              offset = c(329000, 261500), scale = 4000, col = 1)
+map.scale.1 = list("SpatialPolygonsRescale", layout.scale.bar(),
+                   offset = c(326500, 217000), scale = 5000, col = 1,
+                   fill = c("transparent", "blue"))
+map.scale.2 = list("sp.text", c(326500, 217900), "0", cex = 0.9, col = 1) 
+map.scale.3 = list("sp.text", c(331500, 217900), "5km", cex = 0.9, col = 1) 
+map.layout <- list(map.na, map.scale.1, map.scale.2, map.scale.3)
+mypalette.1 <- brewer.pal(9, "Reds")
+mypalette.2 <- brewer.pal(9, "Blues")
+mypalette.3 <- brewer.pal(9, "Greens")
+mypalette.4 <- brewer.pal(9, "Oranges")
+mypalette.5 <- brewer.pal(9, "Purples")
+mypalette.6 <- brewer.pal(9, "Spectral")
+spplot(mydata_sp, "yield", key.space = "right",
+       col.regions = mypalette.3, cuts = 5, #at = c( 4,6,8),
+       sp.layout = map.layout,
+       main = "yield selected plotting (basic)") 
+spplot(mydata_sp_not_cleaned, "yield", key.space = "right",
+       col.regions = mypalette.3, cuts = 5, #at = c( 4,6,8),
+       sp.layout = map.layout,
+       main = "yield all plotting (basic)") 
+
+```
+
+# 4. basic lm model
+```{r}
+# library(mgcv)
+# #gam_result <- gam(yield~s(seed,k=3)+s(n,k=6)+s(X,k=6)+s(Y,k=6)+te(X,Y),data=mydata_sp)
+# gam_result <- gam(yield~s(seed,k=3)+s(n,k=6)+s(X,k=6)+s(Y,k=6),data=mydata_sp)
+# plot(gam_result)
+# summary(gam_result)
+lm_model1 <- lm("yield ~ S +  N ",data = mydata_sp)
+summary(lm_model1)
+lm_model2 <- lm("yield ~ S + S2 + N + N2 ",data = mydata_sp)
+summary(lm_model2)
+lm_model3 <- lm("yield ~ S + S2 + N + N2 +SN+ SN2+S2N +S2N2 ",data = mydata_sp)
+summary(lm_model3)
+
+```
+# 5. Finding optimal bandwidth
+```{r}
+
+bw.gwr.1 <- bw.gwr(yield ~ S + N +S2 + N2 +
+                  SN+ S2N + SN2 +S2N2, data = mydata_sp,
+                  approach = "AICc", kernel = "bisquare", adaptive = TRUE)
+bw.gwr.1 #bw =70, AIC =15618.68
+
+bw.gwr.2 <- bw.gwr(yield ~ S + N +S2 + N2 +
+                  SN+ S2N + SN2 +S2N2, data = mydata_sp,
+                  approach = "AICc", kernel = "gaussian", adaptive = TRUE)
+bw.gwr.2 #bw =16, AIC =15656.27
+
+bw.gwr.3 <- bw.gwr(yield ~ S + N +S2 + N2 +
+                  SN+ S2N + SN2 +S2N2, data = mydata_sp,
+                  approach = "AICc", kernel = "exponential", adaptive = TRUE)
+bw.gwr.3 #bw =16, AIC =15837.64
+
+bw.gwr.4 <- bw.gwr(yield ~ S + N +S2 + N2 +
+                  SN+ S2N + SN2 +S2N2, data = mydata_sp,
+                  approach = "AICc", kernel = "tricube", adaptive = TRUE)
+bw.gwr.4 #bw =70, AIC =15612.51
+
+bw.gwr.5 <- bw.gwr(yield ~ S + N +S2 + N2 +
+                  SN+ S2N + SN2 +S2N2, data = mydata_sp,
+                  approach = "AICc", kernel = "boxcar", adaptive = TRUE)
+bw.gwr.5 #bw =29, AIC =15733.19
+```
+
+
+# 6. model selection procedure
+```{r, echo=FALSE}
+
+DeVar <- "yield"
+InDeVars <- c("S","N", "S2", "N2","SN",
+             "SN2","S2N","S2N2" )
+
+model.sel1 <- model.selection.gwr(DeVar, InDeVars, data = mydata_sp,
+                                kernel = "bisquare", adaptive = TRUE, bw = 70)
+# model.sel2 <- model.selection.gwr(DeVar, InDeVars, data = mydata_sp,
+#                                  kernel = "gaussian", adaptive = TRUE, bw = 16)
+# model.sel <- model.selection.gwr(DeVar, InDeVars, data = mydata_sp,
+#                                  kernel = "exponential", adaptive = TRUE, bw = 16)
+sorted.models <- model.sort.gwr(model.sel1, numVars = length(InDeVars),
+                                ruler.vector = model.sel1[[2]][,2])
+model.list <- sorted.models[[1]]
+model.view.gwr(DeVar, InDeVars, model.list = model.list)
+# circular view of 3 regressions from stepwise process,
+#
+plot(sorted.models[[2]][,2], col = "blue", pch = 20, lty = 5,
+     main = "Alternative view of GWR model selection procedure",
+     ylab = "AICc", xlab = "Model number", type = "b")
+# AIC from model, AIC value continue to fall until both variables are included, this suggest
+# that containing with bοth independent variable is worthwhile ( for specified bandwidth)
+```
+
+
+
+# 7. Run the GWR and MGWR models
+```{r}
+
+M1_corn_gwr <- gwr.basic( yield ~ S + N +S2+ N2 +SN+S2N +SN2+S2N2 , data = mydata_sp,
+                            bw = bw.gwr.1, kernel = "bisquare", adaptive = TRUE) 
+
+print(M1_corn_gwr)
+
+M2_corn_mgwr <- gwr.mixed("yield ~ S + N +S2+ N2 +SN+S2N +SN2+S2N2", 
+              data = mydata_sp, fixed.vars = c("S2","N2", "SN", "SN2", "S2N", "S2N2"),
+              intercept.fixed = FALSE,
+                           bw = bw.gwr.1, 
+                           diagnostic = T,
+                           kernel = "bisquare", 
+                           adaptive = T,
+                           longlat = F) 
+print(M2_corn_mgwr)
+# hist(M2_corn_mgwr$SDF$S_L, freq = FALSE, breaks = 100 )
+# M2_corn_mgwr$global
+# M2_corn_mgwr$local
+
+save(M1_corn_gwr, file="M1_corn_gwr.rdata")
+save(M2_corn_mgwr, file="M2_corn_mgwr.rdata")
+load("M2_corn_mgwr.rdata")
+load("M1_corn_gwr.rdata")
+print(M1_corn_gwr)
+print(M2_corn_mgwr)
+```
+#### ############ ######
+# 8. optimization #######
+#### ################### ###
+```{r}
+##########
+
+#===================================
+# Preparation
+#===================================
+#--------------------------
+# packages and dataset
+#--------------------------
+#--- packages ---#
+load("~/Dropbox/STRIPS_WTPAnalysis/Data/OFPE/M2_corn_mgwr.rdata")
+library(sf)
+library(sp)
+library(data.table)
+library(tidyverse)
+
+#--- dataset ---#
+coef_tbl <- st_as_sf(M2_corn_mgwr$SDF) %>% 
+  mutate(id = 1:nrow(.)) 
+
+coef_dt <- data.table(coef_tbl)
+
+n_cells <- nrow(coef_dt)
+
+#--------------------------
+# Set parameters
+#--------------------------
+seed_range <- seq(20, 40, 0.2) ## SR
+nitrogen_range <- seq(100, 270, 1) ## NR
+c_price <- 3.5
+n_price <- 0.4
+s_price <- 1.5
+
+#===================================
+# Optimization (all the combinations)
+#===================================
+profit_data <- expand.grid(id = 1:nrow(coef_dt), S = seed_range, N = nitrogen_range) %>%
+  data.table() %>%
+  #--- merge the coef data to the evaluation points data ---#
+  coef_dt[., on = "id"] %>% 
+  .[order(id),] %>% 
+  mutate(
+    yield = Intercept_L + S_L * S + N_L * N + S2_F * S^2 + 
+      N2_F * N^2 + SN_F * S * N + SN2_F * S * N^2 + S2N_F * S^2 * N + 
+      S2N2_F * S^2 * N^2,
+    revenue = yield * c_price,
+    cost = S * s_price + N * n_price,
+    profit = revenue - cost
+  ) 
+
+object.size(profit_data)
+
+ggplot(profit_data[id == 1, ]) +
+  geom_line(aes(y = yield, x = N))
+
+optimal_SN <- profit_data %>%  
+  setkey(id, profit) %>% 
+  group_by(id) %>% 
+  slice(n()) %>% 
+  select(id, yield, revenue, cost, profit, S, N)
+
+#--- merge the opt_NS data to the sf data ---#
+sf_with_opt_NS <- left_join(coef_tbl, optimal_SN, by = "id")
+
+#===================================
+# Optimization (by id)
+#===================================
+
+get_opt_NS <- function(i) {
+
+  profit_data <- expand.grid(S = seed_range, N = nitrogen_range) %>%
+    data.table() %>%
+    .[, id := i] %>% 
+    #--- merge the coef data to the evaluation points data ---#
+    coef_dt[., on = "id"] %>% 
+    mutate(
+      yield = Intercept_L + S_L * S + N_L * N + S2_F * S^2 + 
+        N2_F * N^2 + SN_F * S * N + SN2_F * S * N^2 + S2N_F * S^2 * N + 
+        S2N2_F * S^2 * N^2,
+      revenue = yield * c_price,
+      cost = S * s_price + N * n_price,
+      profit = revenue - cost
+    ) %>% 
+    .[order(profit),] %>% 
+    .[.N, ] %>% 
+    .[, .(id, yield, revenue, cost, profit, S, N)]
+
+  return(profit_data)
+
+} 
+
+library(parallel)
+
+opt_NS_all <- mclapply(1:n_cells, get_opt_NS, mc.cores = 12) %>% 
+  rbindlist()
+
+#--- merge the opt_NS data to the sf data ---#
+sf_with_opt_NS <- left_join(coef_tbl, opt_NS_all, by = "id")
+
+#===================================
+# Visualize
+#===================================
+ggplot(sf_with_opt_NS) +
+  geom_sf(aes(fill = N)) +
+  scale_fill_viridis_c()
+
+ggplot(sf_with_opt_NS) +
+  geom_sf(aes(fill = S)) +
+  scale_fill_viridis_c()
+
+ggplot(sf_with_opt_NS) +
+  geom_sf(aes(fill = profit)) +
+  scale_fill_viridis_c()
+
+```
+
+##### #################
+# 9. Find profit maximizing  seed and nitrogen rates ()
+#### ##################
+```{r}
+#
+library(data.table)
+ID <- beta_data1$ID
+SR <- beta_data1$seed
+NR <- beta_data1$nitrogen
+Profit_values <- beta_data1$profit
+
+group <- data.frame(Subject =ID,max_profit=Profit_values,seed_star =SR, n_star=NR )
+group <- as.data.table(group)
+group[group[, .I[max_profit ==max(max_profit)],by=Subject]$V1]
+
+grid_profit_values <- group[group[, .I[max_profit ==max(max_profit)],by=Subject]$V1] %>% as.data.frame()
+
+class(grid_profit_values)
+
+print(grid_profit_values)
+
+```
+##### ################# ########
+# 10. calculate optimal yield farm profit
+##### ######### ###########
+
+```{r}
+
+#combine two dataframe
+new_data2 <- cbind(Subject =mydata_sp$ID,beta_I,beta_S,beta_N,beta_SN,
+                   beta_S2,beta_N2,beta_S2N,beta_SN2,beta_S2N2, 
+                   corn_price,n_price,seed_price) %>% as.data.frame()
+
+merged_data <- merge.data.frame(grid_profit_values,new_data2) %>% 
+  mutate(yield_star = beta_I +
+           beta_S* seed_star+ beta_N * n_star + 
+           beta_SN* I(seed_star * n_star) +
+           beta_S2* I(seed_star^2) + beta_N2 * I(n_star^2) +
+           beta_S2N* I(seed_star^2 *n_star) + 
+           beta_SN2 *I(seed_star *n_star^2) + 
+           beta_S2N2 * I(seed_star^2 *n_star^2))
+summary(merged_data)
+# calculate farm profit
+```
+
+#### ###### #############
+### 11. Randomize praire strips 
+#### ############### #########
+```{r}
+
+```
+
+#### ###### #############
+### 12. Gaussian model All 
+#### ############### #########
+
+```{r}
+M1_corn_gwr_gauss <- gwr.basic( yield ~ S + N +S2+ N2 +SN+S2N +SN2+S2N2 , data = mydata_sp,
+                            bw = bw.gwr.2, kernel = "gaussian", adaptive = TRUE) 
+M2_corn_mgwr_gauss <- gwr.mixed("yield ~ S + N +S2+ N2 +SN+S2N +SN2+S2N2", 
+              data = mydata_sp, fixed.vars = c("S2","N2", "SN", "SN2", "S2N", "S2N2"),
+              intercept.fixed = FALSE,
+                           bw = bw.gwr.2, 
+                           diagnostic = T,
+                           kernel = "gaussian", 
+                           adaptive = T, 
+                           longlat = F) 
+print(M2_corn_mgwr_gauss)
+save(M1_corn_gwr_gauss, file="M1_corn_gwr_gauss.rdata")
+save(M2_corn_mgwr_gauss, file="M2_corn_mgwr_gauss.rdata")
+#load("M2_corn_mgwr.rdata")
+#load(M1_corn_gwr.rdata")
+print(M1_corn_gwr_gauss)
+print(M2_corn_mgwr_gauss)
+
+# optimization
+beta_I_G <- M2_corn_mgwr_gauss$SDF$Intercept_L
+beta_S_G <- M2_corn_mgwr_gauss$SDF$S_L
+beta_N_G <- M2_corn_mgwr_gauss$SDF$N_L
+beta_SN_G <- M2_corn_mgwr_gauss$SDF$SN_F
+beta_S2_G <- M2_corn_mgwr_gauss$SDF$S2_F
+beta_N2_G <- M2_corn_mgwr_gauss$SDF$N2_F
+beta_S2N_G <- M2_corn_mgwr_gauss$SDF$S2N_F
+beta_SN2_G <- M2_corn_mgwr_gauss$SDF$SN2_F
+beta_S2N2_G <- M2_corn_mgwr_gauss$SDF$S2N2_F
+
+ID_range <- mydata_sp$ID
+seed_range <- seq(1, 40, 1) ## SR
+nitrogen_range <- seq(200, 270, 1) ## NR
+corn_price <- 3.5
+n_price <- 0.4
+seed_price <- 1.5
+
+evaluation_point_data2 <- expand.grid(Id =ID_range, seed = seed_range, nitrogen = nitrogen_range) %>%
+  data.frame() %>%
+  mutate(
+    N_2 = nitrogen^2,
+    S_2 = seed^2,
+    S_N = seed*nitrogen,
+    S2_N = seed^2 *nitrogen,
+    S_N2 = seed * nitrogen^2,
+    S2_N2 = seed^2 *nitrogen^2) %>%
+  mutate(yield = beta_I_G + beta_S *seed + beta_N_G * nitrogen + beta_SN_G * S_N +
+      beta_S2_G * S_2 + beta_SN_G * S_N +  beta_S2N_G * S2_N + beta_SN2_G * S_N2 + beta_S2N2_G * S2_N2, 
+      profit = corn_price*yield - seed_price * seed - n_price *nitrogen)
+
+# evaluation_point_data$profit %>% max()
+
+beta_data2 <- data.frame(ID= ID_range, beta_N = runif(5293760), beta_S = runif(5293760)) %>%
+  .[rep(1:nrow(.), each = 1), ] %>%
+  mutate(seed = rep(evaluation_point_data2$seed, 1)) %>% 
+  mutate(nitrogen = rep(evaluation_point_data2$nitrogen, 1)) %>%
+  mutate(profit = rep(evaluation_point_data2$profit, 1))
+
+tail(beta_data2)  
+#
+library(data.table)
+ID <- beta_data2$ID
+SR <- beta_data2$seed
+NR <- beta_data2$nitrogen
+Profit_values <- beta_data2$profit
+
+group <- data.frame(Subject =ID,max_profit=Profit_values,seed_star =SR, n_star=NR )
+group <- as.data.table(group)
+group[group[, .I[max_profit ==max(max_profit)],by=Subject]$V1]
+
+grid_profit_values2 <- group[group[, .I[max_profit ==max(max_profit)],by=Subject]$V1] %>% as.data.frame()
+
+class(grid_profit_values)
+
+print(grid_profit_values)
+
+#
+#combine two dataframe
+new_data3 <- cbind(Subject =mydata_sp$ID,beta_I_G,beta_S_G,beta_N_G,beta_SN_G,
+                   beta_S2_G,beta_N2_G,beta_S2N_G,beta_SN2_G,beta_S2N2_G, 
+                   corn_price,n_price,seed_price) %>% as.data.frame()
+
+merged_data2 <- merge.data.frame(grid_profit_values2,new_data3) %>% 
+  mutate(yield_star = beta_I +
+           beta_S* seed_star+ beta_N * n_star + 
+           beta_SN* I(seed_star * n_star) +
+           beta_S2* I(seed_star^2) + beta_N2 * I(n_star^2) +
+           beta_S2N* I(seed_star^2 *n_star) + 
+           beta_SN2 *I(seed_star *n_star^2) + 
+           beta_S2N2 * I(seed_star^2 *n_star^2))
+summary(merged_data2)
+
+
+```
+
+

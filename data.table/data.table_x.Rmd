@@ -1,5 +1,5 @@
 ---
-title: "Data wrangling with `tidyverse`"
+title: "Data wrangling with `data.table`"
 author: "AECN 396/896-002"
 output:
   xaringan::moon_reader:
@@ -47,15 +47,21 @@ The objectives of this chapter is to learn how to use the `data.table` package t
 
 .panelset[ 
 
-.panel[.panel-name[What is it?]
+.panel[.panel-name[what is it?]
 
-The `data.table` package is a popular alternative to `dplyr` that is **much faster** than `dplyr` for most data operations particularly when the dataset is large.
++ The `data.table` package is a popular alternative to `dplyr` that is **much faster** than `dplyr` for most data operations particularly when the dataset is large.
+  * See [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping) for the speed comparison of `dplyr` and `data.table`.
+  * [This website](https://atrebas.github.io/post/2019-03-03-datatable-dplyr/) compares `dply` vs `data.table` side by side.
 
-See [here](https://github.com/Rdatatable/data.table/wiki/Benchmarks-%3A-Grouping) for the speed comparison of `dplyr` and `data.table`.
++ `data.table` has its own `data.frame` called `data.table`
 
-[`dply` vs `data.table`](https://atrebas.github.io/post/2019-03-03-datatable-dplyr/)
+  ]
 
-Install the package if you have not.
+.panel[.panel-name[preparation]
+
+**Package**
+
+Install the package if you have not and library it.
 
 ```{r, eval = FALSE}
 install.packages("data.table")
@@ -65,10 +71,7 @@ install.packages("data.table")
 library(data.table)
 ```
 
-  ]
-
-.panel[.panel-name[Preparation]
-
+**Dataset**
 
 We use the following `weather` dataset.
 
@@ -81,13 +84,10 @@ flights <- fread("https://raw.githubusercontent.com/Rdatatable/data.table/master
   ]
 
   <!-- panel ends here -->
-]
 
----
+.panel[.panel-name[how]
 
-# How it works: general form
-
-
+Here is the general form of `data.table` operation.
 
 ```{r eval = F}
 data.table[i, j, by]
@@ -101,32 +101,39 @@ or
 
 .content-box-red[Take `data.table`, subset/reorder rows using `i`, then calculate `j`, grouped by `by`.]
 
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=850px></html>
+  ]
 
-**Key difference 1**: You can do all three in a single statement unlike `dplyr`:
+<!-- panel ends here -->
 
-For example, they will give the same results (the number of flights by American Airline by origin-month):
+.panel[.panel-name[key difference form dplyr]
 
-<br>
+You can implement all the three main actions (filter, calculate, group) in a single statement unlike `dplyr`:
+
+For example, the following set of codes below will give the same results (the number of flights by American Airline by origin-month):
+
 
 **data.table** way:
 
-```{r eval = F}
+```{r dt-ex-same}
 flights[carrier == "AA", .(.N), by = .(origin, month)] %>% head()
 ```
 
-<br>
-
 **`dplyr`** way :
 
-```{r eval = F}
+```{r dp-ex-same}
 flights %>% 
   filter(carrier == "AA") %>% 
   group_by(origin, month) %>% 
-  summarize(n()) %>%
-  head()
+  summarize(n()) %>% head()
 ```
 
+  ]
+
+<!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
 
 ---
 
@@ -373,8 +380,6 @@ The results of the `n`th expression is assigned to `n`th variable name on the le
 flights_mini[, `:=`(total_delay = arr_delay + dep_delay, speed = distance/air_time)]
 ```
 
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
-
 Confirm that `flights_mini` was updated to have the new variables defined just above.
 
 .scroll-box-16[
@@ -460,7 +465,7 @@ flights_mini_copy
 
 ---
 
-# Other useful functions  
+# Other useful operations and tips  
 
 .panelset[ 
 
@@ -535,7 +540,9 @@ flights %>% setnames("Hour", "hour")
 
   <!-- panel ends here -->
 
-.panel[.panel-name[duplicated]
+.panel[.panel-name[duplicated and unique]
+
+**find duplicates**
 
 `duplicated()` checks whether each of the observations have other observations that are identical in values of the user-specified variables, and returns a TRUE/FALSE vector of length equal to the number of rows of the data.
 
@@ -547,7 +554,13 @@ flights %>%
   head(10)
 ```
 
+**find unique observations**
 
+`unique()` does the opposite of `duplicated()`. After applying `unique()`, you will be left with only the observations that are unique in all of the variables specified by the user (There will be only one observation that has the same values in all the user-specified variables).
+
+```{r }
+unique(flights, by = c("year", "month", "day", "carrier"))  
+```
 
   ] 
 
@@ -584,13 +597,8 @@ Note: for this example, we could have just used `fifelse()` as the created varia
 ]
 
   <!-- panel ends here -->
-]
 
-<!-- panel set ends here -->
-
----
-
-# Piping 
+.panel[.panel-name[Piping]
 
 You can use `%>%` to chain piped operations just like `dplyr` using `.` to refer to the `data.table` generated through the preceding actions. 
 
@@ -602,6 +610,13 @@ flights[, .(.N), by = .(origin, month)] %>%
   .[i, j, by] %>% 
   .[i, j, by]  
 ```
+
+  ] 
+
+  <!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
 
 ---
 
@@ -791,8 +806,37 @@ yield_data_long <- data.table(
 
 .panel[.panel-name[long to wide]
 
-You can use `dcast()` function to make `yield_data_long` wide:
+You can use `dcast()` function to make a long dataset wide:
 
+**Syntax**
+
+```{r eval = F}
+#--- NOT RUN ---#  
+dcast(data.table, A ~ B, value.var = C)
+```
+
+Using the `pivot_wider()` language, 
+
++ `B` is equivalent to variables you specify for `names_from` 
++ `C` is equivalent to variables you specify for `values_from` 
++ A are all the variables except B and C.
+
+<br>
+
+**Example**
+
+.left4[
+
+Original long data:
+
+```{r }
+yield_data_long
+```
+]
+
+.right6[
+
+Wide data: 
 
 ```{r }
 (
@@ -800,17 +844,45 @@ yield_data_wide <- dcast(yield_data_long, state ~ year, value.var = "yield")
 )
 ```
 
+]
+
   ]
 
 <!-- panel ends here -->
 
 .panel[.panel-name[wide to long]
 
-```{r }
-(
-yield_data_long <- melt(yield_data_wide, id.vars = "state")
-)
+You can use `melt()` function to make a wide dataset long:
+
+**Syntax**
+
+```{r eval = F}
+melt(data.table, id.vars = "state")  
 ```
+
++ `id.vars` are the variables except those that will be melt into long format
+
+<br>
+
+**Example**
+
+.left4[
+
+Original wide data:
+
+```{r }
+yield_data_wide 
+```
+]
+
+.right6[
+
+Long data:
+```{r }
+melt(yield_data_wide, id.vars = "state")
+```
+
+]
 
   ] 
 
@@ -819,7 +891,7 @@ yield_data_long <- melt(yield_data_wide, id.vars = "state")
 
 ---
 
-# Reshaping datasets
+# Reshaping datasets: multiple columns 
 
 .panelset[ 
 
@@ -913,8 +985,9 @@ Alternatively, it is probably better to follow the multi-step approach we took w
 .panel[.panel-name[better alternative]
 
 The strategy here is to 
+
 + first make the data long ignoring the fact we want `yield_*` and `rainfall_*` to be separate variables eventually
-+ split variable names into two: variable meaning and year  
++ split variable names into two: variable meaning and year (done by `tstrsplit()`)  
 + and then use `dcast()` to make it wider
 
 ```{r }
@@ -938,5 +1011,11 @@ yield_data_wide %>%
 
 # Merging
 
+You can use `merge()` function to merge two datasets.
+
+
 
 # Key
+
+
+

@@ -13,6 +13,8 @@ This is the repository for AECN 396/AECN896-002 at University of Nebraska Lincol
 + Lecture 6: Make Tables 
     * Create tables with `gt` ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-6-MakeTable/make_table_x.html))
     * Create regression and summary tables with `modelsummary` ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-6-MakeTable/modelsummary_x.html))
++ Lecture 7: `data.table` ([slide](https://tmieno2.github.io/Data-Science-with-R/data.table/data.table_x.html))
+    
 
 ## Assignments
 
