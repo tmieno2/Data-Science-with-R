@@ -398,18 +398,30 @@ flights &lt;- fread("https://raw.githubusercontent.com/Rdatatable/data.table/mas
 ```
 
 ```
-##         year month day dep_delay arr_delay carrier origin dest air_time distance hour
-##      1: 2014     1   1        14        13      AA    JFK  LAX      359     2475    9
-##      2: 2014     1   1        -3        13      AA    JFK  LAX      363     2475   11
-##      3: 2014     1   1         2         9      AA    JFK  LAX      351     2475   19
-##      4: 2014     1   1        -8       -26      AA    LGA  PBI      157     1035    7
-##      5: 2014     1   1         2         1      AA    JFK  LAX      350     2475   13
-##     ---                                                                              
-## 253312: 2014    10  31         1       -30      UA    LGA  IAH      201     1416   14
-## 253313: 2014    10  31        -5       -14      UA    EWR  IAH      189     1400    8
-## 253314: 2014    10  31        -8        16      MQ    LGA  RDU       83      431   11
-## 253315: 2014    10  31        -4        15      MQ    LGA  DTW       75      502   11
-## 253316: 2014    10  31        -5         1      MQ    LGA  SDF      110      659    8
+##         year month day dep_delay arr_delay carrier origin
+##      1: 2014     1   1        14        13      AA    JFK
+##      2: 2014     1   1        -3        13      AA    JFK
+##      3: 2014     1   1         2         9      AA    JFK
+##      4: 2014     1   1        -8       -26      AA    LGA
+##      5: 2014     1   1         2         1      AA    JFK
+##     ---                                                  
+## 253312: 2014    10  31         1       -30      UA    LGA
+## 253313: 2014    10  31        -5       -14      UA    EWR
+## 253314: 2014    10  31        -8        16      MQ    LGA
+## 253315: 2014    10  31        -4        15      MQ    LGA
+## 253316: 2014    10  31        -5         1      MQ    LGA
+##         dest air_time distance hour
+##      1:  LAX      359     2475    9
+##      2:  LAX      363     2475   11
+##      3:  LAX      351     2475   19
+##      4:  PBI      157     1035    7
+##      5:  LAX      350     2475   13
+##     ---                            
+## 253312:  IAH      201     1416   14
+## 253313:  IAH      189     1400    8
+## 253314:  RDU       83      431   11
+## 253315:  DTW       75      502   11
+## 253316:  SDF      110      659    8
 ```
 
   ]
@@ -502,13 +514,20 @@ flights[origin == "JFK" &amp; month == 6L, ] %&gt;% head()
 ```
 
 ```
-##    year month day dep_delay arr_delay carrier origin dest air_time distance hour
-## 1: 2014     6   1        -9        -5      AA    JFK  LAX      324     2475    8
-## 2: 2014     6   1       -10       -13      AA    JFK  LAX      329     2475   12
-## 3: 2014     6   1        18        -1      AA    JFK  LAX      326     2475    7
-## 4: 2014     6   1        -6       -16      AA    JFK  LAX      320     2475   10
-## 5: 2014     6   1        -4       -45      AA    JFK  LAX      326     2475   18
-## 6: 2014     6   1        -6       -23      AA    JFK  LAX      329     2475   14
+##    year month day dep_delay arr_delay carrier origin dest
+## 1: 2014     6   1        -9        -5      AA    JFK  LAX
+## 2: 2014     6   1       -10       -13      AA    JFK  LAX
+## 3: 2014     6   1        18        -1      AA    JFK  LAX
+## 4: 2014     6   1        -6       -16      AA    JFK  LAX
+## 5: 2014     6   1        -4       -45      AA    JFK  LAX
+## 6: 2014     6   1        -6       -23      AA    JFK  LAX
+##    air_time distance hour
+## 1:      324     2475    8
+## 2:      329     2475   12
+## 3:      326     2475    7
+## 4:      320     2475   10
+## 5:      326     2475   18
+## 6:      329     2475   14
 ```
 
 + `i`: `origin == "JFK" &amp; month == 6L` 
@@ -856,15 +875,24 @@ flights_mini
 ```
 
 ```
-##    year month day dep_delay arr_delay distance air_time    speed
-## 1: 2014     1   1        14        13     2475      359 6.894150
-## 2: 2014     1   1        -3        13     2475      363 6.818182
-## 3: 2014     2   1        -1         1     2475      358 6.913408
-## 4: 2014     2   1        -5         3     2475      358 6.913408
-## 5: 2014     3   1       -11        36     2475      375 6.600000
-## 6: 2014     3   1        -3        14     2475      368 6.725543
-## 7: 2014     4   1        -8       -23      764      113 6.761062
-## 8: 2014     4   1        -8       -11      431       71 6.070423
+##    year month day dep_delay arr_delay distance air_time
+## 1: 2014     1   1        14        13     2475      359
+## 2: 2014     1   1        -3        13     2475      363
+## 3: 2014     2   1        -1         1     2475      358
+## 4: 2014     2   1        -5         3     2475      358
+## 5: 2014     3   1       -11        36     2475      375
+## 6: 2014     3   1        -3        14     2475      368
+## 7: 2014     4   1        -8       -23      764      113
+## 8: 2014     4   1        -8       -11      431       71
+##       speed
+## 1: 6.894150
+## 2: 6.818182
+## 3: 6.913408
+## 4: 6.913408
+## 5: 6.600000
+## 6: 6.725543
+## 7: 6.761062
+## 8: 6.070423
 ```
 
 
@@ -911,24 +939,24 @@ flights_mini
 ```
 
 ```
-##    year month day dep_delay arr_delay distance air_time    speed total_delay
-## 1: 2014     1   1        14        13     2475      359 6.894150          27
-## 2: 2014     1   1        -3        13     2475      363 6.818182          10
-## 3: 2014     2   1        -1         1     2475      358 6.913408           0
-## 4: 2014     2   1        -5         3     2475      358 6.913408          -2
-## 5: 2014     3   1       -11        36     2475      375 6.600000          25
-## 6: 2014     3   1        -3        14     2475      368 6.725543          11
-## 7: 2014     4   1        -8       -23      764      113 6.761062         -31
-## 8: 2014     4   1        -8       -11      431       71 6.070423         -19
-##    carrier_origin
-## 1:       6.894150
-## 2:       6.818182
-## 3:       6.913408
-## 4:       6.913408
-## 5:       6.600000
-## 6:       6.725543
-## 7:       6.761062
-## 8:       6.070423
+##    year month day dep_delay arr_delay distance air_time
+## 1: 2014     1   1        14        13     2475      359
+## 2: 2014     1   1        -3        13     2475      363
+## 3: 2014     2   1        -1         1     2475      358
+## 4: 2014     2   1        -5         3     2475      358
+## 5: 2014     3   1       -11        36     2475      375
+## 6: 2014     3   1        -3        14     2475      368
+## 7: 2014     4   1        -8       -23      764      113
+## 8: 2014     4   1        -8       -11      431       71
+##       speed total_delay carrier_origin
+## 1: 6.894150          27       6.894150
+## 2: 6.818182          10       6.818182
+## 3: 6.913408           0       6.913408
+## 4: 6.913408          -2       6.913408
+## 5: 6.600000          25       6.600000
+## 6: 6.725543          11       6.725543
+## 7: 6.761062         -31       6.761062
+## 8: 6.070423         -19       6.070423
 ```
 ]
 
@@ -1034,24 +1062,24 @@ flights_mini_copy
 ```
 
 ```
-##    year month day dep_delay arr_delay distance air_time    speed total_delay
-## 1: 2014     1   1        14        13     2475      359 6.894150          27
-## 2: 2014     1   1        -3        13     2475      363 6.818182          10
-## 3: 2014     2   1        -1         1     2475      358 6.913408           0
-## 4: 2014     2   1        -5         3     2475      358 6.913408          -2
-## 5: 2014     3   1       -11        36     2475      375 6.600000          25
-## 6: 2014     3   1        -3        14     2475      368 6.725543          11
-## 7: 2014     4   1        -8       -13      764      113 6.761062         -31
-## 8: 2014     4   1        -8        -1      431       71 6.070423         -19
-##    carrier_origin mean_arr_delay
-## 1:       6.894150             13
-## 2:       6.818182             13
-## 3:       6.913408              2
-## 4:       6.913408              2
-## 5:       6.600000             25
-## 6:       6.725543             25
-## 7:       6.761062             -7
-## 8:       6.070423             -7
+##    year month day dep_delay arr_delay distance air_time
+## 1: 2014     1   1        14        13     2475      359
+## 2: 2014     1   1        -3        13     2475      363
+## 3: 2014     2   1        -1         1     2475      358
+## 4: 2014     2   1        -5         3     2475      358
+## 5: 2014     3   1       -11        36     2475      375
+## 6: 2014     3   1        -3        14     2475      368
+## 7: 2014     4   1        -8       -13      764      113
+## 8: 2014     4   1        -8        -1      431       71
+##       speed total_delay carrier_origin mean_arr_delay
+## 1: 6.894150          27       6.894150             13
+## 2: 6.818182          10       6.818182             13
+## 3: 6.913408           0       6.913408              2
+## 4: 6.913408          -2       6.913408              2
+## 5: 6.600000          25       6.600000             25
+## 6: 6.725543          11       6.725543             25
+## 7: 6.761062         -31       6.761062             -7
+## 8: 6.070423         -19       6.070423             -7
 ```
 ]
 
@@ -1091,13 +1119,20 @@ flights %&gt;% head()
 ```
 
 ```
-##    year month day dep_delay arr_delay carrier origin dest air_time distance hour
-## 1: 2014     1   1        14        13      AA    JFK  LAX      359     2475    9
-## 2: 2014     1   1        -3        13      AA    JFK  LAX      363     2475   11
-## 3: 2014     1   1         2         9      AA    JFK  LAX      351     2475   19
-## 4: 2014     1   1        -8       -26      AA    LGA  PBI      157     1035    7
-## 5: 2014     1   1         2         1      AA    JFK  LAX      350     2475   13
-## 6: 2014     1   1         4         0      AA    EWR  LAX      339     2454   18
+##    year month day dep_delay arr_delay carrier origin dest
+## 1: 2014     1   1        14        13      AA    JFK  LAX
+## 2: 2014     1   1        -3        13      AA    JFK  LAX
+## 3: 2014     1   1         2         9      AA    JFK  LAX
+## 4: 2014     1   1        -8       -26      AA    LGA  PBI
+## 5: 2014     1   1         2         1      AA    JFK  LAX
+## 6: 2014     1   1         4         0      AA    EWR  LAX
+##    air_time distance hour
+## 1:      359     2475    9
+## 2:      363     2475   11
+## 3:      351     2475   19
+## 4:      157     1035    7
+## 5:      350     2475   13
+## 6:      339     2454   18
 ```
 
 ]
@@ -1112,13 +1147,20 @@ flights[order(origin, distance),] %&gt;% head()
 ```
 
 ```
-##    year month day dep_delay arr_delay carrier origin dest air_time distance hour
-## 1: 2014     1  30         9        17      US    EWR  PHL       46       80   15
-## 2: 2014     1  30       -13       -25      US    EWR  PHL       34       80   17
-## 3: 2014     1  31        -8       -25      US    EWR  PHL       23       80    5
-## 4: 2014     1  31        -7        14      US    EWR  PHL       36       80   17
-## 5: 2014     1  31        16        17      US    EWR  PHL       34       80   15
-## 6: 2014     2   1         5         2      US    EWR  PHL       31       80    7
+##    year month day dep_delay arr_delay carrier origin dest
+## 1: 2014     1  30         9        17      US    EWR  PHL
+## 2: 2014     1  30       -13       -25      US    EWR  PHL
+## 3: 2014     1  31        -8       -25      US    EWR  PHL
+## 4: 2014     1  31        -7        14      US    EWR  PHL
+## 5: 2014     1  31        16        17      US    EWR  PHL
+## 6: 2014     2   1         5         2      US    EWR  PHL
+##    air_time distance hour
+## 1:       46       80   15
+## 2:       34       80   17
+## 3:       23       80    5
+## 4:       36       80   17
+## 5:       34       80   15
+## 6:       31       80    7
 ```
 
 ]
@@ -1144,30 +1186,30 @@ flights
 ```
 
 ```
-##         year month day dep_delay arr_delay carrier origin destination air_time distance
-##      1: 2014     1   1        14        13      AA    JFK         LAX      359     2475
-##      2: 2014     1   1        -3        13      AA    JFK         LAX      363     2475
-##      3: 2014     1   1         2         9      AA    JFK         LAX      351     2475
-##      4: 2014     1   1        -8       -26      AA    LGA         PBI      157     1035
-##      5: 2014     1   1         2         1      AA    JFK         LAX      350     2475
-##     ---                                                                                
-## 253312: 2014    10  31         1       -30      UA    LGA         IAH      201     1416
-## 253313: 2014    10  31        -5       -14      UA    EWR         IAH      189     1400
-## 253314: 2014    10  31        -8        16      MQ    LGA         RDU       83      431
-## 253315: 2014    10  31        -4        15      MQ    LGA         DTW       75      502
-## 253316: 2014    10  31        -5         1      MQ    LGA         SDF      110      659
-##         Hour
-##      1:    9
-##      2:   11
-##      3:   19
-##      4:    7
-##      5:   13
-##     ---     
-## 253312:   14
-## 253313:    8
-## 253314:   11
-## 253315:   11
-## 253316:    8
+##         year month day dep_delay arr_delay carrier origin
+##      1: 2014     1   1        14        13      AA    JFK
+##      2: 2014     1   1        -3        13      AA    JFK
+##      3: 2014     1   1         2         9      AA    JFK
+##      4: 2014     1   1        -8       -26      AA    LGA
+##      5: 2014     1   1         2         1      AA    JFK
+##     ---                                                  
+## 253312: 2014    10  31         1       -30      UA    LGA
+## 253313: 2014    10  31        -5       -14      UA    EWR
+## 253314: 2014    10  31        -8        16      MQ    LGA
+## 253315: 2014    10  31        -4        15      MQ    LGA
+## 253316: 2014    10  31        -5         1      MQ    LGA
+##         destination air_time distance Hour
+##      1:         LAX      359     2475    9
+##      2:         LAX      363     2475   11
+##      3:         LAX      351     2475   19
+##      4:         PBI      157     1035    7
+##      5:         LAX      350     2475   13
+##     ---                                   
+## 253312:         IAH      201     1416   14
+## 253313:         IAH      189     1400    8
+## 253314:         RDU       83      431   11
+## 253315:         DTW       75      502   11
+## 253316:         SDF      110      659    8
 ```
 ]
   
@@ -1207,7 +1249,8 @@ flights %&gt;%
 ```
 
 ```
-##  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE  TRUE
+##  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE  TRUE
+## [10]  TRUE
 ```
 
 **find unique observations**
@@ -1220,18 +1263,30 @@ unique(flights, by = c("year", "month", "day", "carrier"))
 ```
 
 ```
-##       year month day dep_delay arr_delay carrier origin dest air_time distance hour
-##    1: 2014     1   1        14        13      AA    JFK  LAX      359     2475    9
-##    2: 2014     1   1         4       -12      AS    EWR  SEA      347     2402   18
-##    3: 2014     1   1        51        60      B6    JFK  CHS      109      636    8
-##    4: 2014     1   1        10        10      DL    LGA  ATL      126      762   18
-##    5: 2014     1   1        25        35      EV    EWR  DAY      102      533   17
-##   ---                                                                              
-## 3934: 2014    10  31       -12       -41      AS    EWR  SEA      319     2402   18
-## 3935: 2014    10  31         6         8      US    JFK  CLT       86      541    6
-## 3936: 2014    10  31         2       -15      VX    JFK  SFO      352     2586    7
-## 3937: 2014    10  31         0       -30      WN    EWR  AUS      217     1504   13
-## 3938: 2014    10  31        12         7      UA    LGA  ORD      121      733   10
+##       year month day dep_delay arr_delay carrier origin
+##    1: 2014     1   1        14        13      AA    JFK
+##    2: 2014     1   1         4       -12      AS    EWR
+##    3: 2014     1   1        51        60      B6    JFK
+##    4: 2014     1   1        10        10      DL    LGA
+##    5: 2014     1   1        25        35      EV    EWR
+##   ---                                                  
+## 3934: 2014    10  31       -12       -41      AS    EWR
+## 3935: 2014    10  31         6         8      US    JFK
+## 3936: 2014    10  31         2       -15      VX    JFK
+## 3937: 2014    10  31         0       -30      WN    EWR
+## 3938: 2014    10  31        12         7      UA    LGA
+##       destination air_time distance hour
+##    1:         LAX      359     2475    9
+##    2:         SEA      347     2402   18
+##    3:         CHS      109      636    8
+##    4:         ATL      126      762   18
+##    5:         DAY      102      533   17
+##   ---                                   
+## 3934:         SEA      319     2402   18
+## 3935:         CLT       86      541    6
+## 3936:         SFO      352     2586    7
+## 3937:         AUS      217     1504   13
+## 3938:         ORD      121      733   10
 ```
 
   ] 
@@ -1578,30 +1633,30 @@ flights[, .SD[which.max(arr_delay), ], by = .(carrier, month)]
 ```
 
 ```
-##      carrier month year day dep_delay arr_delay origin dest air_time distance hour
-##   1:      AA     1 2014   8       358       367    EWR  MIA      175     1085   12
-##   2:      AS     1 2014  11       102        62    EWR  SEA      329     2402   20
-##   3:      B6     1 2014   2       577       626    JFK  RDU       86      427    3
-##   4:      DL     1 2014   2       973       996    LGA  MIA      156     1096   11
-##   5:      EV     1 2014  15       475       499    EWR  JAX      142      820   19
-##  ---                                                                              
-## 130:      WN    10 2014   6       326       300    EWR  BNA      116      748   23
-## 131:      UA    10 2014  31       427       393    EWR  ORD      100      719   21
-## 132:      OO    10 2014  10       207       221    LGA  ORD      122      733   17
-## 133:      US    10 2014  10       441       457    EWR  CLT       85      529   17
-## 134:      HA    10 2014  23        58        27    JFK  HNL      599     4983   10
-##      above_average_dealy
-##   1:                TRUE
-##   2:                TRUE
-##   3:                TRUE
-##   4:                TRUE
-##   5:                TRUE
-##  ---                    
-## 130:                TRUE
-## 131:                TRUE
-## 132:                TRUE
-## 133:                TRUE
-## 134:                TRUE
+##      carrier month year day dep_delay arr_delay origin
+##   1:      AA     1 2014   8       358       367    EWR
+##   2:      AS     1 2014  11       102        62    EWR
+##   3:      B6     1 2014   2       577       626    JFK
+##   4:      DL     1 2014   2       973       996    LGA
+##   5:      EV     1 2014  15       475       499    EWR
+##  ---                                                  
+## 130:      WN    10 2014   6       326       300    EWR
+## 131:      UA    10 2014  31       427       393    EWR
+## 132:      OO    10 2014  10       207       221    LGA
+## 133:      US    10 2014  10       441       457    EWR
+## 134:      HA    10 2014  23        58        27    JFK
+##      destination air_time distance hour above_average_dealy
+##   1:         MIA      175     1085   12                TRUE
+##   2:         SEA      329     2402   20                TRUE
+##   3:         RDU       86      427    3                TRUE
+##   4:         MIA      156     1096   11                TRUE
+##   5:         JAX      142      820   19                TRUE
+##  ---                                                       
+## 130:         BNA      116      748   23                TRUE
+## 131:         ORD      100      719   21                TRUE
+## 132:         ORD      122      733   17                TRUE
+## 133:         CLT       85      529   17                TRUE
+## 134:         HNL      599     4983   10                TRUE
 ```
 
 Remember that `.SD` is a list of `data.table`s grouped by carrier and month. `.SD[which.max(arr_dealy), ]` will find the row where the `arr_delay` is the highest by group (month-carrier).
@@ -1918,8 +1973,9 @@ Alternatively, it is probably better to follow the multi-step approach we took w
 .panel[.panel-name[better alternative]
 
 The strategy here is to 
+
 + first make the data long ignoring the fact we want `yield_*` and `rainfall_*` to be separate variables eventually
-+ split variable names into two: variable meaning and year  
++ split variable names into two: variable meaning and year (done by `tstrsplit()`)  
 + and then use `dcast()` to make it wider
 
 
@@ -1956,8 +2012,14 @@ yield_data_wide %&gt;%
 
 # Merging
 
+You can use `merge()` function to merge two datasets.
+
+
 
 # Key
+
+
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
