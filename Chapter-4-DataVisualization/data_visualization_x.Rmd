@@ -42,7 +42,7 @@ The objectives of this chapter is to learn how to use the `ggplot2` package to c
 
 <br>
 
-<span style="color:red"> Tips: </span>hitting "o" key will give you a panel view of the slides
+<span style="color:red"> Tips: </span>hitting letter "o" key will give you a panel view of the slides
 
 
 ---
@@ -1330,11 +1330,91 @@ ggplot(data=premium) +
 
 ---
 
+# Density plot, histogram, boxplot 
+
+.panelset[ 
+
+.panel[.panel-name[density-histogram]
+
+Density plots and histograms convey basically the same information. 
+
+.content-box-green[**Key difference**]:
+
++ Density plots are normalized version of histograms so that the area under them are 1.
++ Histograms convey the information about the number of observations in addition to the distribution 
+
+
+.left5[
+```{r echo = F, out.width = "80%"}
+ggplot(county_yield) +
+  geom_density(
+    aes(x = corn_yield, fill = state_name), 
+    alpha = 0.4
+  )
+```
+]
+
+.right5[
+
+```{r echo = F, out.width = "80%"}
+ggplot(county_yield) +
+  geom_histogram(
+    aes(x = corn_yield, fill = state_name), 
+    alpha = 0.4, position = "identity"
+  )
+```
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[density-box]
+
+
+.content-box-green[**Key difference**]:
+
++ a density-plot provides complete information about the distribution of a single variable, but important summary statistics like mean or media are not present 
++ a box in box-plot provides incomplete information about the distribution of a single variable, but it takes up much less space in a figure
+
+.left3[
+
+For this reason, boxplots are particularly useful when it is desirable to place the distribution information of a single variable across groups and over time in a single panel (see the figure to the right as an example).  
+
+You can convey similar information using density plots faceted by year. But, it is often the case that full distribution information is not necessary.
+
+]
+
+.right7[
+
+```{r echo = F, out.width = "80%"}
+county_yield %>% 
+  filter(year>=2014) %>% 
+  ggplot(.) +
+    geom_boxplot(
+      aes(y = corn_yield, x = factor(year), fill = state_name), 
+      alpha = 0.4
+    )  
+```
+]
+
+  ]
+
+<!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+---
+
 # Preparing datasets 
 
+.left-full[
+ 
 We have seen 
 
-+ figures where its main body are made color differentiated (e.g., with `aes(color = var)` inside the `geom_*()` function)
++ figures where its main elements (points, lines, boxes, etc) are made color differentiated (e.g., with `aes(color = var)` inside the `geom_*()` function)
 +  faceted figures  
 
 .content-box-blue[.red[Important]: the dataset has to be in long format to create these types of figures!!]
@@ -1355,6 +1435,9 @@ Imagine creating boxplots of corn yield fill color-differentiated by state and f
 
 You will have trouble with specifying `facet_grid()` because you do not have a single variable that represents `year`.
 
+You will find that reshaping wide datasets using `pivot_longer()` is very useful in creating figures.
+
+ ] 
 
 <!-- 
 #=========================================
@@ -1637,7 +1720,9 @@ head(ci_bound_data)
 ```
 ]
 
-  ] <!-- panel ends here -->
+  ] 
+
+<!-- panel ends here -->
 
 ]
 
@@ -3778,7 +3863,7 @@ decorate("factor", eval = F) %>%
 
 ---
 
-# Box plot 
+# More on box plots 
 
 .panelset[ 
 
@@ -3938,8 +4023,9 @@ decorate("weather", eval = F) %>%
 ```
 ]
 
+  ] 
 
-  ] <!-- panel ends here -->
+<!-- panel ends here -->
 
 .panel[.panel-name[this works]
 
@@ -3973,6 +4059,179 @@ When a factor object is created using `factor()`, the order of its levels are se
 
   ] <!-- panel ends here -->
 ]
+
+---
+
+# More on bar charts
+
+.panelset[ 
+
+.panel[.panel-name[data prep]
+
+Create the following data:
+
+```{r }
+mean_yield_sy <- county_yield %>% 
+  filter(year >= 2010) %>% 
+  group_by(state_name, year) %>% 
+  summarize(
+    corn_yield = mean(corn_yield, na.rm = TRUE)
+  ) %>% 
+  filter(!is.na(year))
+```
+
+```{r echo = F}
+mean_yield_sy
+```
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[Default]
+
+.left5[
+
+By default `geom_bar()` creates a bar plot where the height of the bars are proportional to the number of observations in each value of x, meaning you do not need to supply `y` in `aes()`.
+
+```{r bar-1, out.width = "80%"}
+ggplot(data = mean_yield_sy) + 
+  geom_bar(
+    aes(
+      x = year
+    )
+  ) 
+```
+
+]
+
+.right5[
+
+You can make the height of bars to be the value of a variable by adding `y = variable` to `aes()` and add `stat = "identity"` option.
+
+```{r bar-2, out.width = "80%"}
+ggplot(data = mean_yield_sy) + 
+  geom_bar(
+    aes(
+      x = year,
+      y = corn_yield #<<
+    ),
+    stat = "identity"
+  ) 
+```
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[geom_col()]
+
+If you would like the height of bars to be the value of a variable, it is better to just use `geom_col()`, which does not ask you to put `stat = "identity"`.
+
+<br>
+
+.left-code[
+```{r bar-col, eval = F}
+ggplot(data = mean_yield_sy) + 
+  geom_col( #<<
+    aes(
+      x = year,
+      y = corn_yield 
+    )
+  ) 
+```
+]
+
+.right-plot[
+```{r bar-col-f, out.width = "80%", ref.label = "bar-col", echo = F}  
+
+```
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[position]
+
+You might have wondered why `con_yield` is really high. That's because the value of `corn_yield` is automatically stacked horizontally when there are more than one observations per group (here, year).
+
+.left5[
+
+No action:
+
+```{r position-1, out.width = "70%"}
+ggplot(data = mean_yield_sy) + 
+  geom_col( 
+    aes(
+      x = year,
+      y = corn_yield 
+    )
+  )   
+```
+
+]
+
+.right5[
+
+Fill-color differentiated by `state_name`:
+
+```{r position-2, out.width = "70%"}
+ggplot(data = mean_yield_sy) + 
+  geom_col( 
+    aes(
+      x = year,
+      y = corn_yield,
+      fill = state_name #<<
+    )
+  )   
+```
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[position]
+
+.left5[
+
+By default, bars are stacked (`position = "stack"`): 
+
+```{r position-s, out.width = "70%"}
+ggplot(data = mean_yield_sy) + 
+  geom_col( 
+    aes(x = year, y = corn_yield, fill = state_name)
+  )   
+```
+
+]
+
+.right5[
+
+You can add `position = "dodge"` to not stack bars vertically:
+
+```{r position-d, out.width = "70%"}
+ggplot(data = mean_yield_sy) + 
+  geom_col( 
+    aes(x = year, y = corn_yield, fill = state_name), 
+    position = "dodge" #<<
+  )   
+```
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
+
+
 
 ---
 name: custom-theme
@@ -4076,30 +4335,35 @@ name: gallery
 
 # Pie charts
 
-.panelset[ 
+.left4[
 
-.panel[.panel-name[Instruction]
+.content-box-green[**When to use**]:
 
-.left-full[
+Pie charts are useful to visualize the share of multiple categories of the same variable (water use share by the industrial, public, and agricultural sectors)
 
-+ You can use `geom_arc_bar()` from the `ggforce` package to create a pie chart
 
-```{r }
+.content-box-green[**Data preparation**]
+
+Create a variable with the starting and ending angles for each category based on the share for each group (see next slide)
+
+.content-box-green[**How**]
+
+
+You can use `geom_arc_bar()` from the `ggforce` package to create a pie chart
+
+```{r cache = F}
 library(ggforce)
 ```
 
-+ First create a dataset where the starting and ending angles based on the share for each group (see next slide)
-+ Then use `geom_arc_bar()` to create a pie chart
+Then use `geom_arc_bar()` to create a pie chart where you provide the starting and ending angles.
+
+Note: You can use the following code as a template to create a pie chart. Replace `state_name` in `fill = state_name` with the variable representing the groups in your share data.
 
 ]
 
-  ]
+.right5[
 
-.panel[.panel-name[Prepare a dataset]
-
-.left-code[
-
-```{r prep-data, results = "hide"}  
+```{r pie-chart, echo = F}  
 share_data <- county_yield %>% 
   select(state_name, corn_yield) %>% 
   group_by(state_name) %>% 
@@ -4110,26 +4374,7 @@ share_data <- county_yield %>%
     start_angle = lag(end_angle, default = 0),
     mid_angle = (end_angle + start_angle)/2
   )
-```
 
-]
-
-.right-plot[
-```{r echo = F}  
-share_data
-```
-]
-
-  ]
-
-.panel[.panel-name[pie chart]
-
-.left-code[
-
-+ You can use the following code as a template to create a pie chart 
-+ Replace `state_name` in `fill = state_name` with the variable representing the groups in your share data
-
-```{r pie-chart, eval = F}  
 #--- define two parameters ---#
 rpie = 1 # pie radius
 rlabel = 0.6 * rpie # radius of the labels
@@ -4160,15 +4405,57 @@ share_data %>%
 ```
 ]
 
-.right-plot[
-```{r pie-chart-f, ref.label = "pie-chart", echo = F}  
+---
+
+
+```{r pie-chart-flip, cache = F, include = F}
+#--- define two parameters ---#
+rpie = 1 # pie radius
+rlabel = 0.6 * rpie # radius of the labels
+
+county_yield %>% #BREAK
+  select(state_name, corn_yield) %>% #BREAK
+  group_by(state_name) %>% #BREAK
+  summarize(yield = mean(corn_yield, na.rm = T)) %>% #BREAK
+  mutate(yield_ratio = yield/sum(yield)) %>% #BREAK
+  mutate(
+    end_angle = 2*pi*cumsum(yield_ratio),
+    start_angle = lag(end_angle, default = 0),
+    mid_angle = (end_angle + start_angle)/2
+  ) %>% #BREAK
+  ggplot(data = .) + #BREAK 
+    geom_arc_bar(
+      aes(
+        x0 = 0, y0 = 0, r0 = 0, r = rpie, 
+        start = start_angle, end = end_angle, 
+        fill = state_name
+      )
+    ) + #BREAK
+    geom_text(
+      aes(
+        x = rlabel * sin(mid_angle), 
+        y = rlabel * cos(mid_angle), 
+        label = state_name
+      ), hjust = 0.5, vjust = 0.5
+    ) + #BREAK
+    coord_fixed() + #BREAK
+    theme_void() + #BREAK
+    scale_fill_viridis_d("State")
 
 ```
-]
 
-  ] 
+`r chunk_reveal(
+  chunk_name = "pie-chart-flip", 
+  title = "# ",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(40, 60)
+  )
+`
 
-]
+
+
 
 
 ---
@@ -4242,7 +4529,25 @@ weather %>%
 
 # Diverging chart (variant of a bar chart)
 
-```{r diverging2, echo = F, out.width = "60%"}  
+.left4[
+
+.content-box-green[**When to use**]:
+
+Diverging charts can be useful to visualize the heterogeneity of a single variable across groups. 
+
+.content-box-green[**Data preparation**]
+
+Diverging charts are just bar chart with y-axis and x-axis flipped. So, you just need a single value per group in long format.
+
+.content-box-green[**How**]
+
+You can use `geom_bar()` with `coord_flip()`. See the next slide for a demonstration.
+
+]
+
+.right6[
+
+```{r diverging2, echo = F, out.width = "90%"}  
 county_yield %>% 
   filter(state_name == "Nebraska") %>% 
   filter(!is.na(corn_yield)) %>% 
@@ -4279,6 +4584,9 @@ county_yield %>%
   )
 
 ```
+]
+
+
 
 ---
 
@@ -4318,7 +4626,7 @@ county_yield %>% #BREAK
 
 `r chunk_reveal(
   chunk_name = "divergin-plot", 
-  title = "# Diverging chart: little by little",
+  title = "# Diverging chart: step by step",
   break_type = "user", 
   display_type = "both", 
   left_assign = FALSE,
@@ -4330,30 +4638,47 @@ county_yield %>% #BREAK
 
 # Area chart 
 
-Area charts are useful when comparing a variable across multiple groups over time.
 
-```{r area-chart, echo = F, out.width = "60%"}  
+.left4[
+
+<br>
+
+.content-box-green[**When to use**]:   
+
+Area charts are useful to visualize the share of multiple categories of the same object (e.g., energy production by energy sources) and also their magnitude at the same time.
+
+.content-box-green[**Data preparation**]:   
+
+You just need `y` and `x` just like a line plot.
+
+You do not have to calculate the height (`y` value) yourself. `geom_area()` will automatically stack `y` values vertically for you (see the next slide). 
+ 
+]
+
+.right6[
+
+```{r area-chart, echo = F, out.width = "90%"}  
 county_yield %>% 
   filter(!is.na(corn_yield)) %>% 
   group_by(state_name, year) %>% 
   summarize(corn_yield = mean(corn_yield)) %>% 
-  group_by(year) %>% 
-  mutate(corn_yield_p = corn_yield / sum(corn_yield)) %>% 
   ggplot(data = .) + 
   geom_area(
     aes(
-      y = corn_yield_p, 
+      y = corn_yield, 
       x = year, 
       fill = state_name
     ), 
     stat = "identity"
   ) + 
-  labs(x = "Year", y = "Corn Yield Ratio") +
+  labs(x = "Year", y = "Corn Yield") +
   scale_fill_viridis_d(name = "State") +  
   theme_bw() +
   theme(legend.position = "bottom")
 
 ```
+
+]
 
 ---
 
@@ -4363,18 +4688,16 @@ county_yield %>% #BREAK
   filter(!is.na(corn_yield)) %>% #BREAK 
   group_by(state_name, year) %>% #BREAK
   summarize(corn_yield = mean(corn_yield)) %>% #BREAK 
-  group_by(year) %>% 
-  mutate(corn_yield_p = corn_yield / sum(corn_yield)) %>% #BREAK
   ggplot(data = .) + #BREAK
   geom_area(
     aes(
-      y = corn_yield_p, 
+      y = corn_yield, 
       x = year, 
       fill = state_name
     ), 
     stat = "identity"
   ) + #BREAK
-  labs(x = "Year", y = "Corn Yield Ratio") + #BREAK
+  labs(x = "Year", y = "Corn Yield") + #BREAK
   scale_fill_viridis_d(name = "State") + #BREAK 
   theme_bw() + #BREAK
   theme(legend.position = "bottom")
@@ -4382,7 +4705,7 @@ county_yield %>% #BREAK
 
 `r chunk_reveal(
   chunk_name = "area-chart-flip", 
-  title = "# Area chart: little by little",
+  title = "# Area chart: step by step",
   break_type = "user", 
   display_type = "both", 
   left_assign = FALSE,
@@ -4394,7 +4717,21 @@ county_yield %>% #BREAK
 
 # Mean and SE chart
 
-```{r mean-se, echo = F, out.width = "60%"}
+.left4[
+
+.content-box-green[**When to use**]:   
+
+Mean and SE charts are useful for reporting mean of variables and their uncertainty in the form of standard errors.
+
+.content-box-green[**Data preparation**]:   
+
+For each group, you need to supply the mean of the variable and the upper and lower bounds (e.g., 95% confidence interval).
+
+]
+
+.right6[
+
+```{r mean-se, echo = F, out.width = "90%"}
 data(Salaries, package="carData")
 
 tibble(Salaries) %>%
@@ -4403,8 +4740,7 @@ tibble(Salaries) %>%
     n = n(),
     mean_salary = mean(salary),
     sd = sd(salary),
-    se = sd / sqrt(n),
-    ci = qt(0.975, df = n - 1) * sd / sqrt(n)
+    se = sd / sqrt(n)
   ) %>% #BREAK
   ggplot(data = .) + #BREAK
   aes(x = rank, y = mean_salary) + #BREAK
@@ -4419,6 +4755,9 @@ tibble(Salaries) %>%
 
 ```
 
+]
+
+
 ---
 
 
@@ -4431,8 +4770,7 @@ Salaries %>% #BREAK
     n = n(),
     mean_salary = mean(salary),
     sd = sd(salary),
-    se = sd / sqrt(n),
-    ci = qt(0.975, df = n - 1) * sd / sqrt(n)
+    se = sd / sqrt(n)
   ) %>% #BREAK
   ggplot(data = .) + #BREAK
   aes(x = rank, y = mean_salary) + #BREAK
@@ -4449,7 +4787,7 @@ Salaries %>% #BREAK
 
 `r chunk_reveal(
   chunk_name = "mean-se-flip", 
-  title = "# Mean and SE chart: little by little",
+  title = "# Mean and SE chart: step by step",
   break_type = "user", 
   display_type = "both", 
   left_assign = FALSE,
@@ -4457,6 +4795,80 @@ Salaries %>% #BREAK
   )
 `
 
+---
+
+# Heat map 
+
+.left5[
+
+.content-box-green[**When to use**]:   
+
+Heat maps can be useful for 3-dimensional data (`x`, `y`, `z`). 
+
+The magnitude of the third dimension (`z`) is represented by color unlike a 3D-plot (e.g., contour map).   
+
+.content-box-green[**Data preparation**]:   
+
+A dataset in long format that has a single value for each group.
+
+.content-box-green[**How**]:   
+
+For each group, you supply `x`, `y`, and `fill = z` to `geom_tile()` (See the next slide for a demonstration).
+
+Read the following data for replication:
+
+```{r }
+gene_data <- readRDS("gene.rds")
+```
+
+]
+
+.right5[
+
+```{r echo = F}
+gene_data %>% 
+  ggplot(.) + 
+    geom_tile(aes(gene_txt, x, fill= value)) +
+    scale_fill_distiller(palette = "YlOrRd") +
+    facet_grid(. ~ group) +
+    theme(
+      axis.ticks.y = element_blank(),
+      axis.title = element_blank(),
+      axis.text.y = element_blank(),
+      axis.text.x = element_text(angle = 90),
+      legend.position = "bottom"
+    )
+```
+
+]
+
+---
+
+
+```{r heatmap, cache = F, include = F}
+gene_data %>% #BREAK
+  ggplot(.) + #BREAK
+    geom_tile(aes(gene_txt, x, fill= value)) + #BREAK
+    scale_fill_distiller(palette = "YlOrRd") + #BREAK
+    facet_grid(. ~ group) + #BREAK
+    theme(
+      axis.ticks.y = element_blank(),
+      axis.title = element_blank(),
+      axis.text.y = element_blank(),
+      axis.text.x = element_text(angle = 90),
+      legend.position = "bottom"
+    )
+```
+
+`r chunk_reveal(
+  chunk_name = "heatmap", 
+  title = "# ",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(40, 60)
+  )
+`
 
 ---
 
@@ -4925,36 +5337,3 @@ name: inputoutput
 + [ggplot2 extensions](https://exts.ggplot2.tidyverse.org/)
 + [gganimat](https://exts.ggplot2.tidyverse.org/)
 
-
-
-<!-- 
-```{r }
-
-data <- fread("N_Response_total_ordered-1.csv") %>% 
-  select(x, matches("_BL_"), matches("_ML_"), matches("_TL_")) %>% 
-  pivot_longer(-x, names_to = "gene", values_to = "value") %>% 
-  mutate(group = case_when(
-    str_detect(gene, "_BL_") ~ "BL",
-    str_detect(gene, "_ML_") ~ "ML",
-    str_detect(gene, "_TL_") ~ "TL"
-  )) %>% 
-  mutate(gene_txt = gsub("_BL_", "", gene)) %>% 
-  mutate(gene_txt = gsub("_ML_", "", gene_txt)) %>% 
-  mutate(gene_txt = gsub("_TL_", "", gene_txt)) %>% 
-  #--- I am drawing random numbers here  ---#
-  # But, this is where you normalize the value with log and z
-  mutate(value = runif(nrow(.)))
-
-ggplot(data) + 
-  geom_tile(aes(gene_txt, x, fill= value)) +
-  scale_fill_gradient(low="white", high="blue") +
-  facet_grid(. ~ group) +
-  theme(
-    axis.ticks.y = element_blank(),
-    axis.title = element_blank(),
-    axis.text.y = element_blank(),
-    axis.text.x = element_text(angle = 90),
-  )
-
-```
- -->

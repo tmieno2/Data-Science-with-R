@@ -149,6 +149,18 @@ class: center, middle, inverse, title-slide
   padding-left: 1%;
 }
 
+.left3 {
+  width: 29%;
+  height: 92%;
+  float: left;
+}
+
+.right7 {
+  width: 69%;
+  float: right;
+  padding-left: 1%;
+}
+
 .left4 {
   width: 38%;
   height: 92%;
@@ -195,10 +207,10 @@ ol, li{
 .content-box-red,
 .content-box-yellow {
   box-sizing: border-box;
-  border-radius: 15px;
-  margin: 0 0 15px;
+  border-radius: 5px;
+  margin: 0 0 10px;
   overflow: hidden;
-  padding: 0px 20px 0px 20px;
+  padding: 0px 5px 0px 5px;
   width: 100%;
 }
 .content-box-blue { background-color: #F0F8FF; }
@@ -350,12 +362,12 @@ The objectives of this chapter is to learn how to use the `ggplot2` package to c
 5. [Other supplementary `geom_*()`](#other-geoms)
 6. [Make your figures presentable to others](#fine-tune)
 7. [Tips](#tips)
-7. [Gallery of other type of figures](#gallery)
-7. [Animated figures](#animated)
+8. [Gallery of other type of figures](#gallery)
+9. [Animated figures](#animated)
 
 &lt;br&gt;
 
-&lt;span style="color:red"&gt; Tips: &lt;/span&gt;hitting "o" key will give you a panel view of the slides
+&lt;span style="color:red"&gt; Tips: &lt;/span&gt;hitting letter "o" key will give you a panel view of the slides
 
 
 ---
@@ -2803,11 +2815,71 @@ Using premium, create histogram of `carat` by `color` and `clarity` on separate 
 
 ---
 
+# Density plot, histogram, boxplot 
+
+.panelset[ 
+
+.panel[.panel-name[density-histogram]
+
+Density plots and histograms convey basically the same information. 
+
+.content-box-green[**Key difference**]:
+
++ Density plots are normalized version of histograms so that the area under them are 1.
++ Histograms convey the information about the number of observations in addition to the distribution 
+
+
+.left5[
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-14-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+]
+
+.right5[
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-15-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[density-box]
+
+
+.content-box-green[**Key difference**]:
+
++ a density-plot provides complete information about the distribution of a single variable, but important summary statistics like mean or media are not present 
++ a box in box-plot provides incomplete information about the distribution of a single variable, but it takes up much less space in a figure
+
+.left3[
+
+For this reason, boxplots are particularly useful when it is desirable to place the distribution information of a single variable across groups and over time in a single panel (see the figure to the right as an example).  
+
+You can convey similar information using density plots faceted by year. But, it is often the case that full distribution information is not necessary.
+
+]
+
+.right7[
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-16-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+]
+
+&lt;!-- panel set ends here --&gt;
+
+---
+
 # Preparing datasets 
 
+.left-full[
+ 
 We have seen 
 
-+ figures where its main body are made color differentiated (e.g., with `aes(color = var)` inside the `geom_*()` function)
++ figures where its main elements (points, lines, boxes, etc) are made color differentiated (e.g., with `aes(color = var)` inside the `geom_*()` function)
 +  faceted figures  
 
 .content-box-blue[.red[Important]: the dataset has to be in long format to create these types of figures!!]
@@ -2838,6 +2910,9 @@ Imagine creating boxplots of corn yield fill color-differentiated by state and f
 
 You will have trouble with specifying `facet_grid()` because you do not have a single variable that represents `year`.
 
+You will find that reshaping wide datasets using `pivot_longer()` is very useful in creating figures.
+
+ ] 
 
 &lt;!-- 
 #=========================================
@@ -3129,7 +3204,9 @@ head(ci_bound_data)
 ```
 ]
 
-  ] &lt;!-- panel ends here --&gt;
+  ] 
+
+&lt;!-- panel ends here --&gt;
 
 ]
 
@@ -3456,7 +3533,7 @@ g_box +
 ]
 
 .right5[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-21-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-24-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ]
@@ -3494,7 +3571,7 @@ You can filter the data first and then use the filtered data.
 ]
 
 .right5[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-23-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-26-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -3525,7 +3602,7 @@ g_box +
 ]
 
 .right5[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-24-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-27-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 
@@ -3680,7 +3757,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-26-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-29-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
   ] &lt;!-- panel ends here --&gt;
 
@@ -3702,7 +3779,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-27-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-30-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -3726,7 +3803,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-28-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-31-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt;
@@ -3751,7 +3828,7 @@ g_axis +
 ]
 
 .right-plot[
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-29-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-32-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
   ] &lt;!-- panel ends here --&gt; 
@@ -5279,7 +5356,7 @@ county_yield_f$state_name_f %&gt;% head()
 
 ---
 
-# Box plot 
+# More on box plots 
 
 .panelset[ 
 
@@ -5391,8 +5468,9 @@ Create a box plot of temperature by month:
 &lt;img src="data_visualization_x_files/figure-html/weather-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
+  ] 
 
-  ] &lt;!-- panel ends here --&gt;
+&lt;!-- panel ends here --&gt;
 
 .panel[.panel-name[this works]
 
@@ -5427,6 +5505,212 @@ When a factor object is created using `factor()`, the order of its levels are se
 
   ] &lt;!-- panel ends here --&gt;
 ]
+
+---
+
+# More on bar charts
+
+.panelset[ 
+
+.panel[.panel-name[data prep]
+
+Create the following data:
+
+
+```r
+mean_yield_sy &lt;- county_yield %&gt;% 
+  filter(year &gt;= 2010) %&gt;% 
+  group_by(state_name, year) %&gt;% 
+  summarize(
+    corn_yield = mean(corn_yield, na.rm = TRUE)
+  ) %&gt;% 
+  filter(!is.na(year))
+```
+
+
+```
+## # A tibble: 27 x 3
+## # Groups:   state_name [3]
+##    state_name  year corn_yield
+##    &lt;chr&gt;      &lt;int&gt;      &lt;dbl&gt;
+##  1 Colorado    2010       196.
+##  2 Colorado    2011       186.
+##  3 Colorado    2012       160.
+##  4 Colorado    2013       184.
+##  5 Colorado    2014       187.
+##  6 Colorado    2015       181.
+##  7 Colorado    2016       173.
+##  8 Colorado    2017       206 
+##  9 Colorado    2018       175.
+## 10 Kansas      2010       182.
+## # … with 17 more rows
+```
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Default]
+
+.left5[
+
+By default `geom_bar()` creates a bar plot where the height of the bars are proportional to the number of observations in each value of x, meaning you do not need to supply `y` in `aes()`.
+
+
+```r
+ggplot(data = mean_yield_sy) + 
+  geom_bar(
+    aes(
+      x = year
+    )
+  ) 
+```
+
+&lt;img src="data_visualization_x_files/figure-html/bar-1-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+]
+
+.right5[
+
+You can make the height of bars to be the value of a variable by adding `y = variable` to `aes()` and add `stat = "identity"` option.
+
+
+```r
+ggplot(data = mean_yield_sy) + 
+  geom_bar(
+    aes(
+      x = year,
+*     y = corn_yield
+    ),
+    stat = "identity"
+  ) 
+```
+
+&lt;img src="data_visualization_x_files/figure-html/bar-2-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+]
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[geom_col()]
+
+If you would like the height of bars to be the value of a variable, it is better to just use `geom_col()`, which does not ask you to put `stat = "identity"`.
+
+&lt;br&gt;
+
+.left-code[
+
+```r
+ggplot(data = mean_yield_sy) + 
+* geom_col(
+    aes(
+      x = year,
+      y = corn_yield 
+    )
+  ) 
+```
+]
+
+.right-plot[
+&lt;img src="data_visualization_x_files/figure-html/bar-col-f-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+]
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[position]
+
+You might have wondered why `con_yield` is really high. That's because the value of `corn_yield` is automatically stacked horizontally when there are more than one observations per group (here, year).
+
+.left5[
+
+No action:
+
+
+```r
+ggplot(data = mean_yield_sy) + 
+  geom_col( 
+    aes(
+      x = year,
+      y = corn_yield 
+    )
+  )   
+```
+
+&lt;img src="data_visualization_x_files/figure-html/position-1-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+]
+
+.right5[
+
+Fill-color differentiated by `state_name`:
+
+
+```r
+ggplot(data = mean_yield_sy) + 
+  geom_col( 
+    aes(
+      x = year,
+      y = corn_yield,
+*     fill = state_name
+    )
+  )   
+```
+
+&lt;img src="data_visualization_x_files/figure-html/position-2-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+]
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[position]
+
+.left5[
+
+By default, bars are stacked (`position = "stack"`): 
+
+
+```r
+ggplot(data = mean_yield_sy) + 
+  geom_col( 
+    aes(x = year, y = corn_yield, fill = state_name)
+  )   
+```
+
+&lt;img src="data_visualization_x_files/figure-html/position-s-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+]
+
+.right5[
+
+You can add `position = "dodge"` to not stack bars vertically:
+
+
+```r
+ggplot(data = mean_yield_sy) + 
+  geom_col( 
+    aes(x = year, y = corn_yield, fill = state_name), 
+*   position = "dodge"
+  )   
+```
+
+&lt;img src="data_visualization_x_files/figure-html/position-d-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+]
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+]
+
+&lt;!-- panel set ends here --&gt;
+
+
 
 ---
 name: custom-theme
@@ -5539,47 +5823,245 @@ name: gallery
 
 # Pie charts
 
-.panelset[ 
+.left4[
 
-.panel[.panel-name[Instruction]
+.content-box-green[**When to use**]:
 
-.left-full[
+Pie charts are useful to visualize the share of multiple categories of the same variable (water use share by the industrial, public, and agricultural sectors)
 
-+ You can use `geom_arc_bar()` from the `ggforce` package to create a pie chart
+
+.content-box-green[**Data preparation**]
+
+Create a variable with the starting and ending angles for each category based on the share for each group (see next slide)
+
+.content-box-green[**How**]
+
+
+You can use `geom_arc_bar()` from the `ggforce` package to create a pie chart
 
 
 ```r
 library(ggforce)
 ```
 
-+ First create a dataset where the starting and ending angles based on the share for each group (see next slide)
-+ Then use `geom_arc_bar()` to create a pie chart
+Then use `geom_arc_bar()` to create a pie chart where you provide the starting and ending angles.
+
+Note: You can use the following code as a template to create a pie chart. Replace `state_name` in `fill = state_name` with the variable representing the groups in your share data.
 
 ]
 
-  ]
+.right5[
 
-.panel[.panel-name[Prepare a dataset]
+&lt;img src="data_visualization_x_files/figure-html/pie-chart-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
 
-.left-code[
+---
 
+
+
+
+count: false
+ 
+# 
+.panel1-pie-chart-flip-user[
 
 ```r
-share_data &lt;- county_yield %&gt;% 
-  select(state_name, corn_yield) %&gt;% 
-  group_by(state_name) %&gt;% 
-  summarize(yield = mean(corn_yield, na.rm = T)) %&gt;% 
-  mutate(yield_ratio = yield/sum(yield)) %&gt;% 
-  mutate(
-    end_angle = 2*pi*cumsum(yield_ratio),
-    start_angle = lag(end_angle, default = 0),
-    mid_angle = (end_angle + start_angle)/2
-  )
-```
+#--- define two parameters ---#
+*rpie = 1  # pie radius
+*rlabel = 0.6 * rpie  # radius of the labels
 
+*county_yield
+```
+]
+ 
+.panel2-pie-chart-flip-user[
+
+```
+##       soy_yield corn_yield year county_code state_name d0_5_9 d1_5_9  d2_5_9
+##    1:        NA         NA 2018         053     Kansas 0.8980 3.8186 13.5279
+##    2:        NA         NA 2017         053     Kansas 3.9994 7.0006  0.0000
+##    3:        NA         NA 2016         053     Kansas 0.5724 0.0996  0.0000
+##    4:        NA         NA 2015         053     Kansas 4.4283 1.6177  0.0000
+##    5:        NA         NA 2014         053     Kansas 4.7032 9.9327  3.5824
+##   ---                                                                       
+## 2960:        53        181 2004         073   Nebraska 0.0000 3.2915 19.7085
+## 2961:        57        195 2003         073   Nebraska 0.0000 7.7427 11.8459
+## 2962:        51        170 2002         073   Nebraska 0.0000 7.0000  1.2978
+## 2963:        56        195 2001         073   Nebraska 5.7915 0.0000  0.0000
+## 2964:        54        147 2000         073   Nebraska 0.0000 4.7386 17.6887
+##       d3_5_9 d4_5_9
+##    1: 0.0000      0
+##    2: 0.0000      0
+##    3: 0.0000      0
+##    4: 0.0000      0
+##    5: 4.7817      0
+##   ---              
+## 2960: 0.0000      0
+## 2961: 3.4114      0
+## 2962: 4.7022      9
+## 2963: 0.0000      0
+## 2964: 0.5727      0
+```
 ]
 
-.right-plot[
+---
+count: false
+ 
+# 
+.panel1-pie-chart-flip-user[
+
+```r
+#--- define two parameters ---#
+rpie = 1  # pie radius
+rlabel = 0.6 * rpie  # radius of the labels
+
+county_yield %&gt;%
+* select(state_name, corn_yield)
+```
+]
+ 
+.panel2-pie-chart-flip-user[
+
+```
+##       state_name corn_yield
+##    1:     Kansas         NA
+##    2:     Kansas         NA
+##    3:     Kansas         NA
+##    4:     Kansas         NA
+##    5:     Kansas         NA
+##   ---                      
+## 2960:   Nebraska        181
+## 2961:   Nebraska        195
+## 2962:   Nebraska        170
+## 2963:   Nebraska        195
+## 2964:   Nebraska        147
+```
+]
+
+---
+count: false
+ 
+# 
+.panel1-pie-chart-flip-user[
+
+```r
+#--- define two parameters ---#
+rpie = 1  # pie radius
+rlabel = 0.6 * rpie  # radius of the labels
+
+county_yield %&gt;%
+  select(state_name, corn_yield) %&gt;%
+* group_by(state_name)
+```
+]
+ 
+.panel2-pie-chart-flip-user[
+
+```
+## # A tibble: 2,964 x 2
+## # Groups:   state_name [3]
+##    state_name corn_yield
+##    &lt;chr&gt;           &lt;dbl&gt;
+##  1 Kansas             NA
+##  2 Kansas             NA
+##  3 Kansas             NA
+##  4 Kansas             NA
+##  5 Kansas             NA
+##  6 Kansas             NA
+##  7 Kansas             NA
+##  8 Kansas             NA
+##  9 Kansas             NA
+## 10 Kansas             NA
+## # … with 2,954 more rows
+```
+]
+
+---
+count: false
+ 
+# 
+.panel1-pie-chart-flip-user[
+
+```r
+#--- define two parameters ---#
+rpie = 1  # pie radius
+rlabel = 0.6 * rpie  # radius of the labels
+
+county_yield %&gt;%
+  select(state_name, corn_yield) %&gt;%
+  group_by(state_name) %&gt;%
+* summarize(yield = mean(corn_yield, na.rm = T))
+```
+]
+ 
+.panel2-pie-chart-flip-user[
+
+```
+## # A tibble: 3 x 2
+##   state_name yield
+##   &lt;chr&gt;      &lt;dbl&gt;
+## 1 Colorado    168.
+## 2 Kansas      173.
+## 3 Nebraska    182.
+```
+]
+
+---
+count: false
+ 
+# 
+.panel1-pie-chart-flip-user[
+
+```r
+#--- define two parameters ---#
+rpie = 1  # pie radius
+rlabel = 0.6 * rpie  # radius of the labels
+
+county_yield %&gt;%
+  select(state_name, corn_yield) %&gt;%
+  group_by(state_name) %&gt;%
+  summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
+* mutate(yield_ratio = yield/sum(yield))
+```
+]
+ 
+.panel2-pie-chart-flip-user[
+
+```
+## # A tibble: 3 x 3
+##   state_name yield yield_ratio
+##   &lt;chr&gt;      &lt;dbl&gt;       &lt;dbl&gt;
+## 1 Colorado    168.       0.322
+## 2 Kansas      173.       0.331
+## 3 Nebraska    182.       0.347
+```
+]
+
+---
+count: false
+ 
+# 
+.panel1-pie-chart-flip-user[
+
+```r
+#--- define two parameters ---#
+rpie = 1  # pie radius
+rlabel = 0.6 * rpie  # radius of the labels
+
+county_yield %&gt;%
+  select(state_name, corn_yield) %&gt;%
+  group_by(state_name) %&gt;%
+  summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
+  mutate(yield_ratio = yield/sum(yield)) %&gt;%
+* mutate(
+*   end_angle = 2*pi*cumsum(yield_ratio),
+*   start_angle = lag(end_angle, default = 0),
+*   mid_angle = (end_angle + start_angle)/2
+* )
+```
+]
+ 
+.panel2-pie-chart-flip-user[
 
 ```
 ## # A tibble: 3 x 6
@@ -5591,53 +6073,280 @@ share_data &lt;- county_yield %&gt;%
 ```
 ]
 
-  ]
-
-.panel[.panel-name[pie chart]
-
-.left-code[
-
-+ You can use the following code as a template to create a pie chart 
-+ Replace `state_name` in `fill = state_name` with the variable representing the groups in your share data
-
+---
+count: false
+ 
+# 
+.panel1-pie-chart-flip-user[
 
 ```r
 #--- define two parameters ---#
-rpie = 1 # pie radius
-rlabel = 0.6 * rpie # radius of the labels
+rpie = 1  # pie radius
+rlabel = 0.6 * rpie  # radius of the labels
 
-#--- create a pie chart ---#
-share_data %&gt;% 
-  ggplot(data = .) + 
+county_yield %&gt;%
+  select(state_name, corn_yield) %&gt;%
+  group_by(state_name) %&gt;%
+  summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
+  mutate(yield_ratio = yield/sum(yield)) %&gt;%
+  mutate(
+    end_angle = 2*pi*cumsum(yield_ratio),
+    start_angle = lag(end_angle, default = 0),
+    mid_angle = (end_angle + start_angle)/2
+  ) %&gt;%
+* ggplot(data = .)
+```
+]
+ 
+.panel2-pie-chart-flip-user[
+&lt;img src="data_visualization_x_files/figure-html/pie-chart-flip_user_07_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-pie-chart-flip-user[
+
+```r
+#--- define two parameters ---#
+rpie = 1  # pie radius
+rlabel = 0.6 * rpie  # radius of the labels
+
+county_yield %&gt;%
+  select(state_name, corn_yield) %&gt;%
+  group_by(state_name) %&gt;%
+  summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
+  mutate(yield_ratio = yield/sum(yield)) %&gt;%
+  mutate(
+    end_angle = 2*pi*cumsum(yield_ratio),
+    start_angle = lag(end_angle, default = 0),
+    mid_angle = (end_angle + start_angle)/2
+  ) %&gt;%
+  ggplot(data = .) +
+*   geom_arc_bar(
+*     aes(
+*       x0 = 0, y0 = 0, r0 = 0, r = rpie,
+*       start = start_angle, end = end_angle,
+*       fill = state_name
+*     )
+*   )
+```
+]
+ 
+.panel2-pie-chart-flip-user[
+&lt;img src="data_visualization_x_files/figure-html/pie-chart-flip_user_08_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-pie-chart-flip-user[
+
+```r
+#--- define two parameters ---#
+rpie = 1  # pie radius
+rlabel = 0.6 * rpie  # radius of the labels
+
+county_yield %&gt;%
+  select(state_name, corn_yield) %&gt;%
+  group_by(state_name) %&gt;%
+  summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
+  mutate(yield_ratio = yield/sum(yield)) %&gt;%
+  mutate(
+    end_angle = 2*pi*cumsum(yield_ratio),
+    start_angle = lag(end_angle, default = 0),
+    mid_angle = (end_angle + start_angle)/2
+  ) %&gt;%
+  ggplot(data = .) +
     geom_arc_bar(
-      aes(x0 = 0, y0 = 0, r0 = 0, r = rpie, # fixed values
-        start = start_angle, 
-        end = end_angle, 
+      aes(
+        x0 = 0, y0 = 0, r0 = 0, r = rpie,
+        start = start_angle, end = end_angle,
+        fill = state_name
+      )
+    ) +
+*   geom_text(
+*     aes(
+*       x = rlabel * sin(mid_angle),
+*       y = rlabel * cos(mid_angle),
+*       label = state_name
+*     ), hjust = 0.5, vjust = 0.5
+*   )
+```
+]
+ 
+.panel2-pie-chart-flip-user[
+&lt;img src="data_visualization_x_files/figure-html/pie-chart-flip_user_09_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-pie-chart-flip-user[
+
+```r
+#--- define two parameters ---#
+rpie = 1  # pie radius
+rlabel = 0.6 * rpie  # radius of the labels
+
+county_yield %&gt;%
+  select(state_name, corn_yield) %&gt;%
+  group_by(state_name) %&gt;%
+  summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
+  mutate(yield_ratio = yield/sum(yield)) %&gt;%
+  mutate(
+    end_angle = 2*pi*cumsum(yield_ratio),
+    start_angle = lag(end_angle, default = 0),
+    mid_angle = (end_angle + start_angle)/2
+  ) %&gt;%
+  ggplot(data = .) +
+    geom_arc_bar(
+      aes(
+        x0 = 0, y0 = 0, r0 = 0, r = rpie,
+        start = start_angle, end = end_angle,
         fill = state_name
       )
     ) +
     geom_text(
       aes(
-        x = rlabel * sin(mid_angle), 
-        y = rlabel * cos(mid_angle), 
+        x = rlabel * sin(mid_angle),
+        y = rlabel * cos(mid_angle),
         label = state_name
-      ), 
-      hjust = 0.5, 
-      vjust = 0.5
+      ), hjust = 0.5, vjust = 0.5
+    ) +
+*   coord_fixed()
+```
+]
+ 
+.panel2-pie-chart-flip-user[
+&lt;img src="data_visualization_x_files/figure-html/pie-chart-flip_user_10_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-pie-chart-flip-user[
+
+```r
+#--- define two parameters ---#
+rpie = 1  # pie radius
+rlabel = 0.6 * rpie  # radius of the labels
+
+county_yield %&gt;%
+  select(state_name, corn_yield) %&gt;%
+  group_by(state_name) %&gt;%
+  summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
+  mutate(yield_ratio = yield/sum(yield)) %&gt;%
+  mutate(
+    end_angle = 2*pi*cumsum(yield_ratio),
+    start_angle = lag(end_angle, default = 0),
+    mid_angle = (end_angle + start_angle)/2
+  ) %&gt;%
+  ggplot(data = .) +
+    geom_arc_bar(
+      aes(
+        x0 = 0, y0 = 0, r0 = 0, r = rpie,
+        start = start_angle, end = end_angle,
+        fill = state_name
+      )
+    ) +
+    geom_text(
+      aes(
+        x = rlabel * sin(mid_angle),
+        y = rlabel * cos(mid_angle),
+        label = state_name
+      ), hjust = 0.5, vjust = 0.5
+    ) +
+    coord_fixed() +
+*   theme_void()
+```
+]
+ 
+.panel2-pie-chart-flip-user[
+&lt;img src="data_visualization_x_files/figure-html/pie-chart-flip_user_11_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-pie-chart-flip-user[
+
+```r
+#--- define two parameters ---#
+rpie = 1  # pie radius
+rlabel = 0.6 * rpie  # radius of the labels
+
+county_yield %&gt;%
+  select(state_name, corn_yield) %&gt;%
+  group_by(state_name) %&gt;%
+  summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
+  mutate(yield_ratio = yield/sum(yield)) %&gt;%
+  mutate(
+    end_angle = 2*pi*cumsum(yield_ratio),
+    start_angle = lag(end_angle, default = 0),
+    mid_angle = (end_angle + start_angle)/2
+  ) %&gt;%
+  ggplot(data = .) +
+    geom_arc_bar(
+      aes(
+        x0 = 0, y0 = 0, r0 = 0, r = rpie,
+        start = start_angle, end = end_angle,
+        fill = state_name
+      )
+    ) +
+    geom_text(
+      aes(
+        x = rlabel * sin(mid_angle),
+        y = rlabel * cos(mid_angle),
+        label = state_name
+      ), hjust = 0.5, vjust = 0.5
     ) +
     coord_fixed() +
     theme_void() +
-    scale_fill_viridis_d("State")
+*   scale_fill_viridis_d("State")
 ```
 ]
-
-.right-plot[
-&lt;img src="data_visualization_x_files/figure-html/pie-chart-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+ 
+.panel2-pie-chart-flip-user[
+&lt;img src="data_visualization_x_files/figure-html/pie-chart-flip_user_12_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
-  ] 
+&lt;style&gt;
+.panel1-pie-chart-flip-user {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-pie-chart-flip-user {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-pie-chart-flip-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
 
-]
+
+
+
+
 
 
 ---
@@ -5710,7 +6419,28 @@ weather %&gt;%
 
 # Diverging chart (variant of a bar chart)
 
-&lt;img src="data_visualization_x_files/figure-html/diverging2-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+.left4[
+
+.content-box-green[**When to use**]:
+
+Diverging charts can be useful to visualize the heterogeneity of a single variable across groups. 
+
+.content-box-green[**Data preparation**]
+
+Diverging charts are just bar chart with y-axis and x-axis flipped. So, you just need a single value per group in long format.
+
+.content-box-green[**How**]
+
+You can use `geom_bar()` with `coord_flip()`. See the next slide for a demonstration.
+
+]
+
+.right6[
+
+&lt;img src="data_visualization_x_files/figure-html/diverging2-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+
 
 ---
 
@@ -5718,7 +6448,7 @@ weather %&gt;%
 
 count: false
  
-# Diverging chart: little by little
+# Diverging chart: step by step
 .panel1-divergin-plot-user[
 
 ```r
@@ -5759,7 +6489,7 @@ count: false
 ---
 count: false
  
-# Diverging chart: little by little
+# Diverging chart: step by step
 .panel1-divergin-plot-user[
 
 ```r
@@ -5794,7 +6524,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Diverging chart: little by little
+# Diverging chart: step by step
 .panel1-divergin-plot-user[
 
 ```r
@@ -5833,7 +6563,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Diverging chart: little by little
+# Diverging chart: step by step
 .panel1-divergin-plot-user[
 
 ```r
@@ -5882,7 +6612,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Diverging chart: little by little
+# Diverging chart: step by step
 .panel1-divergin-plot-user[
 
 ```r
@@ -5932,7 +6662,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Diverging chart: little by little
+# Diverging chart: step by step
 .panel1-divergin-plot-user[
 
 ```r
@@ -5985,7 +6715,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Diverging chart: little by little
+# Diverging chart: step by step
 .panel1-divergin-plot-user[
 
 ```r
@@ -6014,7 +6744,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Diverging chart: little by little
+# Diverging chart: step by step
 .panel1-divergin-plot-user[
 
 ```r
@@ -6048,7 +6778,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Diverging chart: little by little
+# Diverging chart: step by step
 .panel1-divergin-plot-user[
 
 ```r
@@ -6087,7 +6817,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Diverging chart: little by little
+# Diverging chart: step by step
 .panel1-divergin-plot-user[
 
 ```r
@@ -6127,7 +6857,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Diverging chart: little by little
+# Diverging chart: step by step
 .panel1-divergin-plot-user[
 
 ```r
@@ -6168,7 +6898,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Diverging chart: little by little
+# Diverging chart: step by step
 .panel1-divergin-plot-user[
 
 ```r
@@ -6243,11 +6973,28 @@ county_yield %&gt;%
 
 # Area chart 
 
-Area charts are useful when comparing a variable across multiple groups over time.
 
-&lt;img src="data_visualization_x_files/figure-html/area-chart-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+.left4[
 
-+ Do not forget `stat = "identity"`
+&lt;br&gt;
+
+.content-box-green[**When to use**]:   
+
+Area charts are useful to visualize the share of multiple categories of the same object (e.g., energy production by energy sources) and also their magnitude at the same time.
+
+.content-box-green[**Data preparation**]:   
+
+You just need `y` and `x` just like a line plot.
+
+You do not have to calculate the height (`y` value) yourself. `geom_area()` will automatically stack `y` values vertically for you (see the next slide). 
+ 
+]
+
+.right6[
+
+&lt;img src="data_visualization_x_files/figure-html/area-chart-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+]
 
 ---
 
@@ -6256,7 +7003,7 @@ Area charts are useful when comparing a variable across multiple groups over tim
 
 count: false
  
-# Area chart: little by little
+# Area chart: step by step
 .panel1-area-chart-flip-user[
 
 ```r
@@ -6297,7 +7044,7 @@ count: false
 ---
 count: false
  
-# Area chart: little by little
+# Area chart: step by step
 .panel1-area-chart-flip-user[
 
 ```r
@@ -6339,7 +7086,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Area chart: little by little
+# Area chart: step by step
 .panel1-area-chart-flip-user[
 
 ```r
@@ -6373,7 +7120,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Area chart: little by little
+# Area chart: step by step
 .panel1-area-chart-flip-user[
 
 ```r
@@ -6408,7 +7155,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Area chart: little by little
+# Area chart: step by step
 .panel1-area-chart-flip-user[
 
 ```r
@@ -6416,36 +7163,18 @@ county_yield %&gt;%
   filter(!is.na(corn_yield)) %&gt;%
   group_by(state_name, year) %&gt;%
   summarize(corn_yield = mean(corn_yield)) %&gt;%
-* group_by(year) %&gt;%
-* mutate(corn_yield_p = corn_yield / sum(corn_yield))
+* ggplot(data = .)
 ```
 ]
  
 .panel2-area-chart-flip-user[
-
-```
-## # A tibble: 56 x 4
-## # Groups:   year [19]
-##    state_name  year corn_yield corn_yield_p
-##    &lt;chr&gt;      &lt;int&gt;      &lt;dbl&gt;        &lt;dbl&gt;
-##  1 Colorado    2000       157.        0.334
-##  2 Colorado    2001       159.        0.326
-##  3 Colorado    2002       139.        0.311
-##  4 Colorado    2003       150.        0.310
-##  5 Colorado    2004       169.        0.317
-##  6 Colorado    2005       168.        0.319
-##  7 Colorado    2006       187.        0.351
-##  8 Colorado    2007       186.        0.339
-##  9 Colorado    2008       164.        0.322
-## 10 Colorado    2010       196.        0.350
-## # … with 46 more rows
-```
+&lt;img src="data_visualization_x_files/figure-html/area-chart-flip_user_05_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
 count: false
  
-# Area chart: little by little
+# Area chart: step by step
 .panel1-area-chart-flip-user[
 
 ```r
@@ -6453,9 +7182,15 @@ county_yield %&gt;%
   filter(!is.na(corn_yield)) %&gt;%
   group_by(state_name, year) %&gt;%
   summarize(corn_yield = mean(corn_yield)) %&gt;%
-  group_by(year) %&gt;%
-  mutate(corn_yield_p = corn_yield / sum(corn_yield)) %&gt;%
-* ggplot(data = .)
+  ggplot(data = .) +
+* geom_area(
+*   aes(
+*     y = corn_yield,
+*     x = year,
+*     fill = state_name
+*   ),
+*   stat = "identity"
+* )
 ```
 ]
  
@@ -6466,7 +7201,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Area chart: little by little
+# Area chart: step by step
 .panel1-area-chart-flip-user[
 
 ```r
@@ -6474,17 +7209,16 @@ county_yield %&gt;%
   filter(!is.na(corn_yield)) %&gt;%
   group_by(state_name, year) %&gt;%
   summarize(corn_yield = mean(corn_yield)) %&gt;%
-  group_by(year) %&gt;%
-  mutate(corn_yield_p = corn_yield / sum(corn_yield)) %&gt;%
   ggplot(data = .) +
-* geom_area(
-*   aes(
-*     y = corn_yield_p,
-*     x = year,
-*     fill = state_name
-*   ),
-*   stat = "identity"
-* )
+  geom_area(
+    aes(
+      y = corn_yield,
+      x = year,
+      fill = state_name
+    ),
+    stat = "identity"
+  ) +
+* labs(x = "Year", y = "Corn Yield")
 ```
 ]
  
@@ -6495,7 +7229,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Area chart: little by little
+# Area chart: step by step
 .panel1-area-chart-flip-user[
 
 ```r
@@ -6503,18 +7237,17 @@ county_yield %&gt;%
   filter(!is.na(corn_yield)) %&gt;%
   group_by(state_name, year) %&gt;%
   summarize(corn_yield = mean(corn_yield)) %&gt;%
-  group_by(year) %&gt;%
-  mutate(corn_yield_p = corn_yield / sum(corn_yield)) %&gt;%
   ggplot(data = .) +
   geom_area(
     aes(
-      y = corn_yield_p,
+      y = corn_yield,
       x = year,
       fill = state_name
     ),
     stat = "identity"
   ) +
-* labs(x = "Year", y = "Corn Yield Ratio")
+  labs(x = "Year", y = "Corn Yield") +
+* scale_fill_viridis_d(name = "State")
 ```
 ]
  
@@ -6525,7 +7258,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Area chart: little by little
+# Area chart: step by step
 .panel1-area-chart-flip-user[
 
 ```r
@@ -6533,19 +7266,18 @@ county_yield %&gt;%
   filter(!is.na(corn_yield)) %&gt;%
   group_by(state_name, year) %&gt;%
   summarize(corn_yield = mean(corn_yield)) %&gt;%
-  group_by(year) %&gt;%
-  mutate(corn_yield_p = corn_yield / sum(corn_yield)) %&gt;%
   ggplot(data = .) +
   geom_area(
     aes(
-      y = corn_yield_p,
+      y = corn_yield,
       x = year,
       fill = state_name
     ),
     stat = "identity"
   ) +
-  labs(x = "Year", y = "Corn Yield Ratio") +
-* scale_fill_viridis_d(name = "State")
+  labs(x = "Year", y = "Corn Yield") +
+  scale_fill_viridis_d(name = "State") +
+* theme_bw()
 ```
 ]
  
@@ -6556,7 +7288,7 @@ county_yield %&gt;%
 ---
 count: false
  
-# Area chart: little by little
+# Area chart: step by step
 .panel1-area-chart-flip-user[
 
 ```r
@@ -6564,50 +7296,16 @@ county_yield %&gt;%
   filter(!is.na(corn_yield)) %&gt;%
   group_by(state_name, year) %&gt;%
   summarize(corn_yield = mean(corn_yield)) %&gt;%
-  group_by(year) %&gt;%
-  mutate(corn_yield_p = corn_yield / sum(corn_yield)) %&gt;%
   ggplot(data = .) +
   geom_area(
     aes(
-      y = corn_yield_p,
+      y = corn_yield,
       x = year,
       fill = state_name
     ),
     stat = "identity"
   ) +
-  labs(x = "Year", y = "Corn Yield Ratio") +
-  scale_fill_viridis_d(name = "State") +
-* theme_bw()
-```
-]
- 
-.panel2-area-chart-flip-user[
-&lt;img src="data_visualization_x_files/figure-html/area-chart-flip_user_10_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
-]
-
----
-count: false
- 
-# Area chart: little by little
-.panel1-area-chart-flip-user[
-
-```r
-county_yield %&gt;%
-  filter(!is.na(corn_yield)) %&gt;%
-  group_by(state_name, year) %&gt;%
-  summarize(corn_yield = mean(corn_yield)) %&gt;%
-  group_by(year) %&gt;%
-  mutate(corn_yield_p = corn_yield / sum(corn_yield)) %&gt;%
-  ggplot(data = .) +
-  geom_area(
-    aes(
-      y = corn_yield_p,
-      x = year,
-      fill = state_name
-    ),
-    stat = "identity"
-  ) +
-  labs(x = "Year", y = "Corn Yield Ratio") +
+  labs(x = "Year", y = "Corn Yield") +
   scale_fill_viridis_d(name = "State") +
   theme_bw() +
 * theme(legend.position = "bottom")
@@ -6615,7 +7313,7 @@ county_yield %&gt;%
 ]
  
 .panel2-area-chart-flip-user[
-&lt;img src="data_visualization_x_files/figure-html/area-chart-flip_user_11_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/area-chart-flip_user_10_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 &lt;style&gt;
@@ -6651,7 +7349,24 @@ county_yield %&gt;%
 
 # Mean and SE chart
 
-&lt;img src="data_visualization_x_files/figure-html/mean-se-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+.left4[
+
+.content-box-green[**When to use**]:   
+
+Mean and SE charts are useful for reporting mean of variables and their uncertainty in the form of standard errors.
+
+.content-box-green[**Data preparation**]:   
+
+For each group, you need to supply the mean of the variable and the upper and lower bounds (e.g., 95% confidence interval).
+
+]
+
+.right6[
+
+&lt;img src="data_visualization_x_files/figure-html/mean-se-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+]
+
 
 ---
 
@@ -6660,7 +7375,7 @@ county_yield %&gt;%
 
 count: false
  
-# Mean and SE chart: little by little
+# Mean and SE chart: step by step
 .panel1-mean-se-flip-user[
 
 ```r
@@ -7077,7 +7792,7 @@ count: false
 ---
 count: false
  
-# Mean and SE chart: little by little
+# Mean and SE chart: step by step
 .panel1-mean-se-flip-user[
 
 ```r
@@ -7089,8 +7804,7 @@ Salaries %&gt;%
 *   n = n(),
 *   mean_salary = mean(salary),
 *   sd = sd(salary),
-*   se = sd / sqrt(n),
-*   ci = qt(0.975, df = n - 1) * sd / sqrt(n)
+*   se = sd / sqrt(n)
 * )
 ```
 ]
@@ -7098,19 +7812,19 @@ Salaries %&gt;%
 .panel2-mean-se-flip-user[
 
 ```
-## # A tibble: 3 x 6
-##   rank          n mean_salary     sd    se    ci
-##   &lt;fct&gt;     &lt;int&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1 AsstProf     67      80776.  8174.  999. 1994.
-## 2 AssocProf    64      93876. 13832. 1729. 3455.
-## 3 Prof        266     126772. 27719. 1700. 3346.
+## # A tibble: 3 x 5
+##   rank          n mean_salary     sd    se
+##   &lt;fct&gt;     &lt;int&gt;       &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1 AsstProf     67      80776.  8174.  999.
+## 2 AssocProf    64      93876. 13832. 1729.
+## 3 Prof        266     126772. 27719. 1700.
 ```
 ]
 
 ---
 count: false
  
-# Mean and SE chart: little by little
+# Mean and SE chart: step by step
 .panel1-mean-se-flip-user[
 
 ```r
@@ -7122,8 +7836,7 @@ Salaries %&gt;%
     n = n(),
     mean_salary = mean(salary),
     sd = sd(salary),
-    se = sd / sqrt(n),
-    ci = qt(0.975, df = n - 1) * sd / sqrt(n)
+    se = sd / sqrt(n)
   ) %&gt;%
 * ggplot(data = .)
 ```
@@ -7136,7 +7849,7 @@ Salaries %&gt;%
 ---
 count: false
  
-# Mean and SE chart: little by little
+# Mean and SE chart: step by step
 .panel1-mean-se-flip-user[
 
 ```r
@@ -7148,8 +7861,7 @@ Salaries %&gt;%
     n = n(),
     mean_salary = mean(salary),
     sd = sd(salary),
-    se = sd / sqrt(n),
-    ci = qt(0.975, df = n - 1) * sd / sqrt(n)
+    se = sd / sqrt(n)
   ) %&gt;%
   ggplot(data = .) +
 * aes(x = rank, y = mean_salary)
@@ -7163,7 +7875,7 @@ Salaries %&gt;%
 ---
 count: false
  
-# Mean and SE chart: little by little
+# Mean and SE chart: step by step
 .panel1-mean-se-flip-user[
 
 ```r
@@ -7175,8 +7887,7 @@ Salaries %&gt;%
     n = n(),
     mean_salary = mean(salary),
     sd = sd(salary),
-    se = sd / sqrt(n),
-    ci = qt(0.975, df = n - 1) * sd / sqrt(n)
+    se = sd / sqrt(n)
   ) %&gt;%
   ggplot(data = .) +
   aes(x = rank, y = mean_salary) +
@@ -7191,7 +7902,7 @@ Salaries %&gt;%
 ---
 count: false
  
-# Mean and SE chart: little by little
+# Mean and SE chart: step by step
 .panel1-mean-se-flip-user[
 
 ```r
@@ -7203,8 +7914,7 @@ Salaries %&gt;%
     n = n(),
     mean_salary = mean(salary),
     sd = sd(salary),
-    se = sd / sqrt(n),
-    ci = qt(0.975, df = n - 1) * sd / sqrt(n)
+    se = sd / sqrt(n)
   ) %&gt;%
   ggplot(data = .) +
   aes(x = rank, y = mean_salary) +
@@ -7250,6 +7960,200 @@ Salaries %&gt;%
 }
 &lt;/style&gt;
 
+
+
+---
+
+# Heat map 
+
+.left5[
+
+.content-box-green[**When to use**]:   
+
+Heat maps can be useful for 3-dimensional data (`x`, `y`, `z`). 
+
+The magnitude of the third dimension (`z`) is represented by color unlike a 3D-plot (e.g., contour map).   
+
+.content-box-green[**Data preparation**]:   
+
+A dataset in long format that has a single value for each group.
+
+.content-box-green[**How**]:   
+
+For each group, you supply `x`, `y`, and `fill = z` to `geom_tile()` (See the next slide for a demonstration).
+
+Read the following data for replication:
+
+
+```r
+gene_data &lt;- readRDS("gene.rds")
+```
+
+]
+
+.right5[
+
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-67-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+
+
+
+count: false
+ 
+# 
+.panel1-heatmap-user[
+
+```r
+*gene_data
+```
+]
+ 
+.panel2-heatmap-user[
+
+```
+## # A tibble: 8,748 x 5
+##    x              gene         value group gene_txt
+##    &lt;chr&gt;          &lt;chr&gt;        &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;   
+##  1 Zm00001d004894 20_WW_BL_TP1 0.739 BL    20_WWTP1
+##  2 Zm00001d004894 20_WW_BL_TP3 0.772 BL    20_WWTP3
+##  3 Zm00001d004894 20_WW_BL_TP5 0.136 BL    20_WWTP5
+##  4 Zm00001d004894 10_WW_BL_TP1 0.222 BL    10_WWTP1
+##  5 Zm00001d004894 10_WW_BL_TP3 0.672 BL    10_WWTP3
+##  6 Zm00001d004894 10_WW_BL_TP5 0.504 BL    10_WWTP5
+##  7 Zm00001d004894 5_WW_BL_TP1  0.991 BL    5_WWTP1 
+##  8 Zm00001d004894 5_WW_BL_TP3  0.201 BL    5_WWTP3 
+##  9 Zm00001d004894 5_WW_BL_TP5  0.669 BL    5_WWTP5 
+## 10 Zm00001d004894 20_D_BL_TP1  0.534 BL    20_DTP1 
+## # … with 8,738 more rows
+```
+]
+
+---
+count: false
+ 
+# 
+.panel1-heatmap-user[
+
+```r
+gene_data %&gt;%
+* ggplot(.)
+```
+]
+ 
+.panel2-heatmap-user[
+&lt;img src="data_visualization_x_files/figure-html/heatmap_user_02_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-heatmap-user[
+
+```r
+gene_data %&gt;%
+  ggplot(.) +
+*   geom_tile(aes(gene_txt, x, fill= value))
+```
+]
+ 
+.panel2-heatmap-user[
+&lt;img src="data_visualization_x_files/figure-html/heatmap_user_03_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-heatmap-user[
+
+```r
+gene_data %&gt;%
+  ggplot(.) +
+    geom_tile(aes(gene_txt, x, fill= value)) +
+*   scale_fill_distiller(palette = "YlOrRd")
+```
+]
+ 
+.panel2-heatmap-user[
+&lt;img src="data_visualization_x_files/figure-html/heatmap_user_04_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-heatmap-user[
+
+```r
+gene_data %&gt;%
+  ggplot(.) +
+    geom_tile(aes(gene_txt, x, fill= value)) +
+    scale_fill_distiller(palette = "YlOrRd") +
+*   facet_grid(. ~ group)
+```
+]
+ 
+.panel2-heatmap-user[
+&lt;img src="data_visualization_x_files/figure-html/heatmap_user_05_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+count: false
+ 
+# 
+.panel1-heatmap-user[
+
+```r
+gene_data %&gt;%
+  ggplot(.) +
+    geom_tile(aes(gene_txt, x, fill= value)) +
+    scale_fill_distiller(palette = "YlOrRd") +
+    facet_grid(. ~ group) +
+*   theme(
+*     axis.ticks.y = element_blank(),
+*     axis.title = element_blank(),
+*     axis.text.y = element_blank(),
+*     axis.text.x = element_text(angle = 90),
+*     legend.position = "bottom"
+*   )
+```
+]
+ 
+.panel2-heatmap-user[
+&lt;img src="data_visualization_x_files/figure-html/heatmap_user_06_output-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+&lt;style&gt;
+.panel1-heatmap-user {
+  color: black;
+  width: 39.2%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel2-heatmap-user {
+  color: black;
+  width: 58.8%;
+  hight: 32%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+.panel3-heatmap-user {
+  color: black;
+  width: NA%;
+  hight: 33%;
+  float: left;
+  padding-left: 1%;
+  font-size: 80%
+}
+&lt;/style&gt;
 
 
 
@@ -7700,40 +8604,6 @@ name: inputoutput
 + [ggplot2 extensions](https://exts.ggplot2.tidyverse.org/)
 + [gganimat](https://exts.ggplot2.tidyverse.org/)
 
-
-
-&lt;!-- 
-
-```r
-data &lt;- fread("N_Response_total_ordered-1.csv") %&gt;% 
-  select(x, matches("_BL_"), matches("_ML_"), matches("_TL_")) %&gt;% 
-  pivot_longer(-x, names_to = "gene", values_to = "value") %&gt;% 
-  mutate(group = case_when(
-    str_detect(gene, "_BL_") ~ "BL",
-    str_detect(gene, "_ML_") ~ "ML",
-    str_detect(gene, "_TL_") ~ "TL"
-  )) %&gt;% 
-  mutate(gene_txt = gsub("_BL_", "", gene)) %&gt;% 
-  mutate(gene_txt = gsub("_ML_", "", gene_txt)) %&gt;% 
-  mutate(gene_txt = gsub("_TL_", "", gene_txt)) %&gt;% 
-  #--- I am drawing random numbers here  ---#
-  # But, this is where you normalize the value with log and z
-  mutate(value = runif(nrow(.)))
-
-ggplot(data) + 
-  geom_tile(aes(gene_txt, x, fill= value)) +
-  scale_fill_gradient(low="white", high="blue") +
-  facet_grid(. ~ group) +
-  theme(
-    axis.ticks.y = element_blank(),
-    axis.title = element_blank(),
-    axis.text.y = element_blank(),
-    axis.text.x = element_text(angle = 90),
-  )
-```
-
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-75-1.png" width="100%" style="display: block; margin: auto;" /&gt;
- --&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

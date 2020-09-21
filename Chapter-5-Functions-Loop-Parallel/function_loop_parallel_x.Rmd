@@ -1249,9 +1249,11 @@ gen_data <- function(i) {
 
   saveRDS(data, paste0("../../Datasets/Chapter_5/experiment_data/corn_experiment_", i, ".rds")) 
 
+  saveRDS(data, paste0("../../Datasets/Chapter_5/experiment_data/soy_experiment_", i, ".rds")) 
+
 }
 
-lapply(1:100, gen_data)
+lapply(1:50, gen_data)
 
 ```
 

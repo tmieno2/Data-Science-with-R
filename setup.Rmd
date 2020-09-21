@@ -168,6 +168,18 @@ suppressMessages(library(tidyverse))
   padding-left: 1%;
 }
 
+.left3 {
+  width: 29%;
+  height: 92%;
+  float: left;
+}
+
+.right7 {
+  width: 69%;
+  float: right;
+  padding-left: 1%;
+}
+
 .left4 {
   width: 38%;
   height: 92%;
@@ -214,10 +226,10 @@ ol, li{
 .content-box-red,
 .content-box-yellow {
   box-sizing: border-box;
-  border-radius: 15px;
-  margin: 0 0 15px;
+  border-radius: 5px;
+  margin: 0 0 10px;
   overflow: hidden;
-  padding: 0px 20px 0px 20px;
+  padding: 0px 5px 0px 5px;
   width: 100%;
 }
 .content-box-blue { background-color: #F0F8FF; }
