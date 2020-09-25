@@ -47,7 +47,7 @@ The objectives of this chapter is to learn how to use the `ggplot2` package to c
 
 ---
 
-#  `ggplot2` package
+# `ggplot2` package
 
 .left-full[
 
@@ -109,7 +109,6 @@ county_yield
 + `d4_5_9`: ~ drought severity of 4 from May to September   
   ]
 ]
-
 
 <!-- 
 #=========================================
@@ -1767,13 +1766,15 @@ ggplot() +
 # Make your figures presentable to others    
 #=========================================
 -->
+
+text.html.markdown.rmarkdown meta.block-level.markdown markup.heading.1.markdown 
   
 ---
 
 class: inverse, center, middle
 name: fine-tune
 
-# Make your figures presentable to others
+# Make your figures presentable to others 
 
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
 
@@ -1915,7 +1916,7 @@ g_box +
 
 ---
 
-# Axes content  
+# Axes content
 
 .panelset[ 
 
@@ -2458,7 +2459,6 @@ It makes the specified component disappear.
   ]
 
 ]
-
 
 ---
 
