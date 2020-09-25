@@ -2177,7 +2177,8 @@ name: reshaping
 
 .left5[
 
-## Long format
+
+.content-box-green[**Long format**]
 
 A single column representing a single variable 
 
@@ -2194,7 +2195,8 @@ yield_data_long <- data.frame(
 
 .right5[
 
-## Wide format
+
+.content-box-green[**Wide format**]
 
 Multiple column representing a single variable 
 
@@ -2220,12 +2222,16 @@ Note: there is nothing in the dataset that tells you what the data values repres
 
 Create the following dataset in long format:
 
-```{r long-data-gen-1}
+```{r long-data-gen-2}
 yield_data_long <- data.frame(
   state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
   year = c(2019, 2020) %>% rep(4),
   yield = c(200, 240, 210, 220, 220, 230, 190, 150)
   )
+```
+
+```{r }
+yield_data_long 
 ```
 
   ]
@@ -2235,7 +2241,7 @@ yield_data_long <- data.frame(
 
 .left5[
 
-## How
+.content-box-green[**How**]
 
 To convert a long-formatted `data.frame` into a wide-formatted `data.frame`, you can use `pivot_wider()` function from the `tidyr` package.
 
@@ -2254,7 +2260,7 @@ pivot_wider(
 
 .right5[
 
-## Example
+.content-box-green[**Example**]
 
 ```{r }
 yield_data_wide <- pivot_wider(
@@ -2274,7 +2280,6 @@ yield_data_wide
   ] 
 
   <!-- panel ends here -->
-
 
 .panel[.panel-name[prefix]
 
@@ -2299,11 +2304,13 @@ yield_data_long %>%
 
 .left5[
 
-## Prepare a dataset 
+
+.content-box-green[**Prepare a dataset**]
+   
 
 Create the following data in long format;
 
-```{r wide-data-gen}
+```{r wide-data-gen-f}
 yield_data_long <- data.frame(
   state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
   year = c(2019, 2020) %>% rep(4),
@@ -2319,7 +2326,7 @@ yield_data_long
 
 .right5[
 
-## Example
+.content-box-green[**Example**]
 
 You can simply supply multiple variables to be made wide like this:
 
@@ -2349,7 +2356,7 @@ yield_data_long %>%
 
 .left5[
 
-## How
+.content-box-green[**How**]
 
 To convert a long-formatted `data.frame` into a wide-formatted `data.frame`, you can use `pivot_longer()` function from the `tidyr` package.
 
@@ -2369,7 +2376,8 @@ pivot_longer(
 
 .right5[
 
-## Example
+
+.content-box-green[**Example**]
 
 ```{r }
 yield_data_wide %>% 
@@ -2429,7 +2437,7 @@ Notice `year` is character. Convert it to numeric using `as.numeric()` if you us
 
 .left5[
 
-## Long
+.content-box-green[**Long**]
 
 Create the following dataset in the long format;
 
@@ -2450,7 +2458,7 @@ yield_data_long
 
 .right5[
 
-## Wide
+.content-box-green[**Wide**]
 
 Convert the long dataset into the wide format: 
 
