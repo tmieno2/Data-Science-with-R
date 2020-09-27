@@ -3064,7 +3064,7 @@ hourly_temp_Jan <- weather %>%
 
 + You are interested in learning the impact of **daily** temperature on departure delay for the flights in January. To do so, you need to have them in a single dataset.  
 
-+ Is this going to be a 1-to-1 matching or 1-to-m matching?
++ Is this going to be a 1-to-1, m-to-1, or 1-to-m matching?
 
 + Merge `daily_temp_Jan` to `flights_Jan` using `left_join()`
 
@@ -3082,7 +3082,7 @@ left_join(flights_Jan, daily_temp_Jan, by = c("origin", "month", "day"))
 
 + You are interested in learning the impact of **hourly** temperature on departure delay for the flights in January. To do so, you need to have them in a single dataset.  
 
-+ Is this going to be a 1-to-1 matching or 1-to-m matching?
++ Is this going to be a 1-to-1, m-to-1, or 1-to-m matching?
 
 + Merge `hourly_temp_Jan` to `flights_Jan` using `left_join()`
 
