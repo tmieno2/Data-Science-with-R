@@ -1297,23 +1297,35 @@ $$
 Max_{N} P_C \times Y(N) - P_N \times N
 $$
 
-+ `N`: corn yield (lb/acre)
++ `N`: nitrogen rate (lb/acre)
 + `Y(N)`: corn yield (bu/acre) as a function of `N` as described above
 + `P_C`: corn price ($/bu)
 + `P_N`: nitrogen price ($/lb)
 
 Here, `N` is a decision variable, and `P_C` and `P_N` are parameters.
 
-## Grid search
-
-Grid search is a very inefficient yet effective tool for finding solutions to optimization problems as long as the dimension of the optimization problem is low (1 or 2 variables).
-
-Grid search basically evaluates the objective function (profit here) at many levels of decision variables (nitrogen here) and pick the one that maximizes the objective function (profit).
 
   ]
 
 <!-- panel ends here -->
+.panel[.panel-name[Grid search]
 
+Grid search is a very inefficient yet effective tool for finding solutions to optimization problems as long as the dimension of the optimization problem is low (1 or 2 variables).
+
+Grid search basically evaluates the objective function (profit here) at many levels of the decision variables (nitrogen here) and pick the one that maximizes the objective function (profit).
+
+
+.content-box-green[**Example**]
+
+```{r echo = F}
+data.table(N = seq(0.1, 300, by = 0.1)) %>% 
+  mutate(yield = 120 + 25 * log(N)) %>% 
+  mutate(profit = 3.5 * yield - 0.4 * N)  
+```
+
+  ] 
+
+  <!-- panel ends here -->
 .panel[.panel-name[example]
 
 Let's define a function that takes `N`, `P_C`, and `P_N` values and returns profits.
@@ -1344,7 +1356,7 @@ data_main
 <!-- panel ends here -->
 
   <!-- panel ends here -->
-.panel[.panel-name[example (cont.)]
+.panel[.panel-name[profit-N]
 
 Here is the visualization of profit-N relationship:
 
@@ -1352,18 +1364,34 @@ Here is the visualization of profit-N relationship:
 opt_N <- filter(data_main, profit == max(profit))$N
 ```  
 
-```{r gg-data, echo = F, out.width = "60%", fig.dim = c(4,2)}
+```{r gg-data, echo = F, out.width = "60%", fig.dim = c(4,3)}
 ggplot(data_main) +
   geom_line(aes(y = profit, x = N)) +
   geom_vline(xintercept = opt_N, linetype = 2, color = "red") +
   annotate('text', x = opt_N - 40, y = 450, label = "Optimal N rate", size = 3)
 ```
 
-You can use `filter()` combined with `max()` to identify the optimal N rate.
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[best N]
+
+Once the profit-N relationship is found, we can use `filter()` combined with `max()` to identify the optimal N rate.
 
 ```{r show-opt-N}
 filter(data_main, profit == max(profit))
 ```
+
+Alternatively, you can sort the data by profit in the ascending order (default) and pick the last row using `slice(n())`.
+
+```{r show-opt-N}
+arrange(data_main, profit) %>% 
+  slice(n())
+```
+
+This method is faster than the first one.
 
   ] 
 
@@ -1536,7 +1564,8 @@ Now, we can identify the optimal N rate at each of the corn and nitrogen combina
 ```{r show-N-vec}
 profit_data %>% 
   group_by(P_C, P_N) %>% 
-  filter(profit == max(profit))
+  arrange(profit) %>% 
+  slice(n())
 ```
 
 
@@ -1548,8 +1577,21 @@ profit_data %>%
 
 <!-- panel set ends here -->
 
-
 ---
+
+# Which strategy?
+
+Which strategy you should take depends on the size of your computer's RMA memory.
+
+Vectorized version is more memory-hungry:
+
++ Strategy 1: loop over the price combinations (one price combination at a time)
++ Strategy 2: loop over price (all the price combinations at the same time)
+
+If you can fit the entire dataset in the RAM memory, then take Strategy 2. Otherwise, break up the entire task into pieces like Strategy 1. 
+
+
+
 
 
 
