@@ -1308,7 +1308,7 @@ Here, `N` is a decision variable, and `P_C` and `P_N` are parameters.
   ]
 
 <!-- panel ends here -->
-.panel[.panel-name[Grid search]
+.panel[.panel-name[grid search]
 
 Grid search is a very inefficient yet effective tool for finding solutions to optimization problems as long as the dimension of the optimization problem is low (1 or 2 variables).
 
