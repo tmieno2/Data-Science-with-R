@@ -754,7 +754,13 @@ After you confirm the code you write gives you desired outcomes, make it a funct
 
 # Exercise 
 
-Define a function that takes nitrogen rates, corn prices, and nitrogen prices and calculate profit per acre based on the following equation:
+Find the profit of corn production at different price combinations of corn and nitrogen where nitrogen rate is fixed at 200 lb/acre.
+
++ Step 1: Define the following sequences of numbers
+  * corn price: `seq(2.5, 4.0, by = 0.05)`
+  * nitrogen price: `seq(0.2, 0.6, by = 0.01)`
++ Step 2: Create a data.frame of the complete combinations of the values from the price vectors
++ Step 3: Define a function that takes a row number, extract corn price and nitrogen price and then calculate profit based on the price combination using the following equations:
 
 $$
 \mbox{corn yield} = 120 + 25 \times log(\mbox{nitrogen rate})
@@ -762,14 +768,10 @@ $$
 
 $$
 \mbox{profit} = \mbox{corn price} \times \mbox{corn yield} - \mbox{nitrogen price} \times \mbox{nitrogen rate}
-$$ 
+$$
 
-+ Fix the nitrogen rate at 200 (lb/acre)
-+ Define the following sequences of numbers
-  * corn price: `seq(2.5, 4.0, by = 0.05)`
-  * nitrogen price: `seq(0.2, 0.6, by = 0.01)`
-+ For each of the unique combination of corn price and nitrogen price, calculate the profit 
-  
++ Step 4: loop over the row numbers of the parameter data
+
 
 ---
 
@@ -1386,7 +1388,7 @@ filter(data_main, profit == max(profit))
 
 Alternatively, you can sort the data by profit in the ascending order (default) and pick the last row using `slice(n())`.
 
-```{r show-opt-N}
+```{r show-opt-N-2}
 arrange(data_main, profit) %>% 
   slice(n())
 ```

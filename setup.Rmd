@@ -156,6 +156,12 @@ suppressMessages(library(tidyverse))
   padding-left: 1%;
 }
 
+.left6 {
+  width: 60%;
+  height: 92%;
+  float: left;
+}
+
 .left5 {
   width: 49%;
   height: 92%;

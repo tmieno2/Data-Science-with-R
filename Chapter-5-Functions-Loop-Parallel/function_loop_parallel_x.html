@@ -137,6 +137,12 @@ class: center, middle, inverse, title-slide
   padding-left: 1%;
 }
 
+.left6 {
+  width: 60%;
+  height: 92%;
+  float: left;
+}
+
 .left5 {
   width: 49%;
   height: 92%;
@@ -1318,7 +1324,13 @@ After you confirm the code you write gives you desired outcomes, make it a funct
 
 # Exercise 
 
-Define a function that takes nitrogen rates, corn prices, and nitrogen prices and calculate profit per acre based on the following equation:
+Find the profit of corn production at different price combinations of corn and nitrogen where nitrogen rate is fixed at 200 lb/acre.
+
++ Step 1: Define the following sequences of numbers
+  * corn price: `seq(2.5, 4.0, by = 0.05)`
+  * nitrogen price: `seq(0.2, 0.6, by = 0.01)`
++ Step 2: Create a data.frame of the complete combinations of the values from the price vectors
++ Step 3: Define a function that takes a row number, extract corn price and nitrogen price and then calculate profit based on the price combination using the following equations:
 
 $$
 \mbox{corn yield} = 120 + 25 \times log(\mbox{nitrogen rate})
@@ -1326,14 +1338,10 @@ $$
 
 $$
 \mbox{profit} = \mbox{corn price} \times \mbox{corn yield} - \mbox{nitrogen price} \times \mbox{nitrogen rate}
-$$ 
+$$
 
-+ Fix the nitrogen rate at 200 (lb/acre)
-+ Define the following sequences of numbers
-  * corn price: `seq(2.5, 4.0, by = 0.05)`
-  * nitrogen price: `seq(0.2, 0.6, by = 0.01)`
-+ For each of the unique combination of corn price and nitrogen price, calculate the profit 
-  
++ Step 4: loop over the row numbers of the parameter data
+
 
 ---
 
@@ -1437,11 +1445,11 @@ microbenchmark(
 ```
 ## Unit: milliseconds
 ##            expr      min        lq       mean   median        uq
-##      vectorized 0.003199 0.0034015 0.00386956 0.003492 0.0036885
-##  not vectorized 0.494305 0.5307865 0.55577668 0.539937 0.5495435
+##      vectorized 0.003447 0.0036635 0.00388996 0.003816 0.0040785
+##  not vectorized 0.526678 0.5332950 0.55737159 0.537326 0.5436770
 ##       max neval
-##  0.008239   100
-##  2.230384   100
+##  0.005498   100
+##  2.320601   100
 ```
 
 + As you can see, the vectorized version is faster. 
@@ -1529,8 +1537,8 @@ microbenchmark(
 ```
 ## Unit: milliseconds
 ##            expr      min       lq     mean   median       uq      max
-##      vectorized 1.227793 1.307533 1.475691 1.346177 1.454650 6.711582
-##  not vectorized 2.105327 2.269628 2.416591 2.359008 2.430178 6.089530
+##      vectorized 1.248616 1.311084 1.430092 1.353222 1.403335 7.089377
+##  not vectorized 2.160169 2.262007 2.424987 2.331036 2.421149 6.239059
 ##  neval
 ##    100
 ##    100
@@ -1683,12 +1691,12 @@ microbenchmark(
 
 ```
 ## Unit: milliseconds
-##              expr        min         lq      mean     median        uq
-##      parallelized 235.005462 265.765989 290.64610 281.810305 303.68393
-##  not parallelized   0.571945   1.403585   3.61518   2.709158   5.06793
-##        max neval
-##  554.42370   100
-##   18.87132   100
+##              expr        min         lq      mean     median
+##      parallelized 223.520167 265.282176 291.62702 288.384027
+##  not parallelized   0.458088   1.248174   3.44421   2.621388
+##          uq       max neval
+##  309.035547 522.67378   100
+##    4.030383  16.93438   100
 ```
 
 ]
@@ -1804,7 +1812,7 @@ toc()
 ```
 
 ```
-## 0.022 sec elapsed
+## 0.026 sec elapsed
 ```
 
 **Not parallelized (sequential)**:
@@ -1817,7 +1825,7 @@ toc()
 ```
 
 ```
-## 21.678 sec elapsed
+## 21.113 sec elapsed
 ```
 
 **Parallelized**:
@@ -1830,7 +1838,7 @@ toc()
 ```
 
 ```
-## 3.26 sec elapsed
+## 3.552 sec elapsed
 ```
 
 ]
