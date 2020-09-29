@@ -10,10 +10,11 @@ This is the repository for AECN 396/AECN896-002 at University of Nebraska Lincol
 + Lecture 3: Data Wrangling with `tidyverse` ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-3-DataWrangling/data_wrangling_x.html))
 + Lecture 4: Data Visualization ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-4-DataVisualization/data_visualization_x.html))
 + Lecture 5: Function, Loop, and Parallel Computation ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-5-Functions-Loop-Parallel/function_loop_parallel_x.html))
-+ Lecture 6: Make Tables 
-    * Create tables with `gt` ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-6-MakeTable/make_table_x.html))
-    * Create regression and summary tables with `modelsummary` ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-6-MakeTable/modelsummary_x.html))
-+ Lecture 7: `data.table` ([slide](https://tmieno2.github.io/Data-Science-with-R/data.table/data.table_x.html))
++ Lecture 6: Dates and String Operations  ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-6-Miscellaneous/strings_x.html))
++ Lecture 7: Make Tables 
+    * Create tables with `gt` ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-7-MakeTable/make_table_x.html))
+    * Create regression and summary tables with `modelsummary` ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-7-MakeTable/modelsummary_x.html))
++ Appendix 1: `data.table` ([slide](https://tmieno2.github.io/Data-Science-with-R/data.table/data.table_x.html))
     
 
 ## Assignments

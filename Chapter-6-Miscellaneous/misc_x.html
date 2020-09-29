@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Miscellaneous Useful Functions and Tips</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="AECN 396/896-002" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/animate.css/animate.xaringan.css" rel="stylesheet" />
+    <link href="libs/tachyons/tachyons.min.css" rel="stylesheet" />
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Miscellaneous Useful Functions and Tips
+### AECN 396/896-002
+
+---
+
+
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+
+.remark-slide-content.hljs-github h1 {
+  margin-top: 5px;  
+  margin-bottom: 25px;  
+}
+
+.remark-slide-content.hljs-github {
+  padding-top: 10px;  
+  padding-left: 30px;  
+  padding-right: 30px;  
+}
+
+.panel-tabs {
+  &lt;!-- color: #062A00; --&gt;
+  color: #841F27;
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panel-tab {
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 3px;  
+  margin-right: 3px;  
+  padding-top: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panelset .panel-tabs .panel-tab {
+  min-height: 40px;
+}
+
+.remark-slide th {
+  border-bottom: 1px solid #ddd;
+}
+
+.remark-slide thead {
+  border-bottom: 0px;
+}
+
+.gt_footnote {
+  padding: 2px;  
+}
+
+.remark-slide table {
+  border-collapse: collapse;
+}
+
+.remark-slide tbody {
+  border-bottom: 2px solid #666;
+}
+
+
+.important {
+  background-color: lightpink;
+  border: 2px solid blue;
+  font-weight: bold;
+} 
+
+.remark-code {
+  display: block;
+  overflow-x: auto;
+  padding: .5em;
+  background: #ffe7e7;
+} 
+
+.hljs-github .hljs {
+  background: #f2f2fd;
+}
+
+.remark-inline-code {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: #e6e6e6;
+}
+
+.r.hljs.remark-code.remark-inline-code{
+  font-size: 0.9em
+}
+
+.left-full {
+  width: 80%;
+  height: 92%;
+  float: left;
+}
+
+.left-code {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left5 {
+  width: 49%;
+  height: 92%;
+  float: left;
+}
+
+.right5 {
+  width: 49%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left3 {
+  width: 29%;
+  height: 92%;
+  float: left;
+}
+
+.right7 {
+  width: 69%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left4 {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right6 {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+ul li{
+  margin: 7px;
+}
+
+ul, li{
+  margin-left: 15px; 
+  padding-left: 0px; 
+}
+
+ol li{
+  margin: 7px;
+}
+
+ol, li{
+  margin-left: 15px; 
+  padding-left: 0px; 
+}
+
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+.content-box { 
+    box-sizing: border-box;
+    background-color: #e2e2e2;
+}
+.content-box-blue,
+.content-box-gray,
+.content-box-grey,
+.content-box-army,
+.content-box-green,
+.content-box-purple,
+.content-box-red,
+.content-box-yellow {
+  box-sizing: border-box;
+  border-radius: 5px;
+  margin: 0 0 10px;
+  overflow: hidden;
+  padding: 0px 5px 0px 5px;
+  width: 100%;
+}
+.content-box-blue { background-color: #F0F8FF; }
+.content-box-gray { background-color: #e2e2e2; }
+.content-box-grey { background-color: #F5F5F5; }
+.content-box-army { background-color: #737a36; }
+.content-box-green { background-color: #d9edc2; }
+.content-box-purple { background-color: #e2e2f9; }
+.content-box-red { background-color: #ffcccc; }
+.content-box-yellow { background-color: #fef5c4; }
+.content-box-blue .remark-inline-code,
+.content-box-blue .remark-inline-code,
+.content-box-gray .remark-inline-code,
+.content-box-grey .remark-inline-code,
+.content-box-army .remark-inline-code,
+.content-box-green .remark-inline-code,
+.content-box-purple .remark-inline-code,
+.content-box-red .remark-inline-code,
+.content-box-yellow .remark-inline-code { 
+  background: none;
+}
+
+.full-width {
+    display: flex;
+    width: 100%;
+    flex: 1 1 auto;
+}
+&lt;/style&gt;
+
+
+&lt;style type="text/css"&gt;
+blockquote, .blockquote {
+  display: block;
+  margin-top: 0.1em;
+  margin-bottom: 0.2em;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-left: solid 10px #0148A4;
+  border-top: solid 2px #0148A4;
+  border-bottom: solid 2px #0148A4;
+  border-right: solid 2px #0148A4;
+  box-shadow: 0 0 6px rgba(0,0,0,0.5);
+  /* background-color: #e64626; */
+  color: #e64626;
+  padding: 0.5em;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+
+.blockquote p {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h1:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h2:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h3:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h4:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+.text-shadow {
+  text-shadow: 0 0 4px #424242;
+}
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+/******************
+ * Slide scrolling
+ * (non-functional)
+ * not sure if it is a good idea anyway
+slides &gt; slide {
+  overflow: scroll;
+ padding: 5px 40px;
+}
+.scrollable-slide .remark-slide {
+  height: 400px;
+  overflow: scroll !important;
+}
+ ******************/
+
+.scroll-box-8 {
+  height:8em;
+  overflow-y: scroll;
+}
+.scroll-box-10 {
+  height:10em;
+  overflow-y: scroll;
+}
+.scroll-box-12 {
+  height:12em;
+  overflow-y: scroll;
+}
+.scroll-box-14 {
+  height:14em;
+  overflow-y: scroll;
+}
+.scroll-box-16 {
+  height:16em;
+  overflow-y: scroll;
+}
+.scroll-box-18 {
+  height:18em;
+  overflow-y: scroll;
+}
+.scroll-box-20 {
+  height:20em;
+  overflow-y: scroll;
+}
+.scroll-box-24 {
+  height:24em;
+  overflow-y: scroll;
+}
+.scroll-box-30 {
+  height:30em;
+  overflow-y: scroll;
+}
+.scroll-output {
+  height: 90%;
+  overflow-y: scroll;
+}
+
+ 
+&lt;/style&gt;
+
+
+
+# Before you start
+
+## Learning objectives
+
+The objectives of this chapter is to learn various functions that are useful to make your programming efficient.   
+
+## Table of contents
+
+1. [Dates](#date)
+2. [Strings](#string)
+3. [](#)
+
+&lt;br&gt;
+
+&lt;span style="color:red"&gt; Tips: &lt;/span&gt;hitting "o" key will give you a panel view of the slides
+
+
+---
+
+# The datasets we use
+
+Install the `gt` package if you have not:
+
+
+```r
+install.packages("gt")  
+```
+
+Load the package: 
+
+
+```r
+library(gt)
+```
+
+The `pizzaplace` dataset is available immediately after you loaded the package.
+
+
+```r
+pizzaplace
+```
+
+```
+## # A tibble: 49,574 x 7
+##    id          date       time     name        size  type   price
+##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;
+##  1 2015-000001 2015-01-01 11:38:36 hawaiian    M     class…  13.2
+##  2 2015-000002 2015-01-01 11:57:40 classic_dlx M     class…  16  
+##  3 2015-000002 2015-01-01 11:57:40 mexicana    M     veggie  16  
+##  4 2015-000002 2015-01-01 11:57:40 thai_ckn    L     chick…  20.8
+##  5 2015-000002 2015-01-01 11:57:40 five_cheese L     veggie  18.5
+##  6 2015-000002 2015-01-01 11:57:40 ital_supr   L     supre…  20.8
+##  7 2015-000003 2015-01-01 12:12:28 prsc_argla  L     supre…  20.8
+##  8 2015-000003 2015-01-01 12:12:28 ital_supr   M     supre…  16.5
+##  9 2015-000004 2015-01-01 12:16:31 ital_supr   M     supre…  16.5
+## 10 2015-000005 2015-01-01 12:21:30 ital_supr   M     supre…  16.5
+## # … with 49,564 more rows
+```
+
+&lt;!-- 
+#=========================================
+# Dates
+#=========================================
+--&gt;
+  
+---
+
+class: inverse, center, middle
+name: date
+
+# Date and time
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+---
+
+# `Date` using the `lubridate` package
+
+
+R has an object class called 
+
+
+```r
+install.packages(lubridate)
+
+library(lubridate) 
+```
+
+Recording dates as an `Date` object instead of a character object has several benefits:
+
++ calendar math is possible with `Date` objects
++ you can `filter()` based on the chronological order of dates
++ converting date into an another format is easy
+
+---
+
+# `Date` operations
+
+.panelset[ 
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[as.Date()]
+
+Dates comes in various formats. Several of them are:
+
++ `2010-12-15`
++ `12/15/2010`
++ `Dec 15 10`
++ `15 December 2010`
+
+They all represent the same date. 
+
+We can use `as.Date()` to transform dates stored as characters into `Date`s. 
+
+
+```r
+#--- NOT RUN ---#  
+as.Date(date in character, format)
+```
+
+In `format` you specify how day, month, and year are represented in the date characters you intend to convert using special symbols including:
+
++ **%d**: day as a number (0-31)
++ **%m**: month (00, 01, 02, `\(\dots\)`, 12)
++ **%b**: abbreviated month (Jan, `\(\dots\)`, Dec)
++ **%B**: unabbreviated month (January, `\(\dots\)`, December)
++ **%y**: 2-digit year (96 for 1996, 02 for 2002)
++ **%Y**: 4-digit year (1996, 2012)
+
+&lt;br&gt;
+
+.content-box-green[**Example**]
+
+
+```r
+#--- convert from a character to a Date ---#
+a_date &lt;- as.Date("Dec 15 10", format = "%b %d %y")
+
+#--- check the class ---#
+class(a_date)
+```
+
+```
+## [1] "Date"
+```
+ 
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[lubridate]
+
+Alternatively, you can use the `lubridate` package to easily convert dates recorded in characters into `Date`s.
+
+Using `lubridate`, you do not need to provide the format information unlike `as.Date()`
+
+Instead, you simply use `y` (year), `m` (month), `d` (day) in the order they appear in the dates in character.
+
+&lt;br&gt;
+
+.content-box-green[**Example**]
+
+
+```r
+ymd("2010-12-15")
+```
+
+```
+## [1] "2010-12-15"
+```
+
+```r
+mdy("12/15/2010")
+```
+
+```
+## [1] "2010-12-15"
+```
+
+```r
+mdy("Dec 15 10")
+```
+
+```
+## [1] "2010-12-15"
+```
+
+```r
+dmy("15 December 2010") 
+```
+
+```
+## [1] "2010-12-15"
+```
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[format]
+  
+It is often the case that date values are not formatted in the way you want (e.g., when you are creating figures). 
+
+While you can use string manipulation functions to reformat dates (which we learn next in this lecture), it is easier to just use the `format()` function.
+
+
+
+```r
+#--- NOT RUN ---#  
+format(Date, format)
+```
+
+You can use the same rule for the `format` argument as the one we saw earlier when using `as.Date()`.
+
+&lt;br&gt;
+
+.content-box-green[**Example**]
+
+
+```r
+pizzaplace %&gt;% 
+  #--- convert to Date ---#
+  mutate(date = ymd(date)) %&gt;% 
+  #--- format ---#
+  mutate(date_txt_f1 = format(date, "%m/%d/%y")) %&gt;% 
+  mutate(date_txt_f2 = format(date, "%m %B %Y")) %&gt;% 
+  select(date_txt_f1, date_txt_f2)
+```
+
+```
+## # A tibble: 49,574 x 2
+##    date_txt_f1 date_txt_f2    
+##    &lt;chr&gt;       &lt;chr&gt;          
+##  1 01/01/15    01 January 2015
+##  2 01/01/15    01 January 2015
+##  3 01/01/15    01 January 2015
+##  4 01/01/15    01 January 2015
+##  5 01/01/15    01 January 2015
+##  6 01/01/15    01 January 2015
+##  7 01/01/15    01 January 2015
+##  8 01/01/15    01 January 2015
+##  9 01/01/15    01 January 2015
+## 10 01/01/15    01 January 2015
+## # … with 49,564 more rows
+```
+
+  ]  
+  
+&lt;!-- panel ends here --&gt;  
+
+.panel[.panel-name[components]
+
+You can extract components (year, month, day) from a `Date` object using various helper functions offered by `lubridate`. 
+
++ `year()`: get year
++ `month()`: get month
++ `mday()`: get day of month 
++ `yday()`: get day of year
++ `wday()`: get day of week
+
+&lt;br&gt;
+
+.content-box-green[**Examples**]
+
+
+```r
+pizzaplace %&gt;% 
+  mutate(date = ymd(date)) %&gt;%
+  distinct(date) %&gt;% 
+  filter(month(date) &gt;= 8) %&gt;% 
+  mutate(
+    year = year(date),
+    month = month(date),
+    mday = mday(date),
+    yday = yday(date),
+    wday = wday(date)
+  ) %&gt;% 
+  select(year, month, mday, yday, wday) %&gt;% 
+  head(10)
+```
+
+
+```
+## # A tibble: 10 x 6
+##    date        year month  mday  yday  wday
+##    &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt;
+##  1 2015-08-01  2015     8     1   213     7
+##  2 2015-08-02  2015     8     2   214     1
+##  3 2015-08-03  2015     8     3   215     2
+##  4 2015-08-04  2015     8     4   216     3
+##  5 2015-08-05  2015     8     5   217     4
+##  6 2015-08-06  2015     8     6   218     5
+##  7 2015-08-07  2015     8     7   219     6
+##  8 2015-08-08  2015     8     8   220     7
+##  9 2015-08-09  2015     8     9   221     1
+## 10 2015-08-10  2015     8    10   222     2
+```
+
+]
+
+.panel[.panel-name[math 1]
+
+Unlike dates in character, you can do some math on `Date` objects.
+
+.content-box-green[**add years, months, and days to a `Date` object**]
+
+You can use `years()`, `months()`, `days()` from the `lubridate` package to add specified years, months, and days, respectively.
+
+
+```r
+ymd("2015-05-01") + years(3)
+```
+
+```
+## [1] "2018-05-01"
+```
+
+```r
+ymd("2015-05-01") - months(3)
+```
+
+```
+## [1] "2015-02-01"
+```
+
+```r
+ymd("2015-05-01") + days(1)
+```
+
+```
+## [1] "2015-05-02"
+```
+
+&lt;br&gt;
+
+.content-box-green[**sequence of dates**]
+
+You can use `seq()` to create a sequence of dates, where the incremental step is defined by the `by` option.
+
+
+```r
+seq(ymd("2015-05-01"), ymd("2020-05-01"), by = "years")   
+```
+
+```
+## [1] "2015-05-01" "2016-05-01" "2017-05-01" "2018-05-01"
+## [5] "2019-05-01" "2020-05-01"
+```
+
+```r
+seq(ymd("2015-05-01"), ymd("2015-06-01"), by = "weeks")   
+```
+
+```
+## [1] "2015-05-01" "2015-05-08" "2015-05-15" "2015-05-22"
+## [5] "2015-05-29"
+```
+
+```r
+seq(ymd("2015-05-01"), ymd("2015-05-09"), by = "days")   
+```
+
+```
+## [1] "2015-05-01" "2015-05-02" "2015-05-03" "2015-05-04"
+## [5] "2015-05-05" "2015-05-06" "2015-05-07" "2015-05-08"
+## [9] "2015-05-09"
+```
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[math 2]
+
+.content-box-green[**filter (logical evaluation)**]
+
+
+```r
+pizzaplace %&gt;% 
+  #--- convert to Date ---#
+  mutate(date = ymd(date)) %&gt;%  
+  filter(date &gt;= as.Date("2015-05-01"))
+```
+
+```
+## # A tibble: 32,969 x 7
+##    id          date       time     name        size  type   price
+##    &lt;chr&gt;       &lt;date&gt;     &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;
+##  1 2015-007170 2015-05-01 11:31:03 classic_dlx M     class…  16  
+##  2 2015-007171 2015-05-01 11:42:07 bbq_ckn     S     chick…  12.8
+##  3 2015-007172 2015-05-01 11:43:01 bbq_ckn     S     chick…  12.8
+##  4 2015-007173 2015-05-01 11:43:37 mexicana    L     veggie  20.2
+##  5 2015-007174 2015-05-01 11:51:22 ital_supr   S     supre…  12.5
+##  6 2015-007174 2015-05-01 11:51:22 ital_supr   L     supre…  20.8
+##  7 2015-007174 2015-05-01 11:51:22 calabrese   M     supre…  16.2
+##  8 2015-007174 2015-05-01 11:51:22 four_cheese L     veggie  18.0
+##  9 2015-007174 2015-05-01 11:51:22 classic_dlx L     class…  20.5
+## 10 2015-007174 2015-05-01 11:51:22 spicy_ital  L     supre…  20.8
+## # … with 32,959 more rows
+```
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+]
+  
+---
+
+class: inverse, center, middle
+name: string
+
+# Strings manipulation
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+---
+
+# String manipulation 
+
+.content-box-green[**Package**]
+
+For string (character) manipulation, we use the `stringr` package, which is part of the `tidyverse` package. So, you have installed it already.
+
+`stringr` is loaded automatically when you load `tidyverse`. So, just load `tidyverse`.
+
+
+```r
+library(tidyverse)  
+```
+
+&lt;br&gt;
+
+.content-box-green[**Functions**]
+
+Here are the select functions we learn in this lecture:
+
++ join and split
+  * `str_c()`
+  * `str_split()` (`dplyr::separate()`)
++ mutate strings
+  * `str_replace()`
++ detect matches
+  * `str_detect()`
++ manage lengths
+  * `str_trim()`
+  * `str_pad()`
+
+&lt;br&gt;
+
+.content-box-green[**Resources**]
+
++ [stringr cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/strings.pdf)
++ [stringr packagedown website](https://stringr.tidyverse.org/index.html)
+
+&lt;br&gt;
+
+---
+
+# Join (concatenate) with `str_c()`
+
+`str_c()` lets you concatenate a vector of strings. It is basically the same as `paste()`.
+
+.panelset[ 
+
+.panel[.panel-name[join 1]
+
+
+.content-box-green[**concatenate**]
+
+
+
+```r
+str_c("R", "rocks")
+```
+
+```
+## [1] "Rrocks"
+```
+
+&lt;br&gt;
+
+.content-box-green[**order matters**]
+
+
+
+```r
+str_c("rocks", "R")
+```
+
+```
+## [1] "rocksR"
+```
+
+&lt;br&gt;
+
+.content-box-green[**separator**]
+
+
+
+```r
+str_c("R", "rocks", sep = "+")
+```
+
+```
+## [1] "R+rocks"
+```
+
+&lt;br&gt;
+
+.content-box-green[**more than two strings**]
+
+
+
+```r
+str_c("R ", "rocks", ", right", "?", sep = "")
+```
+
+```
+## [1] "R rocks, right?"
+```
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[join 2]
+
+.content-box-green[**a string and a vector of strings**]
+
+
+```r
+verbs &lt;- c("sucks", "rocks", "is just okay")
+
+str_c("R", verbs, sep = "+")
+```
+
+```
+## [1] "R+sucks"        "R+rocks"        "R+is just okay"
+```
+
++ Each of the vector elements (`verbs`) are concatenated with a string (`"R"`)
++ The separator (`"+"`) applied to all the vector elements
+
+&lt;br&gt;
+
+.content-box-green[**collapsing a vector of strings to a single string**]
+
+
+```r
+str_c("R", verbs, sep = "+", collapse = "%")
+```
+
+```
+## [1] "R+sucks%R+rocks%R+is just okay"
+```
+
++ The `collapse` option collapse all the vector elements into a single string with the collapse separator (here, `%`) placed between the individual vector elements
++ `sep = "+"` is applied when concatenating a vector of strings and a string, and `collapse = "%"` is applied when concatenating the resulting vector of strings. 
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[join 3]
+
+
+.content-box-green[**two vectors of equal length**]
+
+
+
+```r
+software_types &lt;- c("R", "Python", "SAS")
+
+str_c(software_types, verbs, sep = " ")
+```
+
+```
+## [1] "R sucks"          "Python rocks"     "SAS is just okay"
+```
+
++ `n`th element of a vector (`software_types`) is met with `n` the element of the other vector (`verbs`).
+
+  &lt;!-- panel ends here --&gt;
+
+
+.content-box-green[**two vectors of different lengths**]
+
+
+
+```r
+software_types &lt;- c("R", "Python", "SAS", "STATA", "Matlab")
+
+str_c(software_types, verbs, sep = " ")
+```
+
+```
+## [1] "R sucks"          "Python rocks"     "SAS is just okay"
+## [4] "STATA sucks"      "Matlab rocks"
+```
+
++ `n`th element of a vector (`software_types`) is met with `n` the element of the other vector (`verbs`) with `verbs` recycled for the elements in `software_type` that are missing positional matches.
+
+
+.content-box-green[**all combinations**]
+
+
+
+```r
+software_types &lt;- c("R", "Python", "SAS", "STATA", "Matlab")
+
+str_c(software_types, `rep(verbs, 5)`, sep = " ")
+```
+
+
+```
+##  [1] "R sucks"             "Python rocks"       
+##  [3] "SAS is just okay"    "STATA sucks"        
+##  [5] "Matlab rocks"        "R is just okay"     
+##  [7] "Python sucks"        "SAS rocks"          
+##  [9] "STATA is just okay"  "Matlab sucks"       
+## [11] "R rocks"             "Python is just okay"
+## [13] "SAS sucks"           "STATA rocks"        
+## [15] "Matlab is just okay"
+```
+
++ take advantage of the recycling feature to create all possible combinations of values    
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[use case]
+
+
+.content-box-green[**Concatenating string variables in a dataset**]
+
+
+Sometimes, you want to concatenate two (or more) string variables into one variable. 
+
+For example, suppose you would like to combine pizza `size` and `type` into a single variable to make it easier to create faceted figures by `size`-`type`.
+
+
+```r
+pizzaplace &lt;- mutate(pizzaplace, type_size = str_c(type, size, sep = "-"))
+```
+
+
+```
+## # A tibble: 49,574 x 8
+##    id       date     time   name     size  type   price type_size
+##    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;    
+##  1 2015-00… 2015-01… 11:38… hawaiian M     class…  13.2 classic-M
+##  2 2015-00… 2015-01… 11:57… classic… M     class…  16   classic-M
+##  3 2015-00… 2015-01… 11:57… mexicana M     veggie  16   veggie-M 
+##  4 2015-00… 2015-01… 11:57… thai_ckn L     chick…  20.8 chicken-L
+##  5 2015-00… 2015-01… 11:57… five_ch… L     veggie  18.5 veggie-L 
+##  6 2015-00… 2015-01… 11:57… ital_su… L     supre…  20.8 supreme-L
+##  7 2015-00… 2015-01… 12:12… prsc_ar… L     supre…  20.8 supreme-L
+##  8 2015-00… 2015-01… 12:12… ital_su… M     supre…  16.5 supreme-M
+##  9 2015-00… 2015-01… 12:16… ital_su… M     supre…  16.5 supreme-M
+## 10 2015-00… 2015-01… 12:21… ital_su… M     supre…  16.5 supreme-M
+## # … with 49,564 more rows
+```
+
+
+.content-box-green[**Reading files**]
+
+
+You can use `str_c()` to create a vector of file names that have a common pattern. 
+
+For example suppose you have files that are named following this convention: "corn_yield_X.csv", where X represents year. 
+
+You have such csv files starting from 2000 to 2020. Then,
+
+
+```r
+file_names &lt;- str_c("corn_yield_", 2000:2020, ".csv")  
+```
+
+
+```r
+head(file_names) 
+```
+
+```
+## [1] "corn_yield_2000.csv" "corn_yield_2001.csv"
+## [3] "corn_yield_2002.csv" "corn_yield_2003.csv"
+## [5] "corn_yield_2004.csv" "corn_yield_2005.csv"
+```
+
+Now, you can easily read each of them iteratively using a loop.
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[split]
+
+
+`str_split()` splits a string based on a pattern you provide:
+
+
+```r
+str_split(pizzaplace$type_size, "-") %&gt;% head()
+```
+
+```
+## [[1]]
+## [1] "classic" "M"      
+## 
+## [[2]]
+## [1] "classic" "M"      
+## 
+## [[3]]
+## [1] "veggie" "M"     
+## 
+## [[4]]
+## [1] "chicken" "L"      
+## 
+## [[5]]
+## [1] "veggie" "L"     
+## 
+## [[6]]
+## [1] "supreme" "L"
+```
+
+But, if you are splitting a variable into two variables, `dplyr::separate()` is a better option.
+
+
+```r
+pizzaplace %&gt;% separate(type_size, c("type_2", "size_2"), "-") %&gt;% 
+  select(id, type, type_2, size, size_2)
+```
+
+```
+## # A tibble: 49,574 x 5
+##    id          type    type_2  size  size_2
+##    &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt; 
+##  1 2015-000001 classic classic M     M     
+##  2 2015-000002 classic classic M     M     
+##  3 2015-000002 veggie  veggie  M     M     
+##  4 2015-000002 chicken chicken L     L     
+##  5 2015-000002 veggie  veggie  L     L     
+##  6 2015-000002 supreme supreme L     L     
+##  7 2015-000003 supreme supreme L     L     
+##  8 2015-000003 supreme supreme M     M     
+##  9 2015-000004 supreme supreme M     M     
+## 10 2015-000005 supreme supreme M     M     
+## # … with 49,564 more rows
+```
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+]
+
+&lt;!-- panel set ends here --&gt;
+
+---
+
+# Mutate 
+
+.panelset[ 
+
+.panel[.panel-name[replace]
+
+You can use `str_replace()` to replace parts of the texts matched with the user-specified texts.
+
+
+```r
+#--- Syntax ---#
+str_replace(string, pattern, replacement)
+```
+
+&lt;br&gt;
+
+.content-box-green[**Example**]:
+
+
+```r
+strings_vec &lt;- c("I think R rocks, but some think it does not rock", "Python also rocks, but Julia does not rock")  
+
+str_replace(strings_vec, "rock", "rock big time")
+```
+
+```
+## [1] "I think R rock big times, but some think it does not rock"
+## [2] "Python also rock big times, but Julia does not rock"
+```
+
+Note that the only the first occurrence of "rock" in each of the string vector element was replaced with "rock big time." 
+
+You need to use `str_replace_all()` to replace all the occurrences. 
+
+
+
+```r
+str_replace_all(strings_vec, "rock", "rock big time") 
+```
+
+```
+## [1] "I think R rock big times, but some think it does not rock big time"
+## [2] "Python also rock big times, but Julia does not rock big time"
+```
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+.panel[.panel-name[use case]
+
+
+.content-box-green[**Formating dates**]
+
+Suppose you would like to have a particular format of date in a figure you are trying to create using `pizzaplace`: e.g., 07/08/20 (month, day, year without the first 2 digits).
+
+Pretend that `date_text` is the variable that indicates date and it looks like this:
+
+
+
+
+```r
+pizzaplace_for_plot$date_text %&gt;% head()
+```
+
+```
+## [1] "01/01/2015" "01/01/2015" "01/01/2015" "01/01/2015"
+## [5] "01/01/2015" "01/01/2015"
+```
+
+So, you would like to replace "20" with "" (nothing).
+
+
+```r
+pizzaplace_for_plot %&gt;% 
+  mutate(date_text = str_replace(date_text, "20", "")) %&gt;% 
+  select(id, date_text, size, type)
+```
+
+```
+## # A tibble: 49,574 x 4
+##    id          date_text size  type   
+##    &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;  
+##  1 2015-000001 01/01/15  M     classic
+##  2 2015-000002 01/01/15  M     classic
+##  3 2015-000002 01/01/15  M     veggie 
+##  4 2015-000002 01/01/15  L     chicken
+##  5 2015-000002 01/01/15  L     veggie 
+##  6 2015-000002 01/01/15  L     supreme
+##  7 2015-000003 01/01/15  L     supreme
+##  8 2015-000003 01/01/15  M     supreme
+##  9 2015-000004 01/01/15  M     supreme
+## 10 2015-000005 01/01/15  M     supreme
+## # … with 49,564 more rows
+```
+
+Now you can create a figure with the dates in the desired format. 
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=796px&gt;&lt;/html&gt;
+
+From `pizzaplace`, you could have just done this:
+
+
+```r
+pizzaplace %&gt;% 
+  mutate(
+    date = ymd(date),
+    date = format(date, "%m/%d/%y")
+  ) %&gt;% 
+  .$date %&gt;% head()
+```
+
+```
+## [1] "01/01/15" "01/01/15" "01/01/15" "01/01/15" "01/01/15"
+## [6] "01/01/15"
+```
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+]
+
+&lt;!-- panel set ends here --&gt;
+
+
+---
+
+# Detect 
+
+.panelset[ 
+
+.panel[.panel-name[detect]
+
+You can use `str_detect()` to check if a user-specified texts are part of strings.
+
+It takes a vector of strings and a text pattern, and then return a vector of TRUE/FALSE.
+
+&lt;br&gt;
+
+.content-box-green[**Example**]
+
+
+```r
+fruit &lt;- c("apple", "banana", "pear", "pineapple")
+
+str_detect(fruit, "apple")   
+```
+
+```
+## [1]  TRUE FALSE FALSE  TRUE
+```
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[use case 1]
+
+.content-box-green[**get the list of file names** ]
+
+Suppose you have two sets of files in a single folder: `corn_experiment_x.rds` and `soy_experiment_y.rds`, where both `x` and `y` range from 1 to 50.
+
+You want to read only the soy files. 
+
+First, let's get the name of the whole list of files in the working directory:
+
+
+```r
+list.files()
+```
+
+
+
+
+```r
+head(all_files)
+```
+
+```
+## [1] "corn_experiment_1.rds"   "corn_experiment_10.rds" 
+## [3] "corn_experiment_100.rds" "corn_experiment_11.rds" 
+## [5] "corn_experiment_12.rds"  "corn_experiment_13.rds"
+```
+
+```r
+tail(all_files) 
+```
+
+```
+## [1] "soy_experiment_5.rds"  "soy_experiment_50.rds"
+## [3] "soy_experiment_6.rds"  "soy_experiment_7.rds" 
+## [5] "soy_experiment_8.rds"  "soy_experiment_9.rds"
+```
+
+Now use `str_detect()` to find which elements of `all_files` include "soy."
+
+
+```r
+is_soy &lt;- str_detect(all_files, "soy")  
+```
+
+Okay so, here is the list of all the "soy" files:
+
+.scroll-box-12[
+
+```r
+all_files[is_soy]  
+```
+
+```
+##  [1] "soy_experiment_1.rds"  "soy_experiment_10.rds"
+##  [3] "soy_experiment_11.rds" "soy_experiment_12.rds"
+##  [5] "soy_experiment_13.rds" "soy_experiment_14.rds"
+##  [7] "soy_experiment_15.rds" "soy_experiment_16.rds"
+##  [9] "soy_experiment_17.rds" "soy_experiment_18.rds"
+## [11] "soy_experiment_19.rds" "soy_experiment_2.rds" 
+## [13] "soy_experiment_20.rds" "soy_experiment_21.rds"
+## [15] "soy_experiment_22.rds" "soy_experiment_23.rds"
+## [17] "soy_experiment_24.rds" "soy_experiment_25.rds"
+## [19] "soy_experiment_26.rds" "soy_experiment_27.rds"
+## [21] "soy_experiment_28.rds" "soy_experiment_29.rds"
+## [23] "soy_experiment_3.rds"  "soy_experiment_30.rds"
+## [25] "soy_experiment_31.rds" "soy_experiment_32.rds"
+## [27] "soy_experiment_33.rds" "soy_experiment_34.rds"
+## [29] "soy_experiment_35.rds" "soy_experiment_36.rds"
+## [31] "soy_experiment_37.rds" "soy_experiment_38.rds"
+## [33] "soy_experiment_39.rds" "soy_experiment_4.rds" 
+## [35] "soy_experiment_40.rds" "soy_experiment_41.rds"
+## [37] "soy_experiment_42.rds" "soy_experiment_43.rds"
+## [39] "soy_experiment_44.rds" "soy_experiment_45.rds"
+## [41] "soy_experiment_46.rds" "soy_experiment_47.rds"
+## [43] "soy_experiment_48.rds" "soy_experiment_49.rds"
+## [45] "soy_experiment_5.rds"  "soy_experiment_50.rds"
+## [47] "soy_experiment_6.rds"  "soy_experiment_7.rds" 
+## [49] "soy_experiment_8.rds"  "soy_experiment_9.rds"
+```
+]
+
+
+Now, you can loop to read all the files. 
+
+  ]
+
+.panel[.panel-name[use case 2]
+
+.content-box-green[**Define a group from a varible** ]
+
+Consider the following dataset of plant genes.
+
+
+```r
+gene_data &lt;- expand.grid(
+  id = c("Zm_1", "Zm_2"), 
+  gene = c("20_WW_BL_TP1", "20_WW_BL_TP", "20_WW_ML_TP1", "20_WW_ML_TP", "20_WW_TL_TP1", "20_WW_TL_TP3")
+) 
+```
+
+
+```
+##      id         gene
+## 1  Zm_1 20_WW_BL_TP1
+## 2  Zm_2 20_WW_BL_TP1
+## 3  Zm_1  20_WW_BL_TP
+## 4  Zm_2  20_WW_BL_TP
+## 5  Zm_1 20_WW_ML_TP1
+## 6  Zm_2 20_WW_ML_TP1
+## 7  Zm_1  20_WW_ML_TP
+## 8  Zm_2  20_WW_ML_TP
+## 9  Zm_1 20_WW_TL_TP1
+## 10 Zm_2 20_WW_TL_TP1
+## 11 Zm_1 20_WW_TL_TP3
+## 12 Zm_2 20_WW_TL_TP3
+```
+
+There are three different types of genes: those that have `_BL_`,`_ML_`, and `_TL_`. The objective here is to make a variable that indicates gene group from the `gene` variable.
+
+
+```r
+gene_data %&gt;% 
+  mutate(gene_group = case_when(
+    str_detect(gene, "_BL_") ~ "BL",
+    str_detect(gene, "_ML_") ~ "ML",
+    str_detect(gene, "_TL_") ~ "TL"
+  ))
+```
+
+```
+##      id         gene gene_group
+## 1  Zm_1 20_WW_BL_TP1         BL
+## 2  Zm_2 20_WW_BL_TP1         BL
+## 3  Zm_1  20_WW_BL_TP         BL
+## 4  Zm_2  20_WW_BL_TP         BL
+## 5  Zm_1 20_WW_ML_TP1         ML
+## 6  Zm_2 20_WW_ML_TP1         ML
+## 7  Zm_1  20_WW_ML_TP         ML
+## 8  Zm_2  20_WW_ML_TP         ML
+## 9  Zm_1 20_WW_TL_TP1         TL
+## 10 Zm_2 20_WW_TL_TP1         TL
+## 11 Zm_1 20_WW_TL_TP3         TL
+## 12 Zm_2 20_WW_TL_TP3         TL
+```
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+]
+
+&lt;!-- panel set ends here --&gt;
+
+---
+
+# Other convenient functions 
+
+.panelset[ 
+
+.panel[.panel-name[letter case]
+
+Here are the collection of functions that let you change the letter case of strings.
+
+.content-box-green[**To upper case**]
+
+
+```r
+pizzaplace %&gt;% 
+  mutate(name = str_to_upper(name))
+```
+
+.scroll-box-10[
+
+```
+## # A tibble: 49,574 x 8
+##    id       date     time   name     size  type   price type_size
+##    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;    
+##  1 2015-00… 2015-01… 11:38… HAWAIIAN M     class…  13.2 classic-M
+##  2 2015-00… 2015-01… 11:57… CLASSIC… M     class…  16   classic-M
+##  3 2015-00… 2015-01… 11:57… MEXICANA M     veggie  16   veggie-M 
+##  4 2015-00… 2015-01… 11:57… THAI_CKN L     chick…  20.8 chicken-L
+##  5 2015-00… 2015-01… 11:57… FIVE_CH… L     veggie  18.5 veggie-L 
+##  6 2015-00… 2015-01… 11:57… ITAL_SU… L     supre…  20.8 supreme-L
+##  7 2015-00… 2015-01… 12:12… PRSC_AR… L     supre…  20.8 supreme-L
+##  8 2015-00… 2015-01… 12:12… ITAL_SU… M     supre…  16.5 supreme-M
+##  9 2015-00… 2015-01… 12:16… ITAL_SU… M     supre…  16.5 supreme-M
+## 10 2015-00… 2015-01… 12:21… ITAL_SU… M     supre…  16.5 supreme-M
+## # … with 49,564 more rows
+```
+]
+
+.content-box-green[**To lower case**]
+
+
+```r
+pizzaplace %&gt;% 
+  mutate(size = str_to_lower(size))
+```
+
+.scroll-box-10[
+
+```
+## # A tibble: 49,574 x 8
+##    id       date     time   name     size  type   price type_size
+##    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;    
+##  1 2015-00… 2015-01… 11:38… hawaiian m     class…  13.2 classic-M
+##  2 2015-00… 2015-01… 11:57… classic… m     class…  16   classic-M
+##  3 2015-00… 2015-01… 11:57… mexicana m     veggie  16   veggie-M 
+##  4 2015-00… 2015-01… 11:57… thai_ckn l     chick…  20.8 chicken-L
+##  5 2015-00… 2015-01… 11:57… five_ch… l     veggie  18.5 veggie-L 
+##  6 2015-00… 2015-01… 11:57… ital_su… l     supre…  20.8 supreme-L
+##  7 2015-00… 2015-01… 12:12… prsc_ar… l     supre…  20.8 supreme-L
+##  8 2015-00… 2015-01… 12:12… ital_su… m     supre…  16.5 supreme-M
+##  9 2015-00… 2015-01… 12:16… ital_su… m     supre…  16.5 supreme-M
+## 10 2015-00… 2015-01… 12:21… ital_su… m     supre…  16.5 supreme-M
+## # … with 49,564 more rows
+```
+]
+
+.content-box-green[**Only the first letter is capitalized**]
+
+
+```r
+pizzaplace %&gt;%  
+  mutate(type = str_to_title(type)) 
+```
+
+.scroll-box-10[
+
+```
+## # A tibble: 49,574 x 8
+##    id       date     time   name     size  type   price type_size
+##    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;    
+##  1 2015-00… 2015-01… 11:38… hawaiian M     Class…  13.2 classic-M
+##  2 2015-00… 2015-01… 11:57… classic… M     Class…  16   classic-M
+##  3 2015-00… 2015-01… 11:57… mexicana M     Veggie  16   veggie-M 
+##  4 2015-00… 2015-01… 11:57… thai_ckn L     Chick…  20.8 chicken-L
+##  5 2015-00… 2015-01… 11:57… five_ch… L     Veggie  18.5 veggie-L 
+##  6 2015-00… 2015-01… 11:57… ital_su… L     Supre…  20.8 supreme-L
+##  7 2015-00… 2015-01… 12:12… prsc_ar… L     Supre…  20.8 supreme-L
+##  8 2015-00… 2015-01… 12:12… ital_su… M     Supre…  16.5 supreme-M
+##  9 2015-00… 2015-01… 12:16… ital_su… M     Supre…  16.5 supreme-M
+## 10 2015-00… 2015-01… 12:21… ital_su… M     Supre…  16.5 supreme-M
+## # … with 49,564 more rows
+```
+]
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[padding]
+
+You can pad strings with symbols of your choice so the resulting string are of the length you specify.   
+
+
+```r
+#--- NOT RUN ---#
+str_pad(strings, string length, side, padding symbol)
+```
+
+&lt;br&gt;
+
+.content-box-green[**Examples**]
+
+
+```r
+str_pad("I am sick of R", 20, side = "left", pad = "?") 
+```
+
+```
+## [1] "??????I am sick of R"
+```
+
+
+```r
+str_pad("I am sick of R", 30, side = "both", pad = "?") 
+```
+
+```
+## [1] "????????I am sick of R????????"
+```
+
+
+```r
+str_pad("I am sick of R", 20, side = "right", pad = "-") 
+```
+
+```
+## [1] "I am sick of R------"
+```
+
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+]
+
+&lt;!-- panel set ends here --&gt;
+
+
+---
+
+# Exercises 
+
+
+.content-box-green[**Exercise 1**]
+
+Create the following dataset:
+
+
+```r
+date_data &lt;- tibble(
+  date = seq(ymd("2012-04-01"), ymd("2012-09-30"), by = "days")
+) %&gt;%    
+  mutate(
+    year = year(date),
+    month = month(date),
+    day = mday(date)
+  ) %&gt;% 
+  select(- date)
+```
+
+Use `str_c()` to combine, `year`, `month`, and `day` using "-" as the separator and convert the combined text to Date using `lubridate`.
+
+&lt;br&gt;
+
+.content-box-green[**Exercise 2**]
+
+Create the following dataset:
+
+
+```r
+date_data &lt;- tibble(
+  date = seq(ymd("2012-04-01"), ymd("2012-09-30"), by = "days")
+) %&gt;%    
+  mutate(
+    year = year(date),
+    day_of_year = yday(date)
+  ) %&gt;% 
+  select(- date)
+```
+
+Using `Date` math to recover the dates from `year` and `day_of_year`. 
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "9:12",
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

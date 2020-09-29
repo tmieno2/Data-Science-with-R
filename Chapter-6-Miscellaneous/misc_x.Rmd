@@ -1,0 +1,866 @@
+---
+title: "Miscellaneous Useful Functions and Tips"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    lib_dir: libs
+    nature:
+      ratio: 9:12
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+---
+
+```{r, child = './../setup.Rmd'}
+```
+
+```{r, include = F, cache = F}
+suppressMessages(library(nycflights13)) 
+suppressMessages(library(extrafont)) 
+suppressMessages(library(gt)) 
+data(pizzaplace)
+suppressMessages(library(patchwork))
+```
+
+# Before you start
+
+## Learning objectives
+
+The objectives of this chapter is to learn various functions that are useful to make your programming efficient.   
+
+## Table of contents
+
+1. [Dates](#date)
+2. [Strings](#string)
+3. [](#)
+
+<br>
+
+<span style="color:red"> Tips: </span>hitting "o" key will give you a panel view of the slides
+
+
+---
+
+# The datasets we use
+
+Install the `gt` package if you have not:
+
+```{r eval = F}
+install.packages("gt")  
+```
+
+Load the package: 
+
+```{r eval = F}
+library(gt)
+```
+
+The `pizzaplace` dataset is available immediately after you loaded the package.
+
+```{r dataset}
+pizzaplace
+```
+
+<!-- 
+#=========================================
+# Dates
+#=========================================
+-->
+  
+---
+
+class: inverse, center, middle
+name: date
+
+# Date and time
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+
+# `Date` using the `lubridate` package
+
+
+R has an object class called 
+
+```{r eval = F}
+install.packages(lubridate)
+
+library(lubridate) 
+```
+
+Recording dates as an `Date` object instead of a character object has several benefits:
+
++ calendar math is possible with `Date` objects
++ you can `filter()` based on the chronological order of dates
++ converting date into an another format is easy
+
+---
+
+# `Date` operations
+
+.panelset[ 
+
+<!-- panel ends here -->
+
+.panel[.panel-name[as.Date()]
+
+Dates comes in various formats. Several of them are:
+
++ `2010-12-15`
++ `12/15/2010`
++ `Dec 15 10`
++ `15 December 2010`
+
+They all represent the same date. 
+
+We can use `as.Date()` to transform dates stored as characters into `Date`s. 
+
+```{r eval = F}
+#--- NOT RUN ---#  
+as.Date(date in character, format)
+```
+
+In `format` you specify how day, month, and year are represented in the date characters you intend to convert using special symbols including:
+
++ **%d**: day as a number (0-31)
++ **%m**: month (00, 01, 02, $\dots$, 12)
++ **%b**: abbreviated month (Jan, $\dots$, Dec)
++ **%B**: unabbreviated month (January, $\dots$, December)
++ **%y**: 2-digit year (96 for 1996, 02 for 2002)
++ **%Y**: 4-digit year (1996, 2012)
+
+<br>
+
+.content-box-green[**Example**]
+
+```{r }
+#--- convert from a character to a Date ---#
+a_date <- as.Date("Dec 15 10", format = "%b %d %y")
+
+#--- check the class ---#
+class(a_date)
+```
+ 
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[lubridate]
+
+Alternatively, you can use the `lubridate` package to easily convert dates recorded in characters into `Date`s.
+
+Using `lubridate`, you do not need to provide the format information unlike `as.Date()`
+
+Instead, you simply use `y` (year), `m` (month), `d` (day) in the order they appear in the dates in character.
+
+<br>
+
+.content-box-green[**Example**]
+
+```{r }
+ymd("2010-12-15")
+mdy("12/15/2010")
+mdy("Dec 15 10")
+dmy("15 December 2010") 
+```
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[format]
+  
+It is often the case that date values are not formatted in the way you want (e.g., when you are creating figures). 
+
+While you can use string manipulation functions to reformat dates (which we learn next in this lecture), it is easier to just use the `format()` function.
+
+
+```{r eval = F}
+#--- NOT RUN ---#  
+format(Date, format)
+```
+
+You can use the same rule for the `format` argument as the one we saw earlier when using `as.Date()`.
+
+<br>
+
+.content-box-green[**Example**]
+
+```{r }
+pizzaplace %>% 
+  #--- convert to Date ---#
+  mutate(date = ymd(date)) %>% 
+  #--- format ---#
+  mutate(date_txt_f1 = format(date, "%m/%d/%y")) %>% 
+  mutate(date_txt_f2 = format(date, "%m %B %Y")) %>% 
+  select(date_txt_f1, date_txt_f2)
+```
+
+  ]  
+  
+<!-- panel ends here -->  
+
+.panel[.panel-name[components]
+
+You can extract components (year, month, day) from a `Date` object using various helper functions offered by `lubridate`. 
+
++ `year()`: get year
++ `month()`: get month
++ `mday()`: get day of month 
++ `yday()`: get day of year
++ `wday()`: get day of week
+
+<br>
+
+.content-box-green[**Examples**]
+
+```{r eval = F}
+pizzaplace %>% 
+  mutate(date = ymd(date)) %>%
+  distinct(date) %>% 
+  filter(month(date) >= 8) %>% 
+  mutate(
+    year = year(date),
+    month = month(date),
+    mday = mday(date),
+    yday = yday(date),
+    wday = wday(date)
+  ) %>% 
+  select(year, month, mday, yday, wday) %>% 
+  head(10)
+```
+
+```{r echo = F}
+pizzaplace %>% 
+  mutate(date = ymd(date)) %>%
+  distinct(date) %>% 
+  filter(month(date) >= 8) %>% 
+  mutate(
+    year = year(date),
+    month = month(date),
+    mday = mday(date),
+    yday = yday(date),
+    wday = wday(date)
+  ) %>% 
+  select(date, year, month, mday, yday, wday) %>% 
+  head(10) 
+```
+
+]
+
+.panel[.panel-name[math 1]
+
+Unlike dates in character, you can do some math on `Date` objects.
+
+.content-box-green[**add years, months, and days to a `Date` object**]
+
+You can use `years()`, `months()`, `days()` from the `lubridate` package to add specified years, months, and days, respectively.
+
+```{r }
+ymd("2015-05-01") + years(3)
+ymd("2015-05-01") - months(3)
+ymd("2015-05-01") + days(1)
+```
+
+<br>
+
+.content-box-green[**sequence of dates**]
+
+You can use `seq()` to create a sequence of dates, where the incremental step is defined by the `by` option.
+
+```{r }
+seq(ymd("2015-05-01"), ymd("2020-05-01"), by = "years")   
+
+seq(ymd("2015-05-01"), ymd("2015-06-01"), by = "weeks")   
+
+seq(ymd("2015-05-01"), ymd("2015-05-09"), by = "days")   
+```  
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[math 2]
+
+.content-box-green[**filter (logical evaluation)**]
+
+```{r }
+pizzaplace %>% 
+  #--- convert to Date ---#
+  mutate(date = ymd(date)) %>%  
+  filter(date >= as.Date("2015-05-01"))
+```
+
+  ] 
+
+  <!-- panel ends here -->
+]
+  
+---
+
+class: inverse, center, middle
+name: string
+
+# Strings manipulation
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+
+# String manipulation 
+
+.content-box-green[**Package**]
+
+For string (character) manipulation, we use the `stringr` package, which is part of the `tidyverse` package. So, you have installed it already.
+
+`stringr` is loaded automatically when you load `tidyverse`. So, just load `tidyverse`.
+
+```{r eval = F}
+library(tidyverse)  
+```
+
+<br>
+
+.content-box-green[**Functions**]
+
+Here are the select functions we learn in this lecture:
+
++ join and split
+  * `str_c()`
+  * `str_split()` (`dplyr::separate()`)
++ mutate strings
+  * `str_replace()`
++ detect matches
+  * `str_detect()`
++ manage lengths
+  * `str_trim()`
+  * `str_pad()`
+
+<br>
+
+.content-box-green[**Resources**]
+
++ [stringr cheatsheet](https://github.com/rstudio/cheatsheets/blob/master/strings.pdf)
++ [stringr packagedown website](https://stringr.tidyverse.org/index.html)
+
+<br>
+
+---
+
+# Join (concatenate) with `str_c()`
+
+`str_c()` lets you concatenate a vector of strings. It is basically the same as `paste()`.
+
+.panelset[ 
+
+.panel[.panel-name[join 1]
+
+
+.content-box-green[**concatenate**]
+
+
+```{r }
+str_c("R", "rocks")
+```
+
+<br>
+
+.content-box-green[**order matters**]
+
+
+```{r }
+str_c("rocks", "R")
+```
+
+<br>
+
+.content-box-green[**separator**]
+
+
+```{r }
+str_c("R", "rocks", sep = "+")
+```
+
+<br>
+
+.content-box-green[**more than two strings**]
+
+
+```{r }
+str_c("R ", "rocks", ", right", "?", sep = "")
+```
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[join 2]
+
+.content-box-green[**a string and a vector of strings**]
+
+```{r }
+verbs <- c("sucks", "rocks", "is just okay")
+
+str_c("R", verbs, sep = "+")
+```
+
++ Each of the vector elements (`verbs`) are concatenated with a string (`"R"`)
++ The separator (`"+"`) applied to all the vector elements
+
+<br>
+
+.content-box-green[**collapsing a vector of strings to a single string**]
+
+```{r }
+str_c("R", verbs, sep = "+", collapse = "%")
+```
+
++ The `collapse` option collapse all the vector elements into a single string with the collapse separator (here, `%`) placed between the individual vector elements
++ `sep = "+"` is applied when concatenating a vector of strings and a string, and `collapse = "%"` is applied when concatenating the resulting vector of strings. 
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[join 3]
+
+
+.content-box-green[**two vectors of equal length**]
+
+
+```{r }
+software_types <- c("R", "Python", "SAS")
+
+str_c(software_types, verbs, sep = " ")
+```
+
++ `n`th element of a vector (`software_types`) is met with `n` the element of the other vector (`verbs`).
+
+  <!-- panel ends here -->
+
+
+.content-box-green[**two vectors of different lengths**]
+
+
+```{r }
+software_types <- c("R", "Python", "SAS", "STATA", "Matlab")
+
+str_c(software_types, verbs, sep = " ")
+```
+
++ `n`th element of a vector (`software_types`) is met with `n` the element of the other vector (`verbs`) with `verbs` recycled for the elements in `software_type` that are missing positional matches.
+
+
+.content-box-green[**all combinations**]
+
+
+```{r eval = F}
+software_types <- c("R", "Python", "SAS", "STATA", "Matlab")
+
+str_c(software_types, `rep(verbs, 5)`, sep = " ")
+```
+
+```{r echo = F}
+software_types <- c("R", "Python", "SAS", "STATA", "Matlab")
+
+str_c(software_types, rep(verbs, 5), sep = " ")
+```
+
++ take advantage of the recycling feature to create all possible combinations of values    
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[use case]
+
+
+.content-box-green[**Concatenating string variables in a dataset**]
+
+
+Sometimes, you want to concatenate two (or more) string variables into one variable. 
+
+For example, suppose you would like to combine pizza `size` and `type` into a single variable to make it easier to create faceted figures by `size`-`type`.
+
+```{r }
+pizzaplace <- mutate(pizzaplace, type_size = str_c(type, size, sep = "-"))
+```
+
+```{r echo = F}
+pizzaplace   
+```  
+
+
+.content-box-green[**Reading files**]
+
+
+You can use `str_c()` to create a vector of file names that have a common pattern. 
+
+For example suppose you have files that are named following this convention: "corn_yield_X.csv", where X represents year. 
+
+You have such csv files starting from 2000 to 2020. Then,
+
+```{r }
+file_names <- str_c("corn_yield_", 2000:2020, ".csv")  
+```
+
+```{r }
+head(file_names) 
+```
+
+Now, you can easily read each of them iteratively using a loop.
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[split]
+
+
+`str_split()` splits a string based on a pattern you provide:
+
+```{r }
+str_split(pizzaplace$type_size, "-") %>% head()
+```
+
+But, if you are splitting a variable into two variables, `dplyr::separate()` is a better option.
+
+```{r }
+pizzaplace %>% separate(type_size, c("type_2", "size_2"), "-") %>% 
+  select(id, type, type_2, size, size_2)
+```
+
+  ] 
+
+  <!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
+
+---
+
+# Mutate 
+
+.panelset[ 
+
+.panel[.panel-name[replace]
+
+You can use `str_replace()` to replace parts of the texts matched with the user-specified texts.
+
+```{r eval = F}
+#--- Syntax ---#
+str_replace(string, pattern, replacement)
+```
+
+<br>
+
+.content-box-green[**Example**]:
+
+```{r }
+strings_vec <- c("I think R rocks, but some think it does not rock", "Python also rocks, but Julia does not rock")  
+
+str_replace(strings_vec, "rock", "rock big time")
+```
+
+Note that the only the first occurrence of "rock" in each of the string vector element was replaced with "rock big time." 
+
+You need to use `str_replace_all()` to replace all the occurrences. 
+
+
+```{r }
+str_replace_all(strings_vec, "rock", "rock big time") 
+```
+
+  ]
+
+<!-- panel ends here -->
+.panel[.panel-name[use case]
+
+
+.content-box-green[**Formating dates**]
+
+Suppose you would like to have a particular format of date in a figure you are trying to create using `pizzaplace`: e.g., 07/08/20 (month, day, year without the first 2 digits).
+
+Pretend that `date_text` is the variable that indicates date and it looks like this:
+
+```{r echo = F}
+pizzaplace_for_plot <- mutate(pizzaplace, date_text = ymd(date) %>%  format("%m/%d/%Y")) 
+```   
+
+```{r }
+pizzaplace_for_plot$date_text %>% head()
+```
+
+So, you would like to replace "20" with "" (nothing).
+
+```{r }
+pizzaplace_for_plot %>% 
+  mutate(date_text = str_replace(date_text, "20", "")) %>% 
+  select(id, date_text, size, type)
+```
+
+Now you can create a figure with the dates in the desired format. 
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+From `pizzaplace`, you could have just done this:
+
+```{r }
+pizzaplace %>% 
+  mutate(
+    date = ymd(date),
+    date = format(date, "%m/%d/%y")
+  ) %>% 
+  .$date %>% head()
+``` 
+
+  ]
+
+<!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+
+---
+
+# Detect 
+
+.panelset[ 
+
+.panel[.panel-name[detect]
+
+You can use `str_detect()` to check if a user-specified texts are part of strings.
+
+It takes a vector of strings and a text pattern, and then return a vector of TRUE/FALSE.
+
+<br>
+
+.content-box-green[**Example**]
+
+```{r }
+fruit <- c("apple", "banana", "pear", "pineapple")
+
+str_detect(fruit, "apple")   
+``` 
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[use case 1]
+
+.content-box-green[**get the list of file names** ]
+
+Suppose you have two sets of files in a single folder: `corn_experiment_x.rds` and `soy_experiment_y.rds`, where both `x` and `y` range from 1 to 50.
+
+You want to read only the soy files. 
+
+First, let's get the name of the whole list of files in the working directory:
+
+```{r eval = F}
+list.files()
+```
+
+```{r echo = F}
+all_files <- list.files("../../Datasets/Chapter_5/experiment_data")
+```
+
+```{r }
+head(all_files)
+tail(all_files) 
+```
+
+Now use `str_detect()` to find which elements of `all_files` include "soy."
+
+```{r }
+is_soy <- str_detect(all_files, "soy")  
+```
+
+Okay so, here is the list of all the "soy" files:
+
+.scroll-box-12[
+```{r }
+all_files[is_soy]  
+```
+]
+
+
+Now, you can loop to read all the files. 
+
+  ]
+
+.panel[.panel-name[use case 2]
+
+.content-box-green[**Define a group from a varible** ]
+
+Consider the following dataset of plant genes.
+
+```{r }
+gene_data <- expand.grid(
+  id = c("Zm_1", "Zm_2"), 
+  gene = c("20_WW_BL_TP1", "20_WW_BL_TP", "20_WW_ML_TP1", "20_WW_ML_TP", "20_WW_TL_TP1", "20_WW_TL_TP3")
+) 
+```
+
+```{r echo = F}
+gene_data 
+```
+
+There are three different types of genes: those that have `_BL_`,`_ML_`, and `_TL_`. The objective here is to make a variable that indicates gene group from the `gene` variable.
+
+```{r }
+gene_data %>% 
+  mutate(gene_group = case_when(
+    str_detect(gene, "_BL_") ~ "BL",
+    str_detect(gene, "_ML_") ~ "ML",
+    str_detect(gene, "_TL_") ~ "TL"
+  ))
+```
+
+  ] 
+
+  <!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
+
+---
+
+# Other convenient functions 
+
+.panelset[ 
+
+.panel[.panel-name[letter case]
+
+Here are the collection of functions that let you change the letter case of strings.
+
+.content-box-green[**To upper case**]
+
+```{r eval = F}
+pizzaplace %>% 
+  mutate(name = str_to_upper(name))
+```
+
+.scroll-box-10[
+```{r echo = F}
+pizzaplace %>% 
+  mutate(name = str_to_upper(name))
+```
+]
+
+.content-box-green[**To lower case**]
+
+```{r eval = F}
+pizzaplace %>% 
+  mutate(size = str_to_lower(size))
+```
+
+.scroll-box-10[
+```{r echo = F}
+pizzaplace %>% 
+  mutate(size = str_to_lower(size))
+```
+]
+
+.content-box-green[**Only the first letter is capitalized**]
+
+```{r eval = F}
+pizzaplace %>%  
+  mutate(type = str_to_title(type)) 
+```
+
+.scroll-box-10[
+```{r echo = F}
+pizzaplace %>%  
+  mutate(type = str_to_title(type)) 
+```
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[padding]
+
+You can pad strings with symbols of your choice so the resulting string are of the length you specify.   
+
+```{r eval = F}
+#--- NOT RUN ---#
+str_pad(strings, string length, side, padding symbol)
+```
+
+<br>
+
+.content-box-green[**Examples**]
+
+```{r }
+str_pad("I am sick of R", 20, side = "left", pad = "?") 
+```
+
+```{r }
+str_pad("I am sick of R", 30, side = "both", pad = "?") 
+```
+
+```{r }
+str_pad("I am sick of R", 20, side = "right", pad = "-") 
+```
+
+
+  ]
+
+<!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+
+---
+
+# Exercises 
+
+
+.content-box-green[**Exercise 1**]
+
+Create the following dataset:
+
+```{r }
+date_data <- tibble(
+  date = seq(ymd("2012-04-01"), ymd("2012-09-30"), by = "days")
+) %>%    
+  mutate(
+    year = year(date),
+    month = month(date),
+    day = mday(date)
+  ) %>% 
+  select(- date)
+```
+
+Use `str_c()` to combine, `year`, `month`, and `day` using "-" as the separator and convert the combined text to Date using `lubridate`.
+
+<br>
+
+.content-box-green[**Exercise 2**]
+
+Create the following dataset:
+
+```{r }
+date_data <- tibble(
+  date = seq(ymd("2012-04-01"), ymd("2012-09-30"), by = "days")
+) %>%    
+  mutate(
+    year = year(date),
+    day_of_year = yday(date)
+  ) %>% 
+  select(- date)
+```
+
+Using `Date` math to recover the dates from `year` and `day_of_year`. 
+
+
