@@ -1040,6 +1040,10 @@ Other backend processes are:
 
 With the `multiprocess` option, R figure out which `multicore` or `multisession` should be used (or can be used) and automatically redirect the backend process to the appropriate (available) one.
 
+.content-box-red[**Note**]:
+
+Unless you tell R explicitly to parallelize things (like using `future_lapply()`), R always uses a single core by default. So, you do not have to change anything manually when you do not want to use multiple cores.
+
 ]
 
   ] 
