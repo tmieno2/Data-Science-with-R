@@ -489,7 +489,6 @@ lapply(mtcars, mean)
 
 ]
 
-
   ] 
 
   <!-- panel ends here -->
@@ -1581,19 +1580,28 @@ profit_data %>%
 
 ---
 
-# Which strategy?
 
-Which strategy you should take depends on the size of your computer's RMA memory.
+.content-box-green[**Which strategy?**]
+  
 
-Vectorized version is more memory-hungry:
++ Which strategy you should take depends on the size of your computer's RMA memory.
 
-+ Strategy 1: loop over the price combinations (one price combination at a time)
-+ Strategy 2: loop over price (all the price combinations at the same time)
++ Going over the RAM memory limit will suffocate your computer, which leads to a substantial loss in computing performance. 
 
-If you can fit the entire dataset in the RAM memory, then take Strategy 2. Otherwise, break up the entire task into pieces like Strategy 1. 
++ Vectorized version is more memory-hungry:
+  * Strategy 1: loop over the price combinations (one price combination at a time)
+  * Strategy 2: loop over price (all the price combinations at the same time)
 
++ If you can fit the entire dataset in the RAM memory, then take Strategy 2. Otherwise, break up the entire task into pieces like Strategy 1. 
 
+--
 
+.content-box-green[**Keep track of RAM memory usage**]
+
++ Mac users: go to .blue[Applications] $\rightarrow$ .blue[Utilities] $\rightarrow$
+.blue[Activity Monitor] $\rightarrow$
+
++ Windows users: press `Windows Key` + `R` $\rightarrow$ type "resmon" into the search box $\rightarrow$ 
 
 
 

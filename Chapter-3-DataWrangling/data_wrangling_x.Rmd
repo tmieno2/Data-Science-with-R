@@ -2177,8 +2177,7 @@ name: reshaping
 
 .left5[
 
-
-.content-box-green[**Long format**]
+## Long format
 
 A single column representing a single variable 
 
@@ -2195,8 +2194,7 @@ yield_data_long <- data.frame(
 
 .right5[
 
-
-.content-box-green[**Wide format**]
+## Wide format
 
 Multiple column representing a single variable 
 
@@ -2222,16 +2220,12 @@ Note: there is nothing in the dataset that tells you what the data values repres
 
 Create the following dataset in long format:
 
-```{r long-data-gen-2}
+```{r long-data-gen-1}
 yield_data_long <- data.frame(
   state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
   year = c(2019, 2020) %>% rep(4),
   yield = c(200, 240, 210, 220, 220, 230, 190, 150)
   )
-```
-
-```{r }
-yield_data_long 
 ```
 
   ]
@@ -2241,7 +2235,7 @@ yield_data_long
 
 .left5[
 
-.content-box-green[**How**]
+## How
 
 To convert a long-formatted `data.frame` into a wide-formatted `data.frame`, you can use `pivot_wider()` function from the `tidyr` package.
 
@@ -2260,7 +2254,7 @@ pivot_wider(
 
 .right5[
 
-.content-box-green[**Example**]
+## Example
 
 ```{r }
 yield_data_wide <- pivot_wider(
@@ -2280,6 +2274,7 @@ yield_data_wide
   ] 
 
   <!-- panel ends here -->
+
 
 .panel[.panel-name[prefix]
 
@@ -2304,13 +2299,11 @@ yield_data_long %>%
 
 .left5[
 
-
-.content-box-green[**Prepare a dataset**]
-   
+## Prepare a dataset 
 
 Create the following data in long format;
 
-```{r wide-data-gen-f}
+```{r wide-data-gen}
 yield_data_long <- data.frame(
   state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
   year = c(2019, 2020) %>% rep(4),
@@ -2326,7 +2319,7 @@ yield_data_long
 
 .right5[
 
-.content-box-green[**Example**]
+## Example
 
 You can simply supply multiple variables to be made wide like this:
 
@@ -2356,7 +2349,7 @@ yield_data_long %>%
 
 .left5[
 
-.content-box-green[**How**]
+## How
 
 To convert a long-formatted `data.frame` into a wide-formatted `data.frame`, you can use `pivot_longer()` function from the `tidyr` package.
 
@@ -2376,8 +2369,7 @@ pivot_longer(
 
 .right5[
 
-
-.content-box-green[**Example**]
+## Example
 
 ```{r }
 yield_data_wide %>% 
@@ -2437,7 +2429,7 @@ Notice `year` is character. Convert it to numeric using `as.numeric()` if you us
 
 .left5[
 
-.content-box-green[**Long**]
+## Long
 
 Create the following dataset in the long format;
 
@@ -2458,7 +2450,7 @@ yield_data_long
 
 .right5[
 
-.content-box-green[**Wide**]
+## Wide
 
 Convert the long dataset into the wide format: 
 
@@ -3064,7 +3056,7 @@ hourly_temp_Jan <- weather %>%
 
 + You are interested in learning the impact of **daily** temperature on departure delay for the flights in January. To do so, you need to have them in a single dataset.  
 
-+ Is this going to be a 1-to-1, m-to-1, or 1-to-m matching?
++ Is this going to be a 1-to-1 matching or 1-to-m matching?
 
 + Merge `daily_temp_Jan` to `flights_Jan` using `left_join()`
 
@@ -3082,7 +3074,7 @@ left_join(flights_Jan, daily_temp_Jan, by = c("origin", "month", "day"))
 
 + You are interested in learning the impact of **hourly** temperature on departure delay for the flights in January. To do so, you need to have them in a single dataset.  
 
-+ Is this going to be a 1-to-1, m-to-1, or 1-to-m matching?
++ Is this going to be a 1-to-1 matching or 1-to-m matching?
 
 + Merge `hourly_temp_Jan` to `flights_Jan` using `left_join()`
 

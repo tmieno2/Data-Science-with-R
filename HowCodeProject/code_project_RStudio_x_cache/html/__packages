@@ -24,15 +24,3 @@ forcats
 future
 future.apply
 microbenchmark
-readstata13
-lubridate
-sf
-sp
-maptools
-robustbase
-Rcpp
-spData
-Matrix
-spatialreg
-GWmodel
-patchwork

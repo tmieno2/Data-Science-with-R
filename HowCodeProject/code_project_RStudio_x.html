@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>How to write R codes, manage Projects, work with RStudio</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="AECN 396/896-002" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/animate.css/animate.xaringan.css" rel="stylesheet" />
+    <link href="libs/tachyons/tachyons.min.css" rel="stylesheet" />
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# How to write R codes, manage Projects, work with RStudio
+### AECN 396/896-002
+
+---
+
+
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+
+.remark-slide-content.hljs-github h1 {
+  margin-top: 5px;  
+  margin-bottom: 25px;  
+}
+
+.remark-slide-content.hljs-github {
+  padding-top: 10px;  
+  padding-left: 30px;  
+  padding-right: 30px;  
+}
+
+.panel-tabs {
+  &lt;!-- color: #062A00; --&gt;
+  color: #841F27;
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panel-tab {
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 3px;  
+  margin-right: 3px;  
+  padding-top: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panelset .panel-tabs .panel-tab {
+  min-height: 40px;
+}
+
+.remark-slide th {
+  border-bottom: 1px solid #ddd;
+}
+
+.remark-slide thead {
+  border-bottom: 0px;
+}
+
+.gt_footnote {
+  padding: 2px;  
+}
+
+.remark-slide table {
+  border-collapse: collapse;
+}
+
+.remark-slide tbody {
+  border-bottom: 2px solid #666;
+}
+
+
+.important {
+  background-color: lightpink;
+  border: 2px solid blue;
+  font-weight: bold;
+} 
+
+.remark-code {
+  display: block;
+  overflow-x: auto;
+  padding: .5em;
+  background: #ffe7e7;
+} 
+
+.hljs-github .hljs {
+  background: #f2f2fd;
+}
+
+.remark-inline-code {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: #e6e6e6;
+}
+
+.r.hljs.remark-code.remark-inline-code{
+  font-size: 0.9em
+}
+
+.left-full {
+  width: 80%;
+  height: 92%;
+  float: left;
+}
+
+.left-code {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left6 {
+  width: 60%;
+  height: 92%;
+  float: left;
+}
+
+.left5 {
+  width: 49%;
+  height: 92%;
+  float: left;
+}
+
+.right5 {
+  width: 49%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left3 {
+  width: 29%;
+  height: 92%;
+  float: left;
+}
+
+.right7 {
+  width: 69%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left4 {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right6 {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+ul li{
+  margin: 7px;
+}
+
+ul, li{
+  margin-left: 15px; 
+  padding-left: 0px; 
+}
+
+ol li{
+  margin: 7px;
+}
+
+ol, li{
+  margin-left: 15px; 
+  padding-left: 0px; 
+}
+
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+.content-box { 
+    box-sizing: border-box;
+    background-color: #e2e2e2;
+}
+.content-box-blue,
+.content-box-gray,
+.content-box-grey,
+.content-box-army,
+.content-box-green,
+.content-box-purple,
+.content-box-red,
+.content-box-yellow {
+  box-sizing: border-box;
+  border-radius: 5px;
+  margin: 0 0 10px;
+  overflow: hidden;
+  padding: 0px 5px 0px 5px;
+  width: 100%;
+}
+.content-box-blue { background-color: #F0F8FF; }
+.content-box-gray { background-color: #e2e2e2; }
+.content-box-grey { background-color: #F5F5F5; }
+.content-box-army { background-color: #737a36; }
+.content-box-green { background-color: #d9edc2; }
+.content-box-purple { background-color: #e2e2f9; }
+.content-box-red { background-color: #ffcccc; }
+.content-box-yellow { background-color: #fef5c4; }
+.content-box-blue .remark-inline-code,
+.content-box-blue .remark-inline-code,
+.content-box-gray .remark-inline-code,
+.content-box-grey .remark-inline-code,
+.content-box-army .remark-inline-code,
+.content-box-green .remark-inline-code,
+.content-box-purple .remark-inline-code,
+.content-box-red .remark-inline-code,
+.content-box-yellow .remark-inline-code { 
+  background: none;
+}
+
+.full-width {
+    display: flex;
+    width: 100%;
+    flex: 1 1 auto;
+}
+&lt;/style&gt;
+
+
+&lt;style type="text/css"&gt;
+blockquote, .blockquote {
+  display: block;
+  margin-top: 0.1em;
+  margin-bottom: 0.2em;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-left: solid 10px #0148A4;
+  border-top: solid 2px #0148A4;
+  border-bottom: solid 2px #0148A4;
+  border-right: solid 2px #0148A4;
+  box-shadow: 0 0 6px rgba(0,0,0,0.5);
+  /* background-color: #e64626; */
+  color: #e64626;
+  padding: 0.5em;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+
+.blockquote p {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h1:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h2:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h3:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h4:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+.text-shadow {
+  text-shadow: 0 0 4px #424242;
+}
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+/******************
+ * Slide scrolling
+ * (non-functional)
+ * not sure if it is a good idea anyway
+slides &gt; slide {
+  overflow: scroll;
+ padding: 5px 40px;
+}
+.scrollable-slide .remark-slide {
+  height: 400px;
+  overflow: scroll !important;
+}
+ ******************/
+
+.scroll-box-8 {
+  height:8em;
+  overflow-y: scroll;
+}
+.scroll-box-10 {
+  height:10em;
+  overflow-y: scroll;
+}
+.scroll-box-12 {
+  height:12em;
+  overflow-y: scroll;
+}
+.scroll-box-14 {
+  height:14em;
+  overflow-y: scroll;
+}
+.scroll-box-16 {
+  height:16em;
+  overflow-y: scroll;
+}
+.scroll-box-18 {
+  height:18em;
+  overflow-y: scroll;
+}
+.scroll-box-20 {
+  height:20em;
+  overflow-y: scroll;
+}
+.scroll-box-24 {
+  height:24em;
+  overflow-y: scroll;
+}
+.scroll-box-30 {
+  height:30em;
+  overflow-y: scroll;
+}
+.scroll-output {
+  height: 90%;
+  overflow-y: scroll;
+}
+
+ 
+&lt;/style&gt;
+
+
+
+## Learning objectives
+
++ Learn how to write functions yourself
++ Learn how to use a for loop and `lapply()` to complete repetitive jobs
++ Learn how not to loop things that can be easily vectorized
++ Learn how to parallelize repetitive jobs using the `future_lapply()` function from the `future.apply` package
+
+## Table of contents
+
+1. [User-defined Function](#user-defined-function)
+2. [Looping](#loop)
+3. [Parallelization](#par)
+
+---
+
+class: inverse, center, middle
+name: user-defined-function
+
+# How to write and organize R codes 
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+
+# A simple function
+
+&lt;!-- 
+#/*=================================================*/
+#' # RStudio tips
+#/*=================================================*/
+--&gt;
+
+---
+
+class: inverse, center, middle
+name: user-defined-function
+
+# RStudio tips 
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+
+# RStudio tips: code snippets
+
+.content-box-green[**What is it?**]
+
+Code snippets are functions that maps sequence of letters and symbols (short) to other sequence of letters and symbols (more complicated and long)
+
+&lt;br&gt;
+
+--
+
+.content-box-green[**Syntax**]
+
+
+```r
+snippet (combination of letters to invoke)
+  (what you want to print on R source pane) 
+```
+
+--
+
+&lt;br&gt;
+
+.content-box-green[**Example**]
+
++ piping operator
+
+
+```r
+snippet pi
+  %&gt;% 
+```
+
+Once you add this, you can type "pi" and hit `tab` (and hit `enter` if there are other competing shortcuts) to have `%&gt;%` printed.
+
++ assignment operator
+
+````markdown
+snippet as
+  &lt;- 
+````
+
+Once you add this, you can type "as" and hit `tab` (and hit `enter` if there are other competing shortcuts) to have `&lt;-` printed.
+
+--
+
+&lt;br&gt;
+
+.content-box-green[**How to add snippets**]
+
+Go to .blue[Preferences] `\(\rightarrow\)` .blue[Code] `\(\rightarrow\)` .blue[Edit Snippets], select R tab, and add snippets.
+
+---
+
+# Context-specificity  
+
+.content-box-green[**Important**]
+
+Suppose you are working on an Rmarkdown document.
+
++ You are in the R context if your cursor is in an R code chunk
++ You are in the Makrdown context if your cursor is outside of an R code chunk
+
+Snippets defined in the R (Markdown) tab only works in the R (Markdown) context.
+
+--
+
+&lt;br&gt;
+
+.content-box-green[**Try**]
+
++ open the "sample.Rmd" file
++ put your cursor anywhere .blue[outside] of the R code chunks
++ type "pi" and hit tab
+
+--
+
+&lt;br&gt;
+
+.content-box-green[**Markdown code snippet example**]
+
+This snippet will let you create an R code chunk with typing "rmc" and hit tab. Place it in the Markdown tab of the snippets list.
+
+````markdown
+snippet rmc
+  ```{r }
+  ```
+````
+
+And, then hit `shift` + `tab` to insert the snippet.
+
++ `tab`: R context
++ `shift`+ `tab`: Markdown context
+
+---
+
+# Using variables in snippets
+
+````markdown
+snippet rmc
+  ```{r ${1:chunk_title}}
+    ${2:chunk_content}
+  ```
+````
+
+`$` is used as a special character to denote where the cursor should jump (by hitting `tab`) after completing each section of a snippet. 
+
+
+---
+
+# Code organization snippets: R
+
+Define header snippets (modify them to your liking):
+
+.content-box-green[**Level 1 header**]
+
+
+```r
+snippet rh1
+  #===============================================
+  # ${1:Level 1 header}
+  #=============================================== 
+```
+
+.content-box-green[**Level 2 header**]
+
+
+```r
+snippet rh2
+  #------------------------------
+  ## ${1:Level 2 header}
+  #------------------------------ 
+```
+
+.content-box-green[**Level 3 header**]
+
+
+```r
+snippet rh3
+  #++++++++++++++++++++
+  ### ${1:Level 3 header}
+  #++++++++++++++++++++ 
+```
+
+---
+
+# More potentially useful snippets 
+
++ add notes
+
+````markdown
+snippet note
+  #--- ${1:note} ---# 
+````
+
++ ggplot (scatter plot)
+
+````markdown
+snippet gl
+  ggplot(data = ${1:dataset}) +
+  geom_line(aes(y = ${2:y}, x = ${3:x}))
+````
+
++ ggplot (density plot)
+
+````markdown
+snippet gd
+  ggplot(data = ${1:dataset}) +
+  geom_density(aes(x = ${2:x}))
+````
+
+---
+
+# Code organization snippets: Markdown
+
+Define header snippets (modify them to your liking):
+
+.content-box-green[**Level 1 header**]
+
+
+```r
+snippet h1
+  &lt;!--===============================================--&gt;
+  # ${1:Level 1 header}
+  &lt;!--===============================================--&gt;
+```
+
+.content-box-green[**Level 2 header**]
+
+
+```r
+snippet h2
+  &lt;!----------------------------------&gt;
+  ## ${1:Level 2 header}
+  &lt;!----------------------------------&gt; 
+```
+
+.content-box-green[**Level 3 header**]
+
+
+```r
+snippet h3
+  &lt;!--++++++++++++++++++++--&gt;
+  ### ${1:Level 3 header}
+  &lt;!--++++++++++++++++++++--&gt; 
+```
+
+&lt;!-- 
+#/*=================================================*/
+#' # Organize your file system 
+#/*=================================================*/
+--&gt;
+
+---
+
+class: inverse, center, middle
+name: user-defined-function
+
+# How to write and organize R codes 
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+
+# Organizing your project
+
+.left5[
+
+.content-box-red[**Project Steps**]
+
+A project mainly consists of four stages:
+
++ Step 1: collect data (most of the times, this is done outside of R)
++ Step 2: data wrangling to prepare the final datasets for analysis
++ Step 3: do analysis and produce results
++ Step 4: prepare documents (journal articles, reports, etc) based on the results
+
+&lt;br&gt;
+
+.content-box-red[**Project Folder Structure**]
+
++ **Code**: all the codes go in here
+  * DataPrep: 
+  * Analysis: 
++ **Data**
+  * RawData: place the raw datasets here
+  * ProcessedData: save the intermediate datasets here 
++ **Literature**: journal articles
++ **Results**: results (regression, figures, tables)
++ **Writing**: WORD, Latex files 
+
+]
+
+.right5[
+
+.content-box-red[**Tips (Recommended)**]
+
++ Step 1:
+  * place all the raw datasets (nothing else) in a designated folder inside the Data folder
+  * do not ever override them, you only read them 
+  * keep them intact
++ Step 2: 
+  * write R codes to process (transform, merge, etc) the raw data and save all the R codes inside the Code/DataPrep folder 
+  * save intermediate R objects or datasets in the Data/ProcessdData folder
+  * do not mix codes and datasets in a single folder
++ Step 3:
+  * write R codes to do analysis and produce results (regression table, figures, tables) and save them in the Results folder
+  * save the R codes in the Code/Analysis folder
++ Step 4:
+  * if you are using Rmd or Rnw (kintr + latex) to write a journal article or report, put them in the Writing folder
+  * refer to figures and tables in the Results folder to insert into the document
+
+]
+
+---
+
+# R code file structure 
+
+.left5[
+
+.content-box-red[**Common Structure**]
+
+All the R code files should have the following common structure:
+
++ Objective statement
+  * input: state input files and datasets
+  * output: state output files and datasets
++ Setup
+  * set the working directory
+  * load packages
+  * load functions
++ Actions
+  * Action 1
+  * Action 2
+  * .
+  * .
+  * .
+  * Action n
+
+]
+
+.right5[
+
+.content-box-red[**Tips**]
+
+Write R codes as if you are writing a report:
+
++ create sections and subsection based on the tasks   
+
++ use separators so it is easy to observe the transition between the sections and subsection (like user-defined headers we defined earlier)
+
++ make the name of the sections and subsections informative
+
++ annotate often (especially when there are quirks and irregularities that warrant attentions)
+
++ dynamically edit the "Objective statement" as you may change the objectives the R code file as you write R codes, which may involve changing what input files to use and what outputs you produce
+]
+
+ 
+---
+
+# Rmarkdown as a compelling type of source file  
+
++ It is much easier to put regular texts in an Rmarkdown file than an R file (all the texts R code chunks are regular texts)
+
+--
+
++ R crashed at a certain chunk and had to restart R and then run all the R codes up to the problematic chunk? 
+  * This is not an issue in an R file because you can just select all the R codes above and run
+  * This used to be a problem with an Rmarkdown file, having to run R code chunks one by one. But, now use `Run All Chunks Above` button (click on the triangle right to the `Run` button and select the option, or hit `option` + `command` + `P`).  
+
+&lt;img src="RunAllChunksAbove.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+--
+
++ Easily move between sections and subsection using the navigator at the bottom lower corner of the source pane
+
+&lt;img src="MoveBetweenChunks.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+--
+
++ Who told you that you have to knit an Rmd file? You do not have to.
+
+---
+
+# Example 
+
+styler package
+[Google's R Style Guide](http://web.stanford.edu/class/cs109l/unrestricted/resources/google-style.html)
+
+file names: s1_, s2_
+
+demonstration: rmarkdown, r. 
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

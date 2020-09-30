@@ -886,13 +886,20 @@ mtcars %&gt;% head()
 ```
 
 ```
-##                    mpg cyl disp  hp drat    wt  qsec vs am gear carb
-## Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4    4
-## Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4    4
-## Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4    1
-## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3    1
-## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3    2
-## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3    1
+##                    mpg cyl disp  hp drat    wt  qsec vs am gear
+## Mazda RX4         21.0   6  160 110 3.90 2.620 16.46  0  1    4
+## Mazda RX4 Wag     21.0   6  160 110 3.90 2.875 17.02  0  1    4
+## Datsun 710        22.8   4  108  93 3.85 2.320 18.61  1  1    4
+## Hornet 4 Drive    21.4   6  258 110 3.08 3.215 19.44  1  0    3
+## Hornet Sportabout 18.7   8  360 175 3.15 3.440 17.02  0  0    3
+## Valiant           18.1   6  225 105 2.76 3.460 20.22  1  0    3
+##                   carb
+## Mazda RX4            4
+## Mazda RX4 Wag        4
+## Datsun 710           1
+## Hornet 4 Drive       1
+## Hornet Sportabout    2
+## Valiant              1
 ```
 ]
 
@@ -942,7 +949,6 @@ lapply(mtcars, mean)
 ]
 
 ]
-
 
   ] 
 
@@ -1444,12 +1450,12 @@ microbenchmark(
 
 ```
 ## Unit: milliseconds
-##            expr      min        lq       mean   median        uq
-##      vectorized 0.003447 0.0036635 0.00388996 0.003816 0.0040785
-##  not vectorized 0.526678 0.5332950 0.55737159 0.537326 0.5436770
+##            expr      min       lq       mean   median       uq
+##      vectorized 0.003205 0.003542 0.00397165 0.003723 0.004024
+##  not vectorized 0.490769 0.523902 0.55994333 0.537095 0.551539
 ##       max neval
-##  0.005498   100
-##  2.320601   100
+##  0.014098   100
+##  2.789982   100
 ```
 
 + As you can see, the vectorized version is faster. 
@@ -1536,12 +1542,12 @@ microbenchmark(
 
 ```
 ## Unit: milliseconds
-##            expr      min       lq     mean   median       uq      max
-##      vectorized 1.248616 1.311084 1.430092 1.353222 1.403335 7.089377
-##  not vectorized 2.160169 2.262007 2.424987 2.331036 2.421149 6.239059
-##  neval
-##    100
-##    100
+##            expr      min       lq     mean   median       uq
+##      vectorized 1.230164 1.381957 1.638241 1.460570 1.673042
+##  not vectorized 2.154676 2.288282 2.483448 2.354325 2.551245
+##       max neval
+##  7.026919   100
+##  3.396470   100
 ```
 
   ] 
@@ -1691,12 +1697,12 @@ microbenchmark(
 
 ```
 ## Unit: milliseconds
-##              expr        min         lq      mean     median
-##      parallelized 223.520167 265.282176 291.62702 288.384027
-##  not parallelized   0.458088   1.248174   3.44421   2.621388
-##          uq       max neval
-##  309.035547 522.67378   100
-##    4.030383  16.93438   100
+##              expr        min         lq       mean     median
+##      parallelized 264.600995 327.897694 354.154277 349.317681
+##  not parallelized   0.590606   1.277103   5.158533   4.281639
+##          uq      max neval
+##  376.699896 525.2349   100
+##    7.476595  24.0577   100
 ```
 
 ]
@@ -1812,7 +1818,7 @@ toc()
 ```
 
 ```
-## 0.026 sec elapsed
+## 0.023 sec elapsed
 ```
 
 **Not parallelized (sequential)**:
@@ -1825,7 +1831,7 @@ toc()
 ```
 
 ```
-## 21.113 sec elapsed
+## 21.547 sec elapsed
 ```
 
 **Parallelized**:
@@ -1838,7 +1844,7 @@ toc()
 ```
 
 ```
-## 3.552 sec elapsed
+## 2.786 sec elapsed
 ```
 
 ]
@@ -2343,19 +2349,28 @@ profit_data %&gt;%
 
 ---
 
-# Which strategy?
 
-Which strategy you should take depends on the size of your computer's RMA memory.
+.content-box-green[**Which strategy?**]
+  
 
-Vectorized version is more memory-hungry:
++ Which strategy you should take depends on the size of your computer's RMA memory.
 
-+ Strategy 1: loop over the price combinations (one price combination at a time)
-+ Strategy 2: loop over price (all the price combinations at the same time)
++ Going over the RAM memory limit will suffocate your computer, which leads to a substantial loss in computing performance. 
 
-If you can fit the entire dataset in the RAM memory, then take Strategy 2. Otherwise, break up the entire task into pieces like Strategy 1. 
++ Vectorized version is more memory-hungry:
+  * Strategy 1: loop over the price combinations (one price combination at a time)
+  * Strategy 2: loop over price (all the price combinations at the same time)
 
++ If you can fit the entire dataset in the RAM memory, then take Strategy 2. Otherwise, break up the entire task into pieces like Strategy 1. 
 
+--
 
+.content-box-green[**Keep track of RAM memory usage**]
+
++ Mac users: go to .blue[Applications] `\(\rightarrow\)` .blue[Utilities] `\(\rightarrow\)`
+.blue[Activity Monitor] `\(\rightarrow\)`
+
++ Windows users: press `Windows Key` + `R` `\(\rightarrow\)` type "resmon" into the search box `\(\rightarrow\)` 
 
 
 

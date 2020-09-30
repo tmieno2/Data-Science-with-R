@@ -1,0 +1,418 @@
+---
+title: "How to write R codes, manage Projects, work with RStudio"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    lib_dir: libs
+    nature:
+      # ratio: 10:12
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r, child = './../setup.Rmd'}
+```
+
+```{r, include = F}
+#--- load packages ---#
+suppressMessages(library(future.apply))
+suppressMessages(library(parallel))
+````
+
+## Learning objectives
+
++ Learn how to write functions yourself
++ Learn how to use a for loop and `lapply()` to complete repetitive jobs
++ Learn how not to loop things that can be easily vectorized
++ Learn how to parallelize repetitive jobs using the `future_lapply()` function from the `future.apply` package
+
+## Table of contents
+
+1. [User-defined Function](#user-defined-function)
+2. [Looping](#loop)
+3. [Parallelization](#par)
+
+---
+
+class: inverse, center, middle
+name: user-defined-function
+
+# How to write and organize R codes 
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+
+# A simple function
+
+<!-- 
+#/*=================================================*/
+#' # RStudio tips
+#/*=================================================*/
+-->
+
+---
+
+class: inverse, center, middle
+name: user-defined-function
+
+# RStudio tips 
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+
+# RStudio tips: code snippets
+
+.content-box-green[**What is it?**]
+
+Code snippets are functions that maps sequence of letters and symbols (short) to other sequence of letters and symbols (more complicated and long)
+
+<br>
+
+--
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+snippet (combination of letters to invoke)
+  (what you want to print on R source pane) 
+```
+
+--
+
+<br>
+
+.content-box-green[**Example**]
+
++ piping operator
+
+```{r eval = F}
+snippet pi
+  %>% 
+```
+
+Once you add this, you can type "pi" and hit `tab` (and hit `enter` if there are other competing shortcuts) to have `%>%` printed.
+
++ assignment operator
+
+````markdown
+snippet as
+  <- 
+````
+
+Once you add this, you can type "as" and hit `tab` (and hit `enter` if there are other competing shortcuts) to have `<-` printed.
+
+--
+
+<br>
+
+.content-box-green[**How to add snippets**]
+
+Go to .blue[Preferences] $\rightarrow$ .blue[Code] $\rightarrow$ .blue[Edit Snippets], select R tab, and add snippets.
+
+---
+
+# Context-specificity  
+
+.content-box-green[**Important**]
+
+Suppose you are working on an Rmarkdown document.
+
++ You are in the R context if your cursor is in an R code chunk
++ You are in the Makrdown context if your cursor is outside of an R code chunk
+
+Snippets defined in the R (Markdown) tab only works in the R (Markdown) context.
+
+--
+
+<br>
+
+.content-box-green[**Try**]
+
++ open the "sample.Rmd" file
++ put your cursor anywhere .blue[outside] of the R code chunks
++ type "pi" and hit tab
+
+--
+
+<br>
+
+.content-box-green[**Markdown code snippet example**]
+
+This snippet will let you create an R code chunk with typing "rmc" and hit tab. Place it in the Markdown tab of the snippets list.
+
+````markdown
+snippet rmc
+  `r ''````{r }
+  ```
+````
+
+And, then hit `shift` + `tab` to insert the snippet.
+
++ `tab`: R context
++ `shift`+ `tab`: Markdown context
+
+---
+
+# Using variables in snippets
+
+````markdown
+snippet rmc
+  `r ''````{r ${1:chunk_title}}
+    ${2:chunk_content}
+  ```
+````
+
+`$` is used as a special character to denote where the cursor should jump (by hitting `tab`) after completing each section of a snippet. 
+
+
+---
+
+# Code organization snippets: R
+
+Define header snippets (modify them to your liking):
+
+.content-box-green[**Level 1 header**]
+
+```{r eval = F}
+snippet rh1
+  #===============================================
+  # ${1:Level 1 header}
+  #=============================================== 
+```
+
+.content-box-green[**Level 2 header**]
+
+```{r eval = F}
+snippet rh2
+  #------------------------------
+  ## ${1:Level 2 header}
+  #------------------------------ 
+```
+
+.content-box-green[**Level 3 header**]
+
+```{r eval = F}
+snippet rh3
+  #++++++++++++++++++++
+  ### ${1:Level 3 header}
+  #++++++++++++++++++++ 
+```
+
+---
+
+# More potentially useful snippets 
+
++ add notes
+
+````markdown
+snippet note
+  #--- ${1:note} ---# 
+````
+
++ ggplot (scatter plot)
+
+````markdown
+snippet gl
+  ggplot(data = ${1:dataset}) +
+  geom_line(aes(y = ${2:y}, x = ${3:x}))
+````
+
++ ggplot (density plot)
+
+````markdown
+snippet gd
+  ggplot(data = ${1:dataset}) +
+  geom_density(aes(x = ${2:x}))
+````
+
+---
+
+# Code organization snippets: Markdown
+
+Define header snippets (modify them to your liking):
+
+.content-box-green[**Level 1 header**]
+
+```{r eval = F}
+snippet h1
+  <!--===============================================-->
+  # ${1:Level 1 header}
+  <!--===============================================-->
+```
+
+.content-box-green[**Level 2 header**]
+
+```{r eval = F}
+snippet h2
+  <!---------------------------------->
+  ## ${1:Level 2 header}
+  <!----------------------------------> 
+```
+
+.content-box-green[**Level 3 header**]
+
+```{r eval = F}
+snippet h3
+  <!--++++++++++++++++++++-->
+  ### ${1:Level 3 header}
+  <!--++++++++++++++++++++--> 
+```
+
+<!-- 
+#/*=================================================*/
+#' # Organize your file system 
+#/*=================================================*/
+-->
+
+---
+
+class: inverse, center, middle
+name: user-defined-function
+
+# How to write and organize R codes 
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+
+# Organizing your project
+
+.left5[
+
+.content-box-red[**Project Steps**]
+
+A project mainly consists of four stages:
+
++ Step 1: collect data (most of the times, this is done outside of R)
++ Step 2: data wrangling to prepare the final datasets for analysis
++ Step 3: do analysis and produce results
++ Step 4: prepare documents (journal articles, reports, etc) based on the results
+
+<br>
+
+.content-box-red[**Project Folder Structure**]
+
++ **Code**: all the codes go in here
+  * DataPrep: 
+  * Analysis: 
++ **Data**
+  * RawData: place the raw datasets here
+  * ProcessedData: save the intermediate datasets here 
++ **Literature**: journal articles
++ **Results**: results (regression, figures, tables)
++ **Writing**: WORD, Latex files 
+
+]
+
+.right5[
+
+.content-box-red[**Tips (Recommended)**]
+
++ Step 1:
+  * place all the raw datasets (nothing else) in a designated folder inside the Data folder
+  * do not ever override them, you only read them 
+  * keep them intact
++ Step 2: 
+  * write R codes to process (transform, merge, etc) the raw data and save all the R codes inside the Code/DataPrep folder 
+  * save intermediate R objects or datasets in the Data/ProcessdData folder
+  * do not mix codes and datasets in a single folder
++ Step 3:
+  * write R codes to do analysis and produce results (regression table, figures, tables) and save them in the Results folder
+  * save the R codes in the Code/Analysis folder
++ Step 4:
+  * if you are using Rmd or Rnw (kintr + latex) to write a journal article or report, put them in the Writing folder
+  * refer to figures and tables in the Results folder to insert into the document
+
+]
+
+---
+
+# R code file structure 
+
+.left5[
+
+.content-box-red[**Common Structure**]
+
+All the R code files should have the following common structure:
+
++ Objective statement
+  * input: state input files and datasets
+  * output: state output files and datasets
++ Setup
+  * set the working directory
+  * load packages
+  * load functions
++ Actions
+  * Action 1
+  * Action 2
+  * .
+  * .
+  * .
+  * Action n
+
+]
+
+.right5[
+
+.content-box-red[**Tips**]
+
+Write R codes as if you are writing a report:
+
++ create sections and subsection based on the tasks   
+
++ use separators so it is easy to observe the transition between the sections and subsection (like user-defined headers we defined earlier)
+
++ make the name of the sections and subsections informative
+
++ annotate often (especially when there are quirks and irregularities that warrant attentions)
+
++ dynamically edit the "Objective statement" as you may change the objectives the R code file as you write R codes, which may involve changing what input files to use and what outputs you produce
+]
+
+ 
+---
+
+# Rmarkdown as a compelling type of source file  
+
++ It is much easier to put regular texts in an Rmarkdown file than an R file (all the texts R code chunks are regular texts)
+
+--
+
++ R crashed at a certain chunk and had to restart R and then run all the R codes up to the problematic chunk? 
+  * This is not an issue in an R file because you can just select all the R codes above and run
+  * This used to be a problem with an Rmarkdown file, having to run R code chunks one by one. But, now use `Run All Chunks Above` button (click on the triangle right to the `Run` button and select the option, or hit `option` + `command` + `P`).  
+
+```{r  echo = F, out.width = "60%"}
+include_graphics("RunAllChunksAbove.png") 
+```
+
+--
+
++ Easily move between sections and subsection using the navigator at the bottom lower corner of the source pane
+
+```{r  echo = F, out.width = "60%"}
+include_graphics("MoveBetweenChunks.png") 
+```
+
+--
+
++ Who told you that you have to knit an Rmd file? You do not have to.
+
+---
+
+# Example 
+
+styler package
+[Google's R Style Guide](http://web.stanford.edu/class/cs109l/unrestricted/resources/google-style.html)
+
+file names: s1_, s2_
+
+demonstration: rmarkdown, r. 
+
+
+
