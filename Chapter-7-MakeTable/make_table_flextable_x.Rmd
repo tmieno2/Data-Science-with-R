@@ -212,57 +212,6 @@ flextable(tab_data, col_keys = c("country_name", "lufhierh", "region", "y_1995",
 
 <!-- panel set ends here -->
 
-
----
-
-# Modify a table 
-
-.panelset[ 
-
-
-.panel[.panel-name[Format: theme]
-
-+ `style()`: Set flextable style
-+ `align()`, `align_text_col()`, `align_nottext_col()`: Set text alignment
-+ `bg()`: Set background color
-+ `font()`: Set font
-+ `fontsize()`: Set font size
-+ `italic()`: Set italic font
-+ `bold()`: Set bold font
-+ `color()`: Set font color
-+ `padding()`: Set paragraph paddings
-+ `valign()`: Set vertical alignment
-+ `rotate()`: rotate cell text
-+ `empty_blanks()`: make blank columns as transparent
-
-]
-
-
-
-<!-- panel ends here -->
-
-.panel[.panel-name[Layout]
-
-+ `merge_at()`: Merge flextable cells into a single one
-+ `merge_h()`: Merge flextable cells horizontally
-+ `merge_h_range()`: rowwise merge of a range of columns
-+ `merge_v()`: Merge flextable cells vertically
-+ `height()`, `height_all()`: Set flextable rows height
-+ `width()`: Set flextable columns width
-+ `hrule()`: Set flextable rule for rows heights
-+ `autofit()`: Adjusts cell widths and heights
-+ `fit_to_width()`: fit a flextable to a maximum width
-+ `as_grouped_data()`: grouped data transformation
-
-  ]
-
-<!-- panel ends here -->
-
-
-]
-
-<!-- panel set ends here -->
-
 ---
 
 # Selector
@@ -460,11 +409,13 @@ style(
 )
 ```
 
-`pr` stands for property.
+We use `fp_*()` functions from the `officer` package to specify the style of .blue[texts], .blue[paragraphs], and .blue[cells].
 
 + `pr_t = fp_text()`: format texts 
 + `pr_p = fp_par()`: format paragraphs
 + `pr_c = fp_celll()`: format cells
+
+(`pr` in `pr_* =`  stands for property.)
 
 ]
 
@@ -505,9 +456,7 @@ It seems that cell formatting is sufficient and paragraph formatting is not nece
 
 .content-box-green[**Explanation**]
 
-`fp_text()` lets you update the appearance of texts, including color, font size, bold or not, etc. 
-
-See the help page below for the complete list of options:
+`fp_text()` lets you update the appearance of texts, including color, font size, bold or not, etc (see the help page below for the complete list of options).
 
 .content-box-green[**Syntax**]
 
@@ -535,22 +484,29 @@ tab_data %>%
   style(
     i = 4:6,
     j = ~ country_name,
-    pr_t = fp_text(
-      color = "red",
-      bold = TRUE,
-      underlined = TRUE
-    )
+    pr_t = fp_text( #<<
+      color = "red", #<<
+      bold = TRUE, #<<
+      underlined = TRUE #<<
+    ) #<<
   )
 ```
 
 ]
-
 
   ]
 
 <!-- panel ends here -->
 
 .panel[.panel-name[fp_par]
+
+.left5[
+
+.content-box-green[**Explanation**]
+
+`fp_paragraph()` lets you update the appearance of paragraphs (see the help page below for the complete list of options).
+
+.content-box-green[**Syntax**]
 
 .scroll-box-24[
 ```{r }
@@ -560,9 +516,41 @@ tab_data %>%
 
   ]
 
+
+.right5[
+
+.content-box-green[**Example**]
+
+```{r }
+tab_data %>% 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  style(
+    i = 4:6,
+    j = ~ country_name,
+    pr_p = fp_par( #<<
+      text.align = "left", #<<
+      shading.color = "grey" #<<
+    ) #<<
+  )
+```
+
+]
+
+  ]
+
 <!-- panel ends here -->
 
 .panel[.panel-name[fp_cell]
+
+.left5[
+
+.content-box-green[**Explanation**]
+
+`fp_cell()` lets you update the appearance of cells (see the help page below for the complete list of options).
+
+.content-box-green[**Syntax**]
 
 .scroll-box-24[
 ```{r }
@@ -572,24 +560,77 @@ tab_data %>%
 
   ]
 
+
+.right5[
+
+.content-box-green[**Example**]
+
+```{r }
+tab_data %>% 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  style(
+    i = 4:6,
+    j = ~ country_name,
+    pr_c = fp_cell( #<<
+      margin = 2, #<<
+      vertical.align = "top", #<<
+      background.color = "red" #<<
+    ) #<<
+  )
+```
+
+]
+
+  ]
+
 <!-- panel ends here -->
 
-.panel[.panel-name[paragraph vs cell]
 
-
-
-
-  ] 
-
-  <!-- panel ends here -->
 ]
 
 <!-- panel set ends here -->
 
+---
 
+# Formatting: convenience functions 
 
+.left5[
 
+.content-box-green[**Instruction**]
 
++ Instead of using the `style()` function in combination with `fp_*()` functions, you can easily work on a specific aesthetic feature using convenience functions like below:
+  * `align()`, `align_text_col()`, `align_nottext_col()`: Set text alignment
+  * `bg()`: Set background color
+  * `font()`: Set font
+  * `fontsize()`: Set font size
+  * `italic()`: Set italic font
+  * `bold()`: Set bold font
+  * `color()`: Set font color
+  * `padding()`: Set paragraph paddings
+  * `valign()`: Set vertical alignment
+  * `rotate()`: rotate cell text
+  * `empty_blanks()`: make blank columns as transparent
+
++ You can use the selector syntax to specify where the specified effects take place
+
+]
+
+.right5[
+
+.content-box-green[**Example**]
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>%  
+  color(i = 1, j = 2, "#fcba03") %>%  
+  bg(i = ~ y_2005 < 2e5, j = c("region"), bg = "grey") %>%  
+  fontsize(i = 7, size = 16)   
+```
+]
 
 
 ---
@@ -603,18 +644,226 @@ tab_data %>% #BREAK
   color(i = 1, j = 2, "#fcba03") %>% #BREAK 
   #--- background ---#
   bg(i = ~ y_2005 < 2e5, j = c("region"), bg = "grey") %>% #BREAK 
+  #--- font type ---#
   font(i = 5, j = ~ country_name + y_2005, fontname = "Times") %>% #BREAK 
+  #--- font size ---#
   fontsize(i = 7, size = 16) %>% #BREAK 
+  #--- italicize ---#
   italic(j = 2) %>% #BREAK 
+  #--- bold ---#
   bold(j = 4) %>% #BREAK 
-  valign(i = ~ region == "Australasia", j = 4, valign = "right") %>% #BREAK 
+  #--- vertical text alignment ---#
+  valign(i = ~ region == "Australasia", j = 4, valign = "top") %>% #BREAK 
+  #--- text direction ---#
   rotate(i = 1, j = 2, rotation = "tbrl") 
 
 ```
 
 `r chunk_reveal(
   chunk_name = "format-flip", 
-  title = "# Format",
+  title = "# Demonstration: Formatting",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+---
+
+# Borders: convenience functions  
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.left5[
+
+.content-box-green[**List of functions**]
+
+Here is a list of convenience functions that you can use to draw border lines on a table:
++ `hline()`: set horizontal borders
++ `hline_bottom()`: set bottom horizontal border
++ `hline_top()`: set top horizontal border
++ `vline()`: set vertical borders
++ `vline_left()`: set flextable left vertical borders
++ `vline_right()`: set flextable right vertical borders
++ `border()`: Set cell borders
++ `border_inner()`: set vertical & horizontal inner borders
++ `border_inner_h()`: set inner borders
++ `border_inner_v()`: set vertical inner borders
++ `border_outer()`: set outer borders
++ `border_remove()`: remove borders
++ `fix_border_issues()`: fix border issues when cell are merged
+
+]
+
+.right5[
+
+.content-box-green[**Instruction**]
+
++ Use the selector syntax to specify where
++ Use the `border = ` option along with `fp_border()` from the `officer` package to specify what kind of borders you would like to draw
+
+.content-box-green[**Example**]
+
+```{r eval = F}
+hline(
+    i = 3, 
+    j = 1:3, 
+    border = fp_border( 
+      color = "red", 
+      style = "dotted", 
+      width = 4 
+    ) 
+  ) 
+```
+
+]
+
+
+] 
+
+<!-- panel ends here -->
+
+.panel[.panel-name[fp_border()]
+
+.left5[
+
+.content-box-green[**Explanation**]
+
+`fp_border()` lets you specify the aesthetics of the borders you are drawing.
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+?fp_border  
+```
+
+.scroll-box-24[
+```{r echo = F}
+?fp_border  
+```
+]
+
+]
+
+.right5[
+
+.content-box-green[**Example**]
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>%  
+  hline(
+    i = 3, 
+    j = 1:3, 
+    border = fp_border( #<<
+      color = "red", #<<
+      style = "dotted", #<<
+      width = 4 #<<
+    ) #<<
+  ) 
+```
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+
+---
+
+```{r borders-f, cache = F, include = F}
+tab_data %>% #BREAK 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% #BREAK 
+  #--- remove all borders ---#
+  border_remove() %>% #BREAK
+  #--- horizontal lines ---#
+  hline(i = 3, j = 1:3, border = fp_border(color = "red")) %>% #BREAK 
+  #--- horizontal line at the bottom ---#
+  hline_bottom(j = 3:4, border = fp_border(color = "green")) %>% #BREAK 
+  #--- horizontal line at the top ---#
+  hline_top(j = 1:3, border = fp_border(color = "orange")) %>% #BREAK 
+  #--- vertical lines ---#
+  vline(border = fp_border(color = "orange")) %>% #BREAK 
+  #--- vertical on the left edge  ---#
+  vline_left(border = fp_border(color = "grey", width = 2)) %>% #BREAK 
+  #--- vertical on the right edge  ---#
+  vline_right(border = fp_border(color = "red", width = 2)) %>% #BREAK 
+  #--- borders of individual cells ---#
+  border(i = 4, j = 2, 
+    border.top = fp_border(color = "red", width = 3),
+    border.left = fp_border(color = "green", width = 3),
+    border.right = fp_border(color = "black", width = 3),
+    border.bottom = fp_border(color = "pink", width = 3)
+  ) %>% #BREAK 
+  #--- horizontal lines (inner) ---#
+  border_inner_h(border = fp_border(color = "black")) %>% #BREAK 
+  #--- vertical lines (inner) ---#
+  border_inner_v(border = fp_border(color = "black")) %>% #BREAK 
+  border_remove() %>% #BREAK 
+  #--- the outer lines ---#
+  border_outer(border = fp_border(color = "red", width = 4)) 
+
+```
+
+`r chunk_reveal(
+  chunk_name = "borders-f", 
+  title = "# Demonstration: Borders",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+---
+
+# Layout
+
+.content-box-green[**List of functions**]
+
+Here is a list of functions you can use to change the layout of a table:
+
++ `merge_at()`: Merge flextable cells into a single one
++ `merge_h()`: Merge flextable cells horizontally
++ `merge_h_range()`: rowwise merge of a range of columns
++ `merge_v()`: Merge flextable cells vertically
++ `height()`, `height_all()`: Set flextable rows height
++ `width()`: Set flextable columns width
++ `hrule()`: Set flextable rule for rows heights
++ `autofit()`: Adjusts cell widths and heights
++ `fit_to_width()`: fit a flextable to a maximum width
++ `as_grouped_data()`: grouped data transformation
+
+]
+
+---
+
+```{r layout, cache = F, include = F}
+tab_data %>% #BREAK 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% #BREAK 
+  merge_v(j = ~ region) %>% #BREAK 
+  height(i = 5, height = 4) %>% #BREAK 
+  width(j = 2, width = 2) %>% #BREAK 
+  autofit()
+```
+
+`r chunk_reveal(
+  chunk_name = "layout", 
+  title = "# Layout",
   break_type = "user", 
   display_type = "both", 
   left_assign = FALSE,
@@ -787,158 +1036,6 @@ tab_data %>% #BREAK
 `r chunk_reveal(
   chunk_name = "format-content-flip", 
   title = "# Format",
-  break_type = "user", 
-  display_type = "both", 
-  left_assign = FALSE,
-  width = c(50, 50)
-  )
-`
-
-
----
-
-
-```{r layout, cache = F, include = F}
-tab_data %>% #BREAK 
-  flextable(
-    col_keys = c("country_name", "region", "y_1995", "y_2005")
-  ) %>% #BREAK 
-  merge_v(j = ~ region) %>% #BREAK 
-  height(i = 5, height = 4) %>% #BREAK 
-  width(j = 2, width = 2) %>% #BREAK 
-  autofit()
-```
-
-`r chunk_reveal(
-  chunk_name = "layout", 
-  title = "# Layout",
-  break_type = "user", 
-  display_type = "both", 
-  left_assign = FALSE,
-  width = c(50, 50)
-  )
-`
-
----
- 
-# Borders 
-
-.panelset[ 
-
-.panel[.panel-name[Instruction]
-
-.left5[
-<br>
-Here is a list of functions that you can use to draw border lines on a table:
-
-+ `hline()`: set horizontal borders
-+ `hline_bottom()`: set bottom horizontal border
-+ `hline_top()`: set top horizontal border
-+ `vline()`: set vertical borders
-+ `vline_left()`: set flextable left vertical borders
-+ `vline_right()`: set flextable right vertical borders
-+ `border()`: Set cell borders
-+ `border_inner()`: set vertical & horizontal inner borders
-+ `border_inner_h()`: set inner borders
-+ `border_inner_v()`: set vertical inner borders
-+ `border_outer()`: set outer borders
-+ `border_remove()`: remove borders
-+ `fix_border_issues()`: fix border issues when cell are merged
-]
-
-.right5[
-
-<br>
-
-All of them takes `border = ` as an option where you determine the specifics of the borders using the `fp_border()` function from the `officer` package.
-
-
-.content-box-green[**Syntax**]
-
-```{r eval = F}
-#--- the values are default values ---#
-border = fp_border(color = "black", style = "solid", width = 1)  
-```
-
-.content-box-green[**Example**]
-
-```{r }
-border = fp_border(color = "grey", style = "dotted", width = 2)  
-```
-
-]
-
-] 
-
-  <!-- panel ends here -->
-
-<!-- panel ends here -->
-
-.panel[.panel-name[Example]
-
-.left-code[
-```{r border-ex, eval = F}  
-tab_data %>%  
-  flextable(
-    col_keys = c("country_name", "region", "y_1995", "y_2005")
-  ) %>%  
-  hline(
-    i = 3, 
-    j = 1:3, 
-    border = fp_border( #<<
-      color = "red", #<<
-      style = "dotted", #<<
-      width = 4 #<<
-    ) #<<
-  ) 
-```
-]
-
-.right-plot[
-```{r border-ex-f, ref.label = "border-ex", echo = F}  
-
-```
-]
-
-  ]
-
-<!-- panel ends here -->
-
-]
-
-<!-- panel set ends here -->
-
-
----
-
-```{r borders-f, cache = F, include = F}
-tab_data %>% #BREAK 
-  flextable(
-    col_keys = c("country_name", "region", "y_1995", "y_2005")
-  ) %>% #BREAK 
-  border_remove() %>% #BREAK
-  hline(i = 3, j = 1:3, border = fp_border(color = "red")) %>% #BREAK 
-  hline_bottom(j = 3:4, border = fp_border(color = "green")) %>% #BREAK 
-  hline_top(j = 1:3, border = fp_border(color = "orange")) %>% #BREAK 
-  vline(border = fp_border(color = "orange")) %>% #BREAK 
-  vline_left(border = fp_border(color = "grey", width = 2)) %>% #BREAK 
-  vline_right(border = fp_border(color = "red", width = 2)) %>% #BREAK 
-  border(i = 4, j = 2, 
-    border.top = fp_border(color = "red", width = 3),
-    border.left = fp_border(color = "green", width = 3),
-    border.right = fp_border(color = "black", width = 3),
-    border.bottom = fp_border(color = "pink", width = 3)
-  ) %>% #BREAK 
-  border_inner_h(border = fp_border(color = "black")) %>% #BREAK 
-  border_inner_v(border = fp_border(color = "black")) %>% #BREAK 
-  border_remove() %>% #BREAK 
-  border_outer(border = fp_border(color = "red", width = 4)) 
-
-```
-
-`r chunk_reveal(
-  chunk_name = "borders-f", 
-  title = "# Borders",
   break_type = "user", 
   display_type = "both", 
   left_assign = FALSE,

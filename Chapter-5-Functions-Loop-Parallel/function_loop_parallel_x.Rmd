@@ -1603,9 +1603,9 @@ profit_data %>%
 .content-box-green[**Keep track of RAM memory usage**]
 
 + Mac users: go to .blue[Applications] $\rightarrow$ .blue[Utilities] $\rightarrow$
-.blue[Activity Monitor] $\rightarrow$
+.blue[Activity Monitor] 
 
-+ Windows users: press `Windows Key` + `R` $\rightarrow$ type "resmon" into the search box $\rightarrow$ 
++ Windows users: press `Windows Key` + `R` $\rightarrow$ type "resmon" into the search box  
 
 
 

@@ -414,5 +414,7 @@ file names: s1_, s2_
 
 demonstration: rmarkdown, r. 
 
+RStudio: visual markdown editing 
 
+# RStudio project, global environment
 
