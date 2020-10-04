@@ -137,6 +137,12 @@ class: center, middle, inverse, title-slide
   padding-left: 1%;
 }
 
+.left6 {
+  width: 60%;
+  height: 92%;
+  float: left;
+}
+
 .left5 {
   width: 49%;
   height: 92%;
@@ -357,7 +363,6 @@ The objectives of this chapter is to learn various functions that are useful to 
 
 1. [Dates](#date)
 2. [Strings](#string)
-3. [](#)
 
 &lt;br&gt;
 
@@ -391,18 +396,18 @@ pizzaplace
 
 ```
 ## # A tibble: 49,574 x 7
-##    id          date       time     name        size  type   price
-##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;
-##  1 2015-000001 2015-01-01 11:38:36 hawaiian    M     class…  13.2
-##  2 2015-000002 2015-01-01 11:57:40 classic_dlx M     class…  16  
-##  3 2015-000002 2015-01-01 11:57:40 mexicana    M     veggie  16  
-##  4 2015-000002 2015-01-01 11:57:40 thai_ckn    L     chick…  20.8
-##  5 2015-000002 2015-01-01 11:57:40 five_cheese L     veggie  18.5
-##  6 2015-000002 2015-01-01 11:57:40 ital_supr   L     supre…  20.8
-##  7 2015-000003 2015-01-01 12:12:28 prsc_argla  L     supre…  20.8
-##  8 2015-000003 2015-01-01 12:12:28 ital_supr   M     supre…  16.5
-##  9 2015-000004 2015-01-01 12:16:31 ital_supr   M     supre…  16.5
-## 10 2015-000005 2015-01-01 12:21:30 ital_supr   M     supre…  16.5
+##    id          date       time     name        size  type    price
+##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt;
+##  1 2015-000001 2015-01-01 11:38:36 hawaiian    M     classic  13.2
+##  2 2015-000002 2015-01-01 11:57:40 classic_dlx M     classic  16  
+##  3 2015-000002 2015-01-01 11:57:40 mexicana    M     veggie   16  
+##  4 2015-000002 2015-01-01 11:57:40 thai_ckn    L     chicken  20.8
+##  5 2015-000002 2015-01-01 11:57:40 five_cheese L     veggie   18.5
+##  6 2015-000002 2015-01-01 11:57:40 ital_supr   L     supreme  20.8
+##  7 2015-000003 2015-01-01 12:12:28 prsc_argla  L     supreme  20.8
+##  8 2015-000003 2015-01-01 12:12:28 ital_supr   M     supreme  16.5
+##  9 2015-000004 2015-01-01 12:16:31 ital_supr   M     supreme  16.5
+## 10 2015-000005 2015-01-01 12:21:30 ital_supr   M     supreme  16.5
 ## # … with 49,564 more rows
 ```
 
@@ -693,8 +698,7 @@ seq(ymd("2015-05-01"), ymd("2020-05-01"), by = "years")
 ```
 
 ```
-## [1] "2015-05-01" "2016-05-01" "2017-05-01" "2018-05-01"
-## [5] "2019-05-01" "2020-05-01"
+## [1] "2015-05-01" "2016-05-01" "2017-05-01" "2018-05-01" "2019-05-01" "2020-05-01"
 ```
 
 ```r
@@ -702,8 +706,7 @@ seq(ymd("2015-05-01"), ymd("2015-06-01"), by = "weeks")
 ```
 
 ```
-## [1] "2015-05-01" "2015-05-08" "2015-05-15" "2015-05-22"
-## [5] "2015-05-29"
+## [1] "2015-05-01" "2015-05-08" "2015-05-15" "2015-05-22" "2015-05-29"
 ```
 
 ```r
@@ -711,9 +714,8 @@ seq(ymd("2015-05-01"), ymd("2015-05-09"), by = "days")
 ```
 
 ```
-## [1] "2015-05-01" "2015-05-02" "2015-05-03" "2015-05-04"
-## [5] "2015-05-05" "2015-05-06" "2015-05-07" "2015-05-08"
-## [9] "2015-05-09"
+## [1] "2015-05-01" "2015-05-02" "2015-05-03" "2015-05-04" "2015-05-05" "2015-05-06"
+## [7] "2015-05-07" "2015-05-08" "2015-05-09"
 ```
 
   ] 
@@ -734,18 +736,18 @@ pizzaplace %&gt;%
 
 ```
 ## # A tibble: 32,969 x 7
-##    id          date       time     name        size  type   price
-##    &lt;chr&gt;       &lt;date&gt;     &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt;
-##  1 2015-007170 2015-05-01 11:31:03 classic_dlx M     class…  16  
-##  2 2015-007171 2015-05-01 11:42:07 bbq_ckn     S     chick…  12.8
-##  3 2015-007172 2015-05-01 11:43:01 bbq_ckn     S     chick…  12.8
-##  4 2015-007173 2015-05-01 11:43:37 mexicana    L     veggie  20.2
-##  5 2015-007174 2015-05-01 11:51:22 ital_supr   S     supre…  12.5
-##  6 2015-007174 2015-05-01 11:51:22 ital_supr   L     supre…  20.8
-##  7 2015-007174 2015-05-01 11:51:22 calabrese   M     supre…  16.2
-##  8 2015-007174 2015-05-01 11:51:22 four_cheese L     veggie  18.0
-##  9 2015-007174 2015-05-01 11:51:22 classic_dlx L     class…  20.5
-## 10 2015-007174 2015-05-01 11:51:22 spicy_ital  L     supre…  20.8
+##    id          date       time     name        size  type    price
+##    &lt;chr&gt;       &lt;date&gt;     &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt;
+##  1 2015-007170 2015-05-01 11:31:03 classic_dlx M     classic  16  
+##  2 2015-007171 2015-05-01 11:42:07 bbq_ckn     S     chicken  12.8
+##  3 2015-007172 2015-05-01 11:43:01 bbq_ckn     S     chicken  12.8
+##  4 2015-007173 2015-05-01 11:43:37 mexicana    L     veggie   20.2
+##  5 2015-007174 2015-05-01 11:51:22 ital_supr   S     supreme  12.5
+##  6 2015-007174 2015-05-01 11:51:22 ital_supr   L     supreme  20.8
+##  7 2015-007174 2015-05-01 11:51:22 calabrese   M     supreme  16.2
+##  8 2015-007174 2015-05-01 11:51:22 four_cheese L     veggie   18.0
+##  9 2015-007174 2015-05-01 11:51:22 classic_dlx L     classic  20.5
+## 10 2015-007174 2015-05-01 11:51:22 spicy_ital  L     supreme  20.8
 ## # … with 32,959 more rows
 ```
 
@@ -944,8 +946,8 @@ str_c(software_types, verbs, sep = " ")
 ```
 
 ```
-## [1] "R sucks"          "Python rocks"     "SAS is just okay"
-## [4] "STATA sucks"      "Matlab rocks"
+## [1] "R sucks"          "Python rocks"     "SAS is just okay" "STATA sucks"     
+## [5] "Matlab rocks"
 ```
 
 + `n`th element of a vector (`software_types`) is met with `n` the element of the other vector (`verbs`) with `verbs` recycled for the elements in `software_type` that are missing positional matches.
@@ -963,14 +965,11 @@ str_c(software_types, `rep(verbs, 5)`, sep = " ")
 
 
 ```
-##  [1] "R sucks"             "Python rocks"       
-##  [3] "SAS is just okay"    "STATA sucks"        
-##  [5] "Matlab rocks"        "R is just okay"     
-##  [7] "Python sucks"        "SAS rocks"          
-##  [9] "STATA is just okay"  "Matlab sucks"       
-## [11] "R rocks"             "Python is just okay"
-## [13] "SAS sucks"           "STATA rocks"        
-## [15] "Matlab is just okay"
+##  [1] "R sucks"             "Python rocks"        "SAS is just okay"   
+##  [4] "STATA sucks"         "Matlab rocks"        "R is just okay"     
+##  [7] "Python sucks"        "SAS rocks"           "STATA is just okay" 
+## [10] "Matlab sucks"        "R rocks"             "Python is just okay"
+## [13] "SAS sucks"           "STATA rocks"         "Matlab is just okay"
 ```
 
 + take advantage of the recycling feature to create all possible combinations of values    
@@ -997,18 +996,18 @@ pizzaplace &lt;- mutate(pizzaplace, type_size = str_c(type, size, sep = "-"))
 
 ```
 ## # A tibble: 49,574 x 8
-##    id       date     time   name     size  type   price type_size
-##    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;    
-##  1 2015-00… 2015-01… 11:38… hawaiian M     class…  13.2 classic-M
-##  2 2015-00… 2015-01… 11:57… classic… M     class…  16   classic-M
-##  3 2015-00… 2015-01… 11:57… mexicana M     veggie  16   veggie-M 
-##  4 2015-00… 2015-01… 11:57… thai_ckn L     chick…  20.8 chicken-L
-##  5 2015-00… 2015-01… 11:57… five_ch… L     veggie  18.5 veggie-L 
-##  6 2015-00… 2015-01… 11:57… ital_su… L     supre…  20.8 supreme-L
-##  7 2015-00… 2015-01… 12:12… prsc_ar… L     supre…  20.8 supreme-L
-##  8 2015-00… 2015-01… 12:12… ital_su… M     supre…  16.5 supreme-M
-##  9 2015-00… 2015-01… 12:16… ital_su… M     supre…  16.5 supreme-M
-## 10 2015-00… 2015-01… 12:21… ital_su… M     supre…  16.5 supreme-M
+##    id          date       time     name        size  type    price type_size
+##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;    
+##  1 2015-000001 2015-01-01 11:38:36 hawaiian    M     classic  13.2 classic-M
+##  2 2015-000002 2015-01-01 11:57:40 classic_dlx M     classic  16   classic-M
+##  3 2015-000002 2015-01-01 11:57:40 mexicana    M     veggie   16   veggie-M 
+##  4 2015-000002 2015-01-01 11:57:40 thai_ckn    L     chicken  20.8 chicken-L
+##  5 2015-000002 2015-01-01 11:57:40 five_cheese L     veggie   18.5 veggie-L 
+##  6 2015-000002 2015-01-01 11:57:40 ital_supr   L     supreme  20.8 supreme-L
+##  7 2015-000003 2015-01-01 12:12:28 prsc_argla  L     supreme  20.8 supreme-L
+##  8 2015-000003 2015-01-01 12:12:28 ital_supr   M     supreme  16.5 supreme-M
+##  9 2015-000004 2015-01-01 12:16:31 ital_supr   M     supreme  16.5 supreme-M
+## 10 2015-000005 2015-01-01 12:21:30 ital_supr   M     supreme  16.5 supreme-M
 ## # … with 49,564 more rows
 ```
 
@@ -1033,9 +1032,8 @@ head(file_names)
 ```
 
 ```
-## [1] "corn_yield_2000.csv" "corn_yield_2001.csv"
-## [3] "corn_yield_2002.csv" "corn_yield_2003.csv"
-## [5] "corn_yield_2004.csv" "corn_yield_2005.csv"
+## [1] "corn_yield_2000.csv" "corn_yield_2001.csv" "corn_yield_2002.csv"
+## [4] "corn_yield_2003.csv" "corn_yield_2004.csv" "corn_yield_2005.csv"
 ```
 
 Now, you can easily read each of them iteratively using a loop.
@@ -1173,8 +1171,7 @@ pizzaplace_for_plot$date_text %&gt;% head()
 ```
 
 ```
-## [1] "01/01/2015" "01/01/2015" "01/01/2015" "01/01/2015"
-## [5] "01/01/2015" "01/01/2015"
+## [1] "01/01/2015" "01/01/2015" "01/01/2015" "01/01/2015" "01/01/2015" "01/01/2015"
 ```
 
 So, you would like to replace "20" with "" (nothing).
@@ -1220,8 +1217,7 @@ pizzaplace %&gt;%
 ```
 
 ```
-## [1] "01/01/15" "01/01/15" "01/01/15" "01/01/15" "01/01/15"
-## [6] "01/01/15"
+## [1] "01/01/15" "01/01/15" "01/01/15" "01/01/15" "01/01/15" "01/01/15"
 ```
 
   ]
@@ -1287,9 +1283,8 @@ head(all_files)
 ```
 
 ```
-## [1] "corn_experiment_1.rds"   "corn_experiment_10.rds" 
-## [3] "corn_experiment_100.rds" "corn_experiment_11.rds" 
-## [5] "corn_experiment_12.rds"  "corn_experiment_13.rds"
+## [1] "corn_experiment_1.rds"   "corn_experiment_10.rds"  "corn_experiment_100.rds"
+## [4] "corn_experiment_11.rds"  "corn_experiment_12.rds"  "corn_experiment_13.rds"
 ```
 
 ```r
@@ -1297,9 +1292,8 @@ tail(all_files)
 ```
 
 ```
-## [1] "soy_experiment_5.rds"  "soy_experiment_50.rds"
-## [3] "soy_experiment_6.rds"  "soy_experiment_7.rds" 
-## [5] "soy_experiment_8.rds"  "soy_experiment_9.rds"
+## [1] "soy_experiment_5.rds"  "soy_experiment_50.rds" "soy_experiment_6.rds" 
+## [4] "soy_experiment_7.rds"  "soy_experiment_8.rds"  "soy_experiment_9.rds"
 ```
 
 Now use `str_detect()` to find which elements of `all_files` include "soy."
@@ -1318,30 +1312,22 @@ all_files[is_soy]
 ```
 
 ```
-##  [1] "soy_experiment_1.rds"  "soy_experiment_10.rds"
-##  [3] "soy_experiment_11.rds" "soy_experiment_12.rds"
-##  [5] "soy_experiment_13.rds" "soy_experiment_14.rds"
-##  [7] "soy_experiment_15.rds" "soy_experiment_16.rds"
-##  [9] "soy_experiment_17.rds" "soy_experiment_18.rds"
-## [11] "soy_experiment_19.rds" "soy_experiment_2.rds" 
-## [13] "soy_experiment_20.rds" "soy_experiment_21.rds"
-## [15] "soy_experiment_22.rds" "soy_experiment_23.rds"
-## [17] "soy_experiment_24.rds" "soy_experiment_25.rds"
-## [19] "soy_experiment_26.rds" "soy_experiment_27.rds"
-## [21] "soy_experiment_28.rds" "soy_experiment_29.rds"
-## [23] "soy_experiment_3.rds"  "soy_experiment_30.rds"
-## [25] "soy_experiment_31.rds" "soy_experiment_32.rds"
-## [27] "soy_experiment_33.rds" "soy_experiment_34.rds"
-## [29] "soy_experiment_35.rds" "soy_experiment_36.rds"
-## [31] "soy_experiment_37.rds" "soy_experiment_38.rds"
-## [33] "soy_experiment_39.rds" "soy_experiment_4.rds" 
-## [35] "soy_experiment_40.rds" "soy_experiment_41.rds"
-## [37] "soy_experiment_42.rds" "soy_experiment_43.rds"
-## [39] "soy_experiment_44.rds" "soy_experiment_45.rds"
-## [41] "soy_experiment_46.rds" "soy_experiment_47.rds"
-## [43] "soy_experiment_48.rds" "soy_experiment_49.rds"
-## [45] "soy_experiment_5.rds"  "soy_experiment_50.rds"
-## [47] "soy_experiment_6.rds"  "soy_experiment_7.rds" 
+##  [1] "soy_experiment_1.rds"  "soy_experiment_10.rds" "soy_experiment_11.rds"
+##  [4] "soy_experiment_12.rds" "soy_experiment_13.rds" "soy_experiment_14.rds"
+##  [7] "soy_experiment_15.rds" "soy_experiment_16.rds" "soy_experiment_17.rds"
+## [10] "soy_experiment_18.rds" "soy_experiment_19.rds" "soy_experiment_2.rds" 
+## [13] "soy_experiment_20.rds" "soy_experiment_21.rds" "soy_experiment_22.rds"
+## [16] "soy_experiment_23.rds" "soy_experiment_24.rds" "soy_experiment_25.rds"
+## [19] "soy_experiment_26.rds" "soy_experiment_27.rds" "soy_experiment_28.rds"
+## [22] "soy_experiment_29.rds" "soy_experiment_3.rds"  "soy_experiment_30.rds"
+## [25] "soy_experiment_31.rds" "soy_experiment_32.rds" "soy_experiment_33.rds"
+## [28] "soy_experiment_34.rds" "soy_experiment_35.rds" "soy_experiment_36.rds"
+## [31] "soy_experiment_37.rds" "soy_experiment_38.rds" "soy_experiment_39.rds"
+## [34] "soy_experiment_4.rds"  "soy_experiment_40.rds" "soy_experiment_41.rds"
+## [37] "soy_experiment_42.rds" "soy_experiment_43.rds" "soy_experiment_44.rds"
+## [40] "soy_experiment_45.rds" "soy_experiment_46.rds" "soy_experiment_47.rds"
+## [43] "soy_experiment_48.rds" "soy_experiment_49.rds" "soy_experiment_5.rds" 
+## [46] "soy_experiment_50.rds" "soy_experiment_6.rds"  "soy_experiment_7.rds" 
 ## [49] "soy_experiment_8.rds"  "soy_experiment_9.rds"
 ```
 ]
@@ -1439,18 +1425,18 @@ pizzaplace %&gt;%
 
 ```
 ## # A tibble: 49,574 x 8
-##    id       date     time   name     size  type   price type_size
-##    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;    
-##  1 2015-00… 2015-01… 11:38… HAWAIIAN M     class…  13.2 classic-M
-##  2 2015-00… 2015-01… 11:57… CLASSIC… M     class…  16   classic-M
-##  3 2015-00… 2015-01… 11:57… MEXICANA M     veggie  16   veggie-M 
-##  4 2015-00… 2015-01… 11:57… THAI_CKN L     chick…  20.8 chicken-L
-##  5 2015-00… 2015-01… 11:57… FIVE_CH… L     veggie  18.5 veggie-L 
-##  6 2015-00… 2015-01… 11:57… ITAL_SU… L     supre…  20.8 supreme-L
-##  7 2015-00… 2015-01… 12:12… PRSC_AR… L     supre…  20.8 supreme-L
-##  8 2015-00… 2015-01… 12:12… ITAL_SU… M     supre…  16.5 supreme-M
-##  9 2015-00… 2015-01… 12:16… ITAL_SU… M     supre…  16.5 supreme-M
-## 10 2015-00… 2015-01… 12:21… ITAL_SU… M     supre…  16.5 supreme-M
+##    id          date       time     name        size  type    price type_size
+##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;    
+##  1 2015-000001 2015-01-01 11:38:36 HAWAIIAN    M     classic  13.2 classic-M
+##  2 2015-000002 2015-01-01 11:57:40 CLASSIC_DLX M     classic  16   classic-M
+##  3 2015-000002 2015-01-01 11:57:40 MEXICANA    M     veggie   16   veggie-M 
+##  4 2015-000002 2015-01-01 11:57:40 THAI_CKN    L     chicken  20.8 chicken-L
+##  5 2015-000002 2015-01-01 11:57:40 FIVE_CHEESE L     veggie   18.5 veggie-L 
+##  6 2015-000002 2015-01-01 11:57:40 ITAL_SUPR   L     supreme  20.8 supreme-L
+##  7 2015-000003 2015-01-01 12:12:28 PRSC_ARGLA  L     supreme  20.8 supreme-L
+##  8 2015-000003 2015-01-01 12:12:28 ITAL_SUPR   M     supreme  16.5 supreme-M
+##  9 2015-000004 2015-01-01 12:16:31 ITAL_SUPR   M     supreme  16.5 supreme-M
+## 10 2015-000005 2015-01-01 12:21:30 ITAL_SUPR   M     supreme  16.5 supreme-M
 ## # … with 49,564 more rows
 ```
 ]
@@ -1467,18 +1453,18 @@ pizzaplace %&gt;%
 
 ```
 ## # A tibble: 49,574 x 8
-##    id       date     time   name     size  type   price type_size
-##    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;    
-##  1 2015-00… 2015-01… 11:38… hawaiian m     class…  13.2 classic-M
-##  2 2015-00… 2015-01… 11:57… classic… m     class…  16   classic-M
-##  3 2015-00… 2015-01… 11:57… mexicana m     veggie  16   veggie-M 
-##  4 2015-00… 2015-01… 11:57… thai_ckn l     chick…  20.8 chicken-L
-##  5 2015-00… 2015-01… 11:57… five_ch… l     veggie  18.5 veggie-L 
-##  6 2015-00… 2015-01… 11:57… ital_su… l     supre…  20.8 supreme-L
-##  7 2015-00… 2015-01… 12:12… prsc_ar… l     supre…  20.8 supreme-L
-##  8 2015-00… 2015-01… 12:12… ital_su… m     supre…  16.5 supreme-M
-##  9 2015-00… 2015-01… 12:16… ital_su… m     supre…  16.5 supreme-M
-## 10 2015-00… 2015-01… 12:21… ital_su… m     supre…  16.5 supreme-M
+##    id          date       time     name        size  type    price type_size
+##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;    
+##  1 2015-000001 2015-01-01 11:38:36 hawaiian    m     classic  13.2 classic-M
+##  2 2015-000002 2015-01-01 11:57:40 classic_dlx m     classic  16   classic-M
+##  3 2015-000002 2015-01-01 11:57:40 mexicana    m     veggie   16   veggie-M 
+##  4 2015-000002 2015-01-01 11:57:40 thai_ckn    l     chicken  20.8 chicken-L
+##  5 2015-000002 2015-01-01 11:57:40 five_cheese l     veggie   18.5 veggie-L 
+##  6 2015-000002 2015-01-01 11:57:40 ital_supr   l     supreme  20.8 supreme-L
+##  7 2015-000003 2015-01-01 12:12:28 prsc_argla  l     supreme  20.8 supreme-L
+##  8 2015-000003 2015-01-01 12:12:28 ital_supr   m     supreme  16.5 supreme-M
+##  9 2015-000004 2015-01-01 12:16:31 ital_supr   m     supreme  16.5 supreme-M
+## 10 2015-000005 2015-01-01 12:21:30 ital_supr   m     supreme  16.5 supreme-M
 ## # … with 49,564 more rows
 ```
 ]
@@ -1495,18 +1481,18 @@ pizzaplace %&gt;%
 
 ```
 ## # A tibble: 49,574 x 8
-##    id       date     time   name     size  type   price type_size
-##    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;    
-##  1 2015-00… 2015-01… 11:38… hawaiian M     Class…  13.2 classic-M
-##  2 2015-00… 2015-01… 11:57… classic… M     Class…  16   classic-M
-##  3 2015-00… 2015-01… 11:57… mexicana M     Veggie  16   veggie-M 
-##  4 2015-00… 2015-01… 11:57… thai_ckn L     Chick…  20.8 chicken-L
-##  5 2015-00… 2015-01… 11:57… five_ch… L     Veggie  18.5 veggie-L 
-##  6 2015-00… 2015-01… 11:57… ital_su… L     Supre…  20.8 supreme-L
-##  7 2015-00… 2015-01… 12:12… prsc_ar… L     Supre…  20.8 supreme-L
-##  8 2015-00… 2015-01… 12:12… ital_su… M     Supre…  16.5 supreme-M
-##  9 2015-00… 2015-01… 12:16… ital_su… M     Supre…  16.5 supreme-M
-## 10 2015-00… 2015-01… 12:21… ital_su… M     Supre…  16.5 supreme-M
+##    id          date       time     name        size  type    price type_size
+##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;    
+##  1 2015-000001 2015-01-01 11:38:36 hawaiian    M     Classic  13.2 classic-M
+##  2 2015-000002 2015-01-01 11:57:40 classic_dlx M     Classic  16   classic-M
+##  3 2015-000002 2015-01-01 11:57:40 mexicana    M     Veggie   16   veggie-M 
+##  4 2015-000002 2015-01-01 11:57:40 thai_ckn    L     Chicken  20.8 chicken-L
+##  5 2015-000002 2015-01-01 11:57:40 five_cheese L     Veggie   18.5 veggie-L 
+##  6 2015-000002 2015-01-01 11:57:40 ital_supr   L     Supreme  20.8 supreme-L
+##  7 2015-000003 2015-01-01 12:12:28 prsc_argla  L     Supreme  20.8 supreme-L
+##  8 2015-000003 2015-01-01 12:12:28 ital_supr   M     Supreme  16.5 supreme-M
+##  9 2015-000004 2015-01-01 12:16:31 ital_supr   M     Supreme  16.5 supreme-M
+## 10 2015-000005 2015-01-01 12:21:30 ital_supr   M     Supreme  16.5 supreme-M
 ## # … with 49,564 more rows
 ```
 ]

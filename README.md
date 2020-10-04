@@ -10,7 +10,9 @@ This is the repository for AECN 396/AECN896-002 at University of Nebraska Lincol
 + Lecture 3: Data Wrangling with the `tidyverse` package ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-3-DataWrangling/data_wrangling_x.html))
 + Lecture 4: Data Visualization ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-4-DataVisualization/data_visualization_x.html))
 + Lecture 5: Function, Loop, and Parallel Computation ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-5-Functions-Loop-Parallel/function_loop_parallel_x.html))
-+ Lecture 6: Dates and String Operations  ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-6-Miscellaneous/misc_x.html))
++ Lecture 6: Miscellaneous Tips and Useful Functions
+    * Project Management, Code Organization, and RStudio  ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-6-HowCodeProject/code_project_RStudio_x.html))
+    * Dates and String Operations  ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-6-Miscellaneous/misc_x.html))
 + Lecture 7: Make Tables 
     * Create tables with the `gt` package([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-7-MakeTable/make_table_x.html))
     * Create tables with the Microsoft-friendly `flextable` package ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-7-MakeTable/make_table_flextable_x.html))

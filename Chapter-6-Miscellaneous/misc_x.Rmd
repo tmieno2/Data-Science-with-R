@@ -22,6 +22,7 @@ suppressMessages(library(nycflights13))
 suppressMessages(library(extrafont)) 
 suppressMessages(library(gt)) 
 data(pizzaplace)
+suppressMessages(library(lubridate)) 
 suppressMessages(library(patchwork))
 ```
 
@@ -35,7 +36,6 @@ The objectives of this chapter is to learn various functions that are useful to 
 
 1. [Dates](#date)
 2. [Strings](#string)
-3. [](#)
 
 <br>
 
