@@ -34,19 +34,6 @@ suppressMessages(library(parallel))
 2. [R Code Structure and Organization](#loop)
 3. [RStudio Tips](#par)
 
----
-
-class: inverse, center, middle
-name: user-defined-function
-
-# How to write and organize R codes 
-
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
-
----
-
-# A simple function
-
 <!-- 
 #/*=================================================*/
 #' # RStudio tips
@@ -61,6 +48,35 @@ name: user-defined-function
 # RStudio tips 
 
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+
+# R sessions and the global environment
+
+.content-box-red[**Recommendation**]
+
+Work on separate R sessions for different projects 
+  * confusions between objects of the same or similar name (accidentally using the one you do not intend to use)
+  * wasting memory by holding objects on the global environment that are completely irrelevant to your working project
+
+--
+
+.content-box-red[**Critical**]
+
++ As long as you have codes and datasets, all the results you have created in an R session can be reproduced. 
+
++ You have a process that takes very long? Then save its outcome and read just the outcome so you do not have to run the process all over again (caching).
+
+--
+
+.content-box-red[**Recommendation**]
+
++ Do not save your workspace when asked by RStudio because it is not necessary!
++ Indeed, let's turn off the options to save the workspace.
+
+```{r  echo = F, out.width = "50%"}
+include_graphics("Workspace.png") 
+```
 
 ---
 
@@ -327,7 +343,32 @@ A project mainly consists of four stages:
   * if you are using Rmd or Rnw (kintr + latex) to write a journal article or report, put them in the Writing folder
   * refer to figures and tables in the Results folder to insert into the document
 
+
 ]
+
+---
+
+# R code file names  
+
+By naming R code files so that which steps they are for and in which order you should run them.
+
+.content-box-green[**Examples**]
+
++ Step 1:
+  * s1_01_download_weather_data.R
+  * s1_02_download_political_boundary_data.R
++ Step 2:
+  * s2_01_summarize_data.R
+  * s2_02_merge_data.R
++ Step 3:
+  * s3_01_regression_analysis.R
+  * s3_02_gen_figures_tables.R
+
+
+.content-box-green[**README.md**]
+
+You can also add a README file that summarizes what each of the R code files can also help you remember what they do (take a look at the sample README file).
+
 
 ---
 
@@ -397,6 +438,36 @@ include_graphics("RunAllChunksAbove.png")
 ```{r  echo = F, out.width = "60%"}
 include_graphics("MoveBetweenChunks.png") 
 ```
+
+---
+
+# Rmarkdown as a source file: Tips
+
+
+.content-box-green[**Tip 1**]
+
+Make the project folder (the parent folder that includes all the folders including Data, Cocde folders, etc) an R project. 
+
+Then, when you click the folder button on RStudio to open a source file, the pop up file system is automatically directed to the project folder (you do not need to find the project folder and then find the source file).  
+
+.content-box-green[**Tip 2**]
+
+After you designate the project folder as an R project, go to Preferences, choose the R Markdown tab, and then choose "Project" for the "Evaluate chunks in directory:" item.
+
+```{r  echo = F, out.width = "50%"}
+include_graphics("RmarkdownDirectory.png") 
+```
+
+This will let you write a path to the dataset and files relative to the project folder. For example, 
+
+```{r eval = F}
+#--- read a data ---#
+data <- readRDS("./Data/RawData/data.rds")   
+
+#--- source an R source file ---#
+source("./Code/data_preparation.R")   
+``` 
+
 ---
 
 # Visual mode for Rmarkdown
@@ -422,52 +493,36 @@ Install the preview version [here](https://rstudio.com/products/rstudio/download
 
 Code snippets do not work in a Markdown context (should be fixed soon).
 
---
+
+---
+
+# R code style 
+
+You can write R codes however you would like. But, your code may get more readable to you and others who might read your codes by following a style guideline that is accepted by many R users. There are several popular styles of formatting R codes:
+
++ [tidyverse style](https://style.tidyverse.org/)
++ [Google's R Style Guide](http://web.stanford.edu/class/cs109l/unrestricted/resources/google-style.html) 
+
+.content-box-green[**Examples**]
+
+Here are some examples of the `tidyverse` style:
+
++ [how to name objects](https://style.tidyverse.org/syntax.html#object-names)
++ [spacing](https://style.tidyverse.org/syntax.html#spacing)
++ [long lines](https://style.tidyverse.org/syntax.html#long-lines)
++ [piping](https://style.tidyverse.org/pipes.html#introduction)
+
+.content-box-green[**Help**]
+
+The `styler` package can help you follow partially the `tidyverse` coding style. 
+
+Once the package is installed, you can highlight the lines of codes and hit `cmd` + `shift` + `A` foe Mac (`ctrl` + `shift` + `A` for Windows) to reformat the codes to conform with the tidyverse style.
+
+Alternatively, you can click on  `Addins` in the middle of the menu at the top, and select `style selection`.
 
 
 ---
 
-# Example 
-
-styler package
-[Google's R Style Guide](http://web.stanford.edu/class/cs109l/unrestricted/resources/google-style.html)
-
-file names: s1_, s2_
-
-demonstration: rmarkdown, r. 
-
-RStudio: visual markdown editing 
-
----
-
-# R sessions and the global environment
-
-.content-box-red[**Recommendation**]
-
-Work on separate R sessions for different projects 
-  * confusions between objects of the same or similar name (accidentally using the one you do not intend to use)
-  * wasting memory by holding objects on the global environment that are completely irrelevant to your working project
-
---
-
-.content-box-red[**Critical**]
-
-+ As long as you have codes and datasets, all the results you have created in an R session can be reproduced. 
-
-+ You have a process that takes very long? Then save its outcome and read just the outcome so you do not have to run the process all over again (caching).
-
---
-
-.content-box-red[**Recommendation**]
-
-+ Do not save your workspace when asked by RStudio because it is not necessary!
-+ Indeed, let's turn off the options to save the workspace.
-
-```{r  echo = F, out.width = "50%"}
-include_graphics("Workspace.png") 
-```
-
----
 
 # Resources 
 
