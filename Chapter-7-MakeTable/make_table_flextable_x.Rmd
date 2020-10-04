@@ -84,7 +84,7 @@ head(mtcars, 20) %>% #BREAK
 
 `r chunk_reveal(
   chunk_name = "taste-flextable", 
-  title = "# Taste of the gt package",
+  title = "# Taste of the flextable package",
   break_type = "user", 
   display_type = "both", 
   left_assign = FALSE,
@@ -281,6 +281,7 @@ tab_data %>%
  <!-- panel ends here -->
 
 .panel[.panel-name[i, j: integer, character]
+
 
 .left-code[
 <br>
@@ -829,7 +830,248 @@ tab_data %>% #BREAK
 
 ---
 
+# Headers and footers 
+
+.panelset[ 
+
+.panel[.panel-name[add_*_row()]
+
+.left5[
+
+You can use these functions to add a row to the top or the bottom of a table:
+
++ `add_header_row()`
++ `add_footer_row()`
+
+<br>
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+add_*_row(flextable, 
+  values = vector of characters, 
+  colwidths = vector of integers 
+)
+```
+
+<br>
+
+.content-box-green[**Example**]
+
+```{r eval = F}
+add_header_row(
+  values = c("3-column label", "1-column label"),
+  colwidths = c(3, 1)
+)
+```
+
+This code insert a row where "3-column label" spans for three columns and "1-column label" spans for one column.
+
+
+.content-box-green[**Note**]
+
+You might want to use `footnote()` to create footnotes instead of `add_footer_rows`, as it allows you to generate reference symbols at the same time.  
+
+]
+
+.right5[
+
+.content-box-green[**Example with an outcome table**]
+
+```{r add-header-row}
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  add_header_row(
+    values = c("3-column label", "1-column label"),
+    colwidths = c(3, 1)
+  ) %>% 
+  align(align = "center", part = "header") %>% 
+  autofit() %>% 
+  add_footer_row(
+    values = "4-column footnote, which is made longer to show it spans across the entire columns.",
+    colwidths = 4
+  )
+```
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[footnote()]
+
+.left5[
+
+.content-box-green[**Explanation**]
+
+`footnote()` lets you add footnotes with reference symbols for each of them. 
+
+.content-box-green[**Syntax**]
+
+.scroll-box-30[
+
+```{r cache = F}
+?footnote  
+```
+
+]
+
+]
+
+.right5[
+
+.content-box-green[**Example with an outcome table**]
+
+```{r }
+tab_data %>%  flextable(col_keys = c("country_name", "region", "y_1995", "y_2005")) %>% 
+  footnote(
+    i = 1, j = 1:2, part = "header",
+    value = as_paragraph(
+      c("This is footnote 1", "This is footnote 2")
+    ),
+    ref_symbols = c("++", "**")
+  )
+```
+
++ `n`th element in `value` is associated with `n`th value in `ref_symbols`
++ use `as_paragraph(c())` for `value`
+
+]
+
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[set_header_labels()]
+
+.left5[
+
+`set_header_labels()` lets you relable existing header labels using a named list.
+
+<br>
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+set_header_labels(
+  values = list( 
+    existing name 1 = "new name 1", 
+    existing name 2 = "new name 2" 
+  ) 
+) 
+```
+
+<br>
+
+.content-box-green[**Example**]
+
+```{r eval = F}
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>%
+  set_header_labels(
+    values = list( #<<
+      country_name = "Country Name", #<<
+      region = "Region" #<<
+    ) #<<
+  ) %>% 
+  autofit() 
+```
+
+]
+
+.right5[
+
+
+.content-box-green[**Example with an outcome table**]
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>%
+  set_header_labels(
+    values = list(
+      country_name = "Country Name",
+      region = "Region"
+    )
+  ) %>% 
+  autofit() 
+```
+]
+
+
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[delete_part()]
+
+.left5[
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+delete_part(flextable, part = "header")
+```
+
+The default is to delete the header.
+
+.content-box-green[**Example**]
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  delete_part()
+```
+
+]
+
+.right5[
+
+.content-box-red[**Important**]
+
+You can still (or have to) use the original variable names from the dataset for selectors even after you deleter the header:
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  delete_part() %>% 
+  hline(
+    i = 3, 
+    j = ~ country_name + region, 
+    border = fp_border(color = "red", style = "dotted", width = 4 
+    ) 
+  )  
+```
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+---
+
 # Layout
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
 
 .content-box-green[**List of functions**]
 
@@ -846,165 +1088,128 @@ Here is a list of functions you can use to change the layout of a table:
 + `fit_to_width()`: fit a flextable to a maximum width
 + `as_grouped_data()`: grouped data transformation
 
-]
+.content-box-green[**Instruction**]
 
----
+Use the selector syntax to specify where just like the other functions we have seen.
 
-```{r layout, cache = F, include = F}
-tab_data %>% #BREAK 
-  flextable(
-    col_keys = c("country_name", "region", "y_1995", "y_2005")
-  ) %>% #BREAK 
-  merge_v(j = ~ region) %>% #BREAK 
-  height(i = 5, height = 4) %>% #BREAK 
-  width(j = 2, width = 2) %>% #BREAK 
-  autofit()
-```
+We will look at `merge_v()`, `autofit()`, and `width()`. 
 
-`r chunk_reveal(
-  chunk_name = "layout", 
-  title = "# Layout",
-  break_type = "user", 
-  display_type = "both", 
-  left_assign = FALSE,
-  width = c(50, 50)
-  )
-`
-
----
-
-# Content transformation and formatting
-
-.panelset[ 
-
-<!-- panel ends here -->
-
-.panel[.panel-name[Instruction]
-
-.left5[
-<br>
-
-Here is a list of functions that let you alter the content of a table:
-
-+ `colformat_char()`: format character cells
-+ `colformat_int()`: format integer cells
-+ `colformat_num()`: format numeric cells
-+ `compose()`, `mk_par()`: Define flextable displayed values
-+ `as_paragraph()`: concatenate chunks in a flextable
-+ `as_chunk()`: chunk of text wrapper
-+ `as_image()`: image chunk wrapper
-+ `minibar()`: mini barplots chunk wrapper
-+ `linerange()`: mini linerange chunk wrapper
-+ `lollipop()`: mini lollipop chart chunk wrapper
-+ `as_b()`: bold chunk
-+ `as_bracket()`: chunk with values in brackets
-+ `as_i()`: italic chunk
-+ `as_sub()`: subscript chunk
-+ `as_sup()`: superscript chunk
-+ `hyperlink_text()`: chunk of text with hyperlink wrapper
-+ `set_caption()`: set caption
-+ `footnote()`: add footnotes to flextable
-+ `void()`: Delete flextable content
-]
-
-.right5[
-
-<br>
 
 .content-box-green[**Note**]
 
-Most of the functions are replaceable with either other `flextable` functions or R operations before applying `flextable()` to initiate a table from the `data.frame`.
+I have not encountered cases where I need to merge cells horizontally. It works in a similar manner to the way `merge_v()` works except that it works on rows instead of columns.
 
-.content-box-green[**Example**]
+  ]
 
-`colformat_char()` lets you add prefix and suffix to character columns. But, you can easily achieve this using `stringr::str_c` to a `data.frame` prior to apply `flextable()` to the `data.frame`.
-
-.content-box-green[**Here**]
-
-We will take a look at those that are likely to be useful and cannot be easily achieved pre-flextable.
-
-+ `as_image()`
-+ `hyperlink_text()`
-+ `set_caption()`
-+ `footnote()`
-
-]
-
-]
 <!-- panel ends here -->
 
-.panel[.panel-name[How]
+.panel[.panel-name[merge_v()]
+
+`merge_v()` merges vertically the adjacent cells with the same values. It does not accept `i` (rows) argument.
+
+
 
 .left5[
 
-<br>
 
-.content-box-green[**Syntax**]
+.content-box-red[**Before**]
 
-```{r eval = F}
-compose(i, j, value = as_paragraph(a list of elements))
-```
-
-`as_paragraph()` concatenates list of the elements specified inside it. 
-
-.content-box-green[**Example**]
-
-The following code first concatenate the values of y_2015, the text "uses ", and "image.png" row-wise and then place it to the [row = 1, col = 2] element of the table, overriding the existing content in the element.
-
-```{r eval = F}
-compose(i = 1, j = 2, 
-  value = as_paragraph(
-    #--- y_2015 ---#
-    as_chunk(y_2015), #<<
-    #--- text ---#
-    "uses ", #<<
-    #--- image ---#
-    as_image("image.png") #<<
-  )
-)
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) 
 ```
 
 ]
 
 .right5[
 
-<br>
-
-.content-box-green[**Example with outcome**]
+.content-box-red[**After**]
 
 ```{r }
-img.file <- file.path( R.home("doc"), "html", "logo.jpg" )
-
-tab_data %>% #BREAK 
+tab_data %>%  
   flextable(
     col_keys = c("country_name", "region", "y_1995", "y_2005")
-  ) %>% #BREAK 
-  compose(i = c(1, 3), j = 1,
-    value = as_paragraph(
-      as_chunk(country_name), #<<
-      "uses ", #<<
-      as_image(src = img.file) #<<
-    ) 
-  ) %>% 
-  autofit()  
-
-
+  ) %>%  merge_v(j = ~ region) #<<
 ```
 
 ]
 
 
-]
+  ]
 
 <!-- panel ends here -->
 
-.panel[.panel-name[footnote()]
+.panel[.panel-name[autofit()]
 
-  ] 
+`autofit()` adjust the height and width of cells .
 
-  <!-- panel ends here -->
+.left5[
 
-.panel[.panel-name[set_caption()]
+.content-box-red[**Before**]
+
+```{r }
+tab_data %>%
+  mutate(country_name = ifelse(country_name == "Australia", "super long country name .......... bluh bluh bluh bluh bluh bluh bluh bluh bluh bluh bluh bluh", country_name)) %>% 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  merge_v(j = ~ region)
+```
+
+]
+
+.right5[
+
+.content-box-red[**After**]
+
+```{r }
+tab_data %>%
+  mutate(country_name = ifelse(country_name == "Australia", "super long country name .......... bluh bluh bluh bluh bluh bluh bluh bluh bluh bluh bluh bluh", country_name)) %>% 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  merge_v(j = ~ region) %>% autofit() #<<
+```
+
+It adjusted the width of the 1st column so that more texts are displayed in a single row. But, the width of the entire table does not go over the limit of the paper.  
+
+]
+
+  ]
+
+.panel[.panel-name[width()]
+
+`width()` set the width of columns to the length you specify.
+
+.left5[
+
+.content-box-red[**Before**]
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  autofit() 
+```
+
+]
+
+.right5[
+
+.content-box-red[**After**]
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  autofit() %>%  width(j = ~ country_name, width = 1) #<<
+```
+
+]
 
   ] 
 
@@ -1014,42 +1219,82 @@ tab_data %>% #BREAK
 
 <!-- panel set ends here -->
 
-
----
-
-```{r format-content-flip, cache = F, include = F}
-tab_data %>% #BREAK 
-  flextable(
-    col_keys = c("country_name", "region", "y_1995", "y_2005")
-  ) %>% #BREAK 
-  compose(j = 1,
-    value = as_paragraph(
-      as_chunk(region),
-      "-",
-      as_chunk(country_name)
-    )
-  )
-  
-
-```
-
-`r chunk_reveal(
-  chunk_name = "format-content-flip", 
-  title = "# Format",
-  break_type = "user", 
-  display_type = "both", 
-  left_assign = FALSE,
-  width = c(50, 50)
-  )
-`
-
----
-
-# Footnote 
-
 ---
 
 # Output 
+
+.left5[
+
+We can save the table in various formats.
+
++ `save_as_docx()`: docx (WORD)
++ `save_as_pptx()`: pptx (Power Point)
++ `save_as_image()`: image (png, pdf, jpeg) with help from the `webshot2` package
+
+Let's create a table for demonstration:
+
+```{r }
+table_tmep <- tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) 
+```
+
+]
+
+.right5[
+
+.content-box-green[**WORD**]
+
+```{r word, eval = F}
+save_as_docx(table_tmep, path = "temp_table.docx")
+```  
+
+.content-box-green[**Power Point**]
+
+```{r power-point, eval = F}
+save_as_pptx(table_tmep, path = "temp_table.pptx")
+```  
+
+.content-box-green[**Image**]
+
+I do not really recommend this option. It is hard to configure the output. 
+
+First install the `webshot2` package.
+
+```{r eval = F}
+#--- install ---#
+remotes::install_github("rstudio/webshot2") 
+
+#--- library ---#
+library(webshot2)
+```
+
++ png
+
+```{r eval = F}
+save_as_image(table_tmep, path = "temp_table.png") 
+```
+
++ pdf
+
+```{r eval = F}
+save_as_image(table_tmep, path = "temp_table.pdf", zoom = 10, webshot = "webshot2") 
+```
+
+]
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

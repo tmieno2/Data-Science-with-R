@@ -24,16 +24,15 @@ suppressMessages(library(parallel))
 
 ## Learning objectives
 
-+ Learn how to write functions yourself
-+ Learn how to use a for loop and `lapply()` to complete repetitive jobs
-+ Learn how not to loop things that can be easily vectorized
-+ Learn how to parallelize repetitive jobs using the `future_lapply()` function from the `future.apply` package
++ Learn how to organize your project: folder, codes, data files, etc
++ Learn how to organize R codes
++ Learn how to use various RStudio tips for efficient programming
 
 ## Table of contents
 
-1. [User-defined Function](#user-defined-function)
-2. [Looping](#loop)
-3. [Parallelization](#par)
+1. [Project Structure and Organization](#user-defined-function)
+2. [R Code Structure and Organization](#loop)
+3. [RStudio Tips](#par)
 
 ---
 
@@ -311,7 +310,7 @@ A project mainly consists of four stages:
 
 .right5[
 
-.content-box-red[**Tips (Recommended)**]
+.content-box-red[**Recommendations**]
 
 + Step 1:
   * place all the raw datasets (nothing else) in a designated folder inside the Data folder
@@ -398,10 +397,33 @@ include_graphics("RunAllChunksAbove.png")
 ```{r  echo = F, out.width = "60%"}
 include_graphics("MoveBetweenChunks.png") 
 ```
+---
+
+# Visual mode for Rmarkdown
+
+
+.content-box-red[**Preview version**]
+
+Preview version (RStudio 1.4) has the visual mode for Rmarkdown
+
+```{r  echo = F, out.width = "50%"}
+include_graphics("VisualMode.png") 
+```
+
+It lets you 
++ edit Rmarkdown as it it is like you are editing in Word. 
++ navigate the file using the navigation bar at the right 
+
+.content-box-green[**Installation**]
+
+Install the preview version [here](https://rstudio.com/products/rstudio/download/preview/).
+
+.content-box-green[**Caveat**]
+
+Code snippets do not work in a Markdown context (should be fixed soon).
 
 --
 
-+ Who told you that you have to knit an Rmd file? You do not have to.
 
 ---
 
@@ -416,5 +438,40 @@ demonstration: rmarkdown, r.
 
 RStudio: visual markdown editing 
 
-# RStudio project, global environment
+---
+
+# R sessions and the global environment
+
+.content-box-red[**Recommendation**]
+
+Work on separate R sessions for different projects 
+  * confusions between objects of the same or similar name (accidentally using the one you do not intend to use)
+  * wasting memory by holding objects on the global environment that are completely irrelevant to your working project
+
+--
+
+.content-box-red[**Critical**]
+
++ As long as you have codes and datasets, all the results you have created in an R session can be reproduced. 
+
++ You have a process that takes very long? Then save its outcome and read just the outcome so you do not have to run the process all over again (caching).
+
+--
+
+.content-box-red[**Recommendation**]
+
++ Do not save your workspace when asked by RStudio because it is not necessary!
++ Indeed, let's turn off the options to save the workspace.
+
+```{r  echo = F, out.width = "50%"}
+include_graphics("Workspace.png") 
+```
+
+---
+
+# Resources 
+
+
++ [Efficient R Programming](https://csgillespie.github.io/efficientR/)
+
 

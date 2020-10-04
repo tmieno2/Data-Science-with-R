@@ -1,0 +1,47 @@
+---
+title: "R as GIS: Vector Data"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    lib_dir: libs
+    nature:
+      ratio: 16:10
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r, child = './../setup.Rmd'}
+```
+
+```{r, include = F, cache = F}
+suppressMessages(library(sf)) 
+suppressMessages(library(ggplot2)) 
+suppressMessages(library(patchwork))
+```
+
+# Before you start
+
+## Learning objectives
+
+The objectives of this chapter is to learn how to use R as GIS 
+
+## Table of contents
+
+1. [Understanding the data structure of `sf`](#data-structure)
+2. [Create sf objects yourself](#create-sf)
+3. [Importing and exporting spatial datasets](#input-output)
+4. [Miiscellaneous operations](#misc)
+5. [Non-interactive transformation](#non-int-trans)
+
+<br>
+
+<span style="color:red"> Tips: </span>hitting letter "o" key will give you a panel view of the slides
+
+
+---
+
+# 
+
