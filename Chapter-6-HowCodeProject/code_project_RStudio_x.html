@@ -361,9 +361,12 @@ slides &gt; slide {
 
 ## Table of contents
 
-1. [Project Structure and Organization](#user-defined-function)
-2. [R Code Structure and Organization](#loop)
-3. [RStudio Tips](#par)
+1. [RStudio Tips](#tips)
+2. [How to organize your project and R codes](#organize)
+
+&lt;br&gt;
+
+&lt;span style="color:red"&gt; Tips: &lt;/span&gt;hitting "o" key will give you a panel view of the slides
 
 &lt;!-- 
 #/*=================================================*/
@@ -374,7 +377,7 @@ slides &gt; slide {
 ---
 
 class: inverse, center, middle
-name: user-defined-function
+name: tips
 
 # RStudio tips 
 
@@ -384,7 +387,7 @@ name: user-defined-function
 
 # R sessions and the global environment
 
-.content-box-red[**Recommendation**]
+.content-box-green[**Recommendation**]
 
 Work on separate R sessions for different projects 
   * confusions between objects of the same or similar name (accidentally using the one you do not intend to use)
@@ -400,7 +403,7 @@ Work on separate R sessions for different projects
 
 --
 
-.content-box-red[**Recommendation**]
+.content-box-green[**Recommendation**]
 
 + Do not save your workspace when asked by RStudio because it is not necessary!
 + Indeed, let's turn off the options to save the workspace.
@@ -624,11 +627,26 @@ snippet h3
 ---
 
 class: inverse, center, middle
-name: user-defined-function
+name: organize
 
 # How to write and organize R codes 
 
 &lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+class: middle 
+
+# Before we start
+
+.content-box-green[**Instruction**]
+
+Go [here](https://www.dropbox.com/sh/w0ie7d7uuej3bpg/AADWey0xgxF2CQ7qXhC0lgw_a?dl=0) and download the sample project folder.
+
+
+.content-box-green[**Note**]
+
+No actual datasets are in the Data folder.
+
 
 ---
 
@@ -636,7 +654,7 @@ name: user-defined-function
 
 .left5[
 
-.content-box-red[**Project Steps**]
+.content-box-green[**Project Steps**]
 
 A project mainly consists of four stages:
 
@@ -647,7 +665,7 @@ A project mainly consists of four stages:
 
 &lt;br&gt;
 
-.content-box-red[**Project Folder Structure**]
+.content-box-green[**Project Folder Structure**]
 
 + **Code**: all the codes go in here
   * DataPrep: 
@@ -659,11 +677,12 @@ A project mainly consists of four stages:
 + **Results**: results (regression, figures, tables)
 + **Writing**: WORD, Latex files 
 
+
 ]
 
 .right5[
 
-.content-box-red[**Recommendations**]
+.content-box-green[**Recommendations**]
 
 + Step 1:
   * place all the raw datasets (nothing else) in a designated folder inside the Data folder
@@ -713,11 +732,12 @@ You can also add a README file that summarizes what each of the R code files can
 
 .left5[
 
-.content-box-red[**Common Structure**]
+.content-box-green[**Common Structure**]
 
 All the R code files should have the following common structure:
 
 + Objective statement
+  * state objectives
   * input: state input files and datasets
   * output: state output files and datasets
 + Setup
@@ -736,7 +756,7 @@ All the R code files should have the following common structure:
 
 .right5[
 
-.content-box-red[**Tips**]
+.content-box-green[**Tips**]
 
 Write R codes as if you are writing a report:
 
@@ -782,6 +802,8 @@ Write R codes as if you are writing a report:
 Make the project folder (the parent folder that includes all the folders including Data, Cocde folders, etc) an R project. 
 
 Then, when you click the folder button on RStudio to open a source file, the pop up file system is automatically directed to the project folder (you do not need to find the project folder and then find the source file).  
+
+--
 
 .content-box-green[**Tip 2**]
 
@@ -852,13 +874,13 @@ Alternatively, you can click on  `Addins` in the middle of the menu at the top, 
 
 
 ---
-
+class: middle
 
 # Resources 
 
-
 + [Efficient R Programming](https://csgillespie.github.io/efficientR/)
-
++ [tidyverse style guide](https://style.tidyverse.org/)
++ [`styler` github page](https://github.com/r-lib/styler)
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

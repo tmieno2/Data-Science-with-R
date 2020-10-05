@@ -1,0 +1,129 @@
+---
+title: "Final Paper Expectations and Regulations"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: middle
+
+```{r, child = './../setup.Rmd'}
+```
+
+```{r, include = F}
+#--- load packages ---#
+suppressMessages(library(tidyverse))
+suppressMessages(library(data.table))
+suppressMessages(library(parallel))
+````
+
+# Final Project
+
+.content-box-green[**Submission**]
+
++ both Rmd and html
++ use the submission link I will provide
+
+
+.content-box-green[**Deadline**]
+
++ Final project is due Nov 25th.
++ Final project approval is due Oct 16th.
+
+---
+
+# Final Project Structure
+
+.content-box-green[**Introduction**]: 2 points
+
++ Describe what you are trying to find out (research question)
++ Describe why the research question is worthwhile answering
+
+(one paragraph)
+
+<br>
+--
+
+.content-box-green[**Data Description and Processing**]: 25 points
+
++ Describe what the final dataset would look like
+  * observational units (plots in an agronomic experiment, county, gene expression, etc)
+  * temporal and spatial scales if applicable 
+  * list of variables 
++ Provide summary statistics for each of the raw datasets using tables
++ Generate appropriate figures that help the readers understand the nature of the datasets 
++ Process raw datasets and combine them 
+
+<br>
+--
+
+.content-box-green[**Exploratory Analysis**]: 12 points
+
++ explore visually the relationship of variables you are interested in understanding 
++ run statistical analysis (unless impossible) and explain the results (Note: if you are Ag Econ students, you must run at least one regression)
++ present the results in a table and draw conclusions
+
+<br>
+--
+
+.content-box-green[**Conclusion**]: 1 point
+
++ summarize the report in several sentences
+
+---
+class: middle
+
+# Regulations and Bonus Points
+
+.content-box-green[**Regulation**]
+
++ Use Rmarkdown 
++ Use at least two raw datasets that need to be combined before analysis, and you need to merge the datasets at some point 
++ Annotate each of line of your R codes (for practice) 
++ Use `tidyverse` functions wherever possible (for practice)
++ Use `ggplot2` for all the figures you generate 
++ Use one of `gt`, `flextable`, and `modelsummary` to create tables (Note: if you are in Ag Econ, you need to create at least one regression results table using `modelsummary`)
++ Your project must include spatial operations using at least one of `sf`, `raster`, and `stars` packages if you are in Agronomy and Horticulture.
+
+--
+
+<br>
+
+.content-box-green[**Bonus Points**]
+
++ Define and use a function(s) in a meaningful way (2 points)
++ Use looping in a meaningful way and parallelize it (2 points)
++ Use more than three types figures in a meaningful way (2 points)
+
+---
+class: middle
+
+# Hints
+
+.content-box-green[**Hint 1**]
+
+The fastest and easiest way to find your final project is to simply bring back one of your old projects (whether it was done in R or outside of R) and redo everything (data wrangling, visualization, statistical analysis, reporting) using R, taking advantage of what you have learned in the class.
+  
+<br>
+--
+
+.content-box-green[**Hint 2**]
+
+Assignment 1 is very similar to what your final project should look like
+
+<br>  
+--
+
+.content-box-green[**Hint 3**]
+
+This assignment is like writing a journal article except you provide lots of details about how you process datasets with all the R codes displayed.
+
+
+
+ 
