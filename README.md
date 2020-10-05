@@ -30,7 +30,7 @@ This is the repository for AECN 396/AECN896-002 at University of Nebraska Lincol
 
 ## Final Project
 
-* Final Project Instruction([here](https://tmieno2.github.io/Data-Science-with-R/FinalProject/final_project_x.html))
+* Final Project Instruction ([here](https://tmieno2.github.io/Data-Science-with-R/FinalProject/final_project_x.html))
 
 ## Datasets
 
