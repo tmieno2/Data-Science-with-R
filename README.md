@@ -28,6 +28,9 @@ This is the repository for AECN 396/AECN896-002 at University of Nebraska Lincol
     * Rmd template and datasets ([here](https://www.dropbox.com/sh/1ftkow27rt4m6yd/AADas9eialIc3PXAqDfVNLCla?dl=0))
     * Submission link ([here](https://www.dropbox.com/request/4kpFrPyezSheeIyA5PXo))
 
+## Final Project
+
+* Final Project Instruction([here]https://tmieno2.github.io/Data-Science-with-R/FinalProject/final_project_x.html))
 
 ## Datasets
 
