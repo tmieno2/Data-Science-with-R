@@ -130,7 +130,8 @@ Once you add this, you can type "as" and hit `tab` (and hit `enter` if there are
 
 .content-box-green[**How to add snippets**]
 
-Go to .blue[Preferences] $\rightarrow$ .blue[Code] $\rightarrow$ .blue[Edit Snippets], select R tab, and add snippets.
++ Mac: Go to .blue[Preferences] $\rightarrow$ .blue[Code] $\rightarrow$ .blue[Edit Snippets], select R tab, and add snippets.
++ Windows: Go to .blue[Tools] $\rightarrow$ .blue[Global Options] $\rightarrow$ .blue[Code] $\rightarrow$ .blue[Edit Snippets], select R tab, and add snippets.
 
 ---
 

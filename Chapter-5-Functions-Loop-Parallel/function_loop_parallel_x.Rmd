@@ -1287,9 +1287,7 @@ name: opt
 
 .panelset[ 
 
-.panel[.panel-name[setup and method]
-
-## Setup
+.panel[.panel-name[setup]
 
 Suppose you have ran an randomized nitrogen experiment for corn production on a field, collected data, and run a regression to find the following quantitative relationship between corn yield (bu/acre) and nitrogen rate (lb/acre):
 
@@ -1608,6 +1606,149 @@ class: middle
 .blue[Activity Monitor] 
 
 + Windows users: press `Windows Key` + `R` $\rightarrow$ type "resmon" into the search box  
+
+
+---
+
+# Optimization (fixed attribute combinations)
+
+.panelset[ 
+
+.panel[.panel-name[setup]
+
+.left-full[
+
+Suppose you have ran an randomized nitrogen experiment for corn production on a field, collected data, and run a regression to find the following quantitative relationship between corn yield (bu/acre) and nitrogen rate (lb/acre):
+
+$$
+\mbox{corn yield} = 120 + (EC/40) \times (1 + slope)\times 25 \times log(\mbox{nitrogen rate})
+$$
+
+You are interested in finding the best nitrogen rates that maximize profit for different parts of the field at a given corn and nitrogen price combination. 
+
+$$
+Max_{N} P_C \times [120 + (1 + slope) * 25 \times log(\mbox{nitrogen rate})] - P_N \times N
+$$
+
++ `N`: nitrogen rate (lb/acre)
++ `slope`: the slope  
++ `EC`: electrical conductivity  
++ `P_C`: corn price ($/bu)
++ `P_N`: nitrogen price ($/lb)
+
+Here, `N` is a decision variable, `slope` and `EC` is an attribute, and `P_C` and `P_N` are parameters.
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[data]
+
+.content-box-green[**Data**]
+
+Consider a 2-plot field like below for the sake of tractability:
+
+```{r }
+field_data <- data.frame(
+  plot_id = c(1, 2),
+  slope = c(0, 0.2),
+  ec = c(40, 30)
+)
+```
+
+```{r echo = F}
+field_data  
+```
+
+.content-box-green[**Objective**]
+
+You want to find the optimal nitrogen rate for each plot for a give combination of corn and nitrogen prices.  
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[Strategy 1]
+
+.left-code[
+
+<br>
+
+You can expand on all the variables, nitrogen rate (decision variable), slope and EC (attributes), and corn and nitrogen prices (parameters):
+
+```{r eval-data-1, eval = F}  
+eval_data_1 <- expand.grid(
+  slope = field_data$slope, 
+  ec = field_data$ec, 
+  N = N_seq
+)
+```
+]
+
+.right-plot[
+
+<br>
+
+```{r eval-data-1-f, echo = F, highlight.output = c(2, 4, 6, 8, 10, 12)}  
+eval_data_1
+```
+
++ You only need the highlighted rows because no plots in this dataset has `slope`-`ec` combinations of `c(0, 30)` and `c(0.2, 40)`
++ 
++ You created unnecessary rows with this approach
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[Strategy 2]
+
+.left5[
+
+By calling the same rows over and over again, you can replicate the same rows multiple times:
+
+```{r }
+field_data[c(1, 1, 1, 2, 2, 2), ]
+```
+
+Hard-coding the vector, 
+
+```{r }
+rep(1:2, each = 3)
+```
+
+But, more generally,
+
+```{r }
+rep(1:nrow(field_data), each = length(N_seq))
+```
+]
+
+.right5[
+
+Under the `tidyverse` framework,
+
+```{r }
+field_data %>% 
+  slice(rep(1:nrow(.), each = length(N_seq)))
+```
+
+This approach does not create plots that do not exist unlike the expand-everything approach.
+
+]
+
+
+  ] 
+
+  <!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
+
 
 
 

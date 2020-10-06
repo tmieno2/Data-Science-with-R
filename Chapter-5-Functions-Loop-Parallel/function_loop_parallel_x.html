@@ -1451,12 +1451,12 @@ microbenchmark(
 
 ```
 ## Unit: milliseconds
-##            expr      min       lq       mean   median       uq
-##      vectorized 0.003205 0.003542 0.00397165 0.003723 0.004024
-##  not vectorized 0.490769 0.523902 0.55994333 0.537095 0.551539
+##            expr      min        lq      mean   median       uq
+##      vectorized 0.003219 0.0035895 0.0045303 0.003868 0.004782
+##  not vectorized 0.495641 0.5236660 0.5628010 0.538783 0.548573
 ##       max neval
-##  0.014098   100
-##  2.789982   100
+##  0.015769   100
+##  2.683817   100
 ```
 
 + As you can see, the vectorized version is faster. 
@@ -1544,11 +1544,11 @@ microbenchmark(
 ```
 ## Unit: milliseconds
 ##            expr      min       lq     mean   median       uq
-##      vectorized 1.230164 1.381957 1.638241 1.460570 1.673042
-##  not vectorized 2.154676 2.288282 2.483448 2.354325 2.551245
+##      vectorized 1.224101 1.380003 1.641345 1.482255 1.771031
+##  not vectorized 2.239979 2.375994 2.649160 2.520054 2.707553
 ##       max neval
-##  7.026919   100
-##  3.396470   100
+##  7.095902   100
+##  7.009078   100
 ```
 
   ] 
@@ -1702,12 +1702,12 @@ microbenchmark(
 
 ```
 ## Unit: milliseconds
-##              expr        min         lq       mean     median
-##      parallelized 264.600995 327.897694 354.154277 349.317681
-##  not parallelized   0.590606   1.277103   5.158533   4.281639
-##          uq      max neval
-##  376.699896 525.2349   100
-##    7.476595  24.0577   100
+##              expr        min         lq      mean     median
+##      parallelized 281.400175 353.633891 374.83251 373.564185
+##  not parallelized   0.644805   2.115329   5.97676   4.414178
+##          uq       max neval
+##  393.639664 521.47165   100
+##    7.616428  49.20121   100
 ```
 
 ]
@@ -1823,7 +1823,7 @@ toc()
 ```
 
 ```
-## 0.023 sec elapsed
+## 0.024 sec elapsed
 ```
 
 **Not parallelized (sequential)**:
@@ -1836,7 +1836,7 @@ toc()
 ```
 
 ```
-## 21.547 sec elapsed
+## 21.809 sec elapsed
 ```
 
 **Parallelized**:
@@ -1849,7 +1849,7 @@ toc()
 ```
 
 ```
-## 2.786 sec elapsed
+## 2.872 sec elapsed
 ```
 
 ]
@@ -1914,9 +1914,7 @@ name: opt
 
 .panelset[ 
 
-.panel[.panel-name[setup and method]
-
-## Setup
+.panel[.panel-name[setup]
 
 Suppose you have ran an randomized nitrogen experiment for corn production on a field, collected data, and run a regression to find the following quantitative relationship between corn yield (bu/acre) and nitrogen rate (lb/acre):
 
@@ -2377,6 +2375,198 @@ class: middle
 .blue[Activity Monitor] 
 
 + Windows users: press `Windows Key` + `R` `\(\rightarrow\)` type "resmon" into the search box  
+
+
+---
+
+# Optimization (fixed attribute combinations)
+
+.panelset[ 
+
+.panel[.panel-name[setup]
+
+.left-full[
+
+Suppose you have ran an randomized nitrogen experiment for corn production on a field, collected data, and run a regression to find the following quantitative relationship between corn yield (bu/acre) and nitrogen rate (lb/acre):
+
+$$
+\mbox{corn yield} = 120 + (EC/40) \times (1 + slope)\times 25 \times log(\mbox{nitrogen rate})
+$$
+
+You are interested in finding the best nitrogen rates that maximize profit for different parts of the field at a given corn and nitrogen price combination. 
+
+$$
+Max_{N} P_C \times [120 + (1 + slope) * 25 \times log(\mbox{nitrogen rate})] - P_N \times N
+$$
+
++ `N`: nitrogen rate (lb/acre)
++ `slope`: the slope  
++ `EC`: electrical conductivity  
++ `P_C`: corn price ($/bu)
++ `P_N`: nitrogen price ($/lb)
+
+Here, `N` is a decision variable, `slope` and `EC` is an attribute, and `P_C` and `P_N` are parameters.
+
+]
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[data]
+
+.content-box-green[**Data**]
+
+Consider a 2-plot field like below for the sake of tractability:
+
+
+```r
+field_data &lt;- data.frame(
+  plot_id = c(1, 2),
+  slope = c(0, 0.2),
+  ec = c(40, 30)
+)
+```
+
+
+```
+##   plot_id slope ec
+## 1       1   0.0 40
+## 2       2   0.2 30
+```
+
+.content-box-green[**Objective**]
+
+You want to find the optimal nitrogen rate for each plot for a give combination of corn and nitrogen prices.  
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Strategy 1]
+
+.left-code[
+
+&lt;br&gt;
+
+You can expand on all the variables, nitrogen rate (decision variable), slope and EC (attributes), and corn and nitrogen prices (parameters):
+
+
+```r
+eval_data_1 &lt;- expand.grid(
+  slope = field_data$slope, 
+  ec = field_data$ec, 
+  N = N_seq
+)
+```
+]
+
+.right-plot[
+
+&lt;br&gt;
+
+
+```
+##    slope ec   N
+*## 1    0.0 40 100
+## 2    0.2 40 100
+*## 3    0.0 30 100
+## 4    0.2 30 100
+*## 5    0.0 40 200
+## 6    0.2 40 200
+*## 7    0.0 30 200
+## 8    0.2 30 200
+*## 9    0.0 40 300
+## 10   0.2 40 300
+*## 11   0.0 30 300
+## 12   0.2 30 300
+```
+
++ You only need the highlighted rows because no plots in this dataset has `slope`-`ec` combinations of `c(0, 30)` and `c(0.2, 40)`
++ 
++ You created unnecessary rows with this approach
+
+]
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Strategy 2]
+
+.left5[
+
+By calling the same rows over and over again, you can replicate multiple of the same rows:
+
+
+```r
+field_data[c(1, 1, 1, 2, 2, 2), ]
+```
+
+```
+##     plot_id slope ec
+## 1         1   0.0 40
+## 1.1       1   0.0 40
+## 1.2       1   0.0 40
+## 2         2   0.2 30
+## 2.1       2   0.2 30
+## 2.2       2   0.2 30
+```
+
+Hard-coding the vector, 
+
+
+```r
+rep(1:2, each = 3)
+```
+
+```
+## [1] 1 1 1 2 2 2
+```
+
+But, more generally,
+
+
+```r
+rep(1:nrow(field_data), each = length(N_seq))
+```
+
+```
+## [1] 1 1 1 2 2 2
+```
+]
+
+.right5[
+
+Under the `tidyverse` framework,
+
+
+```r
+field_data %&gt;% 
+  slice(rep(1:nrow(.), each = length(N_seq)))
+```
+
+```
+##   plot_id slope ec
+## 1       1   0.0 40
+## 2       1   0.0 40
+## 3       1   0.0 40
+## 4       2   0.2 30
+## 5       2   0.2 30
+## 6       2   0.2 30
+```
+
+]
+
+
+
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+]
+
+&lt;!-- panel set ends here --&gt;
+
 
 
 
