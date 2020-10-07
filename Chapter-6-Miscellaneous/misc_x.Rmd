@@ -666,7 +666,7 @@ You want to read only the soy files.
 First, let's get the name of the whole list of files in the working directory:
 
 ```{r eval = F}
-list.files()
+all_files <- list.files("../../Datasets/Chapter_5/experiment_data")
 ```
 
 ```{r echo = F}
