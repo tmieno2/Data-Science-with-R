@@ -489,8 +489,16 @@ In `format` you specify how day, month, and year are represented in the date cha
 
 ```r
 #--- convert from a character to a Date ---#
+(
 a_date &lt;- as.Date("Dec 15 10", format = "%b %d %y")
+)
+```
 
+```
+## [1] "2010-12-15"
+```
+
+```r
 #--- check the class ---#
 class(a_date)
 ```

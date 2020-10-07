@@ -25,3 +25,16 @@ nycflights13
 gt
 patchwork
 lubridate
+future
+future.apply
+microbenchmark
+readstata13
+sf
+sp
+maptools
+robustbase
+Rcpp
+spData
+Matrix
+spatialreg
+GWmodel
