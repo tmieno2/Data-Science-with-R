@@ -1636,7 +1636,7 @@ $$
 + `P_C`: corn price ($/bu)
 + `P_N`: nitrogen price ($/lb)
 
-Here, `N` is a decision variable, `slope` and `EC` is an attribute, and `P_C` and `P_N` are parameters.
+Here, `N` is a decision variable, `slope` and `EC` are attributes, and `P_C` and `P_N` are parameters.
 
 ]
 
