@@ -2396,7 +2396,7 @@ $$
 You are interested in finding the best nitrogen rates that maximize profit for different parts of the field at a given corn and nitrogen price combination. 
 
 $$
-Max_{N} P_C \times [120 + (1 + slope) * 25 \times log(\mbox{nitrogen rate})] - P_N \times N
+Max_{N} P_C \times [120 + (EC/40) \times (1 + slope) * 25 \times log(\mbox{nitrogen rate})] - P_N \times N
 $$
 
 + `N`: nitrogen rate (lb/acre)
@@ -2496,7 +2496,7 @@ eval_data_1 &lt;- expand.grid(
 
 .left5[
 
-By calling the same rows over and over again, you can replicate multiple of the same rows:
+By calling the same rows over and over again, you can replicate the same rows multiple times:
 
 
 ```r
@@ -2556,8 +2556,9 @@ field_data %&gt;%
 ## 6       2   0.2 30
 ```
 
-]
+This approach does not create plots that do not exist unlike the expand-everything approach.
 
+]
 
 
   ] 

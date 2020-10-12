@@ -1627,7 +1627,7 @@ $$
 You are interested in finding the best nitrogen rates that maximize profit for different parts of the field at a given corn and nitrogen price combination. 
 
 $$
-Max_{N} P_C \times [120 + (1 + slope) * 25 \times log(\mbox{nitrogen rate})] - P_N \times N
+Max_{N} P_C \times [120 + (EC/40) \times (1 + slope) * 25 \times log(\mbox{nitrogen rate})] - P_N \times N
 $$
 
 + `N`: nitrogen rate (lb/acre)
