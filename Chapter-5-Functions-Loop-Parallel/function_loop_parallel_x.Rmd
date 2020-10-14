@@ -1696,7 +1696,6 @@ eval_data_1
 ```
 
 + You only need the highlighted rows because no plots in this dataset has `slope`-`ec` combinations of `c(0, 30)` and `c(0.2, 40)`
-+ 
 + You created unnecessary rows with this approach
 
 ]

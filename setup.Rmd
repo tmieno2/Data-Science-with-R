@@ -140,7 +140,6 @@ suppressMessages(library(tidyverse))
 
 .left-full {
   width: 80%;
-  height: 92%;
   float: left;
 }
 
@@ -164,12 +163,18 @@ suppressMessages(library(tidyverse))
 
 .left5 {
   width: 49%;
-  height: 92%;
+  <!-- height: 92%; -->
   float: left;
 }
 
 .right5 {
   width: 49%;
+  float: right;
+  padding-left: 1%;
+}
+
+.right4 {
+  width: 39%;
   float: right;
   padding-left: 1%;
 }
