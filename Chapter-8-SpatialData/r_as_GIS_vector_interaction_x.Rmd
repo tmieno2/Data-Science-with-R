@@ -1,0 +1,177 @@
+---
+title: "R as GIS: Interaction of Vector Datasets"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    lib_dir: libs
+    nature:
+      ratio: 12:8
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+---
+
+```{r, child = './../setup.Rmd'}
+```
+
+```{r, include = F, cache = F}
+suppressMessages(library(sf)) 
+suppressMessages(library(ggplot2)) 
+suppressMessages(library(patchwork))
+suppressMessages(library(mapview))
+```
+
+# Before you start
+
+## Learning objectives
+
+The objectives of this chapter is to learn how to use R as GIS, specifically how to interact two `sf` objects:
+
++ subsetting an `sf` object based on another `sf` object
++ overlay an `sf` object on another `sf` object to extract values from the `sf` object
+
+## Table of contents
+
+1. [Topological Relations](#top)
+2. [Spatial Subsetting](#subset)
+3. [Spatial Value Extraction](#extract)
+
+<br>
+
+<span style="color:red"> Tips: </span>hitting letter "o" key will give you a panel view of the slides
+
+---
+class: middle
+
+# Prerequisites and Preparation
+
+.content-box-green[**Prerequisites**]
+
++ What Geographic Coordinate System (GCS), Coordinate Reference System (CRS), and projection are ([this](https://annakrystalli.me/intro-r-gis/gis.html) is a good resource)
+
++ Distinctions between vector and raster data ([this](https://gis.stackexchange.com/questions/57142/what-is-the-difference-between-vector-and-raster-data-models) is a simple summary of the difference)
+
+.content-box-green[**Preparation**]
+
+Go [here](https://www.dropbox.com/sh/mn7yk7baru0pm4e/AADDfjIHcWpxACamPh3NVGI4a?dl=0) and download all the files.
+
+---
+class: inverse, center, middle
+name: data-structure
+
+# Topological Relations
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+class: middle
+
+# Topological Relations
+
+---
+class: middle
+
+.content-box-green[**Definition**]
+
+Topological relations refer to the way multiple spatial objects are spatially related to one another. 
+
+--
+
+.content-box-green[**Goals**]
+
+You can identify various types of spatial relations using the `sf` package 
+
++ Our main focus is on the intersections of spatial objects, which can be found using `st_intersects()`.
+
++ We also briefly cover `st_is_within_distance()`
+ 
+(Run `?geos_binary_pred` to see other topological relations you can find.) 
+
+---
+class: middle
+
+# Data Preparation 
+
+---
+class: middle
+
+.content-box-green[**POINTS**]
+
+```{r create_points}
+#--- create points ---#
+point_1 <- st_point(c(2, 2))
+point_2 <- st_point(c(1, 1))
+point_3 <- st_point(c(1, 3))
+
+#--- combine the points to make a single  sf of points ---#
+(
+points <- list(point_1, point_2, point_3) %>% 
+  st_sfc() %>% 
+  st_as_sf() %>% 
+  mutate(point_name = c("point 1", "point 2", "point 3"))
+)
+```
+
+---
+class: middle
+
+
+**LINES**
+
+```{r create_lines}
+#--- create points ---#
+line_1 <- st_linestring(rbind(c(0, 0), c(2.5, 0.5)))
+line_2 <- st_linestring(rbind(c(1.5, 0.5), c(2.5, 2)))
+
+#--- combine the points to make a single  sf of points ---#
+(
+lines <- list(line_1, line_2) %>% 
+  st_sfc() %>% 
+  st_as_sf() %>% 
+  mutate(line_name = c("line 1", "line 2"))
+)
+```
+
+---
+class: middle
+
+**POLYGONS**
+
+```{r create_polygons}
+#--- create polygons ---#
+polygon_1 <- st_polygon(list(
+  rbind(c(0, 0), c(2, 0), c(2, 2), c(0, 2), c(0, 0)) 
+))
+
+polygon_2 <- st_polygon(list(
+  rbind(c(0.5, 1.5), c(0.5, 3.5), c(2.5, 3.5), c(2.5, 1.5), c(0.5, 1.5)) 
+))
+
+polygon_3 <- st_polygon(list(
+  rbind(c(0.5, 2.5), c(0.5, 3.2), c(2.3, 3.2), c(2, 2), c(0.5, 2.5)) 
+))
+
+#--- combine the polygons to make an sf of polygons ---#
+(
+polygons <- list(polygon_1, polygon_2, polygon_3) %>% 
+  st_sfc() %>% 
+  st_as_sf() %>% 
+  mutate(polygon_name = c("polygon 1", "polygon 2", "polygon 3"))
+)
+```
+
+---
+class: middle
+
+```{r plot-point-polygons, echo = F, out.width = "70%"}
+ggplot() +
+  geom_sf(data = polygons, aes(fill = polygon_name), alpha = 0.3) +
+  scale_fill_discrete(name = "Polygons") +
+  geom_sf(data = lines, aes(color = line_name)) +
+  scale_color_discrete(name = "Lines") + 
+  geom_sf(data = points, aes(shape = point_name), size = 3) +
+  scale_shape_discrete(name = "Points")  
+``` 

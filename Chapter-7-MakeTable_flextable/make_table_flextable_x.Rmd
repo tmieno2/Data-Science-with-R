@@ -1,0 +1,1303 @@
+---
+title: "Making Tables with `flextable`"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    lib_dir: libs
+    nature:
+      ratio: 16:10
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r, child = './../setup.Rmd'}
+```
+
+```{r, include = F, cache = F}
+suppressMessages(library(nycflights13)) 
+suppressMessages(library(gt)) 
+suppressMessages(library(tidyverse)) 
+suppressMessages(library(flextable)) 
+suppressMessages(library(printr))
+suppressMessages(library(officer)) 
+```
+
+# Before you start
+
+## Learning objectives
+
+The objectives of this chapter is to learn how to use the `flextable` package to create publication-quality tables.
+
+## Table of contents
+
+1. [Create and modify tables: the basics](#create-modify)
+2. [Formatting values in tables](#formating)
+3. [Modify by column](#columns)
+4. [Save tables as a file](#save)
+
+<br>
+
+<span style="color:red"> Tips: </span>hitting "o" key will give you a panel view of the slides
+
+
+<!-- 
+#=========================================
+# gt Basics
+#=========================================
+-->
+
+---
+
+class: inverse, center, middle
+
+# Create tables with the `flextable` package 
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+
+```{r taste-flextable, cache = F, include = F}
+head(mtcars, 20) %>% #BREAK
+  select(am, carb, gear, mpg, drat) %>% #BREAK
+  flextable() %>% #BREAK
+  theme_vanilla() %>% #BREAK 
+  set_header_labels(mpg = "miles per gallon") %>% #BREAK 
+  autofit() %>% #BREAK 
+  merge_v(j = c("am", "carb")) %>% #BREAK 
+  italic(j = 1) %>% #BREAK 
+  bg(bg = "#C90000", part = "header") %>% #BREAK 
+  color(color = "blue", j = 5) %>% #BREAK 
+  color(color = "red", i = 5:10, j = 2) %>% #BREAK 
+  color(color = "white", part = "header") %>% #BREAK 
+  bold(~ drat > 3.2, ~ gear, bold = TRUE) %>% #BREAK 
+  align(j = 1) %>% #BREAK
+  fontsize(i = 12:18, size = 8) %>% #BREAK
+  add_footer_row(values = "blah blah", colwidths = 5) %>% #BREAK
+  border_outer(fp_border(color="red", width = 2)) %>% #BREAK 
+  line_spacing(space = 1.5) %>% #BREAK
+  theme_tron()  
+  
+```
+
+`r chunk_reveal(
+  chunk_name = "taste-flextable", 
+  title = "# Taste of the flextable package",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(40, 60)
+  )
+`
+  
+<!-- 
+#=========================================
+# Create or Modify Parts  
+#=========================================
+-->
+  
+---
+
+class: inverse, center, middle
+name: create-modify
+
+# Create table and modify Parts  
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+
+
+# Initiate a table 
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.content-box-green[**Before we start**]
+
+Install the `flextable` package and library it.
+
+```{r eval = F}
+install.pacakges(flextable) 
+```
+
+```{r eval = F}
+library(flextable)  
+```
+
+.content-box-red[**How**]
+
++ We can apply `flextable()` to a `data.frame` to initiate a table. 
+
++ We can then modify its part using many functions offered by the `flextable` package
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[Data Preparation]
+
+.left4[
+```{r results = "hide"}
+#--- Define regions ---#
+Australasia <- c("AU", "NZ")
+Melanesia <- c("NC", "PG", "SB", "VU")
+Polynesia <- c("PF", "WS", "TO", "TV")
+
+#--- create a dataset ---#
+tab_data <- countrypops %>%
+  filter(country_code_2 %in% c(
+    Australasia, Melanesia, Polynesia)
+  ) %>%
+  filter(year %in% c(1995, 2005, 2015)) %>%
+  mutate(region = case_when(
+    country_code_2 %in% Australasia ~ "Australasia",
+    country_code_2 %in% Melanesia ~ "Melanesia",
+    country_code_2 %in% Polynesia ~ "Polynesia",
+  )) %>%
+  pivot_wider(
+    values_from = population, 
+    names_from = year,
+    names_prefix = "y_"
+  ) %>%
+  arrange(region, desc(y_2015)) %>%
+  select(-starts_with("country_code")) %>% 
+  mutate(
+    pop_ratio_10_15 = y_2015/y_2005,
+    date = "2013-11-14"
+  )  
+
+```
+]
+
+.right6[
+```{r echo = F}
+tab_data 
+```
+]
+
+  ] 
+
+  <!-- panel ends here -->
+.panel[.panel-name[Initiate]
+
+.left4[
+```{r eval = F}
+flextable(tab_data, 
+  col_keys = c(
+    "country_name", 
+    "lufhierh", 
+    "region", 
+    "y_1995", 
+    "y_2005")
+)
+```
+
++ `col_keys`: the name of the variables from the `data.frame` (providing variable names that do no exist in the dataset creates blank columns) 
+
+]
+
+.right6[
+```{r echo = F}
+flextable(tab_data, col_keys = c("country_name", "lufhierh", "region", "y_1995", "y_2005")) 
+```
+]
+
+]
+
+]
+
+<!-- panel set ends here -->
+
+---
+
+# Selector
+
+.panelset[ 
+ 
+ .panel[.panel-name[Instruction]
+
+Many functions let you choose specifically where you apply changes. Those functions have 
+
++ `i` for rows selection 
+  * formula 
+  * integer vector 
+  * logical vector
++ `j` for cols selection
+  * formula
+  * character vector
+  * integer vector
+ 
+You can use any combinations of the reference methods for `i` and `j`.
+
+   ]
+ 
+ <!-- panel ends here -->
+ 
+ .panel[.panel-name[i, j: formula]
+
+
+.left5[
+<br>
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+function(
+  i = ~ condition based on variables,
+  j = ~ vairable 1 + variable 2 + ...,
+  .
+)  
+```
+
+.content-box-red[**Example**]
+
+```{r i_formula, eval = F}
+tab_data %>% 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  color(
+    i = ~ y_2005 > 2e5, #<<
+    j = ~ country_name + region, #<<
+    color = "red"
+  )
+```
+]
+
+.right5[
+
+<br>
+
+```{r i_formula-t, ref.label = "i_formula", echo = F}
+```
+]
+
+ 
+   ]
+ 
+ <!-- panel ends here -->
+
+.panel[.panel-name[i, j: integer, character]
+
+
+.left-code[
+<br>
+```{r i-c, eval = F}  
+tab_data %>% 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  color(
+    i = c(2, 4:9), #<<
+    j = c("country_name", "y_1995"), #<<
+    color = "red"
+  )
+```
+
+Using a character vector for `j` is not recommended because using a formula involves less typing.
+
+]
+ 
+.right-plot[
+<br>
+```{r i-c-f, ref.label = "i-c", echo = F}  
+
+```
+]
+  
+   ] 
+ 
+   <!-- panel ends here --> 
+
+.panel[.panel-name[i, j: logical, integer]
+
+.left-code[
+<br>
+```{r l-i, eval = F}  
+tab_data %>% 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  color(
+    i = rep(c(TRUE, FALSE), each = 5), #<<
+    j = c(1, 3), #<<
+    color = "red"
+  )
+```
+]
+ 
+.right-plot[
+<br>
+```{r l-i-f, ref.label = "l-i", echo = F}  
+
+```
+]
+  
+   ] 
+ 
+   <!-- panel ends here --> 
+
+.panel[.panel-name[by parts]
+
+.left-code[
+<br>
+You can refer to parts of the table using `part =` option. The available options are
+
++ `header`: the header part of the table
++ `footer`: the footer part of the table
++ `body`: the body part of the table
++ `all`: the body and the header parts of the table
+
+<br>
+```{r parts, eval = F}  
+tab_data %>% 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  color(
+    part = "header", #<<
+    color = "red"
+  )
+```
+
+Different functions have different default values for `part`.
+
+]
+ 
+.right-plot[
+<br>
+```{r parts-f, ref.label = "parts", echo = F}  
+
+```
+]
+
+
+  ] 
+
+  <!-- panel ends here -->
+]
+ 
+ <!-- panel set ends here -->
+
+---
+
+# Style 
+
+.panelset[ 
+
+.panel[.panel-name[Introduction]
+
+.left5[
+
+.content-box-green[**Explanation**]
+
+You can use the `style()` function to change the style and format of a table.  
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+style(
+  x,
+  i = NULL,
+  j = NULL,
+  pr_t = NULL,
+  pr_p = NULL,
+  pr_c = NULL,
+  part = "body"
+)
+```
+
+We use `fp_*()` functions from the `officer` package to specify the style of .blue[texts], .blue[paragraphs], and .blue[cells].
+
++ `pr_t = fp_text()`: format texts 
++ `pr_p = fp_par()`: format paragraphs
++ `pr_c = fp_celll()`: format cells
+
+(`pr` in `pr_* =`  stands for property.)
+
+]
+
+.right5[
+
+.content-box-green[**paragraph vs cell**]
+
++ paragraphs: rectangular boxes around the texts inside the cells 
++ cells: rectangular boxes that contain paragraphs and texts inside 
+
+```{r }
+head(tab_data, 5) %>% #BREAK 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  style(
+    pr_p = fp_par(
+      border.bottom = fp_border(width = 2, color = "blue")
+    ),
+    pr_c = fp_cell(
+      border.bottom = fp_border(width = 2, color = "red")
+    ) 
+  )
+```
+
+It seems that cell formatting is sufficient and paragraph formatting is not necessary...
+
+]
+
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[fp_text]
+
+.left5[
+
+.content-box-green[**Explanation**]
+
+`fp_text()` lets you update the appearance of texts, including color, font size, bold or not, etc (see the help page below for the complete list of options).
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+?fp_text  
+```
+
+.scroll-box-24[
+```{r echo = F}
+?fp_text  
+```
+]
+
+]
+
+.right5[
+
+.content-box-green[**Example**]
+
+```{r }
+tab_data %>% 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  style(
+    i = 4:6,
+    j = ~ country_name,
+    pr_t = fp_text( #<<
+      color = "red", #<<
+      bold = TRUE, #<<
+      underlined = TRUE #<<
+    ) #<<
+  )
+```
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[fp_par]
+
+.left5[
+
+.content-box-green[**Explanation**]
+
+`fp_paragraph()` lets you update the appearance of paragraphs (see the help page below for the complete list of options).
+
+.content-box-green[**Syntax**]
+
+.scroll-box-24[
+```{r }
+?fp_par  
+```
+]
+
+  ]
+
+
+.right5[
+
+.content-box-green[**Example**]
+
+```{r }
+tab_data %>% 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  style(
+    i = 4:6,
+    j = ~ country_name,
+    pr_p = fp_par( #<<
+      text.align = "left", #<<
+      shading.color = "grey" #<<
+    ) #<<
+  )
+```
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[fp_cell]
+
+.left5[
+
+.content-box-green[**Explanation**]
+
+`fp_cell()` lets you update the appearance of cells (see the help page below for the complete list of options).
+
+.content-box-green[**Syntax**]
+
+.scroll-box-24[
+```{r }
+?fp_cell  
+```
+]
+
+  ]
+
+
+.right5[
+
+.content-box-green[**Example**]
+
+```{r }
+tab_data %>% 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  style(
+    i = 4:6,
+    j = ~ country_name,
+    pr_c = fp_cell( #<<
+      margin = 2, #<<
+      vertical.align = "top", #<<
+      background.color = "red" #<<
+    ) #<<
+  )
+```
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+
+]
+
+<!-- panel set ends here -->
+
+---
+
+# Formatting: convenience functions 
+
+.left5[
+
+.content-box-green[**Instruction**]
+
++ Instead of using the `style()` function in combination with `fp_*()` functions, you can easily work on a specific aesthetic feature using convenience functions like below:
+  * `align()`, `align_text_col()`, `align_nottext_col()`: Set text alignment
+  * `bg()`: Set background color
+  * `font()`: Set font
+  * `fontsize()`: Set font size
+  * `italic()`: Set italic font
+  * `bold()`: Set bold font
+  * `color()`: Set font color
+  * `padding()`: Set paragraph paddings
+  * `valign()`: Set vertical alignment
+  * `rotate()`: rotate cell text
+  * `empty_blanks()`: make blank columns as transparent
+
++ You can use the selector syntax to specify where the specified effects take place
+
+]
+
+.right5[
+
+.content-box-green[**Example**]
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>%  
+  color(i = 1, j = 2, "#fcba03") %>%  
+  bg(i = ~ y_2005 < 2e5, j = c("region"), bg = "grey") %>%  
+  fontsize(i = 7, size = 16)   
+```
+]
+
+
+---
+
+```{r format-flip, cache = F, include = F}
+tab_data %>% #BREAK 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% #BREAK 
+  #--- text color ---#
+  color(i = 1, j = 2, "#fcba03") %>% #BREAK 
+  #--- background ---#
+  bg(i = ~ y_2005 < 2e5, j = c("region"), bg = "grey") %>% #BREAK 
+  #--- font type ---#
+  font(i = 5, j = ~ country_name + y_2005, fontname = "Times") %>% #BREAK 
+  #--- font size ---#
+  fontsize(i = 7, size = 16) %>% #BREAK 
+  #--- italicize ---#
+  italic(j = 2) %>% #BREAK 
+  #--- bold ---#
+  bold(j = 4) %>% #BREAK 
+  #--- vertical text alignment ---#
+  valign(i = ~ region == "Australasia", j = 4, valign = "top") %>% #BREAK 
+  #--- text direction ---#
+  rotate(i = 1, j = 2, rotation = "tbrl") 
+
+```
+
+`r chunk_reveal(
+  chunk_name = "format-flip", 
+  title = "# Demonstration: Formatting",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+---
+
+# Borders: convenience functions  
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.left5[
+
+.content-box-green[**List of functions**]
+
+Here is a list of convenience functions that you can use to draw border lines on a table:
++ `hline()`: set horizontal borders
++ `hline_bottom()`: set bottom horizontal border
++ `hline_top()`: set top horizontal border
++ `vline()`: set vertical borders
++ `vline_left()`: set flextable left vertical borders
++ `vline_right()`: set flextable right vertical borders
++ `border()`: Set cell borders
++ `border_inner()`: set vertical & horizontal inner borders
++ `border_inner_h()`: set inner borders
++ `border_inner_v()`: set vertical inner borders
++ `border_outer()`: set outer borders
++ `border_remove()`: remove borders
++ `fix_border_issues()`: fix border issues when cell are merged
+
+]
+
+.right5[
+
+.content-box-green[**Instruction**]
+
++ Use the selector syntax to specify where
++ Use the `border = ` option along with `fp_border()` from the `officer` package to specify what kind of borders you would like to draw
+
+.content-box-green[**Example**]
+
+```{r eval = F}
+hline(
+    i = 3, 
+    j = 1:3, 
+    border = fp_border( 
+      color = "red", 
+      style = "dotted", 
+      width = 4 
+    ) 
+  ) 
+```
+
+]
+
+
+] 
+
+<!-- panel ends here -->
+
+.panel[.panel-name[fp_border()]
+
+.left5[
+
+.content-box-green[**Explanation**]
+
+`fp_border()` lets you specify the aesthetics of the borders you are drawing.
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+?fp_border  
+```
+
+.scroll-box-24[
+```{r echo = F}
+?fp_border  
+```
+]
+
+]
+
+.right5[
+
+.content-box-green[**Example**]
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>%  
+  hline(
+    i = 3, 
+    j = 1:3, 
+    border = fp_border( #<<
+      color = "red", #<<
+      style = "dotted", #<<
+      width = 4 #<<
+    ) #<<
+  ) 
+```
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+
+---
+
+```{r borders-f, cache = F, include = F}
+tab_data %>% #BREAK 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% #BREAK 
+  #--- remove all borders ---#
+  border_remove() %>% #BREAK
+  #--- horizontal lines ---#
+  hline(i = 3, j = 1:3, border = fp_border(color = "red")) %>% #BREAK 
+  #--- horizontal line at the bottom ---#
+  hline_bottom(j = 3:4, border = fp_border(color = "green")) %>% #BREAK 
+  #--- horizontal line at the top ---#
+  hline_top(j = 1:3, border = fp_border(color = "orange")) %>% #BREAK 
+  #--- vertical lines ---#
+  vline(border = fp_border(color = "orange")) %>% #BREAK 
+  #--- vertical on the left edge  ---#
+  vline_left(border = fp_border(color = "grey", width = 2)) %>% #BREAK 
+  #--- vertical on the right edge  ---#
+  vline_right(border = fp_border(color = "red", width = 2)) %>% #BREAK 
+  #--- borders of individual cells ---#
+  border(i = 4, j = 2, 
+    border.top = fp_border(color = "red", width = 3),
+    border.left = fp_border(color = "green", width = 3),
+    border.right = fp_border(color = "black", width = 3),
+    border.bottom = fp_border(color = "pink", width = 3)
+  ) %>% #BREAK 
+  #--- horizontal lines (inner) ---#
+  border_inner_h(border = fp_border(color = "black")) %>% #BREAK 
+  #--- vertical lines (inner) ---#
+  border_inner_v(border = fp_border(color = "black")) %>% #BREAK 
+  border_remove() %>% #BREAK 
+  #--- the outer lines ---#
+  border_outer(border = fp_border(color = "red", width = 4)) 
+
+```
+
+`r chunk_reveal(
+  chunk_name = "borders-f", 
+  title = "# Demonstration: Borders",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+---
+
+# Headers and footers 
+
+.panelset[ 
+
+.panel[.panel-name[add_*_row()]
+
+.left5[
+
+You can use these functions to add a row to the top or the bottom of a table:
+
++ `add_header_row()`
++ `add_footer_row()`
+
+<br>
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+add_*_row(flextable, 
+  values = vector of characters, 
+  colwidths = vector of integers 
+)
+```
+
+<br>
+
+.content-box-green[**Example**]
+
+```{r eval = F}
+add_header_row(
+  values = c("3-column label", "1-column label"),
+  colwidths = c(3, 1)
+)
+```
+
+This code insert a row where "3-column label" spans for three columns and "1-column label" spans for one column.
+
+
+.content-box-green[**Note**]
+
+You might want to use `footnote()` to create footnotes instead of `add_footer_rows`, as it allows you to generate reference symbols at the same time.  
+
+]
+
+.right5[
+
+.content-box-green[**Example with an outcome table**]
+
+```{r add-header-row}
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  add_header_row(
+    values = c("3-column label", "1-column label"),
+    colwidths = c(3, 1)
+  ) %>% 
+  align(align = "center", part = "header") %>% 
+  autofit() %>% 
+  add_footer_row(
+    values = "4-column footnote, which is made longer to show it spans across the entire columns.",
+    colwidths = 4
+  )
+```
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[footnote()]
+
+.left5[
+
+.content-box-green[**Explanation**]
+
+`footnote()` lets you add footnotes with reference symbols for each of them. 
+
+.content-box-green[**Syntax**]
+
+.scroll-box-30[
+
+```{r cache = F}
+?footnote  
+```
+
+]
+
+]
+
+.right5[
+
+.content-box-green[**Example with an outcome table**]
+
+```{r }
+tab_data %>%  flextable(col_keys = c("country_name", "region", "y_1995", "y_2005")) %>% 
+  footnote(
+    i = 1, j = 1:2, part = "header",
+    value = as_paragraph(
+      c("This is footnote 1", "This is footnote 2")
+    ),
+    ref_symbols = c("++", "**")
+  )
+```
+
++ `n`th element in `value` is associated with `n`th value in `ref_symbols`
++ use `as_paragraph(c())` for `value`
+
+]
+
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[set_header_labels()]
+
+.left5[
+
+`set_header_labels()` lets you relable existing header labels using a named list.
+
+<br>
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+set_header_labels(
+  values = list( 
+    existing name 1 = "new name 1", 
+    existing name 2 = "new name 2" 
+  ) 
+) 
+```
+
+<br>
+
+.content-box-green[**Example**]
+
+```{r eval = F}
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>%
+  set_header_labels(
+    values = list( #<<
+      country_name = "Country Name", #<<
+      region = "Region" #<<
+    ) #<<
+  ) %>% 
+  autofit() 
+```
+
+]
+
+.right5[
+
+
+.content-box-green[**Example with an outcome table**]
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>%
+  set_header_labels(
+    values = list(
+      country_name = "Country Name",
+      region = "Region"
+    )
+  ) %>% 
+  autofit() 
+```
+]
+
+
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[delete_part()]
+
+.left5[
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+delete_part(flextable, part = "header")
+```
+
+The default is to delete the header.
+
+.content-box-green[**Example**]
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  delete_part()
+```
+
+]
+
+.right5[
+
+.content-box-red[**Important**]
+
+You can still (or have to) use the original variable names from the dataset for selectors even after you deleter the header:
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  delete_part() %>% 
+  hline(
+    i = 3, 
+    j = ~ country_name + region, 
+    border = fp_border(color = "red", style = "dotted", width = 4 
+    ) 
+  )  
+```
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+---
+
+# Layout
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.content-box-green[**List of functions**]
+
+Here is a list of functions you can use to change the layout of a table:
+
++ `merge_at()`: Merge flextable cells into a single one
++ `merge_h()`: Merge flextable cells horizontally
++ `merge_h_range()`: rowwise merge of a range of columns
++ `merge_v()`: Merge flextable cells vertically
++ `height()`, `height_all()`: Set flextable rows height
++ `width()`: Set flextable columns width
++ `hrule()`: Set flextable rule for rows heights
++ `autofit()`: Adjusts cell widths and heights
++ `fit_to_width()`: fit a flextable to a maximum width
++ `as_grouped_data()`: grouped data transformation
+
+.content-box-green[**Instruction**]
+
+Use the selector syntax to specify where just like the other functions we have seen.
+
+We will look at `merge_v()`, `autofit()`, and `width()`. 
+
+
+.content-box-green[**Note**]
+
+I have not encountered cases where I need to merge cells horizontally. It works in a similar manner to the way `merge_v()` works except that it works on rows instead of columns.
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[merge_v()]
+
+`merge_v()` merges vertically the adjacent cells with the same values. It does not accept `i` (rows) argument.
+
+
+
+.left5[
+
+
+.content-box-red[**Before**]
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) 
+```
+
+]
+
+.right5[
+
+.content-box-red[**After**]
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>%  merge_v(j = ~ region) #<<
+```
+
+]
+
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[autofit()]
+
+`autofit()` adjust the height and width of cells .
+
+.left5[
+
+.content-box-red[**Before**]
+
+```{r }
+tab_data %>%
+  mutate(country_name = ifelse(country_name == "Australia", "super long country name .......... bluh bluh bluh bluh bluh bluh bluh bluh bluh bluh bluh bluh", country_name)) %>% 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  merge_v(j = ~ region)
+```
+
+]
+
+.right5[
+
+.content-box-red[**After**]
+
+```{r }
+tab_data %>%
+  mutate(country_name = ifelse(country_name == "Australia", "super long country name .......... bluh bluh bluh bluh bluh bluh bluh bluh bluh bluh bluh bluh", country_name)) %>% 
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  merge_v(j = ~ region) %>% autofit() #<<
+```
+
+It adjusted the width of the 1st column so that more texts are displayed in a single row. But, the width of the entire table does not go over the limit of the paper.  
+
+]
+
+  ]
+
+.panel[.panel-name[width()]
+
+`width()` set the width of columns to the length you specify.
+
+.left5[
+
+.content-box-red[**Before**]
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  autofit() 
+```
+
+]
+
+.right5[
+
+.content-box-red[**After**]
+
+```{r }
+tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) %>% 
+  autofit() %>%  width(j = ~ country_name, width = 1) #<<
+```
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+---
+class: middle
+
+# Output 
+
+We can save the table in various formats.
+
++ `save_as_docx()`: docx (WORD)
++ `save_as_pptx()`: pptx (Power Point)
++ `save_as_image()`: image (png, pdf, jpeg) with help from the `webshot2` package
+
+Let's create a table for demonstration:
+
+```{r }
+table_tmep <- tab_data %>%  
+  flextable(
+    col_keys = c("country_name", "region", "y_1995", "y_2005")
+  ) 
+```
+
+---
+class: middle
+
+.content-box-green[**WORD**]
+
+```{r word, eval = F}
+save_as_docx(table_tmep, path = "temp_table.docx")
+```  
+
+--
+
+.content-box-green[**Power Point**]
+
+```{r power-point, eval = F}
+save_as_pptx(table_tmep, path = "temp_table.pptx")
+```  
+
+---
+class: middle
+
+.content-box-green[**Image**]
+
+I do not really recommend this option. It is hard to configure the output. 
+
+First install the `webshot2` package.
+
+```{r eval = F}
+#--- install ---#
+remotes::install_github("rstudio/webshot2") 
+
+#--- library ---#
+library(webshot2)
+```
+
++ png
+
+```{r eval = F}
+save_as_image(table_tmep, path = "temp_table.png") 
+```
+
++ pdf
+
+```{r eval = F}
+save_as_image(table_tmep, path = "temp_table.pdf", zoom = 10, webshot = "webshot2") 
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

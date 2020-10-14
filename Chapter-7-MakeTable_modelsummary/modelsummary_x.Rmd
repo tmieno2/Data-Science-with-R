@@ -1,0 +1,1229 @@
+---
+title: "Making Regression and Summary Tables with `modelsummary`"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    lib_dir: libs
+    nature:
+      ratio: 16:10
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r, child = './../setup.Rmd'}
+```
+
+```{r, include = F, cache = F}
+suppressMessages(library(nycflights13)) 
+suppressMessages(library(modelsummary)) 
+suppressMessages(library(flextable)) 
+suppressMessages(library(sandwich)) 
+suppressMessages(library(gt)) 
+suppressMessages(library(tidyverse)) 
+```
+
+
+# Before you start
+
+## Learning objectives
+
+The objectives of this lecture is to learn how to use the `modelsummary` package to create regression and summary tables that are of publication quality. 
+
+Here is the [modelsummary package website](https://vincentarelbundock.github.io/modelsummary/).
+
+## Table of contents
+
+1. [Create regression tables](#reg-table)
+2. [Create summary tables](#summary-table)
+
+<br>
+
+<span style="color:red"> Tips: </span>hitting "o" key will give you a panel view of the slides
+
+---
+
+# The datasets we use
+
+```{r eval = F, echo = F}
+setwd("~/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-6-MakeTable") 
+```
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+Go [here](https://www.dropbox.com/sh/63rlp4ydmyjm1ui/AACYSeN0f_WAgKPQKzgpGVe0a?dl=0) and download **county_yield.rds** and then read the file onto R:
+
+```{r dataset, results = "hide", cache = F}
+county_yield <- readRDS("county_yield.rds") %>% 
+  tibble() %>% 
+  select(soy_yield, corn_yield, year, county_code, state_name, d0_5_9, d1_5_9, d2_5_9, d3_5_9, d4_5_9) %>% 
+  filter(state_name %in% c("Nebraska", "Kansas", "Colorado"))
+```
+
+]
+
+.panel[.panel-name[Variable Definitions]
++ `soy_yield`: soybean yield (bu/acre)
++ `corn_yield`: corn yield (bu/acre)
++ `d0_5_9`: ratio of weeks under drought severity of 0 from May to September
++ `d1_5_9`: ~ drought severity of 1 from May to September   
++ `d2_5_9`: ~ drought severity of 2 from May to September   
++ `d3_5_9`: ~ drought severity of 3 from May to September   
++ `d4_5_9`: ~ drought severity of 4 from May to September   
+
+  ]
+
+]
+
+
+<!-- 
+#=========================================
+# Create regression tables  
+#=========================================
+-->
+
+---
+
+class: inverse, center, middle
+name: reg-table
+
+# Create regression tables with the `modelsummary` package 
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+
+```{r include = F}
+model_1_corn <- lm(corn_yield ~ d1_5_9 + d2_5_9, data = county_yield)
+vcov_1_corn <- vcovHC(model_1_corn)
+model_2_corn <- lm(corn_yield ~ d1_5_9 + d2_5_9 + d3_5_9 + d4_5_9, data = county_yield)
+vcov_2_corn <- vcovHC(model_2_corn)
+model_1_soy <- lm(soy_yield ~ d1_5_9 + d2_5_9, data = county_yield)
+vcov_1_soy <- vcovHC(model_1_soy)
+model_2_soy <- lm(soy_yield ~ d1_5_9 + d2_5_9 + d3_5_9 + d4_5_9, data = county_yield)
+vcov_2_soy <- vcovHC(model_2_soy)
+```
+
+
+```{r basics-ms, cache = F, include = F}
+list(
+  "Corn 1" = model_1_corn, 
+  "Corn 2" =  model_2_corn, 
+  "Soy 1" = model_1_soy, 
+  "Soy 2" = model_2_soy
+) %>% #BREAK
+  msummary(
+    title = "Awesome Regression Results", #BREAK2
+    coef_map = c("d1_5_9" = "DI: category 1", "d2_5_9" = "DI: category 2", "d3_5_9" = "DI: category 3", "d4_5_9" = "DI: category 4", "(Intercept)" = "Constant"), #BREAK3
+    notes = list("A note"), #BREAK4
+    fmt = "%.2f", #BREAK5
+    statistic_override = list(vcov_1_corn, vcov_2_corn, vcov_1_soy, vcov_2_soy), #BREAK6
+    stars = TRUE, #BREAK7
+    gof_omit = "IC|Log|Adj", #BREAK8
+  )
+
+```
+
+`r chunk_reveal(
+  chunk_name = "basics-ms", 
+  title = "# Taste of modelsummary",
+  break_type = "non_seq", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+---
+
+```{r basics-ms-gt, cache = F, include = F}
+list(
+  "Corn 1" = model_1_corn, 
+  "Corn 2" =  model_2_corn, 
+  "Soy 1" = model_1_soy, 
+  "Soy 2" = model_2_soy
+) %>% 
+  msummary(
+    output = "gt",
+    title = "Awesome Regression Results", 
+    coef_map = c("d1_5_9" = "DI: category 1", "d2_5_9" = "DI: category 2", "d3_5_9" = "DI: category 3", "d4_5_9" = "DI: category 4", "(Intercept)" = "Constant"), 
+    notes = list("A note"), 
+    fmt = "%.2f", 
+    statistic_override = list(vcov_1_corn, vcov_2_corn, vcov_1_soy, vcov_2_soy), 
+    stars = TRUE, 
+    gof_omit = "IC|Log|Adj", 
+  ) %>%  #BREAK
+  tab_spanner(
+    label = "Corn",
+    columns = vars("Corn 1", "Corn 2")
+  ) %>% #BREAK
+  tab_spanner(
+    label = "Soy",
+    columns = vars("Soy 1", "Soy 2")
+  ) %>% #BREAK
+  tab_style(
+    style = cell_text(color = 'red'),
+    locations = cells_body(rows = 7)
+  )
+
+```
+
+`r chunk_reveal(
+  chunk_name = "basics-ms-gt", 
+  title = "# Taste of modelsummary and gt",
+  break_type = "user", 
+  display_type = "both", 
+  left_assign = FALSE,
+  width = c(50, 50)
+  )
+`
+
+---
+
+# Create a regression table 
+
+.panelset[ 
+
+.panel[.panel-name[prepare]
+
+Let's first run regressions which we are going to report in tables.
+
+```{r eval = F}
+model_1_corn <- lm(corn_yield ~ d1_5_9 + d2_5_9, data = county_yield)
+model_2_corn <- lm(corn_yield ~ d1_5_9 + d2_5_9 + d3_5_9 + d4_5_9, data = county_yield)
+model_1_soy <- lm(soy_yield ~ d1_5_9 + d2_5_9, data = county_yield)
+model_2_soy <- lm(soy_yield ~ d1_5_9 + d2_5_9 + d3_5_9 + d4_5_9, data = county_yield)
+```
+
+Get White-Huber robust variance-covariance matrix for the regressions:
+
+```{r }
+library(sandwich)
+
+vcov_1_corn <- vcovHC(model_1_corn)
+vcov_2_corn <- vcovHC(model_2_corn)
+vcov_1_soy <- vcovHC(model_1_soy)
+vcov_2_soy <- vcovHC(model_2_soy)
+```
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[default table]
+
+.left-code[
+You can supply a list of regression results to msummary() to create a default regression table.
+
+```{r model-sum-default, eval = F}  
+msummary(
+  list(
+    model_1_corn, 
+    model_2_corn, 
+    model_1_soy, 
+    model_2_soy
+  )
+)
+```
+
+]
+
+.right-plot[
+```{r model-sum-default-f, ref.label = "model-sum-default", echo = F}  
+
+```
+]
+
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[modify]
+
+`msummary()` offers multiple options to modify the default regression table to your liking:
+
++ `title`: put a title to the table
++ `stars`: place significance symbols (and modify the symbol placement rules)
++ `coef_map`: change the order and label of variable names  
++ `notes`: add footnotes
++ `fmt`: change the format of numbers 
++ `statistic`: type of statistics you display along with coefficient estimates
++ `gof_map`: define which model statistics to display 
++ `gof_omit`: define which model statistics to omit from the default selection of model statistics
++ `add_rows`: add rows of arbitrary contents to the table
+
+  ] 
+
+<!-- panel ends here -->
+
+.panel[.panel-name[stars]
+
+.left5[
+
+Add `stars = TRUE` in `msummary()` to add significance markers.
+
+You can modify significance levels and markers by supplying a named vector with its elements being the significance levels and their corresponding names being the significance markers.
+
+**Example**:
+
+
+```{r stars, eval = F}
+#--- create a named vector ---#
+stars_label <- c("+" = 0.1, "&+" = 0.05, "+*+" = 0.01)
+
+#--- create a table ---#
+msummary(model_1_corn, stars = stars_label)
+```
+
+]
+
+
+.right5[
+
+```{r ref.label = "stars", echo = F}
+
+```
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[coef_map]
+
+.left-code[
+`coef_map` allows you to reorder coefficient rows and change their labels.  
+
+Similarly with the `stars` option, you supply a named vector where its names are the existing labels and their corresponding elements are the new labels. 
+
+In the table, the coefficient rows are placed in the order they are ordered in the named vector.     
+
+```{r coef, eval = F}
+#--- define a coef_map vector ---#
+coef_map_vec <- c(
+  "d1_5_9" = "DI: category 1", 
+  "d2_5_9" = "DI: category 2", 
+  "d3_5_9" = "DI: category 3", 
+  "d4_5_9" = "DI: category 4", 
+  "(Intercept)" = "Constant"
+) 
+
+#--- create a table ---#
+msummary(
+  list(model_2_corn, model_2_soy), 
+  coef_map = coef_map_vec
+)
+
+```
+]
+
+.right-plot[
+```{r coef-f, ref.label = "coef", echo = F}  
+
+```
+]
+
+
+
+  ] 
+
+<!-- panel ends here -->
+
+.panel[.panel-name[coef_omit]
+
+.left-code[
+
+`coef_omit()` lets you omit coefficient rows from the default selections.
+
+You supply a vector of strings (and/or regular expressions), and coefficient rows that match the string pattern will be omitted.
+
+**Example**
+```{r coef-omit, eval = F}  
+msummary(
+  list(model_2_corn, model_2_soy), 
+  coef_omit ="d2"
+)
+```
+
+`d2` matches with `d2_5_9`, and rows associated with the coefficients on `d2_5_9` are removed.
+
+]
+
+.right-plot[
+```{r coef-omit-f, ref.label = "coef-omit", echo = F}  
+
+
+```
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[gof_omit]
+
+.left-code[
+
+`gof_omit()` lets you omit model statistics like $R^2$ from the default selections.
+
+
+You supply a vector of strings (and/or regular expressions), and statistics that match the string pattern will be omitted.
+
+**Example**
+
+```{r omit-stat, eval = F}  
+msummary(
+  list(model_2_corn, model_2_soy), 
+  gof_omit ="IC|Adj"
+)
+```
+
+`IC` matches with `AIC` and `BIC`, and `Adj` matches with `R2 Adj`
+
+]
+
+.right-plot[
+```{r omit-stat-f, ref.label = "omit-stat", echo = F}  
+
+```
+]
+
+  ] 
+
+.panel[.panel-name[add_rows]
+
+.left-code[
+
+`add_rows()` can be used to insert arbitrary rows into a table. 
+
+Adding rows using `add_rows()` involves:
+
++ Creating a `data.frame` (or `tibble`) to insert
+
++ Tell which rows you will inset the `data.frame` by `attr(data.frame, "position") <- row number`. 
+
+```{r add-rows, eval = F}  
+#--- create a table (data.frame) to insert ---#
+(
+rows <- data.frame(
+  c1 = c("FE: County", "FE: Year"),
+  c2 = c("Yes", "Yes"),
+  c3 = c("No", "Now")
+  )
+)
+
+#--- tell where to insert ---#
+attr(rows, "position") <- c(3, 4)
+
+#--- create a table with rows inserted ---#
+msummary(
+  list(Moddel1 = model_2_corn, Model2 = model_2_soy), 
+  gof_omit ="IC|Adj",
+  coef_omit = "d",
+  add_row = rows #<<
+)
+
+```
+]
+
+.right-plot[
+```{r add-rows-f, ref.label = "add-rows", echo = F}  
+
+```
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[fmt]
+
+
+**Example**:
+
+.left-code[
+
+`fmt()` option lets you format numbers in the table. It follows the `sprintf` C-library standard. 
+
+By far the most common use cases is to change the number of digits after the decimal point.
+
+For this purpose, we do not really have to understand how the `sprintf` standard works.
+
+You can simply replace `x` in `%.xf` with the number of digits.
+
+```{r format, eval = F}  
+msummary(
+  list(Moddel1 = model_2_corn, Model2 = model_2_soy), 
+  gof_omit ="IC|Adj",
+  coef_omit = "d",
+  add_row = rows,
+  #--- 2 digits after the decimal point ---#
+  fmt = "%.2f" #<<
+)
+```
+
+]
+
+.right-plot[
+```{r format-f, ref.label = "format", echo = F}  
+
+```
+]
+
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+<!-- panel set ends here -->
+
+---
+
+# Swapping the default VCOV with another VCOV
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.left-full[
+
+It is often the case that we replace the default variance-covariance matrix with a robust one for valid statistical testing.
+
+You can achieve this using the `statistic_override` option. You will give a list of variance-covariance matrices in the order their corresponding regression results appear on the table.
+
+**Syntax:**
+```{r eval = F}
+statistic_override = list(vcov_1, vcov_2, ...)
+```
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[Compare]
+
+.left5[
+
+Default: 
+
+```{r }
+msummary(
+  list(Moddel1 = model_2_corn, Model2 = model_2_soy), 
+  gof_omit = "IC|R",
+  coef_omit = "d3|d4",
+  #--- no statistical override ---#
+)  
+```
+]
+
+.right5[
+
+VCOV swapped:
+
+```{r }
+msummary(
+  list(Moddel1 = model_2_corn, Model2 = model_2_soy), 
+  gof_omit = "IC|R",
+  coef_omit = "d3|d4",
+  statistic_override = list(vcov_2_corn, vcov_2_soy) #<<
+)  
+```
+]
+
+  ]
+
+<!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+
+---
+name: save-table
+
+# Saving the table 
+
+.left-full[
+
+You can save the table to a file by providing a file name to the `output` option.
+
+The supported file types are:
+
++ .html 
++ .tex 
++ .md 
++ .txt 
++ .docx, pptx
++ .png 
++ .jpg
+
+<br>
+
+**Example**:
+
+The `docx` option may be particularly useful for those who want to put finishing touches on the table manually on WORD:
+
+```{r eval = F}
+msummary(
+  list(Moddel1 = model_2_corn, Model2 = model_2_soy),
+  output = "reg_results_table.docx" #<<
+)
+```
+
+]
+
+---
+name: save-R
+
+# Further modify regression tables with other packages
+
+.panelset[ 
+
+.panel[.panel-name[output type]
+
+.left-full[
+
+Using the `output` option in `msummary()`, you can turn the regression table into R objects that are readily modifiable by the `gt`, `kableExtra`, and `flextable` packages.
+
+
+.content-box-green[**Example: gt**]
+
+```{r }
+#--- create a regression table and turn it into a gt_tbl ---#
+reg_table_gt <- list(model_1_corn, model_1_soy)%>% 
+  msummary(output = "gt")
+
+#--- check the class ---#
+class(reg_table_gt)
+```
+
+.content-box-green[**Example: flextable**]
+
+```{r }
+#--- create a regression table and turn it into a gt_tbl ---#
+reg_table_ft <- list(model_1_corn, model_1_soy)%>% 
+  msummary(output = "flextable")
+
+#--- check the class ---#
+class(reg_table_ft)
+```
+
+]
+
+  ]
+<!-- panel ends here -->
+
+.panel[.panel-name[edit with flextable]
+
+.left-code[
+
+Now that the regression table created using `msummary()` with `output = "flextable"` is a `flextable` object. 
+
+So, we can use our knowledge of the `flextable` package to further modify the regression table if you would like. 
+
+For the details of how to use the `flextable` package visit the `flextable` lecture notes. 
+
+Here I will just given you an example of the use of `flextable` operations.
+
+**Example**
+
+```{r edit-ft, eval = F}  
+list(
+  "Corn 1" = model_1_corn, 
+  "Corn 2" =  model_2_corn, 
+  "Soy 1" = model_1_soy, 
+  "Soy 2" = model_2_soy
+) %>% 
+msummary(
+  output = "flextable",
+  gof_omit ="IC|Adj",
+) %>%  
+bold(i = 9, j = c(3, 5), bold = TRUE) %>% 
+color(i = 3, j = 2, color = "red")
+
+```
+]
+
+.right-plot[
+```{r edit-ft-f, ref.label = "edit-ft", echo = F}  
+
+```
+]
+
+  ]
+<!-- panel ends here -->
+
+.panel[.panel-name[edit with gt]
+
+.left-code[
+
+Now that the regression table is a `gt_tbl` object, we can use our knowledge of the `gt` package to modify the regression table. 
+
+For the details of how to use the `gt` package go [here](). Here I will just given you an example of the use of `gt` operations.
+
+**Example**
+```{r edit-gt, eval = F}  
+list(
+  "Corn 1" = model_1_corn, 
+  "Corn 2" =  model_2_corn, 
+  "Soy 1" = model_1_soy, 
+  "Soy 2" = model_2_soy
+) %>% 
+  msummary(
+    output = "gt",
+    gof_omit ="IC|Adj",
+  ) %>%  
+  tab_spanner( #<<
+    label = "Corn", #<<
+    columns = vars("Corn 1", "Corn 2") #<<
+  ) %>% #<<
+  tab_style( #<<
+    style = cell_text(color = 'red'), #<<
+    locations = cells_body(rows = 7:8) #<<
+  ) #<<
+```
+]
+
+.right-plot[
+```{r edit-gt-f, ref.label = "edit-gt", echo = F}  
+
+```
+]
+
+  ]
+
+
+<!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+
+<!-- 
+#=========================================
+# Create regression tables  
+#=========================================
+-->
+
+---
+
+class: inverse, center, middle
+name: summary-table
+
+# Create summary tables 
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+
+
+# Example table with `tablesummary()` 
+
+.left-code[
+```{r exmaple-table, eval = F}  
+county_yield %>% 
+  filter(year %in% 2010:2012) %>% 
+  datasummary(
+    (Year = factor(year)) * (
+      (`Corn Yield (bu/acre)` = corn_yield) + 
+      (`Soy Yield (bu/acre)` = soy_yield) + 
+      (`DI: category 4` = d4_5_9)
+    ) ~ 
+    state_name * (Mean + SD) ,
+    data = .
+  )  
+```
+]
+
+.right-plot[
+```{r exmaple-table-f, ref.label = "exmaple-table", echo = F}  
+```
+]
+
+
+---
+
+
+# `datasummary()` 
+
+.panelset[ 
+
+.panel[.panel-name[basics]
+
+.left-code[
+
+**Syntax**:
+
+```{r eval = F}
+datasummary(formula, data = dataset)
+```
+
+`formula` has two sides separated by `~` just like formula for regression. 
+
+Variables/statistics on the left-hand side (right-hand side) comprise rows (columns).
+
+]
+
+.right-plot[
+
+**Example**:
+
+```{r }
+datasummary(
+  corn_yield ~ Mean, #<<
+  data = county_yield
+)
+```
+
+<br>
+
+Switching the order changes the structure of the resulting table:
+
+```{r }
+datasummary(
+  Mean ~ corn_yield, #<<
+  data = county_yield
+)
+```
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[summary functions]
+
+
+.left-code[
+
+The `modelsummary` package offers multiple summary functions of its own:
+
++ `Mean`
++ `SD`
++ `Min`
++ `Max`
++ `P0`, `P25`, `P50`, `P75`, `P100`
++ `Histogram`
+
+These functions have `na.rm = NA` hidden inside it, so they avoid having NA when simply applying their counterparts from the `base` package.
+
+]
+
+.right-plot[
+
+For example, compare these two:
+
+```{r }
+datasummary(
+  corn_yield ~ Mean, #<<
+  data = county_yield
+)
+```
+
+```{r }
+datasummary(
+  #--- mean from the base package ---#
+  corn_yield ~ mean, #<<
+  data = county_yield
+)
+```
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[user-defined function]
+
+.left-full[
+
+You can use a user-defined function that takes a vector of values and return a single value. 
+
+**Example**:
+
+```{r user-defined}  
+#--- define a function ---#
+MinMax <- function(x){
+  paste0('[', min(x, na.rm = TRUE), ', ', max(x, na.rm = TRUE), ']')
+} 
+
+#--- use it ---#
+datasummary(corn_yield ~ MinMax, data = county_yield) 
+```
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[add stats/variables]
+
+.left-full[
+
+You can add more variables and statistics using `+`.
+
+**Example**:
+
+```{r plus}  
+datasummary(
+  corn_yield + soy_yield + d0_5_9 + d1_5_9
+  ~ Mean + SD+ MinMax + Histogram, 
+  data = county_yield
+)
+```
+
+For each of the variables on the left-hand side, each of the statistics on the right-hand side is calculated and displayed.
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[All]
+
+You can use `All()` to create a summary table for all the numeric variables in the dataset.
+
+At the moment, `All()` does not work on `tibble`. So, if your dataset is `tibble`, convert it to a `data.frame` on the fly in the code like below:
+
+**Example**:
+
+```{r all, cache = F}  
+datasummary(
+  All(data.frame(county_yield)) 
+  ~ Mean + SD, 
+  data = county_yield
+)
+```
+
+  ] 
+
+  <!-- panel ends here -->
+
+
+
+  <!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
+
+
+---
+
+
+# `datasummary()` (cont.) 
+
+.panelset[ 
+
+.panel[.panel-name[nesting]
+
+.left-code[
+
+You can nest categorical variables with `*`, meaning you can get summary statistics for each value of the categorical variable (like `group_by() %>% summarize()`).
+
+**Syntax**
+
+```{r eval = F}
+#--- single stat ---#
+variable ~ category_variable * stat  
+
+#--- multiple stats ---#
+variable ~ category_variable * (stat 1 + stat 2 + ...)  
+```
+
+]
+
+.right-plot[
+
+**Examples**:
+
+```{r nesting-f}  
+datasummary(
+  corn_yield + soy_yield + d0_5_9 + d1_5_9
+  ~ state_name * (Mean + SD) + MinMax, #<< 
+  data = county_yield
+)
+```
+
+For each value of `state_name` (`Nebraska`, `Colorado`, `Kansas`), `Mean` and `SD` are shown for each of the variables on the left-hand side. But, `MinMax` is for the entire sample.
+
+]
+
+  ] 
+
+.panel[.panel-name[deeper]
+
+.left-full[
+
+You can nest with multiple categorical variables by multiplying stats with multiple categorical variables. 
+
+**Example**:
+
+```{r deeper}  
+county_yield %>% 
+  filter(year %in% 2011:2012) %>% 
+  filter(state_name %in% c("Kansas", "Nebraska")) %>% 
+  datasummary(
+    corn_yield + soy_yield + d0_5_9 + d1_5_9
+    ~ factor(year) * state_name * (Mean + SD) + MinMax, #<< 
+    data = .
+  )
+```
+
+For each of the unique combinations of `state_name` (`Nebraska`, `Kansas`) and `year` (2011, 2012), `Mean` and `SD` are shown for each of the variables on the left-hand side. But, `MinMax` is for the entire sample.
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[renaming]
+
+.left-full[
+
+By default variable and statistics names are used as the labels in the table.
+
+You can provide labels by the following syntax: `(label = variable/stat)`
+
+**Example**:
+
+```{r renaming}  
+county_yield %>% 
+  filter(year %in% 2011:2012) %>% 
+  filter(state_name %in% c("Kansas", "Nebraska")) %>% 
+  datasummary(
+    (`Corn Yield (bu/acre)` = corn_yield) #<<
+    ~ state_name * (Mean + (Std.Dev. = SD)), #<< 
+    data = .
+  )
+```
+
++ `corn_yield` is labeled as `Corn Yield (bu/acre)`
++ `SD` is labeled as `Std.Dev.`
+
+.content-box-red[Note: when you have spaces in the label, surround the label with back quotes.]
+
+If you do not like this way of changing labels, you can always use `gt` package.
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[function arguments]
+
+.left-full[
+
+You can pass option arguments to the stats function by: `stat * Argument(options)`
+
+<br>
+
+**Example**:
+
+```{r arguments}  
+county_yield %>% 
+  filter(year %in% 2011:2012) %>% 
+  filter(state_name %in% c("Kansas", "Nebraska")) %>% 
+  datasummary(
+    corn_yield 
+    ~ state_name * (mean + sd) * Arguments(na.rm = TRUE) + #<<
+      quantile * Arguments(prob = 0.1, na.rm = TRUE), #<< 
+    data = .
+  )
+```
+
+<br>
+
++ `(mean + sd) * Arguments(na.rm = TRUE)` adds `na.rm = TRUE` option to `mean()` and `sd()`
++ `quantile * Arguments(prob = 0.1, na.rm = TRUE)` adds `prob = 0.1` and `na.rm = TRUE` to `quantileo()`
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[title and notes]
+
+See the example below:
+
+.left-full[
+**Example**:
+
+```{r title}  
+county_yield %>% 
+  filter(year %in% 2011:2012) %>% 
+  filter(state_name %in% c("Kansas", "Nebraska")) %>% 
+  datasummary(
+    corn_yield 
+    ~ state_name * (mean + sd) * Arguments(na.rm = TRUE) + 
+      quantile * Arguments(prob = 0.1, na.rm = TRUE),  
+    data = .,
+    title = "A title", #<<
+    notes = c("first note", "second note") #<<
+  )
+```
+]
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[align columns]
+
+You can use `align` to align columns. Available alignment are:
+
++ `l`: left
++ `r`: right
++ `c`: center
+
+Inside `align()`, you provide a sequence of the option letters (e.g., `"lrcle"`)
+
+The `n`th letter corresponds to `n`th column.
+
+.left-full[
+**Example**:
+
+```{r align}  
+county_yield %>% 
+  filter(year %in% 2011:2012) %>% 
+  filter(state_name %in% c("Kansas", "Nebraska")) %>% 
+  datasummary(
+    corn_yield 
+    ~ state_name * (`This is M E A N` = mean) * Arguments(na.rm = TRUE) + 
+      (`This is Q U A N T I L E` = quantile) * Arguments(prob = 0.1, na.rm = TRUE),  
+    data = .,
+    align = "lrlc" #<<
+  )
+```
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[Output]
+
+You can use the `output` option to either export the table as a file or save it as R objects which you can further modify. 
+
+This works exactly the same way as the `msummary()` function. 
+
++ Go [here](#save-table) for exporting the table as a file in various format 
++ Go [here](#save-R) for saving the table as an R object for further modifications
+
+  ] 
+
+  <!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
+
+---
+
+# Convenience functions
+
+.panelset[ 
+
+.panel[.panel-name[categorical variables]
+
+.left-full[
+
+You can use `datasummary_skim()` with 'categorical' option to quickly generate a summary table for categorical variables:
+
+**Syntax**:
+```{r eval = F}
+datasummary_skim(dataset, 'categorical')
+```
+
+**Example**:
+```{r }
+county_yield %>% 
+  select(- county_code) %>% 
+  data.frame() %>% 
+  datasummary_skim(., 'categorical') 
+```
+
+Note: `datasummary_skim()` does work well on a `tibble` object.
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[balance table]
+
+If your data was generated through randomized experiments (or you are using natural experiments), then `datasummary_balance()` can be very useful as it can generate a variable balance table.
+
+**Syntax**:
+```{r eval = F}
+datasummary_balance(variables to summarize ~ treatment dummy)
+```
+
++ `variables to summarize`: list of variables to summarize
++ `treatment dummy`: a dummy variable that indicates whether in the treated or control group
+
+.left-code[
+
+**Example**:
+
+```{r balance-tab, eval = F}  
+county_yield %>% 
+  filter(state_name %in% c("Nebraska", "Kansas")) %>% 
+  dplyr::select(c(state_name, where(is.numeric))) %>% 
+  dplyr::select(- year) %>% 
+  datasummary_balance(
+    All (data.frame(.))~ state_name, #<<
+    data = .
+  )
+```
+]
+
+.right-plot[
+```{r balance-tab-f, ref.label = "balance-tab", echo = F}  
+
+```
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[correlation table]
+
+.left-full[
+
+You can create a correlation table with `datasummary_correlation()`.
+
+```{r }
+county_yield %>% 
+  filter(state_name %in% c("Nebraska", "Kansas")) %>% 
+  dplyr::select(c(state_name, where(is.numeric))) %>% 
+  dplyr::select(- year) %>% 
+  datasummary_correlation()
+```
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+

@@ -14,9 +14,9 @@ This is the repository for AECN 396/AECN896-002 at University of Nebraska Lincol
     * Project Management, Code Organization, and RStudio  ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-6-HowCodeProject/code_project_RStudio_x.html))
     * Dates and String Operations  ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-6-Miscellaneous/misc_x.html))
 + Lecture 7: Make Tables 
-    * Create tables with the `gt` package([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-7-MakeTable/make_table_x.html))
-    * Create tables with the Microsoft-friendly `flextable` package ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-7-MakeTable/make_table_flextable_x.html))
-    * Create regression and summary tables with `modelsummary` ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-7-MakeTable/modelsummary_x.html))
+    * Create tables with the `gt` package([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-7-MakeTable_gt/make_table_gt_x.html))
+    * Create tables with the Microsoft-friendly `flextable` package ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-7-MakeTable_flextable/make_table_flextable_x.html))
+    * Create regression and summary tables with `modelsummary` ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-7-MakeTable_modelsummary/modelsummary_x.html))
 + Lecture 8: R as GIS
     * Vector data basics with the `sf` package ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-8-SpatialData/r_as_GIS_vector_basics_x.html))
 
