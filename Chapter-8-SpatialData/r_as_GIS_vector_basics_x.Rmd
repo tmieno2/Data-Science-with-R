@@ -50,10 +50,12 @@ The objectives of this chapter is to learn how to use R as GIS, specifically how
 ---
 class: middle
 
-#  Spatial Data Operations using R
+#  Prerequisites
 
-+ vector data: 
-+ raster data: 
++ What Geographic Coordinate System (GCS), Coordinate Reference System (CRS), and projection are ([this](https://annakrystalli.me/intro-r-gis/gis.html) is a good resource)
+
++ Distinctions between vector and raster data ([this](https://gis.stackexchange.com/questions/57142/what-is-the-difference-between-vector-and-raster-data-models) is a simple summary of the difference)
+
 
 ---
 class: inverse, center, middle
