@@ -23,16 +23,7 @@ suppressMessages(library(ggplot2))
 suppressMessages(library(patchwork))
 suppressMessages(library(mapview))
 ```
-<!-- 
-```{r xaringanExtra, echo = FALSE, cache = F}
-library(xaringanExtra)
-xaringanExtra::use_xaringan_extra(c("tile_view", "animate_css", "tachyons"))
-xaringanExtra::use_tile_view()
-xaringanExtra::use_panelset()
-xaringanExtra::use_clipboard()
-```
- -->
- 
+
 # Before you start
 
 ## Learning objectives
