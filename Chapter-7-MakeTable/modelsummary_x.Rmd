@@ -62,10 +62,6 @@ county_yield <- readRDS("county_yield.rds") %>%
   filter(state_name %in% c("Nebraska", "Kansas", "Colorado"))
 ```
 
-```{r echo = F, cache = F}
-county_yield
-```
-
 ]
 
 .panel[.panel-name[Variable Definitions]
@@ -597,7 +593,8 @@ name: save-R
 
 Using the `output` option in `msummary()`, you can turn the regression table into R objects that are readily modifiable by the `gt`, `kableExtra`, and `flextable` packages.
 
-**Example**:
+
+.content-box-green[**Example: gt**]
 
 ```{r }
 #--- create a regression table and turn it into a gt_tbl ---#
@@ -608,10 +605,60 @@ reg_table_gt <- list(model_1_corn, model_1_soy)%>%
 class(reg_table_gt)
 ```
 
+.content-box-green[**Example: flextable**]
+
+```{r }
+#--- create a regression table and turn it into a gt_tbl ---#
+reg_table_ft <- list(model_1_corn, model_1_soy)%>% 
+  msummary(output = "flextable")
+
+#--- check the class ---#
+class(reg_table_ft)
+```
+
 ]
 
   ]
+<!-- panel ends here -->
 
+.panel[.panel-name[edit with flextable]
+
+.left-code[
+
+Now that the regression table created using `msummary()` with `output = "flextable"` is a `flextable` object. 
+
+So, we can use our knowledge of the `flextable` package to further modify the regression table if you would like. 
+
+For the details of how to use the `flextable` package visit the `flextable` lecture notes. 
+
+Here I will just given you an example of the use of `flextable` operations.
+
+**Example**
+
+```{r edit-ft, eval = F}  
+list(
+  "Corn 1" = model_1_corn, 
+  "Corn 2" =  model_2_corn, 
+  "Soy 1" = model_1_soy, 
+  "Soy 2" = model_2_soy
+) %>% 
+msummary(
+  output = "flextable",
+  gof_omit ="IC|Adj",
+) %>%  
+bold(i = 9, j = c(3, 5), bold = TRUE) %>% 
+color(i = 3, j = 2, color = "red")
+
+```
+]
+
+.right-plot[
+```{r edit-ft-f, ref.label = "edit-ft", echo = F}  
+
+```
+]
+
+  ]
 <!-- panel ends here -->
 
 .panel[.panel-name[edit with gt]
@@ -836,7 +883,7 @@ datasummary(
 )
 ```
 
-For each of the variables on the left-hand side, the statistics on the right-hand side are obtained.
+For each of the variables on the left-hand side, each of the statistics on the right-hand side is calculated and displayed.
 
 ]
 
@@ -1178,6 +1225,4 @@ county_yield %>%
 
 <!-- panel set ends here -->
 
-
----
 

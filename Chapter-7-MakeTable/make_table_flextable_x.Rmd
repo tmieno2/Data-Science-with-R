@@ -1220,10 +1220,9 @@ tab_data %>%
 <!-- panel set ends here -->
 
 ---
+class: middle
 
 # Output 
-
-.left5[
 
 We can save the table in various formats.
 
@@ -1240,9 +1239,8 @@ table_tmep <- tab_data %>%
   ) 
 ```
 
-]
-
-.right5[
+---
+class: middle
 
 .content-box-green[**WORD**]
 
@@ -1250,11 +1248,16 @@ table_tmep <- tab_data %>%
 save_as_docx(table_tmep, path = "temp_table.docx")
 ```  
 
+--
+
 .content-box-green[**Power Point**]
 
 ```{r power-point, eval = F}
 save_as_pptx(table_tmep, path = "temp_table.pptx")
 ```  
+
+---
+class: middle
 
 .content-box-green[**Image**]
 
@@ -1282,7 +1285,6 @@ save_as_image(table_tmep, path = "temp_table.png")
 save_as_image(table_tmep, path = "temp_table.pdf", zoom = 10, webshot = "webshot2") 
 ```
 
-]
 
 
 

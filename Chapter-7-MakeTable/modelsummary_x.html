@@ -17,6 +17,8 @@
     <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
     <script src="libs/kePrint/kePrint.js"></script>
     <link href="libs/lightable/lightable.css" rel="stylesheet" />
+    <link href="libs/tabwid/tabwid.css" rel="stylesheet" />
+    <script src="libs/tabwid/tabwid.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
   <body>
@@ -39,6 +41,39 @@ class: center, middle, inverse, title-slide
 
 
 &lt;style type="text/css"&gt;
+
+.remark-slide-content.hljs-github h1 {
+  margin-top: 5px;  
+  margin-bottom: 25px;  
+}
+
+.remark-slide-content.hljs-github {
+  padding-top: 10px;  
+  padding-left: 30px;  
+  padding-right: 30px;  
+}
+
+.panel-tabs {
+  &lt;!-- color: #062A00; --&gt;
+  color: #841F27;
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panel-tab {
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 3px;  
+  margin-right: 3px;  
+  padding-top: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panelset .panel-tabs .panel-tab {
+  min-height: 40px;
+}
 
 .remark-slide th {
   border-bottom: 1px solid #ddd;
@@ -90,7 +125,6 @@ class: center, middle, inverse, title-slide
 
 .left-full {
   width: 80%;
-  height: 92%;
   float: left;
 }
 
@@ -106,14 +140,38 @@ class: center, middle, inverse, title-slide
   padding-left: 1%;
 }
 
+.left6 {
+  width: 60%;
+  height: 92%;
+  float: left;
+}
+
 .left5 {
   width: 49%;
-  height: 92%;
+  &lt;!-- height: 92%; --&gt;
   float: left;
 }
 
 .right5 {
   width: 49%;
+  float: right;
+  padding-left: 1%;
+}
+
+.right4 {
+  width: 39%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left3 {
+  width: 29%;
+  height: 92%;
+  float: left;
+}
+
+.right7 {
+  width: 69%;
   float: right;
   padding-left: 1%;
 }
@@ -164,10 +222,10 @@ ol, li{
 .content-box-red,
 .content-box-yellow {
   box-sizing: border-box;
-  border-radius: 15px;
-  margin: 0 0 15px;
+  border-radius: 5px;
+  margin: 0 0 10px;
   overflow: hidden;
-  padding: 0px 20px 0px 20px;
+  padding: 0px 5px 0px 5px;
   width: 100%;
 }
 .content-box-blue { background-color: #F0F8FF; }
@@ -339,24 +397,6 @@ county_yield &lt;- readRDS("county_yield.rds") %&gt;%
   tibble() %&gt;% 
   select(soy_yield, corn_yield, year, county_code, state_name, d0_5_9, d1_5_9, d2_5_9, d3_5_9, d4_5_9) %&gt;% 
   filter(state_name %in% c("Nebraska", "Kansas", "Colorado"))
-```
-
-
-```
-## # A tibble: 2,964 x 10
-##    soy_yield corn_yield  year county_code state_name d0_5_9  d1_5_9 d2_5_9 d3_5_9 d4_5_9
-##        &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt; &lt;chr&gt;       &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-##  1        NA         NA  2018 053         Kansas      0.898  3.82    13.5  0           0
-##  2        NA         NA  2017 053         Kansas      4.00   7.00     0    0           0
-##  3        NA         NA  2016 053         Kansas      0.572  0.0996   0    0           0
-##  4        NA         NA  2015 053         Kansas      4.43   1.62     0    0           0
-##  5        NA         NA  2014 053         Kansas      4.70   9.93     3.58 4.78        0
-##  6        NA         NA  2013 053         Kansas      2.86   6.35     4.80 0           0
-##  7        NA         NA  2012 053         Kansas      1      4        3    4           7
-##  8        NA         NA  2011 053         Kansas      3.31  12.5      6.95 0.0911      0
-##  9        NA         NA  2010 053         Kansas      0.442  0        0    0           0
-## 10        NA         NA  2009 053         Kansas      1.72   0        0    0           0
-## # … with 2,954 more rows
 ```
 
 ]
@@ -1695,7 +1735,6 @@ list(
   font-size: 80%
 }
 &lt;/style&gt;
-
 
 
 
@@ -4808,7 +4847,8 @@ name: save-R
 
 Using the `output` option in `msummary()`, you can turn the regression table into R objects that are readily modifiable by the `gt`, `kableExtra`, and `flextable` packages.
 
-**Example**:
+
+.content-box-green[**Example: gt**]
 
 
 ```r
@@ -4824,10 +4864,63 @@ class(reg_table_gt)
 ## [1] "gt_tbl" "list"
 ```
 
+.content-box-green[**Example: flextable**]
+
+
+```r
+#--- create a regression table and turn it into a gt_tbl ---#
+reg_table_ft &lt;- list(model_1_corn, model_1_soy)%&gt;% 
+  msummary(output = "flextable")
+
+#--- check the class ---#
+class(reg_table_ft)
+```
+
+```
+## [1] "flextable"
+```
+
 ]
 
   ]
+&lt;!-- panel ends here --&gt;
 
+.panel[.panel-name[edit with flextable]
+
+.left-code[
+
+Now that the regression table created using `msummary()` with `output = "flextable"` is a `flextable` object. 
+
+So, we can use our knowledge of the `flextable` package to further modify the regression table if you would like. 
+
+For the details of how to use the `flextable` package visit the `flextable` lecture notes. 
+
+Here I will just given you an example of the use of `flextable` operations.
+
+**Example**
+
+
+```r
+list(
+  "Corn 1" = model_1_corn, 
+  "Corn 2" =  model_2_corn, 
+  "Soy 1" = model_1_soy, 
+  "Soy 2" = model_2_soy
+) %&gt;% 
+msummary(
+  output = "flextable",
+  gof_omit ="IC|Adj",
+) %&gt;%  
+bold(i = 9, j = c(3, 5), bold = TRUE) %&gt;% 
+color(i = 3, j = 2, color = "red")
+```
+]
+
+.right-plot[
+<div class="tabwid"><style>.cl-edfff73a{font-family:'Arial';font-size:11px;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(17, 17, 17, 1.00);background-color:transparent;}.cl-edfff758{font-family:'Arial';font-size:11px;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(255, 0, 0, 1.00);background-color:transparent;}.cl-edfff762{font-family:'Arial';font-size:11px;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(17, 17, 17, 1.00);background-color:transparent;}.cl-ee000388{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:2px;padding-top:2px;padding-left:5px;padding-right:5px;line-height: 1.00;background-color:transparent;}.cl-ee001fb2{width:54px;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-ee001fc6{width:54px;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 1.00px solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-ee001fd0{width:54px;background-color:transparent;vertical-align: middle;border-bottom: 2.00px solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-ee001fda{width:54px;background-color:transparent;vertical-align: middle;border-bottom: 2.00px solid rgba(0, 0, 0, 1.00);border-top: 2.00px solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table style='border-collapse:collapse;'><thead><tr style="overflow-wrap:break-word;"><td class="cl-ee001fda"><p class="cl-ee000388"><span class="cl-edfff73a"> </span></p></td><td class="cl-ee001fda"><p class="cl-ee000388"><span class="cl-edfff73a">Corn 1</span></p></td><td class="cl-ee001fda"><p class="cl-ee000388"><span class="cl-edfff73a">Corn 2</span></p></td><td class="cl-ee001fda"><p class="cl-ee000388"><span class="cl-edfff73a">Soy 1</span></p></td><td class="cl-ee001fda"><p class="cl-ee000388"><span class="cl-edfff73a">Soy 2</span></p></td></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(Intercept)</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">181.978</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">183.882</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">56.169</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">56.315</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a"></span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.678)</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.690)</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.283)</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.289)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">d1_5_9</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff758">-0.216</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">-0.367</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">-0.063</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">-0.069</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a"></span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.135)</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.133)</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.055)</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.055)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">d2_5_9</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">-1.081</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">-0.836</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">-0.338</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">-0.310</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a"></span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.124)</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.129)</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.053)</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.055)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">d3_5_9</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a"></span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">-0.754</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a"></span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">-0.169</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a"></span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a"></span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.158)</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a"></span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.090)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">d4_5_9</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a"></span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff762">-2.194</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a"></span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff762">-0.157</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a"></span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a"></span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.320)</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a"></span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">(0.209)</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ee001fc6"><p class="cl-ee000388"><span class="cl-edfff73a">Num.Obs.</span></p></td><td class="cl-ee001fc6"><p class="cl-ee000388"><span class="cl-edfff73a">1956</span></p></td><td class="cl-ee001fc6"><p class="cl-ee000388"><span class="cl-edfff73a">1956</span></p></td><td class="cl-ee001fc6"><p class="cl-ee000388"><span class="cl-edfff73a">1153</span></p></td><td class="cl-ee001fc6"><p class="cl-ee000388"><span class="cl-edfff73a">1153</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">R2</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">0.050</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">0.099</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">0.049</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">0.053</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">Log.Lik.</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">-8899.218</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">-8847.985</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">-3921.891</span></p></td><td class="cl-ee001fb2"><p class="cl-ee000388"><span class="cl-edfff73a">-3919.073</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-ee001fd0"><p class="cl-ee000388"><span class="cl-edfff73a">F</span></p></td><td class="cl-ee001fd0"><p class="cl-ee000388"><span class="cl-edfff73a">51.768</span></p></td><td class="cl-ee001fd0"><p class="cl-ee000388"><span class="cl-edfff73a">53.480</span></p></td><td class="cl-ee001fd0"><p class="cl-ee000388"><span class="cl-edfff73a">29.401</span></p></td><td class="cl-ee001fd0"><p class="cl-ee000388"><span class="cl-edfff73a">16.153</span></p></td></tr></tbody></table></div>
+]
+
+  ]
 &lt;!-- panel ends here --&gt;
 
 .panel[.panel-name[edit with gt]
@@ -5740,7 +5833,7 @@ datasummary(
 &lt;/tbody&gt;
 &lt;/table&gt;
 
-For each of the variables on the left-hand side, the statistics on the right-hand side are obtained.
+For each of the variables on the left-hand side, each of the statistics on the right-hand side is calculated and displayed.
 
 ]
 
@@ -6609,8 +6702,6 @@ county_yield %&gt;%
 
 &lt;!-- panel set ends here --&gt;
 
-
----
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>

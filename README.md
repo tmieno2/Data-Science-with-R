@@ -38,4 +38,4 @@ This is the repository for AECN 396/AECN896-002 at University of Nebraska Lincol
 ## Datasets
 
 + Lecture 5: [datasets](https://www.dropbox.com/sh/tonqm6wiu72t5m7/AABZEwq2UZlq0s4RxZLKzq3Ya?dl=0)
-+ Lecture 8: [datasets]()
++ Lecture 8: [datasets](https://www.dropbox.com/sh/mn7yk7baru0pm4e/AADDfjIHcWpxACamPh3NVGI4a?dl=0)

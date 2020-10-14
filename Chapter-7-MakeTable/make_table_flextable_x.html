@@ -123,7 +123,6 @@ class: center, middle, inverse, title-slide
 
 .left-full {
   width: 80%;
-  height: 92%;
   float: left;
 }
 
@@ -147,12 +146,18 @@ class: center, middle, inverse, title-slide
 
 .left5 {
   width: 49%;
-  height: 92%;
+  &lt;!-- height: 92%; --&gt;
   float: left;
 }
 
 .right5 {
   width: 49%;
+  float: right;
+  padding-left: 1%;
+}
+
+.right4 {
+  width: 39%;
   float: right;
   padding-left: 1%;
 }
@@ -3378,10 +3383,9 @@ tab_data %&gt;%
 &lt;!-- panel set ends here --&gt;
 
 ---
+class: middle
 
 # Output 
-
-.left5[
 
 We can save the table in various formats.
 
@@ -3399,9 +3403,8 @@ table_tmep &lt;- tab_data %&gt;%
   ) 
 ```
 
-]
-
-.right5[
+---
+class: middle
 
 .content-box-green[**WORD**]
 
@@ -3410,12 +3413,17 @@ table_tmep &lt;- tab_data %&gt;%
 save_as_docx(table_tmep, path = "temp_table.docx")
 ```
 
+--
+
 .content-box-green[**Power Point**]
 
 
 ```r
 save_as_pptx(table_tmep, path = "temp_table.pptx")
 ```
+
+---
+class: middle
 
 .content-box-green[**Image**]
 
@@ -3446,7 +3454,6 @@ save_as_image(table_tmep, path = "temp_table.png")
 save_as_image(table_tmep, path = "temp_table.pdf", zoom = 10, webshot = "webshot2") 
 ```
 
-]
 
 
 
