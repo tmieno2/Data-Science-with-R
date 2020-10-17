@@ -19,6 +19,7 @@ This is the repository for AECN 396/AECN896-002 at University of Nebraska Lincol
     * Create regression and summary tables with `modelsummary` ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-7-MakeTable_modelsummary/modelsummary_x.html))
 + Lecture 8: R as GIS
     * Vector data basics with the `sf` package ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-8-SpatialData/r_as_GIS_vector_basics_x.html))
+    * Spatial interactions of vector datasets ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-8-SpatialData/r_as_GIS_vector_interaction_x.html))
 
 + Appendix 1: Data Wrangling with the `data.table` package ([slide](https://tmieno2.github.io/Data-Science-with-R/data.table/data.table_x.html))
 

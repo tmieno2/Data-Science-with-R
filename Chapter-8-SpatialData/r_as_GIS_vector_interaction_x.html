@@ -358,6 +358,7 @@ slides &gt; slide {
 
 
 
+
 # Before you start
 
 ## Learning objectives
@@ -390,7 +391,7 @@ class: middle
 
 .content-box-green[**Preparation**]
 
-Go [here](https://www.dropbox.com/sh/mn7yk7baru0pm4e/AADDfjIHcWpxACamPh3NVGI4a?dl=0) and download all the files.
+Go [here](https://www.dropbox.com/sh/vhtpjiezijb97lj/AABpvzqdyZMkR1DgUBeI_mOja?dl=0) and download all the files.
 
 ---
 class: inverse, center, middle
@@ -466,7 +467,7 @@ points &lt;- list(point_1, point_2, point_3) %&gt;%
 class: middle
 
 
-**LINES**
+.content-box-green[**LINES**]
 
 
 ```r
@@ -497,7 +498,7 @@ lines &lt;- list(line_1, line_2) %&gt;%
 ---
 class: middle
 
-**POLYGONS**
+.content-box-green[**POLYGONS**]
 
 
 ```r
@@ -539,6 +540,2011 @@ polygons &lt;- list(polygon_1, polygon_2, polygon_3) %&gt;%
 class: middle
 
 &lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/plot-point-polygons-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+---
+class: middle
+
+# st_intersect() 
+
+`st_intersects()` checks which of `sfg`s in an `sf` geographically intersect with which of `sfg`s in another `sf`.
+
+
+---
+class: middle
+
+.content-box-green[**points and polygons**]
+
+.left5[
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/unnamed-chunk-4-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+.right5[
+
+
+```r
+st_intersects(points, polygons)
+```
+
+```
+## Sparse geometry binary predicate list of length 3, where the predicate was `intersects'
+##  1: 1, 2, 3
+##  2: 1
+##  3: 2, 3
+```
+
++ The output is a list of which polygon(s) each of the points intersect with. 
+
++ The numbers 1, 2, and 3 in the first row mean that 1st (polygon 1), 2nd (polygon 2), and 3rd (polygon 3) objects of the `polygons` intersect with the first point (point 1) of the `points` object. 
+
++ The fact that point 1 is considered to be intersecting with polygon 2 means that the area inside the border is considered a part of the polygon (of course).
+
+]
+
+---
+class: middle
+ 
+
+If you would like the results of `st_intersects()` in a matrix form with boolean values filling the matrix, you can add `sparse = FALSE` option. 
+
+
+```r
+st_intersects(points, polygons, sparse = FALSE)
+```
+
+```
+##       [,1]  [,2]  [,3]
+## [1,]  TRUE  TRUE  TRUE
+## [2,]  TRUE FALSE FALSE
+## [3,] FALSE  TRUE  TRUE
+```
+
+---
+class: middle
+
+
+.content-box-green[**lines and polygons**]
+
+.left5[
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/unnamed-chunk-6-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+.right5[
+
+```r
+st_intersects(lines, polygons)
+```
+
+```
+## Sparse geometry binary predicate list of length 2, where the predicate was `intersects'
+##  1: 1
+##  2: 1, 2
+```
+
+The output is a list of which polygon(s) each of the lines intersect with.
+]
+
+---
+class: middle
+ 
+.content-box-green[**polygons and polygons**]
+
+.left5[
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+.right5[
+
+
+```r
+st_intersects(polygons, polygons)
+```
+
+```
+## Sparse geometry binary predicate list of length 3, where the predicate was `intersects'
+##  1: 1, 2, 3
+##  2: 1, 2, 3
+##  3: 1, 2, 3
+```
+
+For polygons vs polygons interaction, `st_intersects()` identifies any polygons that either touches (even at a point like polygons 1 and 3) or share some area.
+
+]
+
+---
+class: middle
+
+# `st_is_within_distance()`  
+
+This function identifies whether two spatial objects are within the distance you specify as the name suggests.  
+
+---
+class: middle
+
+
+Create two sets of points. 
+
+
+```r
+set.seed(384738)
+
+points_set_1 &lt;- lapply(1:5, function(x) st_point(runif(2))) %&gt;% 
+  st_sfc() %&gt;% st_as_sf() %&gt;% 
+  mutate(id = 1:nrow(.))
+
+points_set_2 &lt;- lapply(1:5, function(x) st_point(runif(2))) %&gt;% 
+  st_sfc() %&gt;% st_as_sf() %&gt;% 
+  mutate(id = 1:nrow(.))
+```
+
+---
+class: middle
+
+Here is the visualization of the two sets of points we just created.
+
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/map-points-points-points-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+class: middle
+
+We want to know which of the blue points (`points_set_2`) are located within 0.2 from each of the red points (`points_set_1`). 
+
+The following figure gives us the answer visually.
+
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/points-points-within-1.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+class: middle
+
+
+.left5[
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/unnamed-chunk-9-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+.right5[
+Confirm your visual inspection results with the outcome of the following code using `st_is_within_distance()` function.
+
+
+```r
+st_is_within_distance(
+	points_set_1, 
+	points_set_2, 
+	dist = 0.2
+)
+```
+
+```
+## Sparse geometry binary predicate list of length 5, where the predicate was `is_within_distance'
+##  1: (empty)
+##  2: (empty)
+##  3: (empty)
+##  4: (empty)
+##  5: 4
+```
+]
+
+---
+class: inverse, center, middle
+name: subset
+
+# Spatial Subsetting
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+class: middle
+
+# Spatial Subsetting
+
+Spatial subsetting refers to operations that narrow down the geographic scope of a spatial object (source data) based on another spatial object (target data). 
+
+---
+class: middle
+
+.content-box-green[**Preparation**]
+
+We illustrate spatial subsetting using Kansas county borders, the boundary of the High-Plains Aquifer (HPA), and agricultural irrigation wells in Kansas.  
+
+Download the datasets from [here](https://www.dropbox.com/sh/vhtpjiezijb97lj/AABpvzqdyZMkR1DgUBeI_mOja?dl=0), save them in the "Data" folder relative to your working directory, and then run the following code.
+
+
+```r
+#--- Kansas county borders ---#
+KS_counties &lt;- readRDS("./Data/KS_county_borders.rds")
+
+#--- HPA boundary ---#
+hpa &lt;- st_read(dsn = "./Data", layer = "hp_bound2010") %&gt;% 
+  .[1, ] %&gt;% 
+  st_transform(st_crs(KS_counties))  
+
+#--- all the irrigation wells in KS ---#
+KS_wells &lt;- readRDS("./Data/Kansas_wells.rds") %&gt;% 
+  st_transform(st_crs(KS_counties))
+
+#--- US railroad ---#
+rail_roads &lt;- st_read(dsn = "./Data", layer = "tl_2015_us_rails") %&gt;% 
+  st_transform(st_crs(KS_counties)) 
+
+#--- Kansas portion of HPA ---#
+hpa_KS &lt;- st_crop(hpa, st_bbox(KS_counties))
+```
+
+
+---
+class: middle
+
+# polygons (source) vs polygons (target)
+
+.content-box-green[**Goal**]
+
+Select only the counties that intersect with the HPA boundary.
+
+---
+class: middle
+
+
+.left4[
+
+
+```r
+ggplot() +
+	geom_sf(data = KS_counties) +
+	geom_sf(
+		data = hpa, 
+		fill = "blue", 
+		alpha = 0.4
+	) +
+	theme_void() 
+```
+
+]
+
+.right6[
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/overlap-KS-county-HPA-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+
+---
+class: middle
+
+.content-box-green[**How**]
+
+When subsetting a data.frame by specifying the row numbers you would like to select, you can do 
+
+
+```r
+#--- NOT RUN ---#
+data.frame[vector of row numbers, ]
+```
+
+Spatial subsetting of sf objects works in a similar syntax:   
+
+
+```r
+#--- NOT RUN ---#
+sf_1[sf_2, ]
+```
+
+where you are subsetting `sf_1` based on `sf_2`. Instead of row numbers, you provide another sf object in place.
+
+---
+class: middle
+
+The following code spatially subsets Kansas counties based on the HPA boundary.
+
+
+```r
+counties_in_hpa &lt;- KS_counties[hpa, ]
+```
+
+---
+class: middle 
+
+.left6[
+
+
+```r
+ggplot() +
+	geom_sf(data = counties_in_hpa) +
+	geom_sf(data = hpa_KS, fill = "blue", alpha = 0.4) +
+	theme_void() 
+```
+
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/subsetted-p-p-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+]
+
+.right4[
+
+&lt;br&gt;
+
++ You can see that only the counties that intersect with the HPA boundary remained. 
+
++ This is because when you use the above syntax of `sf_1[sf_2, ]`, .red[the default underlying topological relations is `st_intersects()`]. 
+
++ So, if an object in `sf_1` intersects with any of the objects in `sf_2` even slightly, then it will remain after subsetting.
+]
+
+---
+class: middle
+
+You can specify the topological relation to be used as an option as in 
+
+
+```r
+#--- NOT RUN ---#
+sf_1[sf_2, op = topological_relation_type] 
+```
+
+For example, if you only want counties that are completely within the HPA boundary, you can do the following:
+
+
+```r
+counties_within_hpa &lt;- KS_counties[hpa, , op = st_within]
+```
+
+---
+class: middle
+
+.left5[
+
+```r
+ggplot() +
+	geom_sf(data = counties_within_hpa) +
+	geom_sf(
+		data = hpa_KS, 
+		fill = "blue", 
+		alpha = 0.4
+	) +
+	theme_void()
+```
+]
+
+.right5[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/county-hpa-within-f-1.png" alt="Kansas counties that are completely within the HPA boundary" width="80%" /&gt;
+&lt;p class="caption"&gt;Kansas counties that are completely within the HPA boundary&lt;/p&gt;
+&lt;/div&gt;
+]
+
+---
+class: middle
+
+
+.content-box-green[**Flagging**]
+
+Sometimes, you just want to flag whether two spatial objects intersect or not, instead of dropping non-overlapping observations. In that case, you can use `st_intersects()`.
+
+
+.content-box-green[**Syntax**]
+
+
+```r
+st_intersects(sf_1, sf_2)	
+```
+
+This would check whether each of the `sfg`s in `sf_1` intersects with each of the `sfg`s in `sf_2`.
+
+---
+class: middle
+
+
+```r
+#--- check the intersections of HPA and counties  ---#
+intersects_hpa &lt;- st_intersects(KS_counties, hpa, sparse = FALSE)
+```
+
+As you can see below, `st_intersects()` returns a matrix of TRUE of FALSE. 
+
+
+```r
+#--- check the class ---#
+class(intersects_hpa)
+```
+
+```
+## [1] "matrix" "array"
+```
+
+```r
+#--- take a look ---#
+head(intersects_hpa)
+```
+
+```
+##       [,1]
+## [1,] FALSE
+## [2,]  TRUE
+## [3,] FALSE
+## [4,]  TRUE
+## [5,]  TRUE
+## [6,]  TRUE
+```
+
+---
+class: middle
+	
+We can then assign the results to a new variable to `KS_counties`:
+
+
+```r
+#--- assign the index as a variable ---#
+KS_counties &lt;- mutate(KS_counties, intersects_hpa  = intersects_hpa)
+```
+
+
+```r
+#--- take a look ---#
+dplyr::select(KS_counties, COUNTYFP, intersects_hpa)
+```
+
+```
+## Simple feature collection with 105 features and 2 fields
+## geometry type:  MULTIPOLYGON
+## dimension:      XY
+## bbox:           xmin: -102.0517 ymin: 36.99308 xmax: -94.59193 ymax: 40.00308
+## geographic CRS: NAD83
+## First 10 features:
+##    COUNTYFP intersects_hpa                       geometry
+## 1       133          FALSE MULTIPOLYGON (((-95.5255 37...
+## 2       075           TRUE MULTIPOLYGON (((-102.0446 3...
+## 3       123          FALSE MULTIPOLYGON (((-98.48738 3...
+## 4       189           TRUE MULTIPOLYGON (((-101.5566 3...
+## 5       155           TRUE MULTIPOLYGON (((-98.47279 3...
+## 6       129           TRUE MULTIPOLYGON (((-102.0419 3...
+## 7       073          FALSE MULTIPOLYGON (((-96.52278 3...
+## 8       023           TRUE MULTIPOLYGON (((-102.0517 4...
+## 9       089           TRUE MULTIPOLYGON (((-98.50445 4...
+## 10      059          FALSE MULTIPOLYGON (((-95.50827 3...
+```
+
+---
+class: middle
+
+# points (source) vs polygons (target)
+
+.content-box-green[**Goal**]
+
+Select only the wells that intersect with (or equivalently inside) the HPA boundary.
+
+---
+class: middle
+
+
+.left4[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+ggplot() + 
+	geom_sf(
+		data = hpa_KS, 
+		fill = "blue", 
+		alpha = 0.3,
+		size = 0.05
+	) +
+	geom_sf(
+		data = KS_wells, 
+		size = 0.1
+	) +
+	theme_void()
+```
+
+]
+
+.right6[
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/map-wells-county-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+We can select only wells that reside within the HPA boundary using the same syntax as the above example.
+
+
+```r
+KS_wells_in_hpa &lt;- KS_wells[hpa, ]
+```
+
+Again, the default topological relation is `st_intersects()`. 
+
+---
+class: middle
+
+As you can see in the figure below, only the wells that are inside (or intersect with) the HPA remained because the default topological relation is `st_intersects()`.  
+
+.left5[
+&lt;br&gt;
+
+```r
+ggplot() + 
+	geom_sf(
+		data = hpa_KS, 
+		fill = "blue", 
+		alpha = 0.3,
+		size = 0.05
+	) +
+	geom_sf(
+		data = KS_wells_in_hpa, 
+		size = 0.1
+	) +
+	theme_void()
+```
+]
+
+.right5[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/wells-in-hpa-f-1.png" alt="A map of Kansas irrigation wells inside the HPA boundary" width="100%" /&gt;
+&lt;p class="caption"&gt;A map of Kansas irrigation wells inside the HPA boundary&lt;/p&gt;
+&lt;/div&gt;
+]
+
+---
+class: middle
+
+.content-box-green[**Flagging**]
+
+If you just want to flag wells that intersects with HPA instead of dropping the non-intersecting wells, use `st_intersects()`:
+
+
+```r
+#--- wells ---#
+KS_wells &lt;- mutate(KS_wells, in_hpa  = st_intersects(KS_wells, hpa, sparse = FALSE))
+
+#--- take a look ---#
+dplyr::select(KS_wells, site, in_hpa)
+```
+
+```
+## Simple feature collection with 37647 features and 2 fields
+## geometry type:  POINT
+## dimension:      XY
+## bbox:           xmin: -102.0495 ymin: 36.99552 xmax: -94.62089 ymax: 40.00199
+## geographic CRS: NAD83
+## First 10 features:
+##    site in_hpa                   geometry
+## 1     1   TRUE POINT (-100.4423 37.52046)
+## 2     3   TRUE POINT (-100.7118 39.91526)
+## 3     5   TRUE POINT (-99.15168 38.48849)
+## 4     7   TRUE POINT (-101.8995 38.78077)
+## 5     8   TRUE  POINT (-100.7122 38.0731)
+## 6     9  FALSE POINT (-97.70265 39.04055)
+## 7    11   TRUE POINT (-101.7114 39.55035)
+## 8    12  FALSE POINT (-95.97031 39.16121)
+## 9    15   TRUE POINT (-98.30759 38.26787)
+## 10   17   TRUE POINT (-100.2785 37.71539)
+```
+
+---
+class: middle
+
+# lines (source) vs polygons (target) 
+
+
+.content-box-green[**Goal**]
+
+Select only railroads that intersect with Kansas.
+
+---
+class: middle
+
+.left4[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+ggplot() + 
+	geom_sf(
+		data = KS_counties, 
+		color = "red",
+		size = 0.1
+	) +
+	geom_sf(
+		data = rail_roads, 
+		size = 0.1
+	) +
+	theme_void()
+```
+]
+
+.right6[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/map-lines-county-f-1.png" alt="U.S. railroads and Kansas county boundaries" width="100%" /&gt;
+&lt;p class="caption"&gt;U.S. railroads and Kansas county boundaries&lt;/p&gt;
+&lt;/div&gt;
+]
+
+---
+class: middle
+
+This will do the job:
+ 
+
+```r
+rail_roads_KS &lt;- rail_roads[KS_counties, ]
+```
+
+---
+class: middle
+
+.left5[
+
+```r
+ggplot() +
+	geom_sf(
+		data = KS_counties, 
+		color = "red",
+		size = 0.1
+	) +
+	geom_sf(
+		data = rail_roads_KS, 
+		size = 0.1
+	) +
+	theme_void()
+```
+
++ As you can see in the figure to the right, only the railroads that intersect with Kansas were selected. 
+
++ Note the lines that go beyond the Kansas boundary are also selected (remember, the default is `st_intersect()`). 
+
++ If you would like the lines beyond the state boundary to be cut out but the intersecting parts of those lines to remain, use `st_intersection()`, which is explained later.
+]
+
+.right5[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/map-rail-ks-f-1.png" alt="Railroads that intersect Kansas county boundaries" width="100%" /&gt;
+&lt;p class="caption"&gt;Railroads that intersect Kansas county boundaries&lt;/p&gt;
+&lt;/div&gt;
+]
+
+---
+class: middle
+
+
+.content-box-green[**Flagging**]
+
+Unlike the previous two cases, multiple objects (lines) are checked against multiple objects (polygons) for intersection. 
+
+Therefore, we cannot use the strategy we took above of returning a vector of true or false using `sparse = TRUE` option. 
+
+Here, we count the number of intersecting counties and then assign `TRUE` if the number is greater than 0. 
+
+---
+class: middle
+
+
+```r
+(
+int_mat &lt;- st_intersects(rail_roads, KS_counties)
+)
+```
+
+```
+## Sparse geometry binary predicate list of length 180958, where the predicate was `intersects'
+## first 10 elements:
+##  1: (empty)
+##  2: (empty)
+##  3: (empty)
+##  4: (empty)
+##  5: (empty)
+##  6: (empty)
+##  7: (empty)
+##  8: (empty)
+##  9: (empty)
+##  10: (empty)
+```
+
+
+```r
+int_vec &lt;- lapply(int_mat, length) %&gt;% unlist()
+
+head(int_vec)
+```
+
+```
+## [1] 0 0 0 0 0 0
+```
+
+---
+class: middle
+
+
+```r
+#--- assign the true/false vector to a new variable ---#
+rail_roads &lt;- mutate(rail_roads, intersect_ks  = int_vec &gt; 0)
+
+#--- take a look ---#
+dplyr::select(rail_roads, LINEARID, intersect_ks)
+```
+
+```
+## Simple feature collection with 180958 features and 2 fields
+## geometry type:  MULTILINESTRING
+## dimension:      XY
+## bbox:           xmin: -165.4011 ymin: 17.95174 xmax: -65.74931 ymax: 65.00006
+## geographic CRS: NAD83
+## First 10 features:
+##       LINEARID intersect_ks                       geometry
+## 1  11020239500        FALSE MULTILINESTRING ((-79.47058...
+## 2  11020239501        FALSE MULTILINESTRING ((-79.46687...
+## 3  11020239502        FALSE MULTILINESTRING ((-79.66819...
+## 4  11020239503        FALSE MULTILINESTRING ((-79.46687...
+## 5  11020239504        FALSE MULTILINESTRING ((-79.74031...
+## 6  11020239575        FALSE MULTILINESTRING ((-79.43695...
+## 7  11020239576        FALSE MULTILINESTRING ((-79.47852...
+## 8  11020239577        FALSE MULTILINESTRING ((-79.43695...
+## 9  11020239589        FALSE MULTILINESTRING ((-79.38736...
+## 10 11020239591        FALSE MULTILINESTRING ((-79.53848...
+```
+
+---
+class: middle
+
+# polygons (source) vs points (target) 
+
+.content-box-green[**Goal**]
+
+Select only counties that intersect with at least one of the wells that overlie the HPA.
+
+---
+class: middle
+
+.left5[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+ggplot() + 
+	geom_sf(
+		data = KS_counties,
+		size = 0.1
+	) +
+	geom_sf(
+		data = KS_wells_in_hpa,
+		size = 0.1	
+	) +
+	theme_void()
+```
+]
+
+.right5[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/map-county-point-f-1.png" alt="Kansas county boundaries and wells that overlie the HPA" width="100%" /&gt;
+&lt;p class="caption"&gt;Kansas county boundaries and wells that overlie the HPA&lt;/p&gt;
+&lt;/div&gt;
+]
+
+
+---
+class: middle
+
+This does the trick:
+
+
+```r
+KS_counties_intersected &lt;- KS_counties[KS_wells_in_hpa, ]  
+```
+
+---
+class: middle
+
+As you can see, only the counties that intersect with at least one well remained.  
+
+.left5[
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+ggplot() + 
+	geom_sf(
+		data = KS_counties,
+		size = 0.1
+	) +
+	geom_sf(
+		data = `KS_counties_intersected`,
+		size = 0.1,
+		fill = "blue",
+		alpha = 0.4
+	) +
+	geom_sf(
+		data = KS_wells_in_hpa,
+		size = 0.1	
+	) +
+	theme_void()
+```
+]
+
+.right5[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/subset-county-point-f-1.png" alt="Counties that have at least one well" width="100%" /&gt;
+&lt;p class="caption"&gt;Counties that have at least one well&lt;/p&gt;
+&lt;/div&gt;
+]
+
+---
+class: middle
+
+To flag counties that have at least one well, use `st_intersects()` as follows just like we did for the lines-polygons case:
+
+
+```r
+int_mat &lt;- st_intersects(KS_counties, KS_wells_in_hpa) %&gt;% 
+  lapply(length) %&gt;% 
+  unlist()
+
+#--- railroads ---#
+KS_counties &lt;- mutate(KS_counties, intersect_wells  = int_mat &gt; 0)
+
+#--- take a look ---#
+dplyr::select(KS_counties, NAME, COUNTYFP, intersect_wells)
+```
+
+```
+## Simple feature collection with 105 features and 3 fields
+## geometry type:  MULTIPOLYGON
+## dimension:      XY
+## bbox:           xmin: -102.0517 ymin: 36.99308 xmax: -94.59193 ymax: 40.00308
+## geographic CRS: NAD83
+## First 10 features:
+##         NAME COUNTYFP intersect_wells                       geometry
+## 1     Neosho      133           FALSE MULTIPOLYGON (((-95.5255 37...
+## 2   Hamilton      075            TRUE MULTIPOLYGON (((-102.0446 3...
+## 3   Mitchell      123           FALSE MULTIPOLYGON (((-98.48738 3...
+## 4    Stevens      189            TRUE MULTIPOLYGON (((-101.5566 3...
+## 5       Reno      155            TRUE MULTIPOLYGON (((-98.47279 3...
+## 6     Morton      129            TRUE MULTIPOLYGON (((-102.0419 3...
+## 7  Greenwood      073           FALSE MULTIPOLYGON (((-96.52278 3...
+## 8   Cheyenne      023            TRUE MULTIPOLYGON (((-102.0517 4...
+## 9     Jewell      089            TRUE MULTIPOLYGON (((-98.50445 4...
+## 10  Franklin      059           FALSE MULTIPOLYGON (((-95.50827 3...
+```
+
+---
+class: middle
+
+# Subsetting to a geographic extent (bounding box)
+
++ We can use `st_crop()` to subset (crop) spatial objects to a spatial bounding box (extent) of a spatial object. 
+
++ The bounding box of an `sf` is a rectangle represented by the minimum and maximum of `x` and `y` that encompass/contain all the spatial objects in the `sf`. 
+
++ You can use `st_bbox()` to find the bounding box of an `sf` object. 
+
+---
+class: middle
+
+Let's get the bounding box of `KS_wells_in_hpa` (irrigation wells in Kansas that overlie HPA).
+
+
+```r
+#--- get the bounding box of KS_wells ---#
+(
+bbox_KS_wells_in_hpa &lt;- st_bbox(KS_wells_in_hpa)  
+)
+```
+
+```
+##       xmin       ymin       xmax       ymax 
+## -102.04953   36.99552  -97.33193   40.00199
+```
+
+```r
+#--- check the class ---#
+class(bbox_KS_wells_in_hpa)
+```
+
+```
+## [1] "bbox"
+```
+
+---
+class: middle
+
+.left5[
+&lt;br&gt;	
+&lt;br&gt;	
+
+```r
+ggplot() + 
+	geom_sf(
+		data = KS_counties,
+		size = 0.1
+	) +
+	geom_sf(
+		data = KS_wells_in_hpa,
+		size = 0.1
+	) +
+	geom_sf(
+		data = st_as_sfc(bbox_KS_wells_in_hpa),
+		color = "red",
+		alpha = 0
+	) +
+	theme_void()
+```
+]
+
+.right5[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/bbox-fig-f-1.png" alt="The bounding box of the irrigation wells in Kansas that overlie HPA" width="100%" /&gt;
+&lt;p class="caption"&gt;The bounding box of the irrigation wells in Kansas that overlie HPA&lt;/p&gt;
+&lt;/div&gt;
+]
+
+---
+class: middle
+
+When you use a bounding box to crop an `sf` objects, you can consider the bounding box as a single polygon.  
+
+Let's crop `KS_counties` using the `bbox` of the irrigation wells. 
+
+
+```r
+KS_cropped &lt;- st_crop(KS_counties, bbox_KS_wells_in_hpa)  
+```
+
+---
+class: middle
+
+Figure below shows what the cropped data looks like:
+
++ As you can see, the `st_crop()` operation cut some counties at the right edge of the bounding box. 
+
++ `st_crop()` is invasive.
+
+.left4[
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+
+```r
+ggplot() + 
+	geom_sf(
+		data = KS_counties,
+		size = 0.1
+	) +
+	geom_sf(
+		data = `KS_cropped`,
+		fill = "red",
+		alpha = 0.4
+	) +
+	theme_void()
+```
+
+
+]
+
+.right6[
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/cropped-fig-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+If you do not like that to happen and want the complete original counties that have at least one well, you can use the subset approach using `[, ]` after converting the bounding box to an `sfc` as follows:
+
+
+```r
+KS_complete_counties &lt;- KS_counties[st_as_sfc(bbox_KS_wells_in_hpa), ]  
+```
+
+---
+class: middle
+	
+Here is what the subsetted Kansas county data looks like: 
+
+.left4[
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+
+```r
+ggplot() + 
+	geom_sf(
+		data = KS_counties,
+		size = 0.1
+	) +
+	geom_sf(
+		data = `KS_complete_counties`,
+		fill = "red",
+		alpha = 0.4
+	) +
+	theme_void()
+```
+
+
+]
+
+.right6[
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/cropped-fig-f-19-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: inverse, center, middle
+name: join
+
+# Spatial Join
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+class: middle
+
+# Spatial Join
+
+By spatial join, we mean spatial operations that involve all of the following:
+
++ overlay one spatial layer (target layer) onto another spatial layer (source layer) 
++ for each of the observation in the target layer
+  * identify which objects in the source layer it geographically intersects (or a different  topological relation) with  
+  * extract values associated with the intersecting objects in the source layer (and summarize if necessary), 
+  * assign the extracted value to the object in the target layer
+
+---
+class: middle
+
+
+.content-box-green[**Spatial join classification**]
+
+We can classify spatial join into four categories by the type of the underlying spatial objects:
+
++ .red[vector-vector: vector data (target) against vector data (source)]  
++ vector-raster: vector data (target) against raster data (source)  
++ raster-vector: raster data (target) against vector data (source)  
++ raster-raster: raster data (target) against raster data (source)  
+
+--
+
+Among the four, our focus here is the first case (the second case will be discussed later). 
+
+--
+
+We will not cover the third and fourth cases in this course because it is almost always the case that our target data is a vector data (e.g., city or farm fields as points, political boundaries as polygons, etc).  
+
+---
+class: middle
+
+
+.content-box-green[**vector data (target) against vector data (source)**]
+
+This category can be further broken down into different sub categories depending on the type of spatial object (point, line, and polygon). 
+
+--
+
+Here, we will ignore any spatial joins that involve lines. This is because objects represented by lines are rarely observation units in our analysis nor the source data from which we will extract values. 
+
+--
+
+Here is the list of the types of spatial joins we will learn.  
+
+1. points (target) against polygons (source)
+2. polygons (target) against points (source)
+3. polygons (target) against polygons (source)
+
+---
+class: middle
+
+# Case 1: points (target) vs polygons (source)
+
+.content-box-green[**What?**]
+
+For each of the observations (points) in the target data,
+
++ finds which polygon in the source file it intersects with
++ assigns the value associated with the intersected polygon to the point
+
+--
+
+.content-box-green[**How**]
+
+In order to achieve this, we can use the `st_join()` function, whose syntax is as follows:    
+
+
+```r
+st_join(points_sf, polygons_sf)
+```
+
+--
+
+.content-box-green[**Note**]
+
+Similar to spatial subsetting, the default topological relation is `st_intersects()`
+
+---
+class: middle
+
+.content-box-green[**Data**]
+
+We use the Kansas irrigation well data (points) and Kansas county boundary data (polygons) for a demonstration. 
+
+.content-box-green[**Goal**]
+
+Our goal is to assign the county-level corn price information from the Kansas county data to wells. 
+
+---
+class: middle
+
+First let's create and add a fake county-level corn price variable to the Kansas county data.  
+
+
+```r
+KS_corn_price &lt;- KS_counties %&gt;%  
+  mutate(
+    corn_price = seq(3.2, 3.9, length = nrow(.)) 
+  ) %&gt;% 
+  dplyr::select(COUNTYFP, corn_price)
+```
+
+---
+class: middle
+
+Here is the map of Kansas counties color-differentiated by fake corn price:
+
+.left4[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+ggplot() + 
+	geom_sf(
+		data = KS_corn_price, 
+		aes(fill = corn_price)
+	) +
+	theme_void() +
+	scale_fill_viridis_c()
+```
+]
+
+.right6[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/county-price-f-1.png" alt="Map of county-level fake corn price" width="100%" /&gt;
+&lt;p class="caption"&gt;Map of county-level fake corn price&lt;/p&gt;
+&lt;/div&gt;
+]
+
+---
+class: middle
+
+
+```r
+#--- spatial join ---#
+(
+KS_wells_County &lt;- st_join(KS_wells, KS_corn_price)
+)
+```
+
+```
+## Simple feature collection with 37647 features and 5 fields
+## geometry type:  POINT
+## dimension:      XY
+## bbox:           xmin: -102.0495 ymin: 36.99552 xmax: -94.62089 ymax: 40.00199
+## geographic CRS: NAD83
+## First 10 features:
+##    site    af_used in_hpa COUNTYFP corn_price                   geometry
+## 1     1 232.099948   TRUE      069   3.556731 POINT (-100.4423 37.52046)
+## 2     3  13.183940   TRUE      039   3.449038 POINT (-100.7118 39.91526)
+## 3     5  99.187052   TRUE      165   3.287500 POINT (-99.15168 38.48849)
+## 4     7   0.000000   TRUE      199   3.644231 POINT (-101.8995 38.78077)
+## 5     8 145.520499   TRUE      055   3.832692  POINT (-100.7122 38.0731)
+## 6     9   3.614535  FALSE      143   3.799038 POINT (-97.70265 39.04055)
+## 7    11 188.423543   TRUE      181   3.590385 POINT (-101.7114 39.55035)
+## 8    12  77.335960  FALSE      177   3.550000 POINT (-95.97031 39.16121)
+## 9    15   0.000000   TRUE      159   3.610577 POINT (-98.30759 38.26787)
+## 10   17 167.819034   TRUE      069   3.556731 POINT (-100.2785 37.71539)
+```
+
+---
+class: middle
+
+.left4[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+ggplot() + 
+	geom_sf(data = KS_counties) +
+*geom_sf(
+*	data = KS_wells_County,
+*	aes(color = corn_price),
+*	size = 0.3
+*) +
+	scale_fill_viridis_c() +
+	theme_void() +
+	theme(
+		legend.position = "bottom"
+	)
+```
+
+]
+
+.right6[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/map-cp-wells-f-1.png" alt="Map of wells color-differentiated by corn price" width="100%" /&gt;
+&lt;p class="caption"&gt;Map of wells color-differentiated by corn price&lt;/p&gt;
+&lt;/div&gt;
+]
+
+---
+class: middle
+
+# Case 2: polygons (target) vs points (source)
+
+.content-box-green[**What?**]
+
+For each of the observations (polygons) in the target data,
+
++ find which observations (points) in the source file it intersects
++ assign the values associated with the points to the polygon. 
+
+--
+
+.content-box-green[**How**]
+
+In order to achieve this, we can use the `st_join()` function, whose syntax is as follows:    
+
+
+```r
+st_join(polygons_sf, points_sf)
+```
+
+--
+
+.content-box-green[**Note**]
+
+Similar to spatial subsetting, the default topological relation is `st_intersects()`
+
+
+---
+class: middle
+
+
+.content-box-green[**Data**]
+
++ Polygons (target): `KS_counties`
++ Points (source): `KS_wells`
+
+.content-box-green[**Goal**]
+
+Our goal is to get county-level total groundwater pumping. 
+
+---
+class: middle
+
+Here is how it is done:
+
+
+```r
+KS_County_wells &lt;- st_join(KS_counties, KS_wells)
+```
+
+&lt;br&gt;
+
+.left6[
+
+Take a look at the resulting data:
+
+
+```r
+dplyr::select(KS_County_wells, COUNTYFP, site, af_used)
+```
+
+```
+## Simple feature collection with 37652 features and 3 fields
+## geometry type:  MULTIPOLYGON
+## dimension:      XY
+## bbox:           xmin: -102.0517 ymin: 36.99308 xmax: -94.59193 ymax: 40.00308
+## geographic CRS: NAD83
+## First 10 features:
+##     COUNTYFP  site   af_used                       geometry
+## 1        133 53861  17.01790 MULTIPOLYGON (((-95.5255 37...
+## 1.1      133 70592   0.00000 MULTIPOLYGON (((-95.5255 37...
+## 2        075   328 394.04513 MULTIPOLYGON (((-102.0446 3...
+## 2.1      075   336  80.65036 MULTIPOLYGON (((-102.0446 3...
+## 2.2      075   436 568.25359 MULTIPOLYGON (((-102.0446 3...
+## 2.3      075  1007 215.80416 MULTIPOLYGON (((-102.0446 3...
+## 2.4      075  1170   0.00000 MULTIPOLYGON (((-102.0446 3...
+## 2.5      075  1192  77.39120 MULTIPOLYGON (((-102.0446 3...
+## 2.6      075  1249   0.00000 MULTIPOLYGON (((-102.0446 3...
+## 2.7      075  1300 320.22612 MULTIPOLYGON (((-102.0446 3...
+```
+]
+
+.right4[
+
+&lt;br&gt;
+
++ All the unique polygon - point intersecting combinations comprise the observations. 
+
+(e.g., There are two wells (with `site == 53861` and `site == 70592`) in the county with `COUNTYFP==133`.)
+
++ For each of the polygons, you will have as many observations as the number of wells that intersect with the polygon. 
+
++ Once you join the two layers, you can find statistics by polygon (county here).
+]
+
+---
+class: middle
+
+Since we want groundwater extraction by county, the following does the job.
+
+
+```r
+KS_County_wells %&gt;% 
+  group_by(COUNTYFP) %&gt;% 
+  summarize(af_used = sum(af_used, na.rm = TRUE)) 
+```
+
+```
+## Simple feature collection with 105 features and 2 fields
+## geometry type:  MULTIPOLYGON
+## dimension:      XY
+## bbox:           xmin: -102.0517 ymin: 36.99308 xmax: -94.59193 ymax: 40.00308
+## geographic CRS: NAD83
+## # A tibble: 105 x 3
+##    COUNTYFP af_used                                                                     geometry
+##    &lt;fct&gt;      &lt;dbl&gt;                                                           &lt;MULTIPOLYGON [°]&gt;
+##  1 001           0  (((-95.51931 37.82026, -95.51897 38.03823, -95.07788 38.03771, -95.07969 37…
+##  2 003           0  (((-95.50833 38.39028, -95.06583 38.38994, -95.07788 38.03771, -95.51897 38…
+##  3 005         771. (((-95.56413 39.65287, -95.33974 39.65298, -95.11519 39.65255, -95.04405 39…
+##  4 007        4972. (((-99.0126 37.47042, -98.46466 37.47101, -98.46493 37.38414, -98.3498 37.3…
+##  5 009       61083. (((-99.03297 38.69676, -98.48611 38.69688, -98.47991 38.68153, -98.48038 38…
+##  6 011           0  (((-95.08808 37.73248, -95.07969 37.8198, -95.07788 38.03771, -94.6141 38.0…
+##  7 013         480. (((-95.78811 40.00047, -95.78457 40.00046, -95.3399 40.00003, -95.33974 39.…
+##  8 015         343. (((-97.15248 37.91273, -97.15291 38.0877, -96.84077 38.08562, -96.52278 38.…
+##  9 017           0  (((-96.83765 38.34864, -96.81951 38.52245, -96.35378 38.52166, -96.35728 38…
+## 10 019           0  (((-96.52487 37.30273, -95.9644 37.29923, -95.96427 36.99922, -96.00081 36.…
+## # … with 95 more rows
+```
+
+Of course, it is just as easy to get other types of statistics by simply modifying the `summarize()` part.
+
+---
+class: middle
+
+However, this two-step process can actually be done in one step using `aggregate()`, in which you specify how you want to aggregate with the `FUN` option:
+
+
+.content-box-green[**Syntax**]
+
+
+```r
+aggregate(points_sf, polygons_sf, FUN = function)
+```
+
+---
+class: middle
+
+
+```r
+#--- mean ---#
+aggregate(KS_wells, KS_counties, FUN = mean)
+```
+
+```
+## Simple feature collection with 105 features and 3 fields
+## geometry type:  MULTIPOLYGON
+## dimension:      XY
+## bbox:           xmin: -102.0517 ymin: 36.99308 xmax: -94.59193 ymax: 40.00308
+## geographic CRS: NAD83
+## First 10 features:
+##        site    af_used    in_hpa                       geometry
+## 1  62226.50   8.508950 0.0000000 MULTIPOLYGON (((-95.5255 37...
+## 2  35184.64 176.390742 0.4481793 MULTIPOLYGON (((-102.0446 3...
+## 3  40086.82  35.465123 0.0000000 MULTIPOLYGON (((-98.48738 3...
+## 4  40179.41 285.672916 1.0000000 MULTIPOLYGON (((-101.5566 3...
+## 5  51249.39  46.048048 0.9743783 MULTIPOLYGON (((-98.47279 3...
+## 6  33033.13 202.612377 1.0000000 MULTIPOLYGON (((-102.0419 3...
+## 7  29840.40   0.000000 0.0000000 MULTIPOLYGON (((-96.52278 3...
+## 8  28235.82  94.585634 0.9736842 MULTIPOLYGON (((-102.0517 4...
+## 9  36180.06  44.033911 0.3000000 MULTIPOLYGON (((-98.50445 4...
+## 10 40016.00   1.142775 0.0000000 MULTIPOLYGON (((-95.50827 3...
+```
+
+Notice that the `mean()` function was applied to all the columns in `KS_wells`, including site id number. 
+
+---
+class: middle
+
+So, you might want to select variables you want to join before you apply the `aggregate()` function like this:  
+
+
+```r
+aggregate(dplyr::select(KS_wells, af_used), KS_counties, FUN = mean)
+```
+
+```
+## Simple feature collection with 105 features and 1 field
+## geometry type:  MULTIPOLYGON
+## dimension:      XY
+## bbox:           xmin: -102.0517 ymin: 36.99308 xmax: -94.59193 ymax: 40.00308
+## geographic CRS: NAD83
+## First 10 features:
+##       af_used                       geometry
+## 1    8.508950 MULTIPOLYGON (((-95.5255 37...
+## 2  176.390742 MULTIPOLYGON (((-102.0446 3...
+## 3   35.465123 MULTIPOLYGON (((-98.48738 3...
+## 4  285.672916 MULTIPOLYGON (((-101.5566 3...
+## 5   46.048048 MULTIPOLYGON (((-98.47279 3...
+## 6  202.612377 MULTIPOLYGON (((-102.0419 3...
+## 7    0.000000 MULTIPOLYGON (((-96.52278 3...
+## 8   94.585634 MULTIPOLYGON (((-102.0517 4...
+## 9   44.033911 MULTIPOLYGON (((-98.50445 4...
+## 10   1.142775 MULTIPOLYGON (((-95.50827 3...
+```
+
+
+---
+class: middle
+
+# Case 3: polygons (target) vs polygons (source)
+
+.content-box-green[**What?**]
+
+For each of the observations (polygons) in the target data,
+
++ find which observations (polygons) in the source file it intersects
++ assign the values associated with the intersecting polygons to the polygon. 
+
+--
+
+.content-box-green[**How**]
+
+In order to achieve this, we can use the `st_join()` function, whose syntax is as follows:    
+
+
+```r
+st_join(targt_polygons_sf, source_polygons_sf)
+```
+
+--
+
+.content-box-green[**Note**]
+
+Similar to spatial subsetting, the default topological relation is `st_intersects()`
+
+---
+class: middle
+
+.content-box-green[**Data**]
+
++ Polygons (target): Hydrologic Units
++ Polygons (source): county-level corn acres in Iowa in 2018 from USDA NASS
+
+.content-box-green[**Goal**]
+
+Our goal is to find corn acres by hydrologic unit based on the county-level corn acres data.
+
+---
+class: middle
+
+
+.left5[
+
+.content-box-green[**IA corn acres data**]
+
+
+```r
+#--- IA boundary ---#
+IA_corn &lt;- readRDS("./Data/IA_corn.rds")
+
+#--- take a look ---#
+IA_corn
+```
+
+```
+## Simple feature collection with 93 features and 3 fields
+## geometry type:  MULTIPOLYGON
+## dimension:      XY
+## bbox:           xmin: 203228.6 ymin: 4470941 xmax: 736832.9 ymax: 4822687
+## projected CRS:  NAD83 / UTM zone 15N
+## First 10 features:
+##    county_code year  acres                       geometry
+## 1          083 2018 183500 MULTIPOLYGON (((458997 4711...
+## 2          141 2018 167000 MULTIPOLYGON (((267700.8 47...
+## 3          081 2018 184500 MULTIPOLYGON (((421231.2 47...
+## 4          019 2018 189500 MULTIPOLYGON (((575285.6 47...
+## 5          023 2018 165500 MULTIPOLYGON (((497947.5 47...
+## 6          195 2018 111500 MULTIPOLYGON (((459791.6 48...
+## 7          063 2018 110500 MULTIPOLYGON (((345214.3 48...
+## 8          027 2018 183000 MULTIPOLYGON (((327408.5 46...
+## 9          121 2018  70000 MULTIPOLYGON (((396378.1 45...
+## 10         077 2018 107000 MULTIPOLYGON (((355180.1 46...
+```
+
+]
+
+.right5[
+
+.content-box-green[**Visualization**]
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/map-IA-corn-1.png" alt="Map of Iowa counties color-differentiated by corn planted acreage" width="100%" /&gt;
+&lt;p class="caption"&gt;Map of Iowa counties color-differentiated by corn planted acreage&lt;/p&gt;
+&lt;/div&gt;
+
+]
+
+---
+class: middle
+
+.left5[
+
+.content-box-green[**HUC units data**]
+
+
+```r
+#--- import HUC units ---#
+HUC_IA &lt;- st_read(dsn = "./Data", layer = "huc250k") %&gt;% 
+  dplyr::select(HUC_CODE) %&gt;% 
+  #--- reproject to the CRS of IA ---#
+  st_transform(st_crs(IA_corn)) %&gt;% 
+  #--- select HUC units that overlaps with IA ---#
+  .[IA_corn, ]
+```
+
+
+```
+## Simple feature collection with 55 features and 1 field
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: 154941.7 ymin: 4346327 xmax: 773299.8 ymax: 4907735
+## projected CRS:  NAD83 / UTM zone 15N
+## First 10 features:
+##     HUC_CODE                       geometry
+## 608 10170203 POLYGON ((235551.4 4907513,...
+## 621 07020009 POLYGON ((408580.7 4880798,...
+## 627 10170204 POLYGON ((248115.2 4891652,...
+## 638 07040008 POLYGON ((580255.9 4864502,...
+## 648 07080201 POLYGON ((496165.4 4863298,...
+## 659 07060001 POLYGON ((640997.4 4847181,...
+## 672 07080202 POLYGON ((456642 4835360, 4...
+## 683 07100003 POLYGON ((377064.5 4819697,...
+## 686 07080203 POLYGON ((441866.5 4813870,...
+## 687 10230003 POLYGON ((333500.3 4832628,...
+```
+
+]
+
+.right5[
+
+
+.content-box-green[**Visualization**]
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/HUC-map-1.png" alt="Map of HUC units that intersect with Iowa state boundary" width="100%" /&gt;
+&lt;p class="caption"&gt;Map of HUC units that intersect with Iowa state boundary&lt;/p&gt;
+&lt;/div&gt;
+
+]
+
+---
+class: middle
+
+Here is a map of Iowa counties with HUC units superimposed on top:
+
+.left4[
+&lt;br&gt;
+
+```r
+ggplot() + 
+	geom_sf(
+		data = IA_corn,
+		aes(fill = acres)
+	) +
+	geom_sf(
+		data = HUC_IA,
+		alpha = 0
+	) +
+	scale_fill_viridis_c() +
+	theme_void() +
+	theme(legend.position = "bottom")
+```
+]
+
+.right6[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/HUC-founcty-map-f-1.png" alt="Map of HUC units superimposed on the counties in Iowas" width="100%" /&gt;
+&lt;p class="caption"&gt;Map of HUC units superimposed on the counties in Iowas&lt;/p&gt;
+&lt;/div&gt;
+]
+
+---
+class: middle
+
+
+.content-box-green[**spatial join**]
+
+
+```r
+(
+HUC_joined &lt;- st_join(HUC_IA, IA_corn)
+)
+```
+
+```
+## Simple feature collection with 349 features and 4 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: 154941.7 ymin: 4346327 xmax: 773299.8 ymax: 4907735
+## projected CRS:  NAD83 / UTM zone 15N
+## First 10 features:
+##       HUC_CODE county_code year  acres                       geometry
+## 608   10170203         149 2018 226500 POLYGON ((235551.4 4907513,...
+## 608.1 10170203         167 2018 249000 POLYGON ((235551.4 4907513,...
+## 608.2 10170203         193 2018 201000 POLYGON ((235551.4 4907513,...
+## 608.3 10170203         119 2018 184500 POLYGON ((235551.4 4907513,...
+## 621   07020009         063 2018 110500 POLYGON ((408580.7 4880798,...
+## 621.1 07020009         109 2018 304000 POLYGON ((408580.7 4880798,...
+## 621.2 07020009         189 2018 120000 POLYGON ((408580.7 4880798,...
+## 627   10170204         141 2018 167000 POLYGON ((248115.2 4891652,...
+## 627.1 10170204         143 2018 116000 POLYGON ((248115.2 4891652,...
+## 627.2 10170204         167 2018 249000 POLYGON ((248115.2 4891652,...
+```
+
+.content-box-green[**Note**]
+
+Each of the intersecting HUC-county combinations becomes an observation with its resulting geometry the same as the geometry of the HUC unit. 
+
+---
+class: middle
+
+.left5[
+
+
+.content-box-green[**Focus on 1 HUC unit**]
+
+The HUC unit with `HUC_CODE ==10170203` intersects with four County.
+
+
+```r
+#--- get the HUC unit with `HUC_CODE ==10170203`  ---#
+(
+temp_HUC_county &lt;- filter(HUC_joined, HUC_CODE == 10170203)
+)
+```
+
+```
+## Simple feature collection with 4 features and 4 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: 154941.7 ymin: 4709628 xmax: 248115.2 ymax: 4907735
+## projected CRS:  NAD83 / UTM zone 15N
+##       HUC_CODE county_code year  acres                       geometry
+## 608   10170203         149 2018 226500 POLYGON ((235551.4 4907513,...
+## 608.1 10170203         167 2018 249000 POLYGON ((235551.4 4907513,...
+## 608.2 10170203         193 2018 201000 POLYGON ((235551.4 4907513,...
+## 608.3 10170203         119 2018 184500 POLYGON ((235551.4 4907513,...
+```
+
++ All of the four observations have identical geometry, which is the geometry of the HUC unit
+
++ The `st_join()` operation did not leave the information about the nature of the intersection of the HUC unit and the four counties. 
+
++ If you are just calculating the simple average of corn acres ignoring the degree of spatial overlaps, this is just fine. 
+]
+
+.right5[
+
+.content-box-green[**Visualization**]
+
+
+```r
+tm_shape(temp_HUC_county) +
+  tm_polygons() +
+  tm_layout(frame = FALSE)
+```
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/four-county-huc-1.png" alt="Map of the HUC unit" width="100%" /&gt;
+&lt;p class="caption"&gt;Map of the HUC unit&lt;/p&gt;
+&lt;/div&gt;
+
+]
+
+---
+class: inverse, center, middle
+name: join
+
+# Spatial Intersection (cropping join)
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+class: middle
+
+
+# Spatial Intersection (cropping join)
+
+.content-box-green[**Definition**]
+
+Cropping join cuts the non-intersecting parts out while joining 
+
+
+.content-box-green[**Use case**]
+
++ We just saw that area-weighted averages cannot be found using `st_join()` because it does not provide information about how much area of each HUC unit is intersecting with each of its intersecting counties. 
+
++ If we can get the geometry of the intersecting part of the HUC unit and the county, then we can calculate its area, which in turn allows us to find area-weighted averages of joined attributes. 
+
+
+
+---
+class: middle
+
+.content-box-green[**How**]
+
++ For these purposes, we can use `sf::st_intersection()`. 
+
+.content-box-green[**st_intersection()**]
+
++ While `st_intersects()` returns the indices of intersecting objects, `st_intersection()` returns intersecting spatial objects with the non-intersecting parts of the `sf` objects cut out. 
+
++ Moreover, attribute values of the source `sf` will be merged to its intersecting `sfg` in the target `sf`. 
+
+---
+class: middle
+
+.content-box-green[**Illustration**]
+  
+We will see how it works for lines-polygons and polygons-polygons cases using the toy examples we used to explain how `st_intersects()` work. 
+
+.left4[
+&lt;br&gt;
+
+```r
+ggplot() +
+  geom_sf(
+  	data = polygons, 
+  	aes(fill = polygon_name), 
+  	alpha = 0.3
+  ) +
+  scale_fill_discrete(name = "Polygons") +
+  geom_sf(
+  	data = lines, 
+  	aes(color = line_name)
+  ) +
+  scale_color_discrete(name = "Lines") +
+  theme_void()
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/plot-lines-polygons-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+.content-box-red[**lines and polygons**]
+
+The following code gets the intersection of the lines and the polygons.
+
+
+```r
+(
+intersections_lp &lt;- st_intersection(lines, polygons) %&gt;% 
+  mutate(int_name = paste0(line_name, "-", polygon_name))
+)
+```
+
+```
+## Simple feature collection with 3 features and 3 fields
+## geometry type:  LINESTRING
+## dimension:      XY
+## bbox:           xmin: 0 ymin: 0 xmax: 2.5 ymax: 2
+## CRS:            NA
+##   line_name polygon_name                              x         int_name
+## 1    line 1    polygon 1        LINESTRING (0 0, 2 0.4) line 1-polygon 1
+## 2    line 2    polygon 1   LINESTRING (1.5 0.5, 2 1.25) line 2-polygon 1
+## 3    line 2    polygon 2 LINESTRING (2.166667 1.5, 2... line 2-polygon 2
+```
+
++ As you can see in the output, each instance of the intersections of the lines and polygons become an observation (line 1-polygon 1, line 2-polygon 1, and line 2-polygon 2). 
+
+
+
+---
+class: middle
+
+The part of the lines that did not intersect with a polygons is cut out and does not remain in the returned `sf`. To see this, see Figure \@ref(fig:lines-polygons-int) below:
+
+.left5[
+
+
+.content-box-green[**Original lines and polygons**]
+
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/plot-lines-polygons-25-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+.right5[
+
+.content-box-green[**Lines after cropping join**]
+
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/lines-polygons-int-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+.content-box-red[**polygons and polygons**]
+
+The following code gets the intersection of polygon 1 and polygon 3 with polygon 2.
+
+
+```r
+(
+intersections_pp &lt;- st_intersection(polygons[c(1,3), ], polygons[2, ]) %&gt;% 
+  mutate(int_name = paste0(polygon_name, "-", polygon_name.1))
+)
+```
+
+```
+## Simple feature collection with 2 features and 3 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: 0.5 ymin: 1.5 xmax: 2.3 ymax: 3.2
+## CRS:            NA
+##   polygon_name polygon_name.1                              x            int_name
+## 1    polygon 1      polygon 2 POLYGON ((0.5 2, 2 2, 2 1.5... polygon 1-polygon 2
+## 2    polygon 3      polygon 2 POLYGON ((0.5 2.5, 0.5 3.2,... polygon 3-polygon 2
+```
+
+Each instance of the intersections of polygons 1 and 3 against polygon 2 becomes an observation (`polygon 1-polygon 2` and `polygon 3-polygon 2`).
+
+---
+class: middle
+
+Just like the lines-polygons case, the non-intersecting part of polygons 1 and 3 are cut out and do not remain in the returned `sf`. 
+
+We will see later that `st_intersection()` can be used to find area-weighted values from the intersecting polygons with help from `st_area()`.  
+
+
+.left5[
+&lt;br&gt;
+
+```r
+ggplot() +
+  #--- here are all the original polygons  ---#
+  geom_sf(
+  	data = polygons, 
+  	aes(fill = polygon_name), 
+  	alpha = 0.3
+  ) +
+  #--- here is what is returned after st_intersection ---#
+  geom_sf(
+  	data = intersections_pp, 
+  	aes(color = int_name),
+  	size = 1.5,
+  	alpha = 0
+  ) +
+  theme_void()
+```
+]
+
+.right5[
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/inter-section-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+.content-box-red[**Area-weighted average**]
+
++ Let's now get back to the example of HUC units and county-level corn acres data.
+
++ We would like to find area-weighted average of corn acres instead of the simple average of corn acres.
+
+---
+class: middle
+
+Using `st_intersection()`, for each of the HUC polygons, we find the intersecting counties, and then divide it into parts based on the boundary of the intersecting polygons. 
+
+
+```r
+(
+HUC_intersections &lt;- st_intersection(HUC_IA, IA_corn) %&gt;% 
+  mutate(huc_county = paste0(HUC_CODE, "-", county_code))
+)
+```
+
+```
+## Simple feature collection with 349 features and 5 fields
+## geometry type:  GEOMETRY
+## dimension:      XY
+## bbox:           xmin: 203228.6 ymin: 4470941 xmax: 736832.9 ymax: 4822687
+## projected CRS:  NAD83 / UTM zone 15N
+## First 10 features:
+##    HUC_CODE county_code year  acres                       geometry   huc_county
+## 1  07080207         083 2018 183500 POLYGON ((482898.9 4711686,... 07080207-083
+## 2  07080205         083 2018 183500 POLYGON ((499779.5 4696819,... 07080205-083
+## 3  07080105         083 2018 183500 POLYGON ((461843.7 4683106,... 07080105-083
+## 4  10170204         141 2018 167000 POLYGON ((269413.3 4793330,... 10170204-141
+## 5  10230003         141 2018 167000 POLYGON ((271582.4 4754543,... 10230003-141
+## 6  10230002         141 2018 167000 POLYGON ((267630.3 4790946,... 10230002-141
+## 7  07100003         081 2018 184500 POLYGON ((436126.2 4789504,... 07100003-081
+## 8  07080203         081 2018 184500 MULTIPOLYGON (((459473.1 47... 07080203-081
+## 9  07080207         081 2018 184500 POLYGON ((429583.2 4779598,... 07080207-081
+## 10 07100005         081 2018 184500 POLYGON ((420999.4 4772213,... 07100005-081
+```
+
+---
+class: middle
+
+The key difference from the `st_join()` example is that each observation of the returned data is a unique HUC-county intersection. 
+
+The figure below is a map of all the intersections of the HUC unit with `HUC_CODE ==10170203` and the four intersecting counties. 
+
+.left4[
+&lt;br&gt;
+
+```r
+HUC_intersections %&gt;% 
+	filter(HUC_CODE == "10170203") %&gt;% 
+	ggplot(data = .) +
+		geom_sf(aes(fill = huc_county)) +
+		theme_void()
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/area-weighted-av-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+In order to find the area-weighted average of corn acres, you can use `st_area()` first to calculate the area of the intersections, and then find the area-weighted average as follows:
+
+
+```r
+(
+HUC_aw_acres &lt;- HUC_intersections %&gt;% 
+  #--- get area ---#
+  mutate(area = as.numeric(st_area(.))) %&gt;% 
+  #--- get area-weight by HUC unit ---#
+  group_by(HUC_CODE) %&gt;% 
+  mutate(weight = area / sum(area)) %&gt;% 
+  #--- calculate area-weighted corn acreage by HUC unit ---#
+  summarize(aw_acres = sum(weight * acres))
+)
+```
+
+```
+## Simple feature collection with 55 features and 2 fields
+## geometry type:  GEOMETRY
+## dimension:      XY
+## bbox:           xmin: 203228.6 ymin: 4470941 xmax: 736832.9 ymax: 4822687
+## projected CRS:  NAD83 / UTM zone 15N
+## # A tibble: 55 x 3
+##    HUC_CODE aw_acres                                                                    geometry
+##    &lt;chr&gt;       &lt;dbl&gt;                                                              &lt;GEOMETRY [m]&gt;
+##  1 07020009  251185. POLYGON ((421317.6 4797774, 421160.2 4797630, 421060.3 4797550, 420940.3 4…
+##  2 07040008  165000  POLYGON ((602931.1 4817205, 602922.4 4817166, 602862.4 4816996, 602772.4 4…
+##  3 07060001  105234. MULTIPOLYGON (((649942.7 4761635, 649613.8 4761791, 649473.8 4761791, 6493…
+##  4 07060002  140201. MULTIPOLYGON (((593265.8 4817066, 593390.7 4817045, 593570.7 4817006, 5937…
+##  5 07060003  149000  MULTIPOLYGON (((692249.2 4712890, 692081.6 4712936, 692051.6 4712956, 6920…
+##  6 07060004  162123. POLYGON ((653200.5 4718418, 652956.5 4718503, 652446.5 4718733, 652186.5 4…
+##  7 07060005  142428. POLYGON ((735347.9 4642386, 734770.6 4642296, 734450.5 4642226, 734140.4 4…
+##  8 07060006  159635. POLYGON ((721064.4 4656959, 721056 4656900, 721026 4656760, 720966 4656630…
+##  9 07080101  115572. POLYGON ((667461.7 4558779, 667381 4558691, 667210.9 4558582, 666760.8 455…
+## 10 07080102  160008. POLYGON ((635032.9 4675777, 635236 4675644, 635356.1 4675614, 635626.1 467…
+## # … with 45 more rows
+```
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

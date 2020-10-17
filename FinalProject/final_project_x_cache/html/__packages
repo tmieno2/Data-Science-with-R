@@ -41,3 +41,6 @@ gt
 flextable
 printr
 officer
+modelsummary
+sandwich
+mapview
