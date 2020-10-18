@@ -60,7 +60,11 @@ class: middle
 
 .content-box-green[**Preparation**]
 
-Go [here](https://www.dropbox.com/sh/mn7yk7baru0pm4e/AADDfjIHcWpxACamPh3NVGI4a?dl=0) and download all the files.
++ Set the working directory to a directory
+
++ Create the "Data" folder under the directory you have set as the working directory 
+
++ Go [here](https://www.dropbox.com/sh/mn7yk7baru0pm4e/AADDfjIHcWpxACamPh3NVGI4a?dl=0), download all the files, and then save them in the "Data" folder you created in the step above
 
 ---
 class: inverse, center, middle
@@ -992,6 +996,8 @@ wells <- readRDS('./Data/well_registration.rds')  %>%
 
 In this dataset, `longdd` and `latdd` represent longitude and latitude, respectively.
 
+We also know (yes, YOU need to know the CRS of your data) that the geographic coordinates system of this data is NAD 83 $(epsg=4269)$ for this dataset. 
+
 --
 
 As you can see the data is not an `sf` object.  
@@ -1012,7 +1018,8 @@ st_as_sf(
 	coords = c(
 		longitude var, 
 		latitude var
-	)
+	),
+	crs = crs
 )	
 ```
 
@@ -1027,7 +1034,8 @@ wells_sf <- st_as_sf(
 	coords = c(
 		"longdd",
 		"latdd"
-	)
+	),
+	crs = 4269
 )
 ```
 
@@ -1038,43 +1046,6 @@ class: middle
 
 ```{r highlight.output = 5}
 head(wells_sf[1:5,])
-```
-
-.content-box-green[**Note**]
-
-The CRS information is missing!
-
----
-class: middle
-
-.content-box-green[**Problem**]
-
-+ So, right after the conversion to `sf`, the `sf` object is NA. 
-
-+ Obviously, $R$ does not know the reference system without you telling it. 
-
-.content-box-green[**Solution**]
-
-+ We know (yes, YOU need to know the CRS of your data) that the geographic coordinates in the wells data is NAD 83 $(epsg=4269)$ for this dataset. 
-
-+ We can assign the right CRS using either `st_set_crs()` or `st_crs()`.
-
-```{r set_crs}
-#--- set CRS ---#
-wells_sf <- st_set_crs(wells_sf, 4269) 
-
-#--- or this ---#
-st_crs(wells_sf) <- 4269
-```
-
----
-class: middle
-
-.content-box-green[**See the changes**]
-
-```{r }
-#--- see the change ---#
-head(wells_sf)
 ```
 
 ---

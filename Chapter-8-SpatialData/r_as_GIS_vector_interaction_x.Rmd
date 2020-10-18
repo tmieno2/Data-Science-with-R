@@ -186,7 +186,7 @@ g_all <- ggplot() +
 ---
 class: middle
 
-# st_intersect() 
+# st_intersects() 
 
 `st_intersects()` checks which of `sfg`s in an `sf` geographically intersect with which of `sfg`s in another `sf`.
 
@@ -344,6 +344,87 @@ st_is_within_distance(
 )
 ```
 ]
+
+---
+
+# Exercise 1
+
+.panelset[ 
+
+.panel[.panel-name[Preparation]
+
+Run the following codes:
+
+```{r results = "hide"}
+#--- mower sensor data ---#
+mower_sensor_sf <- read_csv("./Data/MAP0233.csv") %>% 
+	st_as_sf(
+	coords = c(
+		"LNG", 
+		"LAT"
+	),
+	crs = 4326
+)	%>% 
+st_transform(26917)
+
+#--- fairway grid data ---#
+fwy05_grid <- st_read(dsn = "Data", layer = "fwy05_grid_NAD") %>% 
+	st_transform(26917)
+```
+
+	]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[Data visualization]
+
+.left5[
+<br>
+<br>
+```{r fairway-mower, eval = F}	
+ggplot()+
+	geom_sf(
+		data = mower_sensor_sf, 
+		size = 0.1
+	) +
+	geom_sf(
+		data = fwy05_grid, 
+		size = 0.1, 
+		fill = "red", 
+		alpha = 0.3
+	) +
+	theme_void()
+```
+]
+
+.right5[
+```{r fairway-mower-f, ref.label = "fairway-mower", echo = F}	
+
+```
+]
+
+	]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[st_intersects()]
+
+Use `st_intersects()` to check which of the points in `mower_sensor_sf` are inside of any of the polygons in `fwy05_grid`.
+
+```{r include = F}
+st_intersects(mower_sensor_sf, fwy05_grid)
+```
+
+Since there are so many points in `mower_sensor_sf`, you won't really see which ones are inside of any of the polygons in `fwy05_grid`.
+
+That is okay for now. We will later learn how to filter `sf` objects spatially. 
+
+	] 
+
+	<!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
 
 ---
 class: inverse, center, middle
@@ -587,7 +668,7 @@ class: middle
 <br>
 <br>
 <br>
-```{r map-wells-county, fig.cap = "A map of Kansas irrigation wells and HPA", eval = F}
+```{r map-wells-county-KS, fig.cap = "A map of Kansas irrigation wells and HPA", eval = F}
 
 ggplot() + 
 	geom_sf(
@@ -606,7 +687,7 @@ ggplot() +
 ]
 
 .right6[
-```{r map-wells-county-f, ref.label = "map-wells-county", echo = F, out.width = "100%"}	
+```{r map-wells-county-KS-f, ref.label = "map-wells-county-KS", echo = F, out.width = "100%"}	
 
 ```
 ]
@@ -735,7 +816,7 @@ ggplot() +
 
 + As you can see in the figure to the right, only the railroads that intersect with Kansas were selected. 
 
-+ Note the lines that go beyond the Kansas boundary are also selected (remember, the default is `st_intersect()`). 
++ Note the lines that go beyond the Kansas boundary are also selected (remember, the default is `st_intersects()`). 
 
 + If you would like the lines beyond the state boundary to be cut out but the intersecting parts of those lines to remain, use `st_intersection()`, which is explained later.
 ]
@@ -1071,6 +1152,42 @@ ggplot() +
 ]
 
 ---
+class: middle
+
+# Exercise 2 
+
+Find all the points from `mower_sensor_sf` inside at least one of the polygons in `fwy05_grid`, and name it `mower_sense_in_grids`.
+
+```{r include = F}
+mower_sense_in_grids <- mower_sensor_sf[fwy05_grid, ]
+```
+
+After this, run the following code to confirm you figure looks like the on the righ. 
+
+.left5[
+```{r mower-grids-answ, eval = F}	
+ggplot() +
+	geom_sf(
+		data =  fwy05_grid, 
+		fill = "green", 
+		alpha = 0.3
+	) +
+	geom_sf(
+		data =  mower_sense_in_grids,
+		size = 0.2
+	) +
+	theme_void()
+```
+]
+
+.right5[
+```{r mower-grids-answ-f, ref.label = "mower-grids-answ", echo = F}	
+
+```
+]
+
+
+---
 class: inverse, center, middle
 name: join
 
@@ -1201,8 +1318,11 @@ ggplot() +
 		data = KS_corn_price, 
 		aes(fill = corn_price)
 	) +
+	scale_fill_viridis_c() +
 	theme_void() +
-	scale_fill_viridis_c()
+	theme(
+		legend.position = "bottom"
+	)
 ```
 ]
 
@@ -1237,7 +1357,7 @@ ggplot() +
 		aes(color = corn_price), #<<
 		size = 0.3 #<<
 	) + #<<
-	scale_fill_viridis_c() +
+	scale_color_viridis_c() +
 	theme_void() +
 	theme(
 		legend.position = "bottom"
@@ -1563,6 +1683,40 @@ tm_shape(temp_HUC_county) +
 ```
 
 ]
+
+---
+	
+# Exercise 3
+
+
+.content-box-green[**Exercise 3.1**]
+
+Use `st_join()` on `fwy05_grid` (target) and `mower_sensor_sf` (source) so that you can join all the points in `mower_sensor_sf` and their attributes to each of the spatially intersecting polygons in `fwy05_grid`. Name the resulting object `grid_points_joined`.
+
+```{r include = F}
+grid_points_joined <- st_join(fwy05_grid,  mower_sensor_sf)	
+```
+
+.content-box-green[**Exercise 3.2**]
+
+Calculate the average NDRE for each of the polygons using `dplyr` operations.
+
+```{r include = F}
+grid_points_joined %>% 
+	group_by(Grid) %>% 
+	summarize(NDRE = mean(NDRE))
+```
+
+Hint: `Grid` variable uniquely identifies which grid the observations belong to.
+
+.content-box-green[**Exercise 3.3**]
+
+Instead of using `st_join()` and then summarizing subsequently, use `aggregate()` to find the mean `NDRE` for each grid.
+
+```{r include = F}
+aggregate(mower_sensor_sf, fwy05_grid,  mean, na.rm = TRUE)	
+```
+
 
 ---
 class: inverse, center, middle
