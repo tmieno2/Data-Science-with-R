@@ -1,0 +1,389 @@
+---
+title: "R as GIS: Raster Data Basics with the `raster` package"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    lib_dir: libs
+    nature:
+      ratio: 12:8
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+---
+
+```{r, child = './../setup.Rmd'}
+```
+
+```{r, include = F, cache = F}
+suppressMessages(library(sf)) 
+suppressMessages(library(ggplot2)) 
+suppressMessages(library(raster))
+suppressMessages(library(tmap))
+```
+
+```{r echo = F, eval = F}
+setwd("/Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-8-SpatialData")
+```
+# Before you start
+
+## Learning objectives
+
+The objectives of this chapter is to learn how to use raster datasets using R.
+
+## Table of contents
+
+1. [Raster object classes by the `raster` package](#data-type)
+2. [Input an output](#io)
+2. [Raster arithmetic](#arithmetic)
+3. [Quick visualization](#viz)
+
+<br>
+
+<span style="color:red"> Tips: </span>hitting letter "o" key will give you a panel view of the slides
+
+---
+class: middle
+
+# Prerequisites and Preparation
+
+.content-box-green[**Prerequisites**]
+
++ What Geographic Coordinate System (GCS), Coordinate Reference System (CRS), and projection are ([this](https://annakrystalli.me/intro-r-gis/gis.html) is a good resource)
+
++ Distinctions between vector and raster data ([this](https://gis.stackexchange.com/questions/57142/what-is-the-difference-between-vector-and-raster-data-models) is a simple summary of the difference)
+
+.content-box-green[**Preparation**]
+
+Go [here](https://www.dropbox.com/sh/vhtpjiezijb97lj/AABpvzqdyZMkR1DgUBeI_mOja?dl=0) and download all the files.
+
+---
+class: inverse, center, middle
+name: data-type
+
+# `raster` package: `RasterLayer`, `RasterStack`, and `RasterBrick`
+
+---
+class: middle
+
+`raster` offers three raster data object classes:
+
++ `RasterLayer`
++ `RasterStack`
++ `RasterBrick`
+
+Often, the three raster object types are collectively referred to as `Raster*` objects for shorthand in the documentation of the `raster` and other related packages.
+
+---
+class: middle
+
+# `RasterLayer`
+
+Let's start with taking a look at raster data. We will download CDL data for Iowa in 2015. 
+
+```{r read_the_IA_cdl_data, highlight.output = 1}
+(
+drone_blue <- raster("./Data/Annos_062718_RE_transparent_reflectance_blue.tif")
+)
+```
+
++ The class of the downloaded data is `RasterLayer`, which is a raster data class defined by the `raster` package.
+
++ A `RasterLayer` consists of only one layer, meaning that only a single variable is associated with the cells (here it is land use category code in integer).
+
+---
+class: middle
+
+.content-box-green[**Visualization**]
+
+```{r out.width = "80%", echo = F}
+plot(drone_blue)
+```
+
+---
+class: middle
+
+```{r }
+drone_blue	
+```
+
+Evaluating the imported raster object provides you with information about the raster data: 
+
++ class
++ dimensions (number of cells, number of columns, number of cells)
++ spatial resolution (30 meter by 30 meter for this raster data)
++ extent 
++ CRS  
+
+
+---
+class: middle
+
+You often need to extract the CRS of a raster object before you interact extract values from a raster layer to a vector data. 
+
+You can use `projection()` to extract the CRS from a raster data: 
+
+```{r chars}
+projection(drone_blue) 
+```
+
+--
+
+.content-box-green[**Note**]
+
++ The CRS format in use is `proj4string`, which is a different format than the `wtk` format used for `sf` objects by the `sf` package.
+
++ The `sf` package accepts a CRS in `proj4string` in `st_transform()`
+
+---
+class: middle
+
+# `RasterStack` and `RasterBrick`
+
+You can stack multiple raster layers of the **same spatial resolution and extent** to create a `RasterStack` using `raster::stack()`. 
+
+Often times, processing a multi-layer object has computational advantages over processing multiple single-layer one by one. 
+
+---
+class: middle
+
+To create a `RasterStack` and `RasterBrick`, let's first import the drone data for the green band.
+
+```{r make_stack, eval = F}
+(
+drone_green <- raster("./Data/Annos_062718_RE_transparent_reflectance_green.tif")
+)
+```  
+
+Let's use `stack()` to stack the two raster datasets to create a `RasterStack` object:
+
+```{r make_stack_run, echo = F}
+(
+drone_bg <- stack(drone_blue, drone_green)
+)
+```
+
+`drone_bg` is a `RasterStack`, and it has two layers of variables: `Annos_062718_RE_transparent_reflectance_blue`, and `Annos_062718_RE_transparent_reflectance_green`.
+
+---
+class: middle
+
+You can create a `RasterStack` by directly reading raster datasets using `stack()` as follows:
+
+```{r make_stack, eval = F}
+(
+drone_stack <- stack(
+	"./Data/Annos_062718_RE_transparent_reflectance_green.tif", 
+	"./Data/Annos_062718_RE_transparent_reflectance_green.tif"
+)
+)
+```
+
+
+---
+class: middle
+
+`RasterBrick` can be made by either combining more than one `RasterLayer`s using `brick()` or by reading a multi-layer raster data file using `brick()`.
+
+.content-box-green[**Example**]
+
+```{r make_brick}
+#--- stack the two ---#
+IA_cdl_brick <- brick(drone_stack)
+
+#--- take a look ---#
+IA_cdl_brick
+```  
+
+--
+
+You can pretty much forget about this class. I have found myself not using `RasterBrick` objects at all. 
+
+While spatial operations on `RasterBrick` are supposedly faster than `RasterStack`, the time to create a `RasterBrick` object itself is often long enough to kill the speed advantage entirely.
+
+---
+class: inverse, center, middle
+name: io
+
+# Raster data input and output
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+class: middle
+
+# Read and write a raster data file  
+
+Raster data files can come in numerous different formats. For example, PRPISM weather data comes in the Band Interleaved by Line (BIL) format, some of the Daymet data comes in netCDF format. Other popular formats include GeoTiff, SAGA, ENVI, and many others. 
+
+### Read raster file(s)
+
+You can use `raster()` to read raster data of many common formats, and it should be almost always the case that the raster data you got can be read using this function. Here, we read a GeoTiff file (a file with .tif extension):
+
+```{r read_no_eval_terra}
+drone_blue <- raster("./Data/Annos_062718_RE_transparent_reflectance_blue.tif")
+```
+
+(Yes, we have seen this earlier)
+
+---
+class: middle
+
+One important thing to note here is that the cell values of the raster data are actually not in memory when you "read" raster data from a file. 
+You basically just established a connection to the file. This helps to reduce the memory footprint of raster data handling. You can check this by `raster::inMemory()` function.
+
+```{r }
+inMemory(drone_blue)
+```
+
+---
+class: middle
+
+You can read multiple single-layer raster datasets of the same spatial extent and resolution at the same time to have a multi-layer `RasterStack` object using `stack()`. 
+
+```{r multiple_files}
+#--- the list of path to the files ---#
+files_list <- c(
+	"./Data/Annos_062718_RE_transparent_reflectance_green.tif", 
+	"./Data/Annos_062718_RE_transparent_reflectance_blue.tif" 
+)
+
+#--- read the two at the same time ---#
+(
+drone_blue_green <- stack(files_list) 
+)
+```
+
+While the files to be read have to have the identical spatial extent and resolution, there are no restrictions on what variable each of the raster layers represent. 
+
+For example, you can combine PRISM temperature and precipitation raster layers.
+
+---
+class: middle
+
+# Write raster files
+
+You can write a `Raster*` object using `writeRaster()`.
+
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+writeRaster(raster object, filename, format)
+```
+
+---
+class: middle
+
+.content-box-green[**Example**]
+
+```{r }
+writeRaster(drone_green, "./Data/export_example_green.tif", format = "GTiff", overwrite = TRUE)
+```
+
++ The above code saves `drone_blue` (a `RasterLayer` object) as a GeoTiff file. 
+
++ The format option can be dropped as `writeRaster()` infers the format from the extension of the file name. 
+
++ The `overwrite = TRUE` option is necessary if a file with the same name already exists and you are overwriting it. 
+
+---
+class: middle
+
+You can also save a `RasterStack` object just like you save a `RasterLayer` object. 
+
+```{r write_terra_2, eval = F}
+writeRaster(drone_blue_green, "./Data/raster_stack_example.tif", format = "GTiff", overwrite = TRUE)
+```
+
++ The saved file is a multi-band raster datasets. 
+
++ If you have many raster files of the same spatial extent and resolution, you can "stack" them on R and then export it to a single multi-band raster datasets, which cleans up your data folder a bit. 
+
+--
+
+.content-box-green[**Note**]
+
+There is no advantage in saving two raster layers as a single GeoTiff file. The single GeoTiff file is just as large in memory as having individual GeoTiff files for the two layers.  
+
+---
+class: inverse, center, middle
+name: arithmetic
+
+# Raster Arithmetic
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+class: middle
+
+.content-box-red[**Raster arithmetic**]
+
++ You can do basic arithmetic operations using raster layers as long as they share the same spatial extent and resolution. 
+
++ Raster arithmetic operations are done element-by-element (cell-by-cell).
+
+For example, when two `RasterLayer`s are added, then the two values associated with the same cell are added and the resulting value becomes the new value for the cell in the newly created `RasterLayer`.
+
+---
+class: middle
+
+.content-box-green[**Examples**]
+
+```{r eval = F}
+drone_b_plus_g <- drone_blue + drone_green	
+```
+
+```{r eval = F}
+drone_b_plus_g <- drone_blue * drone_green	
+```
+
+```{r eval = F}
+drone_b_plus_g <- drone_blue - drone_green	
+```
+
+---
+class: middle
+
+.content-box-green[**NDVI**]
+
+A prime use case of raster arithmetic is NDVI (or any other reflectance-based measures) calculation.
+
+---
+class: inverse, center, middle
+name: viz
+
+# Quick visualization of raster data
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+class: middle
+
+.content-box-green[**Static map**]
+
+To have a quick visualization of the data values of `Raster*` objects, you can simply use `plot()`:
+
+```{r plot_stack, out.width = "70%"}
+plot(drone_blue)
+```
+
+---
+class: middle
+
+.content-box-green[**Interactive map**]
+
+If you would like to have an interactive view of raster datasets, you can use the `mapView()` function from the `mapview` package just like we did for `sf` objects. 
+
+```{r int-map-raster}
+mapView(drone_blue_green)
+```
+
+---
+class: middle
+
+.content-box-green[**Note**]
+
+We will learn how to create publication-quality maps using the `ggplot2` package later.
