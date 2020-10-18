@@ -19,9 +19,9 @@ output:
 
 ```{r, include = F, cache = F}
 suppressMessages(library(sf)) 
-suppressMessages(library(ggplot2)) 
 suppressMessages(library(patchwork))
 suppressMessages(library(mapview))
+suppressMessages(library(tidyverse))
 ```
 
 # Before you start
@@ -51,7 +51,6 @@ The objectives of this chapter is to learn how to use R as GIS, specifically how
 class: middle
 
 #  Prerequisites and Preparation
-
 
 .content-box-green[**Prerequisites**]
 
@@ -382,6 +381,17 @@ plot(a_multipolygon, col = "red")
 <!-- panel set ends here -->
 
 ---
+class: middle
+
+# Exercises
+
+.content-box-green[**Exercise 1**]
+Create an `sfg` of `POINT`. 
+
+.content-box-green[**Exercise 2**]
+Create an `sfg` of `POLYGON`. 
+
+---
 class: inverse, center, middle
 name: const
 
@@ -470,6 +480,20 @@ As you can see `sf_ex` is now recognized also as an `sf` object.
 #--- check the class ---#
 class(sf_ex)
 ```
+
+---
+class: middle
+
+# Exercises
+
+.content-box-green[**Exercise 1**]
+
+Create an `sfc` using the `POINT` and `POLYGON` you made earlier.
+
+.content-box-green[**Exercise 2**]
+
+Create an `sf` object using the `sfc` object you created above, where the additional variable in the `sf` object is `id` with the `POINT` and `POLYGON` assigned `id = 1` and `id = 2`, respectively. 
+ 
 
 ---
 class: inverse, center, middle
@@ -644,6 +668,27 @@ nc <- readRDS(".Data/nc_county.rds")
 The use of rds files can be particularly attractive when the dataset is large because rds files are typically more memory efficient than shape files. 
 
 ---
+class: middle
+
+# Exercise
+
+.content-box-green[**Exercise 1**]
+
+Read the "Fairway_Five" shape files onto R using `st_read()`, and bame it `Fairway_Five`.
+
+```{r include = F}
+Fairway_Five <- st_read(dsn = "./Data", "Fairway_Five") 
+```
+
+.content-box-green[**Exercise 2**]
+
+Write the "Fairway_Five" as a Geopackage file using `st_write()`.
+
+```{r eval = F}
+st_write(Fairway_Five, "./Data/Fairway_Five.gpkg", overwrite = TRUE) 
+```
+
+---
 class: inverse, center, middle
 name: proj
 
@@ -730,13 +775,13 @@ class: middle
 
 .left5[
 ```{r }
-select(nc, geometry)
+dplyr::select(nc, geometry)
 ```	
 ]
 
 .right5[
 ```{r }
-select(nc_utm, geometry)
+dplyr::select(nc_utm, geometry)
 ```
 ]
 
@@ -781,6 +826,19 @@ nc_utm_back_to_original <- st_transform(
 st_crs(nc_utm_back_to_original)
 ```
 ]
+
+---
+class: middle
+
+# Exercises 
+
+.content-box-green[**Exercise 1**]
+
+Check the CRS of `Fairway_Five`.
+
+.content-box-green[**Exercise 2**]
+
+Find the EPSG code for WGS 84, and change the CRS of `Fairway_Five` to WGS 84 using the EPSG code.
 
 ---
 class: inverse, center, middle
@@ -1020,6 +1078,33 @@ head(wells_sf)
 ```
 
 ---
+class: middle
+
+# Exercises 
+
+.content-box-green[**Exercise 1**]
+
+Read "MAP0233.csv" using `read_csv()` from the `readr` package and name it `mower_sensor`.
+
+```{r include = F}
+mower_sensor <- read_csv("./Data/MAP0233.csv")
+```
+
+.content-box-green[**Exercise 2**]
+
+Using the `LAT` (latitude) and `LNG` (longitude) columns, turn the tibble into an `sf`, and then assign the CRS of WGS 84 using its EPSG code.  
+
+```{r include = F}
+mower_sensor_sf <- mower_sensor %>% 
+	st_as_sf(
+	coords = c(
+		"LAT", 
+		"LNG"
+	)
+)
+```
+
+---
 class: inverse, center, middle
 name: sf-to-sp
 
@@ -1206,7 +1291,7 @@ class: middle
 ```{r }
 (
 nc <- mutate(nc, area = st_area(nc)) %>% 
-	select(area)
+	dplyr::select(area)
 )
 ```
 
@@ -1229,14 +1314,14 @@ So, you need to convert it to numeric like this:
 nc <- mutate(nc, 
 	area = st_area(nc) `%>% as.numeric()`,
 	) %>% 
-	select(area)
+	dplyr::select(area)
 ```
 
 ```{r echo = F}
 nc <- mutate(nc, 
 	area = st_area(nc) %>% as.numeric(),
 	) %>% 
-	select(area)
+	dplyr::select(area)
 ```
 
 ```{r }
@@ -1334,7 +1419,45 @@ st_distance(
 
 The output of the `st_distance()` operation above is a matrix of distances whose $[i,j]$ element is the distance between the $i$th `sfg` of `st_centroid(nc[1:5, ])` and $j$th `sfg` of `st_centroid(nc[6:10, ])`.
 
+---
+class: middle
 
+# Exercises 
+
+.content-box-green[**Exercise 1**]
+
+Read "fwy05_grid_NAD" shape files, name it `fwy05_grid`, transform its CRS to NAS 83/UTM zone 17N (its EPSG code is 26917)
+
+```{r include = F}
+fwy05_grid <- st_read(dsn = "Data", layer = "fwy05_grid_NAD") %>% 
+	st_transform(26917)
+```
+
+Then use `plot()` to visualize the data to see what the `sfg`s in this dataset are.
+
+.content-box-green[**Exercise 2**]
+
+Create buffers around the grid polygons where the radius of the buffer is 10 meter, and name it `fwy05_buffers`.
+
+```{r include = F}
+fwy05_buffers <- st_buffer(fwy05_grid, dist = 10)
+```
+
+.content-box-green[**Exercise 3**]
+
+Find the centroid of each of the buffer polygons you created in Exercise 2, and then name it `buffers_centroids`.
+
+```{r include = F}
+buffers_centroids <- st_centroid(fwy05_buffers)
+```
+
+.content-box-green[**Exercise 4**]
+
+Calculated the distances between the centroids in `buffers_centroids`.
+
+```{r include = F}
+st_distance(buffers_centroids)
+```
 
 
 
