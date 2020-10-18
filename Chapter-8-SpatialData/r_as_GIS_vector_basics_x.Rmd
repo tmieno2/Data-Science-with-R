@@ -484,13 +484,13 @@ class(sf_ex)
 ---
 class: middle
 
-# Exercises
+# Exercises 1
 
-.content-box-green[**Exercise 1**]
+.content-box-green[**Exercise 1.1**]
 
 Create an `sfc` using the `POINT` and `POLYGON` you made earlier.
 
-.content-box-green[**Exercise 2**]
+.content-box-green[**Exercise 1.2**]
 
 Create an `sf` object using the `sfc` object you created above, where the additional variable in the `sf` object is `id` with the `POINT` and `POLYGON` assigned `id = 1` and `id = 2`, respectively. 
  
@@ -670,9 +670,9 @@ The use of rds files can be particularly attractive when the dataset is large be
 ---
 class: middle
 
-# Exercise
+# Exercises 2
 
-.content-box-green[**Exercise 1**]
+.content-box-green[**Exercise 2.1**]
 
 Read the "Fairway_Five" shape files onto R using `st_read()`, and bame it `Fairway_Five`.
 
@@ -680,7 +680,7 @@ Read the "Fairway_Five" shape files onto R using `st_read()`, and bame it `Fairw
 Fairway_Five <- st_read(dsn = "./Data", "Fairway_Five") 
 ```
 
-.content-box-green[**Exercise 2**]
+.content-box-green[**Exercise 2.2**]
 
 Write the "Fairway_Five" as a Geopackage file using `st_write()`.
 
@@ -830,13 +830,13 @@ st_crs(nc_utm_back_to_original)
 ---
 class: middle
 
-# Exercises 
+# Exercises 3 
 
-.content-box-green[**Exercise 1**]
+.content-box-green[**Exercise 3.1**]
 
 Check the CRS of `Fairway_Five`.
 
-.content-box-green[**Exercise 2**]
+.content-box-green[**Exercise 3.2**]
 
 Find the EPSG code for WGS 84, and change the CRS of `Fairway_Five` to WGS 84 using the EPSG code.
 
@@ -1080,9 +1080,9 @@ head(wells_sf)
 ---
 class: middle
 
-# Exercises 
+# Exercises 4
 
-.content-box-green[**Exercise 1**]
+.content-box-green[**Exercise 4.1**]
 
 Read "MAP0233.csv" using `read_csv()` from the `readr` package and name it `mower_sensor`.
 
@@ -1090,7 +1090,7 @@ Read "MAP0233.csv" using `read_csv()` from the `readr` package and name it `mowe
 mower_sensor <- read_csv("./Data/MAP0233.csv")
 ```
 
-.content-box-green[**Exercise 2**]
+.content-box-green[**Exercise 4.2**]
 
 Using the `LAT` (latitude) and `LNG` (longitude) columns, turn the tibble into an `sf`, and then assign the CRS of WGS 84 using its EPSG code.  
 
@@ -1422,9 +1422,9 @@ The output of the `st_distance()` operation above is a matrix of distances whose
 ---
 class: middle
 
-# Exercises 
+# Exercises 5 
 
-.content-box-green[**Exercise 1**]
+.content-box-green[**Exercise 5.1**]
 
 Read "fwy05_grid_NAD" shape files, name it `fwy05_grid`, transform its CRS to NAS 83/UTM zone 17N (its EPSG code is 26917)
 
@@ -1435,7 +1435,7 @@ fwy05_grid <- st_read(dsn = "Data", layer = "fwy05_grid_NAD") %>%
 
 Then use `plot()` to visualize the data to see what the `sfg`s in this dataset are.
 
-.content-box-green[**Exercise 2**]
+.content-box-green[**Exercise 5.2**]
 
 Create buffers around the grid polygons where the radius of the buffer is 10 meter, and name it `fwy05_buffers`.
 
@@ -1443,7 +1443,7 @@ Create buffers around the grid polygons where the radius of the buffer is 10 met
 fwy05_buffers <- st_buffer(fwy05_grid, dist = 10)
 ```
 
-.content-box-green[**Exercise 3**]
+.content-box-green[**Exercise 5.3**]
 
 Find the centroid of each of the buffer polygons you created in Exercise 2, and then name it `buffers_centroids`.
 
@@ -1451,7 +1451,7 @@ Find the centroid of each of the buffer polygons you created in Exercise 2, and 
 buffers_centroids <- st_centroid(fwy05_buffers)
 ```
 
-.content-box-green[**Exercise 4**]
+.content-box-green[**Exercise 5.4**]
 
 Calculated the distances between the centroids in `buffers_centroids`.
 
