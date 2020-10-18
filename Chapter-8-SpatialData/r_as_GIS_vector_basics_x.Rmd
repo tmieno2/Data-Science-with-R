@@ -102,7 +102,7 @@ Read the North Carolina county boundary data:
 
 ```{r results = "hide"}
 nc <- st_read(system.file("shape/nc.shp", package="sf")) %>% 
-	select(AREA, NAME, FIPS)
+	dplyr::select(AREA, NAME, FIPS)
 ```
 
 Check the class:
@@ -148,7 +148,7 @@ class: middle
 .left5[
 
 ```{r }
-select(nc, geometry)  
+dplyr::select(nc, geometry)  
 ```
 
 ]
@@ -990,7 +990,7 @@ Let's read a dataset (irrigation wells in Nebraska):
 #--- read irrigation well registration data ---#
 (
 wells <- readRDS('./Data/well_registration.rds')  %>% 
-	select(wellid, ownerid, acres, longdd, latdd)
+	dplyr::select(wellid, ownerid, acres, longdd, latdd)
 )
 ``` 
 
