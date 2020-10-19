@@ -994,6 +994,13 @@ wells <- readRDS('./Data/well_registration.rds')  %>%
 )
 ``` 
 
+---
+class: middle
+
+```{r echo = F}
+wells
+```
+
 In this dataset, `longdd` and `latdd` represent longitude and latitude, respectively.
 
 We also know (yes, YOU need to know the CRS of your data) that the geographic coordinates system of this data is NAD 83 $(epsg=4269)$ for this dataset. 
