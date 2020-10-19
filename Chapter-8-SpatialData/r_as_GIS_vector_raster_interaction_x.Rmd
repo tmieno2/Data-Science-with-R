@@ -19,9 +19,13 @@ output:
 
 ```{r, include = F, cache = F}
 suppressMessages(library(sf)) 
-suppressMessages(library(ggplot2)) 
+suppressMessages(library(terra)) 
 suppressMessages(library(patchwork))
+suppressMessages(library(data.table))
 suppressMessages(library(mapview))
+suppressMessages(library(tidyverse))
+suppressMessages(library(raster))
+suppressMessages(library(exactextractr))
 ```
 
 ```{r echo = F, eval = F}
@@ -31,16 +35,27 @@ setwd("/Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-8-Spa
 
 ## Learning objectives
 
-The objectives of this chapter is to learn how to use R as GIS, specifically how to interact two `sf` objects:
+Learn the spatial interactions of a vector and raster dataset. Specifically,
 
-+ subsetting an `sf` object based on another `sf` object
-+ overlay an `sf` object on another `sf` object to extract values from the `sf` object
+.content-box-green[**Objective 1**]
+
+Crop (spatially subset) a raster dataset based on the geographic extent of a vector dataset. 
+
+.content-box-green[**Objective 2**]
+
+Extract values from raster data for points and polygons. 
+
+To be precise, here is what we mean by raster data extraction and what it does for points and polygons data:
+
++ **Points**: For each of the points, find which raster cell it is located within, and assign the value of the cell to the point.  
+ 
++ **Polygons**: For each of the polygons, identify all the raster cells that intersect with the polygon, and assign a vector of the cell values to the polygon
 
 ## Table of contents
 
-1. [Topological Relations](#top)
-2. [Spatial Subsetting](#subset)
-3. [Spatial Value Extraction](#extract)
+1. [Cropping raster datasets](#crop)
+2. [Extract values from raster datasets](#extract)
+3. [Basic speed comparison](#speed)
 
 <br>
 
@@ -49,7 +64,7 @@ The objectives of this chapter is to learn how to use R as GIS, specifically how
 ---
 class: middle
 
-# Prerequisites and Preparation
+# Prerequisites 
 
 .content-box-green[**Prerequisites**]
 
@@ -57,1755 +72,386 @@ class: middle
 
 + Distinctions between vector and raster data ([this](https://gis.stackexchange.com/questions/57142/what-is-the-difference-between-vector-and-raster-data-models) is a simple summary of the difference)
 
-.content-box-green[**Preparation**]
+---
+class: middle
 
-Go [here](https://www.dropbox.com/sh/vhtpjiezijb97lj/AABpvzqdyZMkR1DgUBeI_mOja?dl=0) and download all the files.
+# Preparation 
+
++ Import treatment block shape files:
+
+```{r results = "hide"}
+treatment_blocks <- st_read(dsn = "./Data", layer = "ZP_TRT_Blocks_Buff") %>% 
+	#--- transform the CRS so that it is consistent with the raster data ---#
+	st_transform(4326)
+```
+
++ Import yield point data
+
+```{r results = "hide"}
+yield <- st_read(dsn = "./Data", layer = "Stevens_Centuro_YLD_shp") %>% 
+	dplyr::select(Yld_Vol_Dr) %>% 
+	rename(dry_yield = Yld_Vol_Dr) %>% 
+	#--- transform the CRS so that it is consistent with the raster data ---#
+	st_transform(4326)
+```
+
+
++ Import drone imagery data (GeoTiff) file.
+
+```{r }
+ndre <- raster("./Data/ndre_07202019.tif")
+```
+
+---
+class: middle
+
+.left4[
+<br>
+
+.content-box-green[**Note**]
+
++ gray circles: yield data points
++ red rectangles: treatment blocks
+]
+
+.right6[
+```{r echo = F}
+tm_shape(ndre) +
+	tm_raster(title = "NDRE") +
+tm_shape(yield) +
+	tm_symbols(size = 0.02) +
+tm_shape(treatment_blocks) +
+	tm_borders(col = "red") +
+	tm_layout(legend.outside = TRUE)
+```
+]
+
+
 
 ---
 class: inverse, center, middle
 name: data-structure
 
-# Topological Relations
+# Cropping raster data 
 
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
 
 ---
 class: middle
 
-# Topological Relations
+# Cropping raster data
 
----
-class: middle
++ Sometimes, it is convenient to crop a raster layer to the specific area of interest so that you do not have to carry around unnecessary parts of the raster layer. 
 
-.content-box-green[**Definition**]
-
-Topological relations refer to the way multiple spatial objects are spatially related to one another. 
-
---
-
-.content-box-green[**Goals**]
-
-You can identify various types of spatial relations using the `sf` package 
-
-+ Our main focus is on the intersections of spatial objects, which can be found using `st_intersects()`.
-
-+ We also briefly cover `st_is_within_distance()`
- 
-(Run `?geos_binary_pred` to see other topological relations you can find.) 
-
----
-class: middle
-
-# Data Preparation 
-
----
-class: middle
-
-.content-box-green[**POINTS**]
-
-```{r create_points}
-#--- create points ---#
-point_1 <- st_point(c(2, 2))
-point_2 <- st_point(c(1, 1))
-point_3 <- st_point(c(1, 3))
-
-#--- combine the points to make a single  sf of points ---#
-(
-points <- list(point_1, point_2, point_3) %>% 
-  st_sfc() %>% 
-  st_as_sf() %>% 
-  mutate(point_name = c("point 1", "point 2", "point 3"))
-)
-```
-
----
-class: middle
-
-
-.content-box-green[**LINES**]
-
-```{r create_lines}
-#--- create points ---#
-line_1 <- st_linestring(rbind(c(0, 0), c(2.5, 0.5)))
-line_2 <- st_linestring(rbind(c(1.5, 0.5), c(2.5, 2)))
-
-#--- combine the points to make a single  sf of points ---#
-(
-lines <- list(line_1, line_2) %>% 
-  st_sfc() %>% 
-  st_as_sf() %>% 
-  mutate(line_name = c("line 1", "line 2"))
-)
-```
-
----
-class: middle
-
-.content-box-green[**POLYGONS**]
-
-```{r create_polygons}
-#--- create polygons ---#
-polygon_1 <- st_polygon(list(
-  rbind(c(0, 0), c(2, 0), c(2, 2), c(0, 2), c(0, 0)) 
-))
-
-polygon_2 <- st_polygon(list(
-  rbind(c(0.5, 1.5), c(0.5, 3.5), c(2.5, 3.5), c(2.5, 1.5), c(0.5, 1.5)) 
-))
-
-polygon_3 <- st_polygon(list(
-  rbind(c(0.5, 2.5), c(0.5, 3.2), c(2.3, 3.2), c(2, 2), c(0.5, 2.5)) 
-))
-
-#--- combine the polygons to make an sf of polygons ---#
-(
-polygons <- list(polygon_1, polygon_2, polygon_3) %>% 
-  st_sfc() %>% 
-  st_as_sf() %>% 
-  mutate(polygon_name = c("polygon 1", "polygon 2", "polygon 3"))
-)
-```
-
----
-class: middle
-
-```{r plot-point-polygons, echo = F, out.width = "70%"}
-(
-g_all <- ggplot() +
-  geom_sf(data = polygons, aes(fill = polygon_name), alpha = 0.3) +
-  scale_fill_discrete(name = "Polygons") +
-  geom_sf(data = lines, aes(color = line_name)) +
-  scale_color_discrete(name = "Lines") + 
-  geom_sf(data = points, aes(shape = point_name), size = 3) +
-  scale_shape_discrete(name = "Points") +
-  theme_void()
-)
-  
-``` 
-
----
-class: middle
-
-# st_intersect() 
-
-`st_intersects()` checks which of `sfg`s in an `sf` geographically intersect with which of `sfg`s in another `sf`.
-
-
----
-class: middle
-
-.content-box-green[**points and polygons**]
-
-.left5[
-```{r echo = F}
-g_all
-```
-]
-
-.right5[
-
-```{r intersects_point_polygons}
-st_intersects(points, polygons)
-```
-
-+ The output is a list of which polygon(s) each of the points intersect with. 
-
-+ The numbers 1, 2, and 3 in the first row mean that 1st (polygon 1), 2nd (polygon 2), and 3rd (polygon 3) objects of the `polygons` intersect with the first point (point 1) of the `points` object. 
-
-+ The fact that point 1 is considered to be intersecting with polygon 2 means that the area inside the border is considered a part of the polygon (of course).
-
-]
-
----
-class: middle
- 
-
-If you would like the results of `st_intersects()` in a matrix form with boolean values filling the matrix, you can add `sparse = FALSE` option. 
-
-```{r, cache=TRUE}
-st_intersects(points, polygons, sparse = FALSE)
-```
-
----
-class: middle
-
-
-.content-box-green[**lines and polygons**]
-
-.left5[
-```{r echo = F}
-g_all
-```
-]
-
-.right5[
-```{r intersects_lines_polygons}
-st_intersects(lines, polygons)
-```
-
-The output is a list of which polygon(s) each of the lines intersect with.
-]
-
----
-class: middle
- 
-.content-box-green[**polygons and polygons**]
-
-.left5[
-```{r echo = F}
-g_all
-```
-]
-
-.right5[
-
-```{r, cache=TRUE}
-st_intersects(polygons, polygons)
-```
-
-For polygons vs polygons interaction, `st_intersects()` identifies any polygons that either touches (even at a point like polygons 1 and 3) or share some area.
-
-]
-
----
-class: middle
-
-# `st_is_within_distance()`  
-
-This function identifies whether two spatial objects are within the distance you specify as the name suggests.  
-
----
-class: middle
-
-
-Create two sets of points. 
-
-```{r create_random_points}
-set.seed(384738)
-
-points_set_1 <- lapply(1:5, function(x) st_point(runif(2))) %>% 
-  st_sfc() %>% st_as_sf() %>% 
-  mutate(id = 1:nrow(.))
-
-points_set_2 <- lapply(1:5, function(x) st_point(runif(2))) %>% 
-  st_sfc() %>% st_as_sf() %>% 
-  mutate(id = 1:nrow(.))
-```
-
----
-class: middle
-
-Here is the visualization of the two sets of points we just created.
-
-```{r map-points-points-points, echo = F, out.width = "60%"}
-ggplot() +
-  geom_sf_text(data = points_set_1, aes(label = id), color = "red") +
-  geom_sf_text(data = points_set_2, aes(label = id), color = "blue") 
-```
-
----
-class: middle
-
-We want to know which of the blue points (`points_set_2`) are located within 0.2 from each of the red points (`points_set_1`). 
-
-The following figure gives us the answer visually.
-
-```{r points-points-within, echo = F, out.width = "60%"}
-#--- create 0.2 buffers around points in points_set_1 ---#
-buffer_1 <- st_buffer(points_set_1, dist = 0.2)
-
-ggplot() +
-  geom_sf(data = buffer_1, color = "red", fill = NA) +
-  geom_sf_text(data = points_set_1, aes(label = id), color = "red") +
-  geom_sf_text(data = points_set_2, aes(label = id), color = "blue") 
-```
-
----
-class: middle
-
-
-.left5[
-```{r echo = F, out.width = "90%"}
-ggplot() +
-  geom_sf(data = buffer_1, color = "red", fill = NA) +
-  geom_sf_text(data = points_set_1, aes(label = id), color = "red") +
-  geom_sf_text(data = points_set_2, aes(label = id), color = "blue")
-```
-]
-
-.right5[
-Confirm your visual inspection results with the outcome of the following code using `st_is_within_distance()` function.
-
-```{r within_distance_blue_red}
-st_is_within_distance(
-	points_set_1, 
-	points_set_2, 
-	dist = 0.2
-)
-```
-]
-
----
-class: inverse, center, middle
-name: subset
-
-# Spatial Subsetting
-
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
-
----
-class: middle
-
-# Spatial Subsetting
-
-Spatial subsetting refers to operations that narrow down the geographic scope of a spatial object (source data) based on another spatial object (target data). 
-
----
-class: middle
-
-.content-box-green[**Preparation**]
-
-We illustrate spatial subsetting using Kansas county borders, the boundary of the High-Plains Aquifer (HPA), and agricultural irrigation wells in Kansas.  
-
-Download the datasets from [here](https://www.dropbox.com/sh/vhtpjiezijb97lj/AABpvzqdyZMkR1DgUBeI_mOja?dl=0), save them in the "Data" folder relative to your working directory, and then run the following code.
-
-```{r hp_import, results = "hide"}
-#--- Kansas county borders ---#
-KS_counties <- readRDS("./Data/KS_county_borders.rds")
-
-#--- HPA boundary ---#
-hpa <- st_read(dsn = "./Data", layer = "hp_bound2010") %>% 
-  .[1, ] %>% 
-  st_transform(st_crs(KS_counties))  
-
-#--- all the irrigation wells in KS ---#
-KS_wells <- readRDS("./Data/Kansas_wells.rds") %>% 
-  st_transform(st_crs(KS_counties))
-
-#--- US railroad ---#
-rail_roads <- st_read(dsn = "./Data", layer = "tl_2015_us_rails") %>% 
-  st_transform(st_crs(KS_counties)) 
-
-#--- Kansas portion of HPA ---#
-hpa_KS <- st_crop(hpa, st_bbox(KS_counties))
-```
-
-
----
-class: middle
-
-# polygons (source) vs polygons (target)
-
-.content-box-green[**Goal**]
-
-Select only the counties that intersect with the HPA boundary.
-
----
-class: middle
-
-
-.left4[
-
-```{r overlap-KS-county-HPA, eval = F, fig.cap = "Kansas portion of High-Plains Aquifer and Kansas counties"}
-ggplot() +
-	geom_sf(data = KS_counties) +
-	geom_sf(
-		data = hpa, 
-		fill = "blue", 
-		alpha = 0.4
-	) +
-	theme_void() 
-``` 
-
-]
-
-.right6[
-```{r overlap-KS-county-HPA-f, ref.label = "overlap-KS-county-HPA", echo = F, out.width = "100%"}	
-
-```
-]
-
-
++ Moreover, it takes less time to extract values from a raster layer when the size of the raster layer is smaller. 
 
 ---
 class: middle
 
 .content-box-green[**How**]
 
-When subsetting a data.frame by specifying the row numbers you would like to select, you can do 
-
-```{r eval = FALSE}
-#--- NOT RUN ---#
-data.frame[vector of row numbers, ]
-```
-
-Spatial subsetting of sf objects works in a similar syntax:   
-
-```{r syntax_subset, eval = FALSE}
-#--- NOT RUN ---#
-sf_1[sf_2, ]
-```
-
-where you are subsetting `sf_1` based on `sf_2`. Instead of row numbers, you provide another sf object in place.
-
----
-class: middle
-
-The following code spatially subsets Kansas counties based on the HPA boundary.
-
-```{r spatial_subset}
-counties_in_hpa <- KS_counties[hpa, ]
-```
-
----
-class: middle 
-
-.left6[
-
-```{r subsetted-p-p, out.width = "80%"}	
-ggplot() +
-	geom_sf(data = counties_in_hpa) +
-	geom_sf(data = hpa_KS, fill = "blue", alpha = 0.4) +
-	theme_void() 
-```
-]
-
-.right4[
-
-<br>
-
-+ You can see that only the counties that intersect with the HPA boundary remained. 
-
-+ This is because when you use the above syntax of `sf_1[sf_2, ]`, .red[the default underlying topological relations is `st_intersects()`]. 
-
-+ So, if an object in `sf_1` intersects with any of the objects in `sf_2` even slightly, then it will remain after subsetting.
-]
-
----
-class: middle
-
-You can specify the topological relation to be used as an option as in 
-
-```{r eval = FALSE}
-#--- NOT RUN ---#
-sf_1[sf_2, op = topological_relation_type] 
-```
-
-For example, if you only want counties that are completely within the HPA boundary, you can do the following:
-
-```{r st_within}
-counties_within_hpa <- KS_counties[hpa, , op = st_within]
-```
-
----
-class: middle
-
-.left5[
-```{r county-hpa-within, eval = F}	
-ggplot() +
-	geom_sf(data = counties_within_hpa) +
-	geom_sf(
-		data = hpa_KS, 
-		fill = "blue", 
-		alpha = 0.4
-	) +
-	theme_void()
-```
-]
-
-.right5[
-```{r county-hpa-within-f, ref.label = "county-hpa-within", echo = F, fig.cap = "Kansas counties that are completely within the HPA boundary", out.width = "80%"}	
-
-```
-]
-
----
-class: middle
-
-
-.content-box-green[**Flagging**]
-
-Sometimes, you just want to flag whether two spatial objects intersect or not, instead of dropping non-overlapping observations. In that case, you can use `st_intersects()`.
-
-
-.content-box-green[**Syntax**]
+You can crop a raster layer by using `raster::crop()`.
 
 ```{r eval = F}
-st_intersects(sf_1, sf_2)	
+raster::crop(Raster*, sf)
 ```
 
-This would check whether each of the `sfg`s in `sf_1` intersects with each of the `sfg`s in `sf_2`.
+The resulting `Raster*` object is the original cropped to the bounding box of the `sf` object.
 
 ---
 class: middle
 
-```{r county_hpa}
-#--- check the intersections of HPA and counties  ---#
-intersects_hpa <- st_intersects(KS_counties, hpa, sparse = FALSE)
-```
+.content-box-green[**Goal**]
 
-As you can see below, `st_intersects()` returns a matrix of TRUE of FALSE. 
+Crop `ndre` to the bounding box of `treatment_blocks`.
+
+.content-box-green[**Code**]
 
 ```{r }
-#--- check the class ---#
-class(intersects_hpa)
+ndre_cropped <- raster::crop(ndre, treatment_blocks)
+```
 
-#--- take a look ---#
-head(intersects_hpa)
+---
+class: middle
+
+```{r echo = F, out.width = "70%"}
+tm_shape(ndre_cropped) +
+	tm_raster(title = "NDRE") +
+tm_shape(treatment_blocks) +
+	tm_polygons(alpha = 0, size = 0.1) +
+	tm_layout(legend.outside = TRUE)
+```
+
+---
+class: inverse, center, middle
+name: data-structure
+
+# Extracting Values from Raster Layers for Vector Data
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+class: middle
+
+# To Points
+
+.content-box-green[**What**]
+
+For each of the points, find which raster cell it is located within, and assign the value of the cell to the point.  
+
+
+.content-box-green[**How**]
+
+You can use `raster::extract()` with the following syntax: 
+
+```{r eval = F}
+raster::extract(raster, sf of points)	
 ```
 
 ---
 class: middle
 	
-We can then assign the results to a new variable to `KS_counties`:
-
-```{r }
-#--- assign the index as a variable ---#
-KS_counties <- mutate(KS_counties, intersects_hpa  = intersects_hpa)
-```
-
-```{r }
-#--- take a look ---#
-dplyr::select(KS_counties, COUNTYFP, intersects_hpa)
-```
-
----
-class: middle
-
-# points (source) vs polygons (target)
 
 .content-box-green[**Goal**]
 
-Select only the wells that intersect with (or equivalently inside) the HPA boundary.
+Extract NDRE values for yield points data:
 
----
-class: middle
-
-
-.left4[
-<br>
-<br>
-<br>
-<br>
-```{r map-wells-county, fig.cap = "A map of Kansas irrigation wells and HPA", eval = F}
-
-ggplot() + 
-	geom_sf(
-		data = hpa_KS, 
-		fill = "blue", 
-		alpha = 0.3,
-		size = 0.05
-	) +
-	geom_sf(
-		data = KS_wells, 
-		size = 0.1
-	) +
-	theme_void()
-``` 
-
-]
-
-.right6[
-```{r map-wells-county-f, ref.label = "map-wells-county", echo = F, out.width = "100%"}	
-
-```
-]
-
----
-class: middle
-
-We can select only wells that reside within the HPA boundary using the same syntax as the above example.
-
-```{r wells_hpa}
-KS_wells_in_hpa <- KS_wells[hpa, ]
-```
-
-Again, the default topological relation is `st_intersects()`. 
-
----
-class: middle
-
-As you can see in the figure below, only the wells that are inside (or intersect with) the HPA remained because the default topological relation is `st_intersects()`.  
-
-.left5[
-<br>
-```{r wells-in-hpa, eval = F}	
-ggplot() + 
-	geom_sf(
-		data = hpa_KS, 
-		fill = "blue", 
-		alpha = 0.3,
-		size = 0.05
-	) +
-	geom_sf(
-		data = KS_wells_in_hpa, 
-		size = 0.1
-	) +
-	theme_void()
-```
-]
-
-.right5[
-```{r wells-in-hpa-f, ref.label = "wells-in-hpa", echo = F, fig.cap = "A map of Kansas irrigation wells inside the HPA boundary"}	
-
-```
-]
-
----
-class: middle
-
-.content-box-green[**Flagging**]
-
-If you just want to flag wells that intersects with HPA instead of dropping the non-intersecting wells, use `st_intersects()`:
-
-```{r well_hpa_flag}
-#--- wells ---#
-KS_wells <- mutate(KS_wells, in_hpa  = st_intersects(KS_wells, hpa, sparse = FALSE))
-
-#--- take a look ---#
-dplyr::select(KS_wells, site, in_hpa)
-```
-
----
-class: middle
-
-# lines (source) vs polygons (target) 
-
-
-.content-box-green[**Goal**]
-
-Select only railroads that intersect with Kansas.
-
----
-class: middle
-
-.left4[
-<br>
-<br>
-<br>
-<br>
-<br>
-```{r map-lines-county, eval = F}	
-ggplot() + 
-	geom_sf(
-		data = KS_counties, 
-		color = "red",
-		size = 0.1
-	) +
-	geom_sf(
-		data = rail_roads, 
-		size = 0.1
-	) +
-	theme_void()
-```
-]
-
-.right6[
-```{r map-lines-county-f, ref.label = "map-lines-county", echo = F, fig.cap = "U.S. railroads and Kansas county boundaries", dependson = "hp_import"}	
-
-```
-]
-
----
-class: middle
-
-This will do the job:
- 
-```{r railroads_ks_county}
-rail_roads_KS <- rail_roads[KS_counties, ]
-```
-
----
-class: middle
-
-.left5[
-```{r map-rail-ks, eval = F}	
-ggplot() +
-	geom_sf(
-		data = KS_counties, 
-		color = "red",
-		size = 0.1
-	) +
-	geom_sf(
-		data = rail_roads_KS, 
-		size = 0.1
-	) +
-	theme_void()
-```
-
-+ As you can see in the figure to the right, only the railroads that intersect with Kansas were selected. 
-
-+ Note the lines that go beyond the Kansas boundary are also selected (remember, the default is `st_intersect()`). 
-
-+ If you would like the lines beyond the state boundary to be cut out but the intersecting parts of those lines to remain, use `st_intersection()`, which is explained later.
-]
-
-.right5[
-```{r map-rail-ks-f, ref.label = "map-rail-ks", echo = F, fig.cap = "Railroads that intersect Kansas county boundaries"}	
-
-```
-]
-
----
-class: middle
-
-
-.content-box-green[**Flagging**]
-
-Unlike the previous two cases, multiple objects (lines) are checked against multiple objects (polygons) for intersection. 
-
-Therefore, we cannot use the strategy we took above of returning a vector of true or false using `sparse = TRUE` option. 
-
-Here, we count the number of intersecting counties and then assign `TRUE` if the number is greater than 0. 
-
----
-class: middle
++ match each of the yield points with the cell in which it resides in
++ assign the cell (nDRE) value to the point
+		
+.content-box-green[**Implementation**]
 
 ```{r }
-(
-int_mat <- st_intersects(rail_roads, KS_counties)
-)
+ndre_extracted <- raster::extract(ndre, yield)	
 ```
+
+Just extracting the raster values to the points is not where we stop. 
+
+We need to merge the extracted values back to the points data so that we can use them for further analysis.
+
+---
+class: middle
+
+.content-box-red[**Aside**]
+
++ In the appendix, raster data extraction for points data using the `terra` package is introduced, which is faster than the raster package. 
+
++ On my computer, `terra::extract()` takes about 0.5 seconds while `raster::extract()` takes about 2.5 seconds.
+
+
+---
+class: middle
+
+.content-box-green[**Merging the extracted values to the points data**]
+
+The $n$th value in `ndre_extracted` is for the $n$th point in `yield`.
+
+So, you can simply do this:
 
 ```{r }
-int_vec <- lapply(int_mat, length) %>% unlist()
+yield <- mutate(yield, NDRE = ndre_extracted) 	
+```
 
-head(int_vec)
+We see only `NA` values for NDRE. No worries, the job was successful.
+
+```{r }
+filter(yield, !is.na(NDRE))
 ```
 
 ---
 class: middle
 
-```{r lines_ks_flag}
-#--- assign the true/false vector to a new variable ---#
-rail_roads <- mutate(rail_roads, intersect_ks  = int_vec > 0)
+# To Polygons
 
-#--- take a look ---#
-dplyr::select(rail_roads, LINEARID, intersect_ks)
-```
 
----
-class: middle
+.content-box-green[**What**]
 
-# polygons (source) vs points (target) 
-
-.content-box-green[**Goal**]
-
-Select only counties that intersect with at least one of the wells that overlie the HPA.
-
----
-class: middle
-
-.left5[
-<br>
-<br>
-<br>
-<br>
-```{r map-county-point, eval = F}	
-ggplot() + 
-	geom_sf(
-		data = KS_counties,
-		size = 0.1
-	) +
-	geom_sf(
-		data = KS_wells_in_hpa,
-		size = 0.1	
-	) +
-	theme_void()
-```
-]
-
-.right5[
-```{r map-county-point-f, ref.label = "map-county-point", echo = F, fig.cap = "Kansas county boundaries and wells that overlie the HPA", dependson = "hp_import"}	
-
-```
-]
-
-
----
-class: middle
-
-This does the trick:
-
-```{r counties_wells}
-KS_counties_intersected <- KS_counties[KS_wells_in_hpa, ]  
-```
-
----
-class: middle
-
-As you can see, only the counties that intersect with at least one well remained.  
-
-.left5[
-<br>
-<br>
-```{r subset-county-point, eval = F}	
-ggplot() + 
-	geom_sf(
-		data = KS_counties,
-		size = 0.1
-	) +
-	geom_sf(
-		data = `KS_counties_intersected`,
-		size = 0.1,
-		fill = "blue",
-		alpha = 0.4
-	) +
-	geom_sf(
-		data = KS_wells_in_hpa,
-		size = 0.1	
-	) +
-	theme_void()
-```
-]
-
-.right5[
-```{r subset-county-point-f, echo = F, fig.cap = "Counties that have at least one well"}	
-ggplot() + 
-	geom_sf(
-		data = KS_counties,
-		size = 0.1
-	) +
-	geom_sf(
-		data = KS_counties_intersected,
-		size = 0.1,
-		fill = "blue",
-		alpha = 0.4
-	) +
-	geom_sf(
-		data = KS_wells_in_hpa,
-		size = 0.1	
-	) +
-	theme_void()
-```
-]
-
----
-class: middle
-
-To flag counties that have at least one well, use `st_intersects()` as follows just like we did for the lines-polygons case:
-
-```{r flag-polygons-points}
-int_mat <- st_intersects(KS_counties, KS_wells_in_hpa) %>% 
-  lapply(length) %>% 
-  unlist()
-
-#--- railroads ---#
-KS_counties <- mutate(KS_counties, intersect_wells  = int_mat > 0)
-
-#--- take a look ---#
-dplyr::select(KS_counties, NAME, COUNTYFP, intersect_wells)
-```
-
----
-class: middle
-
-# Subsetting to a geographic extent (bounding box)
-
-+ We can use `st_crop()` to subset (crop) spatial objects to a spatial bounding box (extent) of a spatial object. 
-
-+ The bounding box of an `sf` is a rectangle represented by the minimum and maximum of `x` and `y` that encompass/contain all the spatial objects in the `sf`. 
-
-+ You can use `st_bbox()` to find the bounding box of an `sf` object. 
-
----
-class: middle
-
-Let's get the bounding box of `KS_wells_in_hpa` (irrigation wells in Kansas that overlie HPA).
-
-```{r bbox_KS_wlls}
-#--- get the bounding box of KS_wells ---#
-(
-bbox_KS_wells_in_hpa <- st_bbox(KS_wells_in_hpa)  
-)
-
-#--- check the class ---#
-class(bbox_KS_wells_in_hpa)
-```
-
----
-class: middle
-
-.left5[
-<br>	
-<br>	
-```{r bbox-fig, eval = F}	
-ggplot() + 
-	geom_sf(
-		data = KS_counties,
-		size = 0.1
-	) +
-	geom_sf(
-		data = KS_wells_in_hpa,
-		size = 0.1
-	) +
-	geom_sf(
-		data = st_as_sfc(bbox_KS_wells_in_hpa),
-		color = "red",
-		alpha = 0
-	) +
-	theme_void()
-```
-]
-
-.right5[
-```{r bbox-fig-f, ref.label = "bbox-fig", echo = F, fig.cap = "The bounding box of the irrigation wells in Kansas that overlie HPA"}	
-
-```
-]
-
----
-class: middle
-
-When you use a bounding box to crop an `sf` objects, you can consider the bounding box as a single polygon.  
-
-Let's crop `KS_counties` using the `bbox` of the irrigation wells. 
-
-```{r crop_counties}
-KS_cropped <- st_crop(KS_counties, bbox_KS_wells_in_hpa)  
-```
-
----
-class: middle
-
-Figure below shows what the cropped data looks like:
-
-+ As you can see, the `st_crop()` operation cut some counties at the right edge of the bounding box. 
-
-+ `st_crop()` is invasive.
-
-.left4[
-
-<br>
-<br>
-<br>
-<br>
-
-```{r cropped-fig, eval = F}	
-ggplot() + 
-	geom_sf(
-		data = KS_counties,
-		size = 0.1
-	) +
-	geom_sf(
-		data = `KS_cropped`,
-		fill = "red",
-		alpha = 0.4
-	) +
-	theme_void()
-```
-
-
-]
-
-.right6[
-```{r cropped-fig-f, echo = F, out.width = "90%"}	
-ggplot() + 
-	geom_sf(
-		data = KS_counties,
-		size = 0.1
-	) +
-	geom_sf(
-		data = KS_cropped,
-		fill = "red",
-		size = 0.2,
-		alpha = 0.4
-	) +
-	theme_void()
-```
-]
-
----
-class: middle
-
-If you do not like that to happen and want the complete original counties that have at least one well, you can use the subset approach using `[, ]` after converting the bounding box to an `sfc` as follows:
-
-```{r intersect_county_point}
-KS_complete_counties <- KS_counties[st_as_sfc(bbox_KS_wells_in_hpa), ]  
-```
-
----
-class: middle
-	
-Here is what the subsetted Kansas county data looks like: 
-
-.left4[
-
-<br>
-<br>
-<br>
-<br>
-
-```{r cropped-fig, eval = F}	
-ggplot() + 
-	geom_sf(
-		data = KS_counties,
-		size = 0.1
-	) +
-	geom_sf(
-		data = `KS_complete_counties`,
-		fill = "red",
-		alpha = 0.4
-	) +
-	theme_void()
-```
-
-
-]
-
-.right6[
-```{r cropped-fig-f, echo = F, out.width = "90%"}	
-ggplot() + 
-	geom_sf(
-		data = KS_counties,
-		size = 0.1
-	) +
-	geom_sf(
-		data = KS_complete_counties,
-		fill = "red",
-		size = 0.2,
-		alpha = 0.4
-	) +
-	theme_void()
-```
-]
-
----
-class: inverse, center, middle
-name: join
-
-# Spatial Join
-
-<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
-
----
-class: middle
-
-# Spatial Join
-
-By spatial join, we mean spatial operations that involve all of the following:
-
-+ overlay one spatial layer (target layer) onto another spatial layer (source layer) 
-+ for each of the observation in the target layer
-  * identify which objects in the source layer it geographically intersects (or a different  topological relation) with  
-  * extract values associated with the intersecting objects in the source layer (and summarize if necessary), 
-  * assign the extracted value to the object in the target layer
-
----
-class: middle
-
-
-.content-box-green[**Spatial join classification**]
-
-We can classify spatial join into four categories by the type of the underlying spatial objects:
-
-+ .red[vector-vector: vector data (target) against vector data (source)]  
-+ vector-raster: vector data (target) against raster data (source)  
-+ raster-vector: raster data (target) against vector data (source)  
-+ raster-raster: raster data (target) against raster data (source)  
-
---
-
-Among the four, our focus here is the first case (the second case will be discussed later). 
-
---
-
-We will not cover the third and fourth cases in this course because it is almost always the case that our target data is a vector data (e.g., city or farm fields as points, political boundaries as polygons, etc).  
-
----
-class: middle
-
-
-.content-box-green[**vector data (target) against vector data (source)**]
-
-This category can be further broken down into different sub categories depending on the type of spatial object (point, line, and polygon). 
-
---
-
-Here, we will ignore any spatial joins that involve lines. This is because objects represented by lines are rarely observation units in our analysis nor the source data from which we will extract values. 
-
---
-
-Here is the list of the types of spatial joins we will learn.  
-
-1. points (target) against polygons (source)
-2. polygons (target) against points (source)
-3. polygons (target) against polygons (source)
-
----
-class: middle
-
-# Case 1: points (target) vs polygons (source)
-
-.content-box-green[**What?**]
-
-For each of the observations (points) in the target data,
-
-+ finds which polygon in the source file it intersects with
-+ assigns the value associated with the intersected polygon to the point
-
---
+For each of the polygons, identify all the raster cells that intersect with the polygon, and assign a vector of the cell values to the polygon. 
 
 .content-box-green[**How**]
 
-In order to achieve this, we can use the `st_join()` function, whose syntax is as follows:    
-
-```{r syntax_st_join, eval = FALSE}
-st_join(points_sf, polygons_sf)
-```
-
---
-
-.content-box-green[**Note**]
-
-Similar to spatial subsetting, the default topological relation is `st_intersects()`
-
----
-class: middle
-
-.content-box-green[**Data**]
-
-We use the Kansas irrigation well data (points) and Kansas county boundary data (polygons) for a demonstration. 
-
-.content-box-green[**Goal**]
-
-Our goal is to assign the county-level corn price information from the Kansas county data to wells. 
-
----
-class: middle
-
-First let's create and add a fake county-level corn price variable to the Kansas county data.  
-
-```{r create_corn_price}
-KS_corn_price <- KS_counties %>%  
-  mutate(
-    corn_price = seq(3.2, 3.9, length = nrow(.)) 
-  ) %>% 
-  dplyr::select(COUNTYFP, corn_price)
-```  
-
----
-class: middle
-
-Here is the map of Kansas counties color-differentiated by fake corn price:
-
-.left4[
-<br>
-<br>
-<br>
-<br>
-<br>
-```{r county-price, eval = F}	
-ggplot() + 
-	geom_sf(
-		data = KS_corn_price, 
-		aes(fill = corn_price)
-	) +
-	theme_void() +
-	scale_fill_viridis_c()
-```
-]
-
-.right6[
-```{r county-price-f, ref.label = "county-price", echo = F, fig.cap = "Map of county-level fake corn price"}	
-
-```
-]
-
----
-class: middle
-
-```{r st_join_KS}
-#--- spatial join ---#
-(
-KS_wells_County <- st_join(KS_wells, KS_corn_price)
-)
-```
-
----
-class: middle
-
-.left4[
-<br>
-<br>
-<br>
-```{r map-cp-wells, eval = F}	
-ggplot() + 
-	geom_sf(data = KS_counties) +
-	geom_sf( #<<
-		data = KS_wells_County, #<<
-		aes(color = corn_price), #<<
-		size = 0.3 #<<
-	) + #<<
-	scale_fill_viridis_c() +
-	theme_void() +
-	theme(
-		legend.position = "bottom"
-	)
-```
-
-]
-
-.right6[
-```{r map-cp-wells-f, ref.label = "map-cp-wells", echo = F, fig.cap = "Map of wells color-differentiated by corn price"}	
-
-```
-]
-
----
-class: middle
-
-# Case 2: polygons (target) vs points (source)
-
-.content-box-green[**What?**]
-
-For each of the observations (polygons) in the target data,
-
-+ find which observations (points) in the source file it intersects
-+ assign the values associated with the points to the polygon. 
-
---
-
-.content-box-green[**How**]
-
-In order to achieve this, we can use the `st_join()` function, whose syntax is as follows:    
-
-```{r syntax_st_join, eval = FALSE}
-st_join(polygons_sf, points_sf)
-```
-
---
-
-.content-box-green[**Note**]
-
-Similar to spatial subsetting, the default topological relation is `st_intersects()`
-
-
----
-class: middle
-
-
-.content-box-green[**Data**]
-
-+ Polygons (target): `KS_counties`
-+ Points (source): `KS_wells`
-
-.content-box-green[**Goal**]
-
-Our goal is to get county-level total groundwater pumping. 
-
----
-class: middle
-
-Here is how it is done:
-
-```{r st_join_polygon_point}
-KS_County_wells <- st_join(KS_counties, KS_wells)
-```
-
-<br>
-
-.left6[
-
-Take a look at the resulting data:
-
-```{r }
-dplyr::select(KS_County_wells, COUNTYFP, site, af_used)
-```
-]
-
-.right4[
-
-<br>
-
-+ All the unique polygon - point intersecting combinations comprise the observations. 
-
-(e.g., There are two wells (with `site == 53861` and `site == 70592`) in the county with `COUNTYFP==133`.)
-
-+ For each of the polygons, you will have as many observations as the number of wells that intersect with the polygon. 
-
-+ Once you join the two layers, you can find statistics by polygon (county here).
-]
-
----
-class: middle
-
-Since we want groundwater extraction by county, the following does the job.
-
-```{r summary_after_join}
-KS_County_wells %>% 
-  group_by(COUNTYFP) %>% 
-  summarize(af_used = sum(af_used, na.rm = TRUE)) 
-```
-
-Of course, it is just as easy to get other types of statistics by simply modifying the `summarize()` part.
-
----
-class: middle
-
-However, this two-step process can actually be done in one step using `aggregate()`, in which you specify how you want to aggregate with the `FUN` option:
-
-
-.content-box-green[**Syntax**]
+We use the `exact_extract()` function from the `exactextractr` package:
 
 ```{r eval = F}
-aggregate(points_sf, polygons_sf, FUN = function)
+library(exactextractr)
 ```
+
+```{r eval = FALSE}
+exact_extract(raster, polygons sf) 
+```
+
+.content-box-green[**Why exact_extract()?**]
+
+We can actually use `raster::extract` for polygons data as well.
+
+However, it is unbearably slow. `exact_extract()` is much faster.
 
 ---
 class: middle
-
-```{r demo_aggregate}
-#--- mean ---#
-aggregate(KS_wells, KS_counties, FUN = mean)
-```
-
-Notice that the `mean()` function was applied to all the columns in `KS_wells`, including site id number. 
-
----
-class: middle
-
-So, you might want to select variables you want to join before you apply the `aggregate()` function like this:  
-
-```{r agg_select}
-aggregate(dplyr::select(KS_wells, af_used), KS_counties, FUN = mean)
-```
-
-
----
-class: middle
-
-# Case 3: polygons (target) vs polygons (source)
-
-.content-box-green[**What?**]
-
-For each of the observations (polygons) in the target data,
-
-+ find which observations (polygons) in the source file it intersects
-+ assign the values associated with the intersecting polygons to the polygon. 
-
---
-
-.content-box-green[**How**]
-
-In order to achieve this, we can use the `st_join()` function, whose syntax is as follows:    
-
-```{r syntax_st_join, eval = FALSE}
-st_join(targt_polygons_sf, source_polygons_sf)
-```
-
---
-
-.content-box-green[**Note**]
-
-Similar to spatial subsetting, the default topological relation is `st_intersects()`
-
----
-class: middle
-
-.content-box-green[**Data**]
-
-+ Polygons (target): Hydrologic Units
-+ Polygons (source): county-level corn acres in Iowa in 2018 from USDA NASS
 
 .content-box-green[**Goal**]
 
-Our goal is to find corn acres by hydrologic unit based on the county-level corn acres data.
+Extract NDRE values for the treatment block polygons.
+
+.content-box-green[**Implementation**]
+
+```{r results = "hide"}
+ndre_extracted <- exact_extract(ndre, treatment_blocks)
+```
 
 ---
 class: middle
 
+The object returned by `exact_extract()` is a list:
 
-.left5[
-
-.content-box-green[**IA corn acres data**]
-
-```{r IA_corn_data}
-#--- IA boundary ---#
-IA_corn <- readRDS("./Data/IA_corn.rds")
-
-#--- take a look ---#
-IA_corn
+```{r }
+#--- check the class ---#
+class(ndre_extracted)
 ```
 
-]
+Since one list element is created for each of the polygons, the number of elements in the list is the same as the number of the polygons.
 
-.right5[
+```{r }
+#--- number of elements of the list ---#
+length(ndre_extracted)
 
-.content-box-green[**Visualization**]
-
-```{r map-IA-corn, fig.cap = "Map of Iowa counties color-differentiated by corn planted acreage", echo = F}
-ggplot() + 
-	geom_sf(
-		data = IA_corn,
-		aes(fill = acres)
-	) + 
-	scale_fill_viridis_c() +
-	theme_void() +
-	theme(legend.position = "bottom")
+#--- number of the polygons ---#
+nrow(treatment_blocks)
 ```
-
-]
 
 ---
 class: middle
 
-.left5[
+Each element of the list is a `data.frame`, where extracted raster values (`value` column) and coverage fraction (`coverage_fraction` column) are stored.  
 
-.content-box-green[**HUC units data**]
+```{r }
+head(ndre_extracted[[1]])
+```
 
-```{r HUC_import, results = "hide"}
-#--- import HUC units ---#
-HUC_IA <- st_read(dsn = "./Data", layer = "huc250k") %>% 
-  dplyr::select(HUC_CODE) %>% 
-  #--- reproject to the CRS of IA ---#
-  st_transform(st_crs(IA_corn)) %>% 
-  #--- select HUC units that overlaps with IA ---#
-  .[IA_corn, ]
+.content-box-green[**Key**]
+
+$n$th element of the list is for the $n$th polygon in `treatment_blocks`.
+
+---
+class: middle
+
+.content-box-green[**after-extraction processing**]
+
+It is almost always the case that we do not need all of those raster values for further analysis. 
+
+Rather, what we often need is the summary of the values by polygon (e.g., average).
+
+To achieve this, you can use `bind_rows()` with `.id` option and then utilize `dplyr` operations.
+
+```{r }
+ndre_mean <- ndre_extracted %>% 
+	bind_rows(.id = "id") %>% 
+  #--- convert from character to numeric  ---#
+	mutate(id = as.numeric(id)) %>% 
+	group_by(id) %>% 
+	summarize(NDRE = mean(value))
 ```
 
 ```{r echo = F}
-HUC_IA
+head(ndre_mean)
 ```
 
-]
-
-.right5[
-
-
-.content-box-green[**Visualization**]
-
-```{r HUC-map, fig.cap = "Map of HUC units that intersect with Iowa state boundary", echo = F}
-tm_shape(HUC_IA) +
-  tm_polygons() +
-  tm_layout(frame = FALSE, legend.outside = TRUE)
-```
-
-]
+In this dataset, the observation with `id == n` corresponds to $n$th polygon in `treatment_blocks`.
 
 ---
 class: middle
 
-Here is a map of Iowa counties with HUC units superimposed on top:
+.content-box-green[**Alternatively**]
 
-.left4[
-<br>
-```{r HUC-founcty-map, eval = F}	
-ggplot() + 
-	geom_sf(
-		data = IA_corn,
-		aes(fill = acres)
-	) +
-	geom_sf(
-		data = HUC_IA,
-		alpha = 0
-	) +
-	scale_fill_viridis_c() +
-	theme_void() +
-	theme(legend.position = "bottom")
+You can use `fun` option inside `exact_extract()` to get a summary of raster values without you having to do it.
+
+```{r results = "hide"}
+ndre_extracted <- exact_extract(ndre, treatment_blocks, fun = "mean")
 ```
-]
 
-.right6[
-```{r HUC-founcty-map-f, ref.label = "HUC-founcty-map", echo = F, fig.cap = "Map of HUC units superimposed on the counties in Iowas"}	
-
+```{r }
+head(ndre_extracted)
 ```
-]
 
----
-class: middle
-
-
-.content-box-green[**spatial join**]
-
-```{r join_HUC_acres}
-(
-HUC_joined <- st_join(HUC_IA, IA_corn)
-)
-```
+--
 
 .content-box-green[**Note**]
 
-Each of the intersecting HUC-county combinations becomes an observation with its resulting geometry the same as the geometry of the HUC unit. 
+Run `?exact_extract` to see other function options. 
 
 ---
 class: middle
 
-.left5[
 
+.content-box-green[**From a RasterStack**]
 
-.content-box-green[**Focus on 1 HUC unit**]
+You can extract raster values from stacked raster layers by a single call of `exact_extract()` 
 
-The HUC unit with `HUC_CODE ==10170203` intersects with four County.
+--
 
-```{r filter_the_first_one}
-#--- get the HUC unit with `HUC_CODE ==10170203`  ---#
-(
-temp_HUC_county <- filter(HUC_joined, HUC_CODE == 10170203)
-)
+Let's create a stack:
+
+```{r }
+ndre_stack <- stack(ndre, ndre, ndre) 	
 ```
 
-+ All of the four observations have identical geometry, which is the geometry of the HUC unit
+--
 
-+ The `st_join()` operation did not leave the information about the nature of the intersection of the HUC unit and the four counties. 
+Extract from the stack:
 
-+ If you are just calculating the simple average of corn acres ignoring the degree of spatial overlaps, this is just fine. 
-]
-
-.right5[
-
-.content-box-green[**Visualization**]
-
-```{r four-county-huc, fig.cap = "Map of the HUC unit"}
-tm_shape(temp_HUC_county) +
-  tm_polygons() +
-  tm_layout(frame = FALSE)
+```{r results = "hide"}
+ndre_stack_extracted <- exact_extract(ndre_stack, treatment_blocks)
 ```
 
-]
+--
+
+Let's take a look at the first element of the returned list.
+
+```{r }
+ndre_stack_extracted[[1]] %>% head()
+```
+
+Instead of having two columns, we now have three columns of extracted raster values and one column for `coverage_fraction`.
+
+$n$th column is for raster values extracted from the $n$th layer.
 
 ---
 class: inverse, center, middle
-name: join
+name: data-structure
 
-# Spatial Intersection (cropping join)
+# Appendix
 
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
 
 ---
 class: middle
 
+# `terra` package
 
-# Spatial Intersection (cropping join)
+.content-box-green[**Aside**]
 
-.content-box-green[**Definition**]
+The `terra` package (successor of the `raster` package) provides a faster extraction method with `terra::extract()`.
 
-Cropping join cuts the non-intersecting parts out while joining 
+The `terra` package is faster than the `raster` package for all the raster operations. However, it is still in development and rather unstable at the moment.
 
+Good news is that once you know how the `raster` package works, your transition to the `terra` package should be rather smooth.
 
-.content-box-green[**Use case**]
+.content-box-green[**Extracting for points**]
 
-+ We just saw that area-weighted averages cannot be found using `st_join()` because it does not provide information about how much area of each HUC unit is intersecting with each of its intersecting counties. 
-
-+ If we can get the geometry of the intersecting part of the HUC unit and the county, then we can calculate its area, which in turn allows us to find area-weighted averages of joined attributes. 
-
-
-
----
-class: middle
-
-.content-box-green[**How**]
-
-+ For these purposes, we can use `sf::st_intersection()`. 
-
-.content-box-green[**st_intersection()**]
-
-+ While `st_intersects()` returns the indices of intersecting objects, `st_intersection()` returns intersecting spatial objects with the non-intersecting parts of the `sf` objects cut out. 
-
-+ Moreover, attribute values of the source `sf` will be merged to its intersecting `sfg` in the target `sf`. 
-
----
-class: middle
-
-.content-box-green[**Illustration**]
-  
-We will see how it works for lines-polygons and polygons-polygons cases using the toy examples we used to explain how `st_intersects()` work. 
-
-.left4[
-<br>
-```{r plot-lines-polygons, eval = F}	
-ggplot() +
-  geom_sf(
-  	data = polygons, 
-  	aes(fill = polygon_name), 
-  	alpha = 0.3
-  ) +
-  scale_fill_discrete(name = "Polygons") +
-  geom_sf(
-  	data = lines, 
-  	aes(color = line_name)
-  ) +
-  scale_color_discrete(name = "Lines") +
-  theme_void()
-```
-]
-
-.right6[
-```{r plot-lines-polygons-f, ref.label = "plot-lines-polygons", echo = F}	
-
-```
-]
-
----
-class: middle
-
-.content-box-red[**lines and polygons**]
-
-The following code gets the intersection of the lines and the polygons.
-
-```{r lines_polygons_intersection}
-(
-intersections_lp <- st_intersection(lines, polygons) %>% 
-  mutate(int_name = paste0(line_name, "-", polygon_name))
-)
+```{r }
+#--- convert `RasterLayer` to `SpatRaster` ---#
+ndre_sr <- rast(ndre)
 ```
 
-+ As you can see in the output, each instance of the intersections of the lines and polygons become an observation (line 1-polygon 1, line 2-polygon 1, and line 2-polygon 2). 
-
-
-
----
-class: middle
-
-The part of the lines that did not intersect with a polygons is cut out and does not remain in the returned `sf`. To see this, see Figure \@ref(fig:lines-polygons-int) below:
-
-.left5[
-
-
-.content-box-green[**Original lines and polygons**]
-
-```{r plot-lines-polygons, echo = F}	
-ggplot() +
-  geom_sf(
-  	data = polygons, 
-  	aes(fill = polygon_name), 
-  	alpha = 0.3
-  ) +
-  scale_fill_discrete(name = "Polygons") +
-  geom_sf(
-  	data = lines, 
-  	aes(color = line_name)
-  ) +
-  scale_color_discrete(name = "Lines") +
-  theme_void()
-```
-]
-
-.right5[
-
-.content-box-green[**Lines after cropping join**]
-
-```{r lines-polygons-int, echo = F, dependson = "lines_polygons_intersection"}
-ggplot() +
-  #--- here are all the original polygons  ---#
-  geom_sf(data = polygons, aes(fill = polygon_name), alpha = 0.3) +
-  #--- here is what is returned after st_intersection ---#
-  geom_sf(data = intersections_lp, aes(color = int_name), size = 1.5) +
-  theme_void()
-```
-]
-
----
-class: middle
-
-.content-box-red[**polygons and polygons**]
-
-The following code gets the intersection of polygon 1 and polygon 3 with polygon 2.
-
-```{r, cache=TRUE}
-(
-intersections_pp <- st_intersection(polygons[c(1,3), ], polygons[2, ]) %>% 
-  mutate(int_name = paste0(polygon_name, "-", polygon_name.1))
-)
-
+```{r eval = F}
+ndre_extracted <- terra::extract(ndre_sr, `st_coordinates`(yield))	
 ```
 
-Each instance of the intersections of polygons 1 and 3 against polygon 2 becomes an observation (`polygon 1-polygon 2` and `polygon 3-polygon 2`).
-
----
-class: middle
-
-Just like the lines-polygons case, the non-intersecting part of polygons 1 and 3 are cut out and do not remain in the returned `sf`. 
-
-We will see later that `st_intersection()` can be used to find area-weighted values from the intersecting polygons with help from `st_area()`.  
-
-
-.left5[
-<br>
-```{r inter-section, eval = F}	
-ggplot() +
-  #--- here are all the original polygons  ---#
-  geom_sf(
-  	data = polygons, 
-  	aes(fill = polygon_name), 
-  	alpha = 0.3
-  ) +
-  #--- here is what is returned after st_intersection ---#
-  geom_sf(
-  	data = intersections_pp, 
-  	aes(color = int_name),
-  	size = 1.5,
-  	alpha = 0
-  ) +
-  theme_void()
-```
-]
-
-.right5[
-```{r inter-section-f, ref.label = "inter-section", echo = F}	
-
-```
-]
-
----
-class: middle
-
-.content-box-red[**Area-weighted average**]
-
-+ Let's now get back to the example of HUC units and county-level corn acres data.
-
-+ We would like to find area-weighted average of corn acres instead of the simple average of corn acres.
-
----
-class: middle
-
-Using `st_intersection()`, for each of the HUC polygons, we find the intersecting counties, and then divide it into parts based on the boundary of the intersecting polygons. 
-
-```{r intersection}
-(
-HUC_intersections <- st_intersection(HUC_IA, IA_corn) %>% 
-  mutate(huc_county = paste0(HUC_CODE, "-", county_code))
-)
+```{r echo = F}
+ndre_extracted <- terra::extract(ndre_sr, st_coordinates(yield))	
 ```
 
----
-class: middle
 
-The key difference from the `st_join()` example is that each observation of the returned data is a unique HUC-county intersection. 
 
-The figure below is a map of all the intersections of the HUC unit with `HUC_CODE ==10170203` and the four intersecting counties. 
 
-.left4[
-<br>
-```{r area-weighted-av, eval = F}	
-HUC_intersections %>% 
-	filter(HUC_CODE == "10170203") %>% 
-	ggplot(data = .) +
-		geom_sf(aes(fill = huc_county)) +
-		theme_void()
-```
-]
 
-.right6[
-```{r area-weighted-av-f, ref.label = "area-weighted-av", echo = F}	
-
-```
-]
-
----
-class: middle
-
-In order to find the area-weighted average of corn acres, you can use `st_area()` first to calculate the area of the intersections, and then find the area-weighted average as follows:
-
-```{r map_area_weighted}
-(
-HUC_aw_acres <- HUC_intersections %>% 
-  #--- get area ---#
-  mutate(area = as.numeric(st_area(.))) %>% 
-  #--- get area-weight by HUC unit ---#
-  group_by(HUC_CODE) %>% 
-  mutate(weight = area / sum(area)) %>% 
-  #--- calculate area-weighted corn acreage by HUC unit ---#
-  summarize(aw_acres = sum(weight * acres))
-)
-```

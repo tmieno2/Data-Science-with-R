@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>R as GIS: Interaction of Vector and Raster Datasets</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="AECN 396/896-002" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/animate.css/animate.xaringan.css" rel="stylesheet" />
+    <link href="libs/tachyons/tachyons.min.css" rel="stylesheet" />
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# R as GIS: Interaction of Vector and Raster Datasets
+### AECN 396/896-002
+
+---
+
+
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+
+.remark-slide-content.hljs-github h1 {
+  margin-top: 5px;  
+  margin-bottom: 25px;  
+}
+
+.remark-slide-content.hljs-github {
+  padding-top: 10px;  
+  padding-left: 30px;  
+  padding-right: 30px;  
+}
+
+.panel-tabs {
+  &lt;!-- color: #062A00; --&gt;
+  color: #841F27;
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panel-tab {
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 3px;  
+  margin-right: 3px;  
+  padding-top: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panelset .panel-tabs .panel-tab {
+  min-height: 40px;
+}
+
+.remark-slide th {
+  border-bottom: 1px solid #ddd;
+}
+
+.remark-slide thead {
+  border-bottom: 0px;
+}
+
+.gt_footnote {
+  padding: 2px;  
+}
+
+.remark-slide table {
+  border-collapse: collapse;
+}
+
+.remark-slide tbody {
+  border-bottom: 2px solid #666;
+}
+
+
+.important {
+  background-color: lightpink;
+  border: 2px solid blue;
+  font-weight: bold;
+} 
+
+.remark-code {
+  display: block;
+  overflow-x: auto;
+  padding: .5em;
+  background: #ffe7e7;
+} 
+
+.hljs-github .hljs {
+  background: #f2f2fd;
+}
+
+.remark-inline-code {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: #e6e6e6;
+}
+
+.r.hljs.remark-code.remark-inline-code{
+  font-size: 0.9em
+}
+
+.left-full {
+  width: 80%;
+  float: left;
+}
+
+.left-code {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left6 {
+  width: 60%;
+  height: 92%;
+  float: left;
+}
+
+.left5 {
+  width: 49%;
+  &lt;!-- height: 92%; --&gt;
+  float: left;
+}
+
+.right5 {
+  width: 49%;
+  float: right;
+  padding-left: 1%;
+}
+
+.right4 {
+  width: 39%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left3 {
+  width: 29%;
+  height: 92%;
+  float: left;
+}
+
+.right7 {
+  width: 69%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left4 {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right6 {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+ul li{
+  margin: 7px;
+}
+
+ul, li{
+  margin-left: 15px; 
+  padding-left: 0px; 
+}
+
+ol li{
+  margin: 7px;
+}
+
+ol, li{
+  margin-left: 15px; 
+  padding-left: 0px; 
+}
+
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+.content-box { 
+    box-sizing: border-box;
+    background-color: #e2e2e2;
+}
+.content-box-blue,
+.content-box-gray,
+.content-box-grey,
+.content-box-army,
+.content-box-green,
+.content-box-purple,
+.content-box-red,
+.content-box-yellow {
+  box-sizing: border-box;
+  border-radius: 5px;
+  margin: 0 0 10px;
+  overflow: hidden;
+  padding: 0px 5px 0px 5px;
+  width: 100%;
+}
+.content-box-blue { background-color: #F0F8FF; }
+.content-box-gray { background-color: #e2e2e2; }
+.content-box-grey { background-color: #F5F5F5; }
+.content-box-army { background-color: #737a36; }
+.content-box-green { background-color: #d9edc2; }
+.content-box-purple { background-color: #e2e2f9; }
+.content-box-red { background-color: #ffcccc; }
+.content-box-yellow { background-color: #fef5c4; }
+.content-box-blue .remark-inline-code,
+.content-box-blue .remark-inline-code,
+.content-box-gray .remark-inline-code,
+.content-box-grey .remark-inline-code,
+.content-box-army .remark-inline-code,
+.content-box-green .remark-inline-code,
+.content-box-purple .remark-inline-code,
+.content-box-red .remark-inline-code,
+.content-box-yellow .remark-inline-code { 
+  background: none;
+}
+
+.full-width {
+    display: flex;
+    width: 100%;
+    flex: 1 1 auto;
+}
+&lt;/style&gt;
+
+
+&lt;style type="text/css"&gt;
+blockquote, .blockquote {
+  display: block;
+  margin-top: 0.1em;
+  margin-bottom: 0.2em;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-left: solid 10px #0148A4;
+  border-top: solid 2px #0148A4;
+  border-bottom: solid 2px #0148A4;
+  border-right: solid 2px #0148A4;
+  box-shadow: 0 0 6px rgba(0,0,0,0.5);
+  /* background-color: #e64626; */
+  color: #e64626;
+  padding: 0.5em;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+
+.blockquote p {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h1:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h2:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h3:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h4:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+.text-shadow {
+  text-shadow: 0 0 4px #424242;
+}
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+/******************
+ * Slide scrolling
+ * (non-functional)
+ * not sure if it is a good idea anyway
+slides &gt; slide {
+  overflow: scroll;
+ padding: 5px 40px;
+}
+.scrollable-slide .remark-slide {
+  height: 400px;
+  overflow: scroll !important;
+}
+ ******************/
+
+.scroll-box-8 {
+  height:8em;
+  overflow-y: scroll;
+}
+.scroll-box-10 {
+  height:10em;
+  overflow-y: scroll;
+}
+.scroll-box-12 {
+  height:12em;
+  overflow-y: scroll;
+}
+.scroll-box-14 {
+  height:14em;
+  overflow-y: scroll;
+}
+.scroll-box-16 {
+  height:16em;
+  overflow-y: scroll;
+}
+.scroll-box-18 {
+  height:18em;
+  overflow-y: scroll;
+}
+.scroll-box-20 {
+  height:20em;
+  overflow-y: scroll;
+}
+.scroll-box-24 {
+  height:24em;
+  overflow-y: scroll;
+}
+.scroll-box-30 {
+  height:30em;
+  overflow-y: scroll;
+}
+.scroll-output {
+  height: 90%;
+  overflow-y: scroll;
+}
+
+ 
+&lt;/style&gt;
+
+
+
+
+# Before you start
+
+## Learning objectives
+
+Learn the spatial interactions of a vector and raster dataset. Specifically,
+
+.content-box-green[**Objective 1**]
+
+Crop (spatially subset) a raster dataset based on the geographic extent of a vector dataset. 
+
+.content-box-green[**Objective 2**]
+
+Extract values from raster data for points and polygons. 
+
+To be precise, here is what we mean by raster data extraction and what it does for points and polygons data:
+
++ **Points**: For each of the points, find which raster cell it is located within, and assign the value of the cell to the point.  
+ 
++ **Polygons**: For each of the polygons, identify all the raster cells that intersect with the polygon, and assign a vector of the cell values to the polygon
+
+## Table of contents
+
+1. [Cropping raster datasets](#crop)
+2. [Extract values from raster datasets](#extract)
+3. [Basic speed comparison](#speed)
+
+&lt;br&gt;
+
+&lt;span style="color:red"&gt; Tips: &lt;/span&gt;hitting letter "o" key will give you a panel view of the slides
+
+---
+class: middle
+
+# Prerequisites 
+
+.content-box-green[**Prerequisites**]
+
++ What Geographic Coordinate System (GCS), Coordinate Reference System (CRS), and projection are ([this](https://annakrystalli.me/intro-r-gis/gis.html) is a good resource)
+
++ Distinctions between vector and raster data ([this](https://gis.stackexchange.com/questions/57142/what-is-the-difference-between-vector-and-raster-data-models) is a simple summary of the difference)
+
+---
+class: middle
+
+# Preparation 
+
++ Import treatment block shape files:
+
+
+```r
+treatment_blocks &lt;- st_read(dsn = "./Data", layer = "ZP_TRT_Blocks_Buff") %&gt;% 
+	#--- transform the CRS so that it is consistent with the raster data ---#
+	st_transform(4326)
+```
+
++ Import yield point data
+
+
+```r
+yield &lt;- st_read(dsn = "./Data", layer = "Stevens_Centuro_YLD_shp") %&gt;% 
+	dplyr::select(Yld_Vol_Dr) %&gt;% 
+	rename(dry_yield = Yld_Vol_Dr) %&gt;% 
+	#--- transform the CRS so that it is consistent with the raster data ---#
+	st_transform(4326)
+```
+
+
++ Import drone imagery data (GeoTiff) file.
+
+
+```r
+ndre &lt;- raster("./Data/ndre_07202019.tif")
+```
+
+---
+class: middle
+
+.left4[
+&lt;br&gt;
+
+.content-box-green[**Note**]
+
++ gray circles: yield data points
++ red rectangles: treatment blocks
+]
+
+.right6[
+&lt;img src="r_as_GIS_vector_raster_interaction_x_files/figure-html/unnamed-chunk-7-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+
+---
+class: inverse, center, middle
+name: data-structure
+
+# Cropping raster data 
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+class: middle
+
+# Cropping raster data
+
++ Sometimes, it is convenient to crop a raster layer to the specific area of interest so that you do not have to carry around unnecessary parts of the raster layer. 
+
++ Moreover, it takes less time to extract values from a raster layer when the size of the raster layer is smaller. 
+
+---
+class: middle
+
+.content-box-green[**How**]
+
+You can crop a raster layer by using `raster::crop()`.
+
+
+```r
+raster::crop(Raster*, sf)
+```
+
+The resulting `Raster*` object is the original cropped to the bounding box of the `sf` object.
+
+---
+class: middle
+
+.content-box-green[**Goal**]
+
+Crop `ndre` to the bounding box of `treatment_blocks`.
+
+.content-box-green[**Code**]
+
+
+```r
+ndre_cropped &lt;- raster::crop(ndre, treatment_blocks)
+```
+
+---
+class: middle
+
+&lt;img src="r_as_GIS_vector_raster_interaction_x_files/figure-html/unnamed-chunk-10-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+---
+class: inverse, center, middle
+name: data-structure
+
+# Extracting Values from Raster Layers for Vector Data
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+class: middle
+
+# To Points
+
+.content-box-green[**What**]
+
+For each of the points, find which raster cell it is located within, and assign the value of the cell to the point.  
+
+
+.content-box-green[**How**]
+
+You can use `raster::extract()` with the following syntax: 
+
+
+```r
+raster::extract(raster, sf of points)	
+```
+
+---
+class: middle
+	
+
+.content-box-green[**Goal**]
+
+Extract NDRE values for yield points data:
+
++ match each of the yield points with the cell in which it resides in
++ assign the cell (nDRE) value to the point
+		
+.content-box-green[**Implementation**]
+
+
+```r
+ndre_extracted &lt;- raster::extract(ndre, yield)	
+```
+
+Just extracting the raster values to the points is not where we stop. 
+
+We need to merge the extracted values back to the points data so that we can use them for further analysis.
+
+---
+class: middle
+
+.content-box-red[**Aside**]
+
++ In the appendix, raster data extraction for points data using the `terra` package is introduced, which is faster than the raster package. 
+
++ On my computer, `terra::extract()` takes about 0.5 seconds while `raster::extract()` takes about 2.5 seconds.
+
+
+---
+class: middle
+
+.content-box-green[**Merging the extracted values to the points data**]
+
+The `\(n\)`th value in `ndre_extracted` is for the `\(n\)`th point in `yield`.
+
+So, you can simply do this:
+
+
+```r
+yield &lt;- mutate(yield, NDRE = ndre_extracted) 	
+```
+
+We see only `NA` values for NDRE. No worries, the job was successful.
+
+
+```r
+filter(yield, !is.na(NDRE))
+```
+
+```
+## Simple feature collection with 9499 features and 2 fields
+## geometry type:  POINT
+## dimension:      XY
+## bbox:           xmin: -95.50367 ymin: 40.03684 xmax: -95.49777 ymax: 40.04296
+## geographic CRS: WGS 84
+## First 10 features:
+##    dry_yield                   geometry      NDRE
+## 1    84.0352  POINT (-95.50366 40.0373) 0.0000000
+## 2   104.3075 POINT (-95.50362 40.03731) 0.0000000
+## 3   122.9578 POINT (-95.50359 40.03731) 0.0000000
+## 4   111.2970 POINT (-95.50356 40.03731) 0.0000000
+## 5    82.7091 POINT (-95.50353 40.03732) 0.0000000
+## 6    57.9979  POINT (-95.5035 40.03732) 0.0000000
+## 7    56.8335 POINT (-95.50346 40.03732) 0.0000000
+## 8    80.8742 POINT (-95.50343 40.03732) 0.5384092
+## 9    97.2693  POINT (-95.5034 40.03732) 0.5394769
+## 10   94.5606 POINT (-95.50336 40.03731) 0.5143825
+```
+
+---
+class: middle
+
+# To Polygons
+
+
+.content-box-green[**What**]
+
+For each of the polygons, identify all the raster cells that intersect with the polygon, and assign a vector of the cell values to the polygon. 
+
+.content-box-green[**How**]
+
+We use the `exact_extract()` function from the `exactextractr` package:
+
+
+```r
+library(exactextractr)
+```
+
+
+```r
+exact_extract(raster, polygons sf) 
+```
+
+.content-box-green[**Why exact_extract()?**]
+
+We can actually use `raster::extract` for polygons data as well.
+
+However, it is unbearably slow. `exact_extract()` is much faster.
+
+---
+class: middle
+
+.content-box-green[**Goal**]
+
+Extract NDRE values for the treatment block polygons.
+
+.content-box-green[**Implementation**]
+
+
+```r
+ndre_extracted &lt;- exact_extract(ndre, treatment_blocks)
+```
+
+---
+class: middle
+
+The object returned by `exact_extract()` is a list:
+
+
+```r
+#--- check the class ---#
+class(ndre_extracted)
+```
+
+```
+## [1] "list"
+```
+
+Since one list element is created for each of the polygons, the number of elements in the list is the same as the number of the polygons.
+
+
+```r
+#--- number of elements of the list ---#
+length(ndre_extracted)
+```
+
+```
+## [1] 25
+```
+
+```r
+#--- number of the polygons ---#
+nrow(treatment_blocks)
+```
+
+```
+## [1] 25
+```
+
+---
+class: middle
+
+Each element of the list is a `data.frame`, where extracted raster values (`value` column) and coverage fraction (`coverage_fraction` column) are stored.  
+
+
+```r
+head(ndre_extracted[[1]])
+```
+
+```
+##        value coverage_fraction
+## 27 0.5890073      0.0002342653
+## 28 0.5822207      0.0020282459
+## 29 0.5958067      0.0041096755
+## 30 0.6105236      0.0061911056
+## 31 0.5333855      0.0082725352
+## 32 0.5064147      0.0103539648
+```
+
+.content-box-green[**Key**]
+
+`\(n\)`th element of the list is for the `\(n\)`th polygon in `treatment_blocks`.
+
+---
+class: middle
+
+.content-box-green[**after-extraction processing**]
+
+It is almost always the case that we do not need all of those raster values for further analysis. 
+
+Rather, what we often need is the summary of the values by polygon (e.g., average).
+
+To achieve this, you can use `bind_rows()` with `.id` option and then utilize `dplyr` operations.
+
+
+```r
+ndre_mean &lt;- ndre_extracted %&gt;% 
+	bind_rows(.id = "id") %&gt;% 
+  #--- convert from character to numeric  ---#
+	mutate(id = as.numeric(id)) %&gt;% 
+	group_by(id) %&gt;% 
+	summarize(NDRE = mean(value))
+```
+
+
+```
+## # A tibble: 6 x 2
+##      id  NDRE
+##   &lt;dbl&gt; &lt;dbl&gt;
+## 1     1 0.599
+## 2     2 0.585
+## 3     3 0.589
+## 4     4 0.606
+## 5     5 0.604
+## 6     6 0.607
+```
+
+In this dataset, the observation with `id == n` corresponds to `\(n\)`th polygon in `treatment_blocks`.
+
+---
+class: middle
+
+.content-box-green[**Alternatively**]
+
+You can use `fun` option inside `exact_extract()` to get a summary of raster values without you having to do it.
+
+
+```r
+ndre_extracted &lt;- exact_extract(ndre, treatment_blocks, fun = "mean")
+```
+
+
+```r
+head(ndre_extracted)
+```
+
+```
+## [1] 0.5987833 0.5853426 0.5886605 0.6057857 0.6043198 0.6066582
+```
+
+--
+
+.content-box-green[**Note**]
+
+Run `?exact_extract` to see other function options. 
+
+---
+class: middle
+
+
+.content-box-green[**From a RasterStack**]
+
+You can extract raster values from stacked raster layers by a single call of `exact_extract()` 
+
+--
+
+Let's create a stack:
+
+
+```r
+ndre_stack &lt;- stack(ndre, ndre, ndre) 	
+```
+
+--
+
+Extract from the stack:
+
+
+```r
+ndre_stack_extracted &lt;- exact_extract(ndre_stack, treatment_blocks)
+```
+
+--
+
+Let's take a look at the first element of the returned list.
+
+
+```r
+ndre_stack_extracted[[1]] %&gt;% head()
+```
+
+```
+##    ndre_07202019.1 ndre_07202019.2 ndre_07202019.3 coverage_fraction
+## 27       0.5890073       0.5890073       0.5890073      0.0002342653
+## 28       0.5822207       0.5822207       0.5822207      0.0020282459
+## 29       0.5958067       0.5958067       0.5958067      0.0041096755
+## 30       0.6105236       0.6105236       0.6105236      0.0061911056
+## 31       0.5333855       0.5333855       0.5333855      0.0082725352
+## 32       0.5064147       0.5064147       0.5064147      0.0103539648
+```
+
+Instead of having two columns, we now have three columns of extracted raster values and one column for `coverage_fraction`.
+
+`\(n\)`th column is for raster values extracted from the `\(n\)`th layer.
+
+---
+class: inverse, center, middle
+name: data-structure
+
+# Appendix
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+class: middle
+
+# `terra` package
+
+.content-box-green[**Aside**]
+
+The `terra` package (successor of the `raster` package) provides a faster extraction method with `terra::extract()`.
+
+The `terra` package is faster than the `raster` package for all the raster operations. However, it is still in development and rather unstable at the moment.
+
+Good news is that once you know how the `raster` package works, your transition to the `terra` package should be rather smooth.
+
+.content-box-green[**Extracting for points**]
+
+
+```r
+#--- convert `RasterLayer` to `SpatRaster` ---#
+ndre_sr &lt;- rast(ndre)
+```
+
+
+```r
+ndre_extracted &lt;- terra::extract(ndre_sr, `st_coordinates`(yield))	
+```
+
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "12:8",
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
