@@ -1,0 +1,595 @@
+---
+title: "R as GIS: Speed Consideration"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    lib_dir: libs
+    nature:
+      ratio: 12:8
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+---
+
+```{r, child = './../setup.Rmd'}
+```
+
+```{r echo = F}
+knitr::opts_chunk$set(cache.lazy = FALSE)
+```
+
+
+```{r, include = F, cache = F}
+suppressMessages(library(sf)) 
+suppressMessages(library(patchwork))
+suppressMessages(library(tigris))
+suppressMessages(library(mapview))
+suppressMessages(library(tidyverse))
+suppressMessages(library(exactextractr))
+suppressMessages(library(raster))
+```
+
+# Before you start
+
+## Learning objectives
+
+The objectives of this chapter is to learn how to speed up raster data extraction for vector data.
+
+## Table of contents
+
+1. [Understanding the data structure of `sf`](#data-structure)
+2. [Create sf objects yourself](#create-sf)
+3. [Different Types of Simple Feature Geometry (`sfg`)](#dif-sfg)
+4. [Constructing `sfc` and `sf` from `sfg`](#const)
+5. [Importing and exporting spatial datasets](#input-output)
+6. [Projection](#proj)
+7. [Quick and Interactive View of an `sf` Object](#view)
+8. [Conversion to and from `sp` objects](#sf-to-sp)
+9. [Non-spatial Transformation of `sf`](#non-trans)
+10. [Non-interactive geometrical operations](#non-int-geo)
+
+<br>
+
+<span style="color:red"> Tips: </span>hitting letter "o" key will give you a panel view of the slides
+
+---
+class: middle
+
+#  Prerequisites and Data Preparation
+
+.content-box-green[**Prerequisites**]
+
++ What Geographic Coordinate System (GCS), Coordinate Reference System (CRS), and projection are ([this](https://annakrystalli.me/intro-r-gis/gis.html) is a good resource)
+
++ Distinctions between vector and raster data ([this](https://gis.stackexchange.com/questions/57142/what-is-the-difference-between-vector-and-raster-data-models) is a simple summary of the difference)
+
+.content-box-green[**Preparation**]
+
++ Set the working directory to a directory
+
++ Create the "Data" folder under the directory you have set as the working directory 
+
++ Go [here](https://www.dropbox.com/sh/mn7yk7baru0pm4e/AADDfjIHcWpxACamPh3NVGI4a?dl=0), download all the files, and then save them in the "Data" folder you created in the step above
+
+---
+class: middle
+
+# Preparation for Parallelization  
+
+```{r cache = F}
+library(future.apply)
+library(parallel)
+
+plan("multiprocess", workers = detectCores() - 1)
+```
+
+The number of cores I am using is `r detectCores() - 1`.
+
+```{r echo = F}
+num_cores	<- detectCores() - 1
+```
+
+---
+class: inverse, center, middle
+name: data-structure
+
+# Extraction from a single raster layer
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+class: middle
+
+We will use the following datasets:
+
++ **raster**: Iowa Cropland Data Layer (CDL) data in 2015  
++ **polygons**: Regular polygon grids over Iowa 
+
+---
+class: middle
+
+
+.content-box-green[**Iowa CDL data in 2015**]
+
+```{r data_prep_par}
+#--- Iowa CDL in 2015 ---#
+(
+IA_cdl_15 <- raster("./Data/IA_cdl_2015.tif")
+)
+```  
+
+Values recorded in the raster data are integers representing land use type.
+
+---
+class: middle
+
+.content-box-green[**Regularly-sized grids over Iowa**]
+
+```{r IA_grids}
+#--- regular grids over Iowa ---#
+(
+IA_grids <- counties(state = "Iowa", cb = TRUE) %>% 
+	st_as_sf() %>% 
+  #--- create regularly-sized grids ---#
+  st_make_grid(n = c(50, 50)) %>% 
+  #--- convert to sf from sfc ---#
+  st_as_sf() %>% 
+  #--- project to the CRS of the CDL data ---#
+  st_transform(projection(IA_cdl_15)) 
+)
+```
+
+---
+class: middle
+
+Here is how they look:
+
+```{r land-grids, fig.cap = "Regularly-sized grids and land use type in Iowa in 2105", echo = F, out.width = "80%"}
+tm_shape(IA_cdl_15) +
+  tm_raster(title = "Land Use ") +
+tm_shape(IA_grids) +
+  tm_borders(lwd = 0.5) +
+tm_layout(legend.outside = TRUE)
+```
+
+---
+class: middle
+
+.content-box-green[**Goal**]
+Extract crop type values from `IA_CDL_15` to the intersecting polygons in `IA_grids`.
+
+
+---
+class: middle
+
+
+.content-box-green[**No parallelization**]
+
+```{r time_ee_disp, eval = F}
+tic()
+temp <- exact_extract(IA_cdl_15, IA_grids) 
+toc()
+```
+
+```{r time_ee_run, echo = F, eval = F}
+tic.clearlog()
+tic()
+temp <- exact_extract(IA_cdl_15, IA_grids, progress = F)
+toc(log = TRUE, quiet = TRUE)
+log_txt <- tic.log(format = FALSE)
+saveRDS(log_txt, "./Results/time_elapsed_nonpar.rds")
+```
+
+```{r par_one_poly_show, echo = F}
+non_par_one <- readRDS("./Results/time_elapsed_nonpar.rds")
+time_elapsed_nonpar <- non_par_one[[1]]$toc - non_par_one[[1]]$tic
+time_elapsed_nonpar 
+```
+
+---
+class: middle
+
+
+.content-box-green[**Parallelized**]
+
+One way to parallelize this process is to let each core work on one polygon at a time. 
+
+Let's first define the function to extract values for one polygon and then run it for all the polygons parallelized. 
+
+```{r par_one_poly, eval = F}
+#--- function to extract raster values for a single polygon ---#
+get_values_i <- function(i){
+
+  temp <- exact_extract(IA_cdl_15, IA_grids[i, ])
+
+  return(temp)
+}
+```	
+
+Now run the extraction job parallelized:
+
+```{r eval = F}
+#--- parallelized ---#
+tic()
+temp <- mclapply(1:nrow(IA_grids), get_values_i, mc.cores = num_cores)
+toc()
+```
+
+```{r par_one_poly_run, echo = F, eval = F}
+tic.clearlog()
+tic()
+temp <- mclapply(1:nrow(IA_grids), get_values_i, mc.cores = num_cores)
+toc(log = TRUE, quiet = TRUE)
+log_one_poly_par <- tic.log(format = FALSE)
+saveRDS(log_one_poly_par, "./Data/log_one_poly_par.rds")
+```
+
+```{r par_one_poly_show, echo = F}
+log_one_poly_par <- readRDS("./Data/log_one_poly_par.rds")
+time_elapsed_nonpar <- log_one_poly_par[[1]]$toc - log_one_poly_par[[1]]$tic
+time_elapsed_nonpar 
+```
+
+As you can see, this is a terrible way to parallelize the computation process.
+
+---
+class: middle
+
+To see why, let's look at the computation time of extracting from one polygon, two polygons, and up to five polygons. 
+
+```{r mb_poly, eval = F}
+library(microbenchmark)
+mb <- microbenchmark(
+  "p_1" = {
+    temp <- exact_extract(IA_cdl_15, IA_grids[1, ])
+  },
+  "p_2" = {
+    temp <- exact_extract(IA_cdl_15, IA_grids[1:2, ])
+  },
+  "p_3" = {
+    temp <- exact_extract(IA_cdl_15, IA_grids[1:3, ])
+  },
+  "p_4" = {
+    temp <- exact_extract(IA_cdl_15, IA_grids[1:4, ])
+  },
+  "p_5" = {
+    temp <- exact_extract(IA_cdl_15, IA_grids[1:5, ])
+  },
+  times = 100
+)
+``` 
+
+```{r mb_poly_run, echo = F, eval = F}
+library(microbenchmark)
+mb <- microbenchmark(
+  "p_1" = {
+    temp <- exact_extract(IA_cdl_15, IA_grids[1, ], progress = F)
+  },
+  "p_2" = {
+    temp <- exact_extract(IA_cdl_15, IA_grids[1:2, ], progress = F)
+  },
+  "p_3" = {
+    temp <- exact_extract(IA_cdl_15, IA_grids[1:3, ], progress = F)
+  },
+  "p_4" = {
+    temp <- exact_extract(IA_cdl_15, IA_grids[1:4, ], progress = F)
+  },
+  "p_5" = {
+    temp <- exact_extract(IA_cdl_15, IA_grids[1:5, ], progress = F)
+  },
+  times = 100
+  ) 
+
+saveRDS(mb, "./Results/mb_poly_run.rds")
+``` 
+
+```{r read-mb, echo = F}
+mb <- readRDS("./Results/mb_poly_run.rds")
+```
+
+---
+class: middle
+
+.left5[
+
+```{r comp-polygons, fig.cap = "Comparison of the computation time of raster data extractions", echo = F}
+mb %>% data.table() %>% 
+  .[, expr := gsub("p_", "", expr)] %>% 
+  ggplot(.) +
+    geom_boxplot(aes(y = time/1e9, x = expr)) +
+    ylim(0, NA) +
+    ylab("seconds") +
+    xlab("number of polygons to process")
+```
+
+```{r overhead, echo = F}
+mb_dt <- data.table(mb)
+overhead <- ((mb_dt[expr == "p_1", mean(time)] - (mb_dt[expr == "p_2", mean(time)] - mb_dt[expr == "p_1", mean(time)]))/1e9) %>% round(digits = 2)
+```
+]
+
+.right5[
++ There is a significant overhead (about `r overhead` seconds) irrespective of the number of the polygons to extract data for. 
+
++ Once the process is initiated and ready to start extracting values for polygons, it does not spend much time processing for additional units of polygon. 
+
++ So, this is a typical example of how you should NOT parallelize. 
+
++ Since each core processes about 136 polygons, a very simple math suggests that you would spend at least `r round(overhead*136, digits = 2)` (`r overhead` $\times$ 136) seconds just for preparing extraction jobs.
+
+]
+
+---
+class: middle
+
+.content-box-green[**Parallelization by group**]
+
+We can minimize this overhead as much as possible by having each core use `exact_extract()` only once in which multiple polygons are processed in the single call. 
+
+Specifically, we will split the collection of the polygons into `r num_cores` groups and have each core extract for one group. 
+
+---
+class: middle
+
+.content-box-green[**Assign group numbers**]
+
+```{r group_par_code_disp, eval = F}
+#--- number of polygons in a group ---#
+num_in_group <- floor(nrow(IA_grids)/num_cores)
+
+#--- assign group id to polygons ---#
+IA_grids <- IA_grids %>%  
+  mutate(
+    #--- create grid id ---#
+    grid_id = 1:nrow(.),
+    #--- assign group id  ---#
+    group_id = grid_id %/% num_in_group + 1
+  )
+```
+
+.content-box-green[**Parallelized by group**]
+
+```{r eval = F}
+tic()
+#--- parallelized processing by group ---#
+temp <- mclapply(
+  1:num_cores, 
+  function(i) exact_extract(
+ 		IA_cdl_15, 
+ 		filter(IA_grids, group_id == i)
+  ),
+  mc.cores = num_cores
+) 
+toc()
+```
+
+```{r group_par_run, echo = F, eval = F}
+tic.clearlog()
+tic()
+#--- number of polygons in a group ---#
+num_in_group <- floor(nrow(IA_grids)/num_cores)
+
+#--- define group id ---#
+IA_grids <- IA_grids %>%  
+  mutate(
+    #--- create grid id ---#
+    grid_id = 1:nrow(.),
+    #--- assign group id  ---#
+    group_id = grid_id %/% num_in_group + 1
+  )
+
+#--- parallelized processing by group ---#
+temp <- mclapply(1:num_cores, function(i) exact_extract(IA_cdl_15, filter(IA_grids, group_id == i), progress = F), mc.cores = num_cores) 
+
+toc(log = TRUE, quiet = TRUE)
+log_group_par_run <- tic.log(format = FALSE)
+
+saveRDS(log_group_par_run, "./Results/log_group_par_run.rds")
+```
+
+```{r group_par_show, echo = F}
+log_group_par_run <- readRDS("./Results/log_group_par_run.rds")
+time_elapsed_gropu_par <- log_group_par_run[[1]]$toc - log_group_par_run[[1]]$tic
+time_elapsed_gropu_par 
+```
+
+Great, this is much better. 
+
+---
+class: middle
+
+We can further reduce the processing time by reducing the size of the object that is returned from each core to be collated into one. 
+
+In the code above, each core returns a list of `data.frame`s where each grid of the same group has multiple values from the intersecting raster cells.   
+
+```{r size_list}
+#--- take a look at the the values extracted for the 1st polygon of the 1st group---#
+head(temp[[1]][[1]])
+
+#--- the size of the list of data returned by the first core ---#
+object.size(temp[[1]]) %>%  format(units = "GB")
+```
+
+In total, about 3GB of data has to be collated into one list from `r num_cores` cores.
+
+---
+class: middle
+
+It turns out, this process is costly. To see this, take a look at the following example where the same `exact_extrct()` processes are run, yet nothing is returned by each core.
+
+```{r nothing_returned, eval = F}
+#--- define the function to extract values by block of polygons ---#
+extract_by_group <- function(i){
+  temp <- exact_extract(IA_cdl_15, filter(IA_grids, group_id == i))
+
+  #--- returns nothing! ---#
+  return(NULL) #<<
+}
+
+#--- parallelized processing by group ---#
+tic()
+temp <- mclapply(
+  1:num_cores, 
+  function(i) extract_by_group(i),
+  mc.cores = num_cores
+)   
+toc()
+```
+
+```{r nothing_returned_run, echo = F, eval = F}
+#--- define function ---#
+extract_by_group <- function(i){
+  temp <- exact_extract(IA_cdl_15, filter(IA_grids, group_id == i))
+  return(NULL)
+}
+
+tic.clearlog()
+tic()
+
+#--- parallelized processing by group ---#
+temp <- mclapply(
+  1:num_cores, 
+  function(i) extract_by_group(i),
+  mc.cores = num_cores
+)   
+toc(log = TRUE, quiet = TRUE)
+log_no_return <- tic.log(format = FALSE)
+
+saveRDS(log_no_return, "./Results/log_no_return.rds")
+```
+
+```{r nothing_returned_show, echo = F}
+log_no_return <- readRDS("./Results/log_no_return.rds")
+time_elapsed_group_none <- log_no_return[[1]]$toc - log_no_return[[1]]$tic
+time_elapsed_group_none 
+```
+
+So, approximately `r time_elapsed_gropu_par - time_elapsed_group_none` seconds were used just to collect the 3GB worth of data from the cores into one.
+
+
+---
+class: middle
+
+In most cases, we do not have to carry around all the individual cell values for our subsequent analysis. 
+
+So, let's get the summary before we have the computer collect the objects returned from each core as follows: 
+
+```{r return_reduced_group, eval = F}
+extract_by_group_reduced <- function(i){
+
+  temp_return <- exact_extract(
+    IA_cdl_15, 
+    filter(IA_grids, group_id == i)
+    ) %>% 
+    #--- combine the list of data.frames into one with polygon id ---#
+    rbindlist(idcol = "id_within_group") %>% 
+    #--- find the count of land use type values by polygon ---#
+    .[, .(num_value = .N), by = .(value, id_within_group)]
+
+  return(temp_return)
+}
+
+tic()
+#--- parallelized processing by group ---#
+temp <- mclapply(
+  1:num_cores, 
+  function(i) extract_by_group_reduced(i),
+  mc.cores = num_cores
+)   
+toc()
+```
+
+```{r return_reduced_group_run, echo = F, eval = F}
+tic.clearlog()
+tic()
+
+extract_by_group_reduced <- function(i){
+  temp_return <- exact_extract(
+    IA_cdl_15, 
+    filter(IA_grids, group_id == i)
+    ) %>% 
+    #--- combine the list of data.frames into one with polygon id ---#
+    rbindlist(idcol = "id_within_group") %>% 
+    #--- find the count of land use type values by polygon ---#
+    .[, .(num_value = .N), by = .(value, id_within_group)] #<<
+  return(temp_return)
+}
+
+
+#--- parallelized processing by group ---#
+temp <- mclapply(
+  1:num_cores, 
+  function(i) extract_by_group_reduced(i),
+  mc.cores = num_cores
+)   
+toc(log = TRUE, quiet = TRUE)
+log_reduced <- tic.log(format = FALSE)
+
+saveRDS(log_reduced, "./Results/log_reduced.rds")
+```
+
+```{r return_reduced_group_show, echo = F}
+log_reduced <- readRDS("./Results/log_reduced.rds")
+time_elapsed_group_reduced <- log_reduced[[1]]$toc - log_reduced[[1]]$tic
+time_elapsed_group_reduced 
+```
+
+It is of course slower than the one that returns nothing, but it is faster than the one that does not reduce the size before the outcome collation.
+
+
+---
+class: middle
+
++ As you can see, the computation time of the fastest approach is now much less, but you still only gained  `r round(time_elapsed_nonpar - time_elapsed_group_reduced, digits = 2)`. 
+
++ How much time did I spend **writing** the code to do the parallelized group processing? Three minutes. 
+
++ Obviously, what matters to you is the **total** time (coding time plus processing time) you spend to get the desired outcome. 
+
++ Indeed, the time you could save by a clever coding at the most is `r round(time_elapsed_nonpar, digits = 2)` seconds. 
+
++ Writing any kind of code in an attempt to make your code faster takes more time than that. So, don't even try to make your code faster if the processing time is quite short in the first place. 
+
++ Before you start parallelizing things, go through what you need to go through in terms of coding in your head, and judge if it's worth it or not. 
+
+---
+class: middle
+
++ Imagine processing CDL data for all the states from 2009 to 2020. 
+
++ Then, the whole process will take roughly `r round(50*12*time_elapsed_nonpar/60/60, digits = 2)` $(50 \times 12 \times `r time_elapsed_nonpar`/60/60)$ hours. 
+
++ Again, a super rough calculation tells us that the whole process would be done in `r round(50*12*time_elapsed_group_reduced/60/60, digits = 2)` hours if parallelized in the same way as the best approach we saw above (block parallelization). 
+
++ Actually, `r round(50*12*time_elapsed_nonpar/60/60, digits = 2)` is still not terrible. You execute the program before you go to bed, and when you start working on the next day, all the data is there for you.    
+
+---
+class: middle
+
+# Summary
+
++ Do not let each core runs small tasks over and over again (extracting raster values for one polygon at a time), or you will suffer from significant overhead.
+
++ Blocking is one way to avoid the problem above.
+
++ Reduce the size of the outcome of each core as much as possible to spend less time to simply collating them into one.
+
++ Do not forget about the time you would spend on coding parallelized processes.
+
+
+---
+class: inverse, center, middle
+name: data-structure
+
+# Extraction from a multi-layer raster data
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+class: middle
+
+
+

@@ -459,7 +459,7 @@ class: middle
 
 .content-box-green[**Visualization**]
 
-&lt;img src="r_as_GIS_raster_basics_x_files/figure-html/unnamed-chunk-4-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+&lt;img src="r_as_GIS_raster_basics_x_files/figure-html/unnamed-chunk-4-1.png" width="70%" style="display: block; margin: auto;" /&gt;
 
 ---
 class: middle
@@ -533,6 +533,16 @@ drone_green &lt;- raster("./Data/Annos_062718_RE_transparent_reflectance_green.t
 )
 ```
 
+```
+## class      : RasterLayer 
+## dimensions : 9640, 4768, 45963520  (nrow, ncol, ncell)
+## resolution : 0.08794, 0.08794  (x, y)
+## extent     : 286164.7, 286584, 4433250, 4434097  (xmin, xmax, ymin, ymax)
+## crs        : +proj=utm +zone=15 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0 
+## source     : /Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-8-SpatialData/Data/Annos_062718_RE_transparent_reflectance_green.tif 
+## names      : Annos_062718_RE_transparent_reflectance_green
+```
+
 Let's use `stack()` to stack the two raster datasets to create a `RasterStack` object:
 
 
@@ -562,6 +572,15 @@ drone_stack &lt;- stack(
 )
 ```
 
+```
+## class      : RasterStack 
+## dimensions : 9640, 4768, 45963520, 2  (nrow, ncol, ncell, nlayers)
+## resolution : 0.08794, 0.08794  (x, y)
+## extent     : 286164.7, 286584, 4433250, 4434097  (xmin, xmax, ymin, ymax)
+## crs        : +proj=utm +zone=15 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0 
+## names      : Annos_062718_RE_transparent_reflectance_green.1, Annos_062718_RE_transparent_reflectance_green.2
+```
+
 
 ---
 class: middle
@@ -577,18 +596,6 @@ IA_cdl_brick &lt;- brick(drone_stack)
 
 #--- take a look ---#
 IA_cdl_brick
-```
-
-```
-## class      : RasterBrick 
-## dimensions : 9640, 4768, 45963520, 2  (nrow, ncol, ncell, nlayers)
-## resolution : 0.08794, 0.08794  (x, y)
-## extent     : 286164.7, 286584, 4433250, 4434097  (xmin, xmax, ymin, ymax)
-## crs        : +proj=utm +zone=15 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0 
-## source     : memory
-## names      : Annos_062718_RE_transparent_reflectance_green.1, Annos_062718_RE_transparent_reflectance_green.2 
-## min values :                                      0.00804817,                                      0.00804817 
-## max values :                                       0.4257042,                                       0.4257042
 ```
 
 --
@@ -722,6 +729,15 @@ writeRaster(drone_blue_green, "./Data/raster_stack_example.tif", format = "GTiff
 There is no advantage in saving two raster layers as a single GeoTiff file. The single GeoTiff file is just as large in memory as having individual GeoTiff files for the two layers.  
 
 ---
+class: middle
+
+# Exercise 1
+
+Read "NIR.tif" and "Red.tif", and name them `NIR` and `Red`. 
+
+
+
+---
 class: inverse, center, middle
 name: arithmetic
 
@@ -750,14 +766,58 @@ class: middle
 drone_b_plus_g &lt;- drone_blue + drone_green	
 ```
 
+.content-box-green[**Confirm**]
+
 
 ```r
-drone_b_plus_g &lt;- drone_blue * drone_green	
+#--- vector of logical values indicating if the values are missing or not ---#
+not_na &lt;- !is.na(getValues(drone_b_plus_g))
 ```
 
 
 ```r
-drone_b_plus_g &lt;- drone_blue - drone_green	
+#--- see the first 6 of non-missing values ---#
+getValues(drone_b_plus_g)[not_na] %&gt;% head()
+```
+
+```
+## [1] 0.07551979 0.06512169 0.06003659 0.05444877 0.05493270 0.06355941
+```
+
+```r
+getValues(drone_blue)[not_na] %&gt;% head()
+```
+
+```
+## [1] 0.02463771 0.02044090 0.01791573 0.01716213 0.01664010 0.01778096
+```
+
+```r
+getValues(drone_green)[not_na] %&gt;% head()
+```
+
+```
+## [1] 0.05088208 0.04468079 0.04212086 0.03728664 0.03829260 0.04577846
+```
+
+---
+class: middle
+
+Of course, you can do other simple arithmetic operations like multiplication, division, and subtraction (try yourself).
+
+
+```r
+drone_blue * drone_green	
+```
+
+
+```r
+drone_blue / drone_green  
+```
+
+
+```r
+drone_blue - drone_green	
 ```
 
 ---
@@ -766,6 +826,34 @@ class: middle
 .content-box-green[**NDVI**]
 
 A prime use case of raster arithmetic is NDVI (or any other reflectance-based measures) calculation.
+
+---
+class: middle
+
+# Exercise 2 
+
+.left5[
+
+Using `NIR` and `Red`,  calculate NDVI and name it `NDVI`.
+
+`\(NDVI = (NIR-Red)/(NIR+Red)\)`
+
+
+
+The use the following code to visualize NDVI.
+
+
+```r
+tm_shape(NDVI) +
+  tm_raster()
+```
+]
+
+.right5[
+&lt;img src="r_as_GIS_raster_basics_x_files/figure-html/unnamed-chunk-18-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
 
 ---
 class: inverse, center, middle

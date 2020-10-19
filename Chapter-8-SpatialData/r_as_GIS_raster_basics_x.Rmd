@@ -98,8 +98,13 @@ class: middle
 
 .content-box-green[**Visualization**]
 
-```{r out.width = "80%", echo = F}
-plot(drone_blue)
+```{r out.width = "70%", echo = F}
+tm_shape(drone_blue) +
+  tm_raster(title = "Blue") +
+  tm_layout(
+    legend.outside = TRUE,
+    frame = F
+  )
 ```
 
 ---
@@ -151,7 +156,7 @@ class: middle
 
 To create a `RasterStack` and `RasterBrick`, let's first import the drone data for the green band.
 
-```{r make_stack, eval = F}
+```{r make_stack}
 (
 drone_green <- raster("./Data/Annos_062718_RE_transparent_reflectance_green.tif")
 )
@@ -172,7 +177,7 @@ class: middle
 
 You can create a `RasterStack` by directly reading raster datasets using `stack()` as follows:
 
-```{r make_stack, eval = F}
+```{r make_stack}
 (
 drone_stack <- stack(
 	"./Data/Annos_062718_RE_transparent_reflectance_green.tif", 
@@ -189,7 +194,7 @@ class: middle
 
 .content-box-green[**Example**]
 
-```{r make_brick}
+```{r make_brick, eval = F}
 #--- stack the two ---#
 IA_cdl_brick <- brick(drone_stack)
 
@@ -309,6 +314,18 @@ writeRaster(drone_blue_green, "./Data/raster_stack_example.tif", format = "GTiff
 There is no advantage in saving two raster layers as a single GeoTiff file. The single GeoTiff file is just as large in memory as having individual GeoTiff files for the two layers.  
 
 ---
+class: middle
+
+# Exercise 1
+
+Read "NIR.tif" and "Red.tif", and name them `NIR` and `Red`. 
+
+```{r include = F}
+NIR <- raster("./Data/NIR.tif") 
+Red <- raster("./Data/Red.tif") 
+```
+
+---
 class: inverse, center, middle
 name: arithmetic
 
@@ -332,16 +349,39 @@ class: middle
 
 .content-box-green[**Examples**]
 
-```{r eval = F}
+```{r }
 drone_b_plus_g <- drone_blue + drone_green	
 ```
 
+.content-box-green[**Confirm**]
+
+```{r }
+#--- vector of logical values indicating if the values are missing or not ---#
+not_na <- !is.na(getValues(drone_b_plus_g))
+```
+
+```{r }
+#--- see the first 6 of non-missing values ---#
+getValues(drone_b_plus_g)[not_na] %>% head()
+getValues(drone_blue)[not_na] %>% head()
+getValues(drone_green)[not_na] %>% head()
+```
+
+---
+class: middle
+
+Of course, you can do other simple arithmetic operations like multiplication, division, and subtraction (try yourself).
+
 ```{r eval = F}
-drone_b_plus_g <- drone_blue * drone_green	
+drone_blue * drone_green	
 ```
 
 ```{r eval = F}
-drone_b_plus_g <- drone_blue - drone_green	
+drone_blue / drone_green  
+```
+
+```{r eval = F}
+drone_blue - drone_green	
 ```
 
 ---
@@ -350,6 +390,42 @@ class: middle
 .content-box-green[**NDVI**]
 
 A prime use case of raster arithmetic is NDVI (or any other reflectance-based measures) calculation.
+
+---
+class: middle
+
+# Exercise 2 
+
+.left5[
+
+Using `NIR` and `Red`,  calculate NDVI and name it `NDVI`.
+
+$NDVI = (NIR-Red)/(NIR+Red)$
+
+```{r ndvi-calc, include = F}
+NDVI <- (NIR-Red)/(NIR+Red)
+```
+
+The use the following code to visualize NDVI.
+
+```{r eval = F}
+tm_shape(NDVI) +
+  tm_raster()
+```
+]
+
+.right5[
+```{r echo = F}
+tm_shape(NDVI) +
+  tm_raster(title = NDVI) +
+  tm_layout(
+    legend.outside = TRUE,
+    frame = FALSE
+  )
+```
+]
+
+
 
 ---
 class: inverse, center, middle
