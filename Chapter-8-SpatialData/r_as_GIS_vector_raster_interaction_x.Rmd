@@ -19,6 +19,7 @@ output:
 
 ```{r, include = F, cache = F}
 suppressMessages(library(sf)) 
+suppressMessages(library(stars)) 
 suppressMessages(library(terra)) 
 suppressMessages(library(patchwork))
 suppressMessages(library(data.table))
@@ -50,6 +51,11 @@ To be precise, here is what we mean by raster data extraction and what it does f
 + **Points**: For each of the points, find which raster cell it is located within, and assign the value of the cell to the point.  
  
 + **Polygons**: For each of the polygons, identify all the raster cells that intersect with the polygon, and assign a vector of the cell values to the polygon
+
+---
+class: middle
+
+# Before you start
 
 ## Table of contents
 
@@ -199,6 +205,71 @@ class: middle
 
 For each of the points, find which raster cell it is located within, and assign the value of the cell to the point.  
 
+---
+class: middle
+
+```{r echo = F}
+set.seed(378533)
+
+#--- create polygons ---#
+polygon <- st_polygon(list(
+  rbind(c(0, 0), c(8, 0), c(8, 8), c(0, 8), c(0, 0)) 
+))
+
+raster_like_cells <- st_make_grid(polygon, n = c(8, 8)) %>% 
+  st_as_sf() %>% 
+  mutate(value = sample(1:64, 64)) 
+
+stars_cells <- st_rasterize(raster_like_cells, nx = 8, ny = 8)
+
+cell_centroids <- st_centroid(raster_like_cells) %>% 
+  st_as_sf() 
+```
+
+.left4[
++ The numbers inside the cells are the values that the cells hold. 
+
++ After the extraction, 
+	* Point 1 will be assigned $50$
+	* Point 2 will be assigned $4$
+	* Point 3 will be assigned $54$.
+]
+
+.right6[
+```{r points-extact-viz, fig.cap = "Visual illustration of raster data extraction for points data", echo = F, out.width = "50%"}
+#--------------------------
+# Create points for which values are extracted
+#--------------------------
+#--- points ---#
+point_1 <- st_point(c(2.4, 2.2))
+point_2 <- st_point(c(6.7, 1.8))
+point_3 <- st_point(c(4.2, 7.1))
+
+#--- combine the points to make a single  sf of points ---#
+points <- list(point_1, point_2, point_3) %>% 
+  st_sfc() %>% 
+  st_as_sf() %>% 
+  mutate(point_name = c("Point 1", "Point 2", "Point 3"))
+
+#--------------------------
+# Create maps
+#--------------------------
+ggplot() +
+  geom_stars(data = stars_cells, alpha = 0.5) +
+  scale_fill_distiller(name = "Value", palette = "Spectral") +
+  geom_sf_text(data = raster_like_cells, aes(label = value)) + 
+  geom_sf(data = points, aes(shape = point_name), size = 2) +
+  scale_shape(name = "Points")  +
+  theme_void()
+```
+]
+
+
+
+ 
+
+---
+class: middle
 
 .content-box-green[**How**]
 
@@ -217,13 +288,50 @@ class: middle
 Extract NDRE values for yield points data:
 
 + match each of the yield points with the cell in which it resides in
-+ assign the cell (nDRE) value to the point
++ assign the cell (NDRE) value to the point
 		
+---
+class: middle
+
+.left4[
+<br>
++ Here is the visualization of two yield points from `yield` and raster cells from `ndre` that surround the yield points.
+
++ We are finding the raster cell to extract the value from for each of all the yield points.
+]
+
+.right6[
+```{r echo = F}
+yield_subset <- yield[treatment_blocks, ] %>% 
+	.[1:2, ] 
+
+yield_subset_buffer <-st_buffer(yield_subset, dist = 0.00001)
+
+ndre_subset <- crop(ndre, yield_subset_buffer)
+
+tm_shape(ndre_subset) +
+	tm_raster() +
+tm_shape(yield_subset) +
+	tm_symbols(size = 0.4, col = "green") +
+tm_layout(
+	frame = F,
+	legend.outside = TRUE
+)
+```
+]
+
+
+
+---
+class: middle
+
 .content-box-green[**Implementation**]
 
 ```{r }
 ndre_extracted <- raster::extract(ndre, yield)	
 ```
+
+.content-box-green[**Next step**]
 
 Just extracting the raster values to the points is not where we stop. 
 
@@ -267,6 +375,41 @@ class: middle
 .content-box-green[**What**]
 
 For each of the polygons, identify all the raster cells that intersect with the polygon, and assign a vector of the cell values to the polygon. 
+
+---
+class: middle
+
+.left4[
+
++ Find all the raster cells each of the polygons "intersect with"
+
++ Assign the value of all the intersecting cells to the polygon (n-to-1). 
+]
+
+.right6[
+```{r polygons-extact-viz, fig.cap = "Visual illustration of raster data extraction for polygons data", echo = F, out.width = "50%"}
+#--------------------------
+# Create a polygon for which values are extracted
+#--------------------------
+polygon_extract <- st_polygon(list(
+  rbind(c(1.5, 2), c(6, 2.3), c(7, 6.5), c(2, 5), c(1.5, 2)) 
+))
+
+polygons_extract_viz <- ggplot() +
+  geom_stars(data = stars_cells, alpha = 0.5) +
+  scale_fill_distiller(name = "Value", palette = "Spectral") +
+  geom_sf(data = polygon_extract, fill = NA) +
+  geom_sf(data = cell_centroids, color = "black", size = 0.8) +
+  geom_sf_text(data = raster_like_cells, aes(label = value), nudge_x = -0.25, nudge_y = 0.25) +
+  theme_void()
+
+polygons_extract_viz
+```
+]
+
+
+---
+class: middle
 
 .content-box-green[**How**]
 

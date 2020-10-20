@@ -193,7 +193,6 @@ suppressMessages(library(tidyverse))
 
 .left4 {
   width: 38%;
-  height: 92%;
   float: left;
 }
 

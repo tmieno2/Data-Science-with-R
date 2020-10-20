@@ -174,7 +174,6 @@ class: center, middle, inverse, title-slide
 
 .left4 {
   width: 38%;
-  height: 92%;
   float: left;
 }
 
@@ -379,6 +378,11 @@ To be precise, here is what we mean by raster data extraction and what it does f
  
 + **Polygons**: For each of the polygons, identify all the raster cells that intersect with the polygon, and assign a vector of the cell values to the polygon
 
+---
+class: middle
+
+# Before you start
+
 ## Table of contents
 
 1. [Cropping raster datasets](#crop)
@@ -518,6 +522,33 @@ class: middle
 
 For each of the points, find which raster cell it is located within, and assign the value of the cell to the point.  
 
+---
+class: middle
+
+
+
+.left4[
++ The numbers inside the cells are the values that the cells hold. 
+
++ After the extraction, 
+	* Point 1 will be assigned `\(50\)`
+	* Point 2 will be assigned `\(4\)`
+	* Point 3 will be assigned `\(54\)`.
+]
+
+.right6[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="r_as_GIS_vector_raster_interaction_x_files/figure-html/points-extact-viz-1.png" alt="Visual illustration of raster data extraction for points data" width="50%" /&gt;
+&lt;p class="caption"&gt;Visual illustration of raster data extraction for points data&lt;/p&gt;
+&lt;/div&gt;
+]
+
+
+
+ 
+
+---
+class: middle
 
 .content-box-green[**How**]
 
@@ -537,14 +568,35 @@ class: middle
 Extract NDRE values for yield points data:
 
 + match each of the yield points with the cell in which it resides in
-+ assign the cell (nDRE) value to the point
++ assign the cell (NDRE) value to the point
 		
+---
+class: middle
+
+.left4[
+&lt;br&gt;
++ Here is the visualization of two yield points from `yield` and raster cells from `ndre` that surround the yield points.
+
++ We are finding the raster cell to extract the value from for each of all the yield points.
+]
+
+.right6[
+&lt;img src="r_as_GIS_vector_raster_interaction_x_files/figure-html/unnamed-chunk-13-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+
+---
+class: middle
+
 .content-box-green[**Implementation**]
 
 
 ```r
 ndre_extracted &lt;- raster::extract(ndre, yield)	
 ```
+
+.content-box-green[**Next step**]
 
 Just extracting the raster values to the points is not where we stop. 
 
@@ -610,6 +662,27 @@ class: middle
 .content-box-green[**What**]
 
 For each of the polygons, identify all the raster cells that intersect with the polygon, and assign a vector of the cell values to the polygon. 
+
+---
+class: middle
+
+.left4[
+
++ Find all the raster cells each of the polygons "intersect with"
+
++ Assign the value of all the intersecting cells to the polygon (n-to-1). 
+]
+
+.right6[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="r_as_GIS_vector_raster_interaction_x_files/figure-html/polygons-extact-viz-1.png" alt="Visual illustration of raster data extraction for polygons data" width="50%" /&gt;
+&lt;p class="caption"&gt;Visual illustration of raster data extraction for polygons data&lt;/p&gt;
+&lt;/div&gt;
+]
+
+
+---
+class: middle
 
 .content-box-green[**How**]
 
