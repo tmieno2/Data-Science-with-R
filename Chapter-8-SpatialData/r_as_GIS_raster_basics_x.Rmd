@@ -186,7 +186,6 @@ drone_stack <- stack(
 )
 ```
 
-
 ---
 class: middle
 

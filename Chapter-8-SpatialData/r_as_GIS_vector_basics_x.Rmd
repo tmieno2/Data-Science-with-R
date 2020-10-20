@@ -678,7 +678,7 @@ class: middle
 
 .content-box-green[**Exercise 2.1**]
 
-Read the "Fairway_Five" shape files onto R using `st_read()`, and bame it `Fairway_Five`.
+Read the "Fairway_Five" shape files onto R using `st_read()`, and name it `Fairway_Five`.
 
 ```{r include = F}
 Fairway_Five <- st_read(dsn = "./Data", "Fairway_Five") 
@@ -688,7 +688,7 @@ Fairway_Five <- st_read(dsn = "./Data", "Fairway_Five")
 
 Write the "Fairway_Five" as a Geopackage file using `st_write()`.
 
-```{r eval = F}
+```{r include = F}
 st_write(Fairway_Five, "./Data/Fairway_Five.gpkg", overwrite = TRUE) 
 ```
 
@@ -813,7 +813,7 @@ nc_utm_back_to_original <- st_transform(
 )
 ```
 
-```{r to_utm17, eval = F}
+```{r to_utm17-run, eval = F}
 #--- transform ---#
 nc_utm_back_to_original <- st_transform(
 	nc_utm, 
@@ -1076,8 +1076,8 @@ Using the `LAT` (latitude) and `LNG` (longitude) columns, turn the tibble into a
 mower_sensor_sf <- mower_sensor %>% 
 	st_as_sf(
 	coords = c(
-		"LAT", 
-		"LNG"
+		"LNG", 
+		"LAT"
 	)
 )
 ```
@@ -1189,7 +1189,7 @@ wells_sf %>%
 
 .scroll-box-12[
 
-```{r dplyr_transformation, echo = F}
+```{r dplyr-transformation-run, echo = F}
 #--- do some transformations ---#
 wells_sf %>% 
   #--- select variables (geometry will always remain after select) ---#

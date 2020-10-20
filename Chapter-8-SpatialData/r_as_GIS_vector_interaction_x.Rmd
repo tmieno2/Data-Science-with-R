@@ -1811,7 +1811,7 @@ intersections_lp <- st_intersection(lines, polygons) %>%
 ---
 class: middle
 
-The part of the lines that did not intersect with a polygons is cut out and does not remain in the returned `sf`. To see this, see Figure \@ref(fig:lines-polygons-int) below:
+The part of the lines that did not intersect with a polygons is cut out and does not remain in the returned `sf`. To see this, see the figure below:
 
 .left5[
 
