@@ -688,7 +688,7 @@ Fairway_Five <- st_read(dsn = "./Data", "Fairway_Five")
 
 Write the "Fairway_Five" as a Geopackage file using `st_write()`.
 
-```{r include = F}
+```{r eval = F, echo = F}
 st_write(Fairway_Five, "./Data/Fairway_Five.gpkg", overwrite = TRUE) 
 ```
 
