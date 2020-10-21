@@ -439,11 +439,46 @@ class: middle
 
 .content-box-green[**Static map**]
 
+.left5[
+<br>
+<br>
+<br>
 To have a quick visualization of the data values of `Raster*` objects, you can simply use `plot()`:
 
-```{r plot_stack, out.width = "70%"}
+```{r plot_stack, out.width = "70%", eval = F}
 plot(drone_blue)
 ```
+
+]
+
+.right5[
+```{r plot_stack, echo = F}
+plot(drone_blue)
+```
+]
+
+
+---
+class: middle
+
+.content-box-green[**Static map**]
+
+.left5[
+To have a quick visualization of the data values of `Raster*` objects, you can also use the `tmap` package as well.
+
+```{r tmap-static-raster, eval = F}  
+tm_shape(drone_blue) +
+  tm_raster()
+```
+]
+
+.right5[
+```{r tmap-static-raster-f, ref.label = "tmap-static-raster", echo = F}  
+
+```
+]
+
+
 
 ---
 class: middle

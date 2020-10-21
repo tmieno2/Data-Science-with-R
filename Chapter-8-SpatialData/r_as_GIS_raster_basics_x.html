@@ -192,7 +192,6 @@ class: center, middle, inverse, title-slide
 
 .left4 {
   width: 38%;
-  height: 92%;
   float: left;
 }
 
@@ -581,7 +580,6 @@ drone_stack &lt;- stack(
 ## names      : Annos_062718_RE_transparent_reflectance_green.1, Annos_062718_RE_transparent_reflectance_green.2
 ```
 
-
 ---
 class: middle
 
@@ -868,6 +866,10 @@ class: middle
 
 .content-box-green[**Static map**]
 
+.left5[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
 To have a quick visualization of the data values of `Raster*` objects, you can simply use `plot()`:
 
 
@@ -875,7 +877,33 @@ To have a quick visualization of the data values of `Raster*` objects, you can s
 plot(drone_blue)
 ```
 
-&lt;img src="r_as_GIS_raster_basics_x_files/figure-html/plot_stack-1.png" width="70%" style="display: block; margin: auto;" /&gt;
+]
+
+.right5[
+&lt;img src="r_as_GIS_raster_basics_x_files/figure-html/plot_stack-19-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+class: middle
+
+.content-box-green[**Static map**]
+
+.left5[
+To have a quick visualization of the data values of `Raster*` objects, you can also use the `tmap` package as well.
+
+
+```r
+tm_shape(drone_blue) +
+  tm_raster()
+```
+]
+
+.right5[
+&lt;img src="r_as_GIS_raster_basics_x_files/figure-html/tmap-static-raster-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
 
 ---
 class: middle
