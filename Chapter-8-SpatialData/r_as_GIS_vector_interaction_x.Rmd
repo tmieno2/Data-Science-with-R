@@ -89,7 +89,7 @@ You can identify various types of spatial relations using the `sf` package
 
 + Our main focus is on the intersections of spatial objects, which can be found using `st_intersects()`.
 
-+ We also briefly cover `st_is_within_distance()`
++ We also briefly cover `st_is_within_distance()` and `st_nearest_feature()`
  
 (Run `?geos_binary_pred` to see other topological relations you can find.) 
 
@@ -272,7 +272,14 @@ class: middle
 
 # `st_is_within_distance()`  
 
-This function identifies whether two spatial objects are within the distance you specify as the name suggests.  
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+st_is_within_distance(sf_1, sf_2)
+```
+
+This function identifies whether any of `sfg`s in `sf_2` is within the specified distance from each of the `sfg`s in `sf_1`.  
 
 ---
 class: middle
@@ -281,7 +288,7 @@ class: middle
 Create two sets of points. 
 
 ```{r create_random_points}
-set.seed(384738)
+set.seed(884738)
 
 points_set_1 <- lapply(1:5, function(x) st_point(runif(2))) %>% 
   st_sfc() %>% st_as_sf() %>% 
@@ -297,7 +304,7 @@ class: middle
 
 Here is the visualization of the two sets of points we just created.
 
-```{r map-points-points-points, echo = F, out.width = "60%"}
+```{r map-points-points-points, echo = F, out.width = "60%", dependson = "create_random_points"}
 ggplot() +
   geom_sf_text(data = points_set_1, aes(label = id), color = "red") +
   geom_sf_text(data = points_set_2, aes(label = id), color = "blue") 
@@ -310,7 +317,7 @@ We want to know which of the blue points (`points_set_2`) are located within 0.2
 
 The following figure gives us the answer visually.
 
-```{r points-points-within, echo = F, out.width = "60%"}
+```{r points-points-within, echo = F, out.width = "60%", dependson = "create_random_points"}
 #--- create 0.2 buffers around points in points_set_1 ---#
 buffer_1 <- st_buffer(points_set_1, dist = 0.2)
 
@@ -325,7 +332,7 @@ class: middle
 
 
 .left5[
-```{r echo = F, out.width = "90%"}
+```{r echo = F, out.width = "90%", dependson = "create_random_points"}
 ggplot() +
   geom_sf(data = buffer_1, color = "red", fill = NA) +
   geom_sf_text(data = points_set_1, aes(label = id), color = "red") +
@@ -334,7 +341,7 @@ ggplot() +
 ]
 
 .right5[
-Confirm your visual inspection results with the outcome of the following code using `st_is_within_distance()` function.
+Confirm that your visual inspection results are consistent with the outcome of the following code using `st_nearest_feature()` function.
 
 ```{r within_distance_blue_red}
 st_is_within_distance(
@@ -344,6 +351,41 @@ st_is_within_distance(
 )
 ```
 ]
+
+---
+class: middle
+
+# `st_nearest_feature()`  
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+st_nearest_feature(sf_1, sf_2)
+```
+
+This function identifies which `sfg`s in `sf_2` is closest in distance to each of `sf_1`.
+
+---
+class: middle
+
+.left5[
+```{r echo = F, out.width = "90%", dependson = "create_random_points"}
+ggplot() +
+  geom_sf(data = buffer_1, color = "red", fill = NA) +
+  geom_sf_text(data = points_set_1, aes(label = id), color = "red") +
+  geom_sf_text(data = points_set_2, aes(label = id), color = "blue")
+```
+]
+
+.right5[
+
+Confirm that your visual inspection results are consistent with the outcome of the following code using `st_is_within_distance()` function.
+
+```{r }
+st_nearest_feature(points_set_1, points_set_2)
+```
+]
+
 
 ---
 
@@ -1117,7 +1159,7 @@ Here is what the subsetted Kansas county data looks like:
 <br>
 <br>
 
-```{r cropped-fig, eval = F}	
+```{r cropped-fig-2, eval = F}	
 ggplot() + 
 	geom_sf(
 		data = KS_counties,
@@ -1135,7 +1177,7 @@ ggplot() +
 ]
 
 .right6[
-```{r cropped-fig-f, echo = F, out.width = "90%"}	
+```{r cropped-fig-2-f, echo = F, out.width = "90%"}	
 ggplot() + 
 	geom_sf(
 		data = KS_counties,
@@ -1390,7 +1432,7 @@ For each of the observations (polygons) in the target data,
 
 In order to achieve this, we can use the `st_join()` function, whose syntax is as follows:    
 
-```{r syntax_st_join, eval = FALSE}
+```{r syntax_st_join-2, eval = FALSE}
 st_join(polygons_sf, points_sf)
 ```
 
@@ -1510,7 +1552,7 @@ For each of the observations (polygons) in the target data,
 
 In order to achieve this, we can use the `st_join()` function, whose syntax is as follows:    
 
-```{r syntax_st_join, eval = FALSE}
+```{r syntax_st_join-3, eval = FALSE}
 st_join(targt_polygons_sf, source_polygons_sf)
 ```
 
@@ -1818,7 +1860,7 @@ The part of the lines that did not intersect with a polygons is cut out and does
 
 .content-box-green[**Original lines and polygons**]
 
-```{r plot-lines-polygons, echo = F}	
+```{r plot-lines-polygons-2, echo = F}	
 ggplot() +
   geom_sf(
   	data = polygons, 

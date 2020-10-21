@@ -174,7 +174,6 @@ class: center, middle, inverse, title-slide
 
 .left4 {
   width: 38%;
-  height: 92%;
   float: left;
 }
 
@@ -421,7 +420,7 @@ You can identify various types of spatial relations using the `sf` package
 
 + Our main focus is on the intersections of spatial objects, which can be found using `st_intersects()`.
 
-+ We also briefly cover `st_is_within_distance()`
++ We also briefly cover `st_is_within_distance()` and `st_nearest_feature()`
  
 (Run `?geos_binary_pred` to see other topological relations you can find.) 
 
@@ -655,7 +654,15 @@ class: middle
 
 # `st_is_within_distance()`  
 
-This function identifies whether two spatial objects are within the distance you specify as the name suggests.  
+
+.content-box-green[**Syntax**]
+
+
+```r
+st_is_within_distance(sf_1, sf_2)
+```
+
+This function identifies whether any of `sfg`s in `sf_2` is within the specified distance from each of the `sfg`s in `sf_1`.  
 
 ---
 class: middle
@@ -665,7 +672,7 @@ Create two sets of points.
 
 
 ```r
-set.seed(384738)
+set.seed(884738)
 
 points_set_1 &lt;- lapply(1:5, function(x) st_point(runif(2))) %&gt;% 
   st_sfc() %&gt;% st_as_sf() %&gt;% 
@@ -697,11 +704,11 @@ class: middle
 
 
 .left5[
-&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/unnamed-chunk-9-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/unnamed-chunk-10-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 .right5[
-Confirm your visual inspection results with the outcome of the following code using `st_is_within_distance()` function.
+Confirm that your visual inspection results are consistent with the outcome of the following code using `st_nearest_feature()` function.
 
 
 ```r
@@ -716,11 +723,47 @@ st_is_within_distance(
 ## Sparse geometry binary predicate list of length 5, where the predicate was `is_within_distance'
 ##  1: (empty)
 ##  2: (empty)
-##  3: (empty)
+##  3: 5
 ##  4: (empty)
-##  5: 4
+##  5: (empty)
 ```
 ]
+
+---
+class: middle
+
+# `st_nearest_feature()`  
+
+.content-box-green[**Syntax**]
+
+
+```r
+st_nearest_feature(sf_1, sf_2)
+```
+
+This function identifies which `sfg`s in `sf_2` is closest in distance to each of `sf_1`.
+
+---
+class: middle
+
+.left5[
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/unnamed-chunk-12-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+.right5[
+
+Confirm that your visual inspection results are consistent with the outcome of the following code using `st_is_within_distance()` function.
+
+
+```r
+st_nearest_feature(points_set_1, points_set_2)
+```
+
+```
+## [1] 2 5 5 5 4
+```
+]
+
 
 ---
 
@@ -1646,7 +1689,7 @@ ggplot() +
 ]
 
 .right6[
-&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/cropped-fig-f-21-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/cropped-fig-2-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -2011,18 +2054,18 @@ KS_County_wells %&gt;%
 ## bbox:           xmin: -102.0517 ymin: 36.99308 xmax: -94.59193 ymax: 40.00308
 ## geographic CRS: NAD83
 ## # A tibble: 105 x 3
-##    COUNTYFP af_used                                                              geometry
-##    &lt;fct&gt;      &lt;dbl&gt;                                                    &lt;MULTIPOLYGON [°]&gt;
-##  1 001           0  (((-95.51931 37.82026, -95.51897 38.03823, -95.07788 38.03771, -95.0…
-##  2 003           0  (((-95.50833 38.39028, -95.06583 38.38994, -95.07788 38.03771, -95.5…
-##  3 005         771. (((-95.56413 39.65287, -95.33974 39.65298, -95.11519 39.65255, -95.0…
-##  4 007        4972. (((-99.0126 37.47042, -98.46466 37.47101, -98.46493 37.38414, -98.34…
-##  5 009       61083. (((-99.03297 38.69676, -98.48611 38.69688, -98.47991 38.68153, -98.4…
-##  6 011           0  (((-95.08808 37.73248, -95.07969 37.8198, -95.07788 38.03771, -94.61…
-##  7 013         480. (((-95.78811 40.00047, -95.78457 40.00046, -95.3399 40.00003, -95.33…
-##  8 015         343. (((-97.15248 37.91273, -97.15291 38.0877, -96.84077 38.08562, -96.52…
-##  9 017           0  (((-96.83765 38.34864, -96.81951 38.52245, -96.35378 38.52166, -96.3…
-## 10 019           0  (((-96.52487 37.30273, -95.9644 37.29923, -95.96427 36.99922, -96.00…
+##    COUNTYFP af_used                                                        geometry
+##    &lt;fct&gt;      &lt;dbl&gt;                                              &lt;MULTIPOLYGON [°]&gt;
+##  1 001           0  (((-95.51931 37.82026, -95.51897 38.03823, -95.07788 38.03771,…
+##  2 003           0  (((-95.50833 38.39028, -95.06583 38.38994, -95.07788 38.03771,…
+##  3 005         771. (((-95.56413 39.65287, -95.33974 39.65298, -95.11519 39.65255,…
+##  4 007        4972. (((-99.0126 37.47042, -98.46466 37.47101, -98.46493 37.38414, …
+##  5 009       61083. (((-99.03297 38.69676, -98.48611 38.69688, -98.47991 38.68153,…
+##  6 011           0  (((-95.08808 37.73248, -95.07969 37.8198, -95.07788 38.03771, …
+##  7 013         480. (((-95.78811 40.00047, -95.78457 40.00046, -95.3399 40.00003, …
+##  8 015         343. (((-97.15248 37.91273, -97.15291 38.0877, -96.84077 38.08562, …
+##  9 017           0  (((-96.83765 38.34864, -96.81951 38.52245, -96.35378 38.52166,…
+## 10 019           0  (((-96.52487 37.30273, -95.9644 37.29923, -95.96427 36.99922, …
 ## # … with 95 more rows
 ```
 
@@ -2509,7 +2552,7 @@ The part of the lines that did not intersect with a polygons is cut out and does
 
 .content-box-green[**Original lines and polygons**]
 
-&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/plot-lines-polygons-31-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="r_as_GIS_vector_interaction_x_files/figure-html/plot-lines-polygons-2-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 .right5[
@@ -2672,18 +2715,18 @@ HUC_aw_acres &lt;- HUC_intersections %&gt;%
 ## bbox:           xmin: 203228.6 ymin: 4470941 xmax: 736832.9 ymax: 4822687
 ## projected CRS:  NAD83 / UTM zone 15N
 ## # A tibble: 55 x 3
-##    HUC_CODE aw_acres                                                             geometry
-##    &lt;chr&gt;       &lt;dbl&gt;                                                       &lt;GEOMETRY [m]&gt;
-##  1 07020009  251185. POLYGON ((421317.6 4797774, 421160.2 4797630, 421060.3 4797550, 420…
-##  2 07040008  165000  POLYGON ((602931.1 4817205, 602922.4 4817166, 602862.4 4816996, 602…
-##  3 07060001  105234. MULTIPOLYGON (((649942.7 4761635, 649613.8 4761791, 649473.8 476179…
-##  4 07060002  140201. MULTIPOLYGON (((593265.8 4817066, 593390.7 4817045, 593570.7 481700…
-##  5 07060003  149000  MULTIPOLYGON (((692249.2 4712890, 692081.6 4712936, 692051.6 471295…
-##  6 07060004  162123. POLYGON ((653200.5 4718418, 652956.5 4718503, 652446.5 4718733, 652…
-##  7 07060005  142428. POLYGON ((735347.9 4642386, 734770.6 4642296, 734450.5 4642226, 734…
-##  8 07060006  159635. POLYGON ((721064.4 4656959, 721056 4656900, 721026 4656760, 720966 …
-##  9 07080101  115572. POLYGON ((667461.7 4558779, 667381 4558691, 667210.9 4558582, 66676…
-## 10 07080102  160008. POLYGON ((635032.9 4675777, 635236 4675644, 635356.1 4675614, 63562…
+##    HUC_CODE aw_acres                                                       geometry
+##    &lt;chr&gt;       &lt;dbl&gt;                                                 &lt;GEOMETRY [m]&gt;
+##  1 07020009  251185. POLYGON ((421317.6 4797774, 421160.2 4797630, 421060.3 479755…
+##  2 07040008  165000  POLYGON ((602931.1 4817205, 602922.4 4817166, 602862.4 481699…
+##  3 07060001  105234. MULTIPOLYGON (((649942.7 4761635, 649613.8 4761791, 649473.8 …
+##  4 07060002  140201. MULTIPOLYGON (((593265.8 4817066, 593390.7 4817045, 593570.7 …
+##  5 07060003  149000  MULTIPOLYGON (((692249.2 4712890, 692081.6 4712936, 692051.6 …
+##  6 07060004  162123. POLYGON ((653200.5 4718418, 652956.5 4718503, 652446.5 471873…
+##  7 07060005  142428. POLYGON ((735347.9 4642386, 734770.6 4642296, 734450.5 464222…
+##  8 07060006  159635. POLYGON ((721064.4 4656959, 721056 4656900, 721026 4656760, 7…
+##  9 07080101  115572. POLYGON ((667461.7 4558779, 667381 4558691, 667210.9 4558582,…
+## 10 07080102  160008. POLYGON ((635032.9 4675777, 635236 4675644, 635356.1 4675614,…
 ## # … with 45 more rows
 ```
     </textarea>
