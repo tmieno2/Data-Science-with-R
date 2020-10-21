@@ -755,10 +755,10 @@ st_transform(sf, EPSG number/CRS in WTK)
 
 .content-box-green[**Example**]
 
-Let's transform (reproject) the data using `NAD83 / UTM zone 17N` CRS. Its EPSG number is `26917`.
+Let's transform (reproject) the data using `NAD83 / UTM zone 14N` CRS. Its EPSG number is `26914`.
 
 ```{r }
-nc_utm <- st_transform(nc, 26917)
+nc_utm <- st_transform(nc, 26914)
 ```
 
 ---
@@ -1404,11 +1404,11 @@ class: middle
 
 .content-box-green[**Exercise 5.1**]
 
-Read "fwy05_grid_NAD" shape files, name it `fwy05_grid`, transform its CRS to NAS 83/UTM zone 17N (its EPSG code is 26917)
+Read "fwy05_grid_NAD" shape files, name it `fwy05_grid`, transform its CRS to NAD 83/UTM zone 14N (its EPSG code is 26914)
 
 ```{r include = F}
 fwy05_grid <- st_read(dsn = "Data", layer = "fwy05_grid_NAD") %>% 
-	st_transform(26917)
+	st_transform(26914)
 ```
 
 Then use `plot()` to visualize the data to see what the `sfg`s in this dataset are.
