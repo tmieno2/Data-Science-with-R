@@ -22,6 +22,8 @@ This is the repository for AECN 396/AECN896-002 at University of Nebraska Lincol
     * Spatial interactions of vector datasets ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-8-SpatialData/r_as_GIS_vector_interaction_x.html))
     * Raster data basics with the `raster` package ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-8-SpatialData/r_as_GIS_raster_basics_x.html))
     * Spatial interactions of vector and raster datasets ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-8-SpatialData/r_as_GIS_vector_raster_interaction_x.html))
+    * Hints on speeding up raster data extraction ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-8-SpatialData/r_as_GIS_speed_x.html))
+    * Creating maps using the `ggplot2` package ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-8-SpatialData/r_as_GIS_vector_map_x.html))
 
 + Appendix 1: Data Wrangling with the `data.table` package ([slide](https://tmieno2.github.io/Data-Science-with-R/data.table/data.table_x.html))
 
