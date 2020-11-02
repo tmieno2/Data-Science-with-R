@@ -174,7 +174,6 @@ class: center, middle, inverse, title-slide
 
 .left4 {
   width: 38%;
-  height: 92%;
   float: left;
 }
 
@@ -359,6 +358,10 @@ slides &gt; slide {
 
 
 
+```r
+setwd("~/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-8-SpatialData")
+```
+
 
 
 # Before you start
@@ -369,16 +372,8 @@ The objectives of this chapter is to learn how to speed up raster data extractio
 
 ## Table of contents
 
-1. [Understanding the data structure of `sf`](#data-structure)
+1. [Extraction from a single layer](#single-layer)
 2. [Create sf objects yourself](#create-sf)
-3. [Different Types of Simple Feature Geometry (`sfg`)](#dif-sfg)
-4. [Constructing `sfc` and `sf` from `sfg`](#const)
-5. [Importing and exporting spatial datasets](#input-output)
-6. [Projection](#proj)
-7. [Quick and Interactive View of an `sf` Object](#view)
-8. [Conversion to and from `sp` objects](#sf-to-sp)
-9. [Non-spatial Transformation of `sf`](#non-trans)
-10. [Non-interactive geometrical operations](#non-int-geo)
 
 &lt;br&gt;
 
@@ -422,7 +417,7 @@ The number of cores I am using is 15.
 
 ---
 class: inverse, center, middle
-name: data-structure
+name: single-layer
 
 # Extraction from a single raster layer
 
@@ -517,6 +512,7 @@ Here is how they look:
 class: middle
 
 .content-box-green[**Goal**]
+
 Extract crop type values from `IA_CDL_15` to the intersecting polygons in `IA_grids`.
 
 
@@ -641,11 +637,11 @@ class: middle
 ---
 class: middle
 
-.content-box-green[**Parallelization by group**]
+# Parallelization by group
 
-We can minimize this overhead as much as possible by having each core use `exact_extract()` only once in which multiple polygons are processed in the single call. 
++ We can minimize this overhead as much as possible by having each core use `exact_extract()` only once in which multiple polygons are processed in the single call. 
 
-Specifically, we will split the collection of the polygons into 15 groups and have each core extract for one group. 
++ Specifically, we will split the collection of the polygons into 15 groups and have each core extract for one group. 
 
 ---
 class: middle
@@ -689,7 +685,7 @@ toc()
 
 ```
 ## elapsed 
-##  11.901
+##  17.582
 ```
 
 Great, this is much better. 
@@ -697,15 +693,22 @@ Great, this is much better.
 ---
 class: middle
 
+# Summarize before collating
+
 We can further reduce the processing time by reducing the size of the object that is returned from each core to be collated into one. 
+
+---
+class: middle
 
 In the code above, each core returns a list of `data.frame`s where each grid of the same group has multiple values from the intersecting raster cells.   
 
 
+
+
 ```r
-#--- take a look at the the values extracted for the 1st polygon of the 1st group---#
 head(temp[[1]][[1]])
 ```
+
 
 ```
 ##     value coverage_fraction
@@ -717,16 +720,19 @@ head(temp[[1]][[1]])
 ## 718   141       0.051118668
 ```
 
+Here is the size of the `data.frame`.
+
+
 ```r
-#--- the size of the list of data returned by the first core ---#
 object.size(temp[[1]]) %&gt;%  format(units = "GB")
 ```
+
 
 ```
 ## [1] "0.2 Gb"
 ```
 
-In total, about 3GB of data has to be collated into one list from 15 cores.
+So, in total, about 3 GB (0.2 Gb `\(\times\)` 15 cores) of data has to be collated into one list from 15 cores.
 
 ---
 class: middle
@@ -761,15 +767,15 @@ toc()
 ##   6.689
 ```
 
-So, approximately 5.212 seconds were used just to collect the 3GB worth of data from the cores into one.
+So, approximately 10.893 seconds were used just to collect the 3GB worth of data from the cores into one.
 
 
 ---
 class: middle
 
-In most cases, we do not have to carry around all the individual cell values for our subsequent analysis. 
++ In many cases, we do not need all the individual cell values for our subsequent analysis. 
 
-So, let's get the summary before we have the computer collect the objects returned from each core as follows: 
++ So, let's get the summary before we have the computer collect the objects returned from each core as follows: 
 
 
 ```r
@@ -782,19 +788,24 @@ extract_by_group_reduced &lt;- function(i){
     #--- combine the list of data.frames into one with polygon id ---#
     rbindlist(idcol = "id_within_group") %&gt;% 
     #--- find the count of land use type values by polygon ---#
-    .[, .(num_value = .N), by = .(value, id_within_group)]
+*   .[, .(num_value = .N), by = .(value, id_within_group)]
 
   return(temp_return)
 }
+```
 
+---
+class: middle
+
+
+```r
 tic()
 #--- parallelized processing by group ---#
 temp &lt;- mclapply(
   1:num_cores, 
   function(i) extract_by_group_reduced(i),
   mc.cores = num_cores
-)   
-toc()
+)    
 ```
 
 
@@ -805,13 +816,16 @@ toc()
 ##   8.514
 ```
 
-It is of course slower than the one that returns nothing, but it is faster than the one that does not reduce the size before the outcome collation.
++ It is of course slower than the one that returns nothing, but it is faster than the one that does not reduce the size before the outcome collation.
 
++ Keep in mind that, if you find that you need to a different summary statistics, then you need to rerun the pallalelized process all over again.  
 
 ---
 class: middle
 
-+ As you can see, the computation time of the fastest approach is now much less, but you still only gained  121.28. 
+.content-box-green[**Before you parallelize things**]
+
++ As you saw, the computation time of the fastest approach is now much less, but you still only gained  121.28 seconds. 
 
 + How much time did I spend **writing** the code to do the parallelized group processing? Three minutes. 
 
@@ -826,13 +840,18 @@ class: middle
 ---
 class: middle
 
+.content-box-green[**Example (worth parallelizing)**]
+
 + Imagine processing CDL data for all the states from 2009 to 2020. 
 
 + Then, the whole process will take roughly 21.63 `\((50 \times 12 \times 129.792/60/60)\)` hours. 
 
 + Again, a super rough calculation tells us that the whole process would be done in 1.42 hours if parallelized in the same way as the best approach we saw above (block parallelization). 
 
-+ Actually, 21.63 is still not terrible. You execute the program before you go to bed, and when you start working on the next day, all the data is there for you.    
++ It is worth investing time to parallelize the process.
+
++ 21.63 is still not too terrible (you execute the program before you go to bed, and when you start working on the next day, all the data is there for you).    
+
 
 ---
 class: middle
@@ -846,7 +865,302 @@ class: middle
 + Reduce the size of the outcome of each core as much as possible to spend less time to simply collating them into one.
 
 + Do not forget about the time you would spend on coding parallelized processes.
-+ 
+
+
+---
+class: inverse, center, middle
+name: data-structure
+
+# Extraction from a multi-layer raster data
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+class: middle
+
+# Example
+
+.content-box-green[**Datasets**]
+
++ **raster**: daily PRISM data 2010 through 2019 stacked by month
++ **polygons**: US County polygons 
+
+.content-box-green[**Objective**]
+
+Extract daily precipitation data for each county from 2010 through 2019.
+
+---
+class: middle
+
+# Data Preparation
+
+.content-box-green[**PRISM daily weather data stacked by month**]
+
+You can download all the prism files from [here](https://www.dropbox.com/sh/gkprbgp8sg5362f/AABLLEUjsGkelCK2aUxaUI72a?dl=0). (Note: if you download all the files, they amount to more than 90 Gb.)
+
+For example, here is a `RasterStack` containing daily precipitation data for the U.S. in November, 1990.
+
+
+```r
+temp_ppt_rs &lt;- stack("/Users/tmieno2/Dropbox/TeachingUNL/R_as_GIS/Data/PRISM/PRISM_ppt_y2010_m1.tif") 
+```
+
+&lt;img src="r_as_GIS_speed_x_files/figure-html/unnamed-chunk-13-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+---
+class: middle
+
+# Data Preparation 
+
+.content-box-green[**UC county**]
+
+
+```r
+(
+US_county &lt;- tigris::counties() %&gt;% 
+  st_as_sf() %&gt;% 
+  #--- project to the CRS of the CDL data ---#
+  st_transform(projection(temp_ppt_rs)) 
+)  
+```
+
+.scroll-box-16[
+
+```
+## Simple feature collection with 3233 features and 17 fields
+## geometry type:  MULTIPOLYGON
+## dimension:      XY
+## bbox:           xmin: -179.2311 ymin: -14.60181 xmax: 179.8597 ymax: 71.43979
+## CRS:            +proj=longlat +datum=NAD83 +no_defs +ellps=GRS80 +towgs84=0,0,0
+## First 10 features:
+##   STATEFP COUNTYFP COUNTYNS GEOID        NAME              NAMELSAD LSAD CLASSFP
+## 0      31      039 00835841 31039      Cuming         Cuming County   06      H1
+## 1      53      069 01513275 53069   Wahkiakum      Wahkiakum County   06      H1
+## 2      35      011 00933054 35011     De Baca        De Baca County   06      H1
+## 3      31      109 00835876 31109   Lancaster      Lancaster County   06      H1
+## 4      31      129 00835886 31129    Nuckolls       Nuckolls County   06      H1
+## 5      72      085 01804523 72085 Las Piedras Las Piedras Municipio   13      H1
+## 6      46      099 01265772 46099   Minnehaha      Minnehaha County   06      H1
+## 7      48      327 01383949 48327      Menard         Menard County   06      H1
+## 8      06      091 00277310 06091      Sierra         Sierra County   06      H1
+## 9      21      053 00516873 21053     Clinton        Clinton County   06      H1
+##   MTFCC CSAFP CBSAFP METDIVFP FUNCSTAT      ALAND   AWATER    INTPTLAT
+## 0 G4020  &lt;NA&gt;   &lt;NA&gt;     &lt;NA&gt;        A 1477652222 10690952 +41.9158651
+## 1 G4020  &lt;NA&gt;   &lt;NA&gt;     &lt;NA&gt;        A  680956809 61588406 +46.2946377
+## 2 G4020  &lt;NA&gt;   &lt;NA&gt;     &lt;NA&gt;        A 6016819484 29089486 +34.3592729
+## 3 G4020   339  30700     &lt;NA&gt;        A 2169287528 22832516 +40.7835474
+## 4 G4020  &lt;NA&gt;   &lt;NA&gt;     &lt;NA&gt;        A 1489645187  1718484 +40.1764918
+## 5 G4020   490  41980     &lt;NA&gt;        A   87748364    32509 +18.1871483
+## 6 G4020  &lt;NA&gt;  43620     &lt;NA&gt;        A 2089691730 18198496 +43.6674723
+## 7 G4020  &lt;NA&gt;   &lt;NA&gt;     &lt;NA&gt;        A 2336237985   613559 +30.8852677
+## 8 G4020  &lt;NA&gt;   &lt;NA&gt;     &lt;NA&gt;        A 2468694587 23299110 +39.5769252
+## 9 G4020  &lt;NA&gt;   &lt;NA&gt;     &lt;NA&gt;        A  510875184 21153253 +36.7272577
+##       INTPTLON                       geometry
+## 0 -096.7885168 MULTIPOLYGON (((-97.01952 4...
+## 1 -123.4244583 MULTIPOLYGON (((-123.4364 4...
+## 2 -104.3686961 MULTIPOLYGON (((-104.5674 3...
+## 3 -096.6886584 MULTIPOLYGON (((-96.91075 4...
+## 4 -098.0468422 MULTIPOLYGON (((-98.27367 4...
+## 5 -065.8711890 MULTIPOLYGON (((-65.91048 1...
+## 6 -096.7957261 MULTIPOLYGON (((-97.12928 4...
+## 7 -099.8588613 MULTIPOLYGON (((-99.82187 3...
+## 8 -120.5219926 MULTIPOLYGON (((-120.6556 3...
+## 9 -085.1360977 MULTIPOLYGON (((-85.2391 36...
+```
+]
+
+---
+class: middle
+
+# Non-parallelized extraction
+
+Here is how long it takes to extract daily precipitation values for all the counties for the entire month of November, 2010.
+
+
+```r
+tic()
+temp &lt;- exact_extract(temp_ppt_rs, US_county, progress = F) 
+toc()
+```
+
+
+
+
+```
+## elapsed 
+##  31.655
+```
+
+So, if you are to do this 12 (months) `\(\times\)` 10 (years) without parallelizing, it would take 63.31 minutes.
+
+---
+class: middle
+
+# Before parallelization 
+
+
+.content-box-green[**Question**]
+
+Should you stack layers and then extract or extract from one layer by one layer? 
+
+Here is how long it takes to extract values from a single layer:
+
+
+```r
+#--- get the first layer ---#
+ppt_rs_1 &lt;- subset(temp_ppt_rs, subset = 1)
+
+#--- time the extraction speed ---#
+tic()
+temp &lt;- exact_extract(ppt_rs_1, US_county, progress = F) 
+toc()
+```
+
+
+
+So, roughly, it would take about 159.09 (5.132 `\(\times\)` 31) seconds to process the entire November precipitation data, which is clearly longer than extracting values from the stacked precipitation layers for November. 
+
+--
+
+.content-box-red[**Key**]
+
+So, stack the layers of raster data and then extract all at once instead of extracting from one layer at a time (as long as your RAM memory allows). 
+
+---
+class: middle
+
+# Parallelized extraction
+
+Consider two strategies:
+
+1. parallelize over polygons (blocked) and do regular loop over year-month 
+2. parallelize over year-month 
+
+--
+
+.content-box-green[**Question**]
+
+Which one do you think is faster?
+
+.content-box-green[**Answer**]
+
+The second option is faster. It is better to have a single core handle larger tasks as long as it does not max out your RAM memory.
+
+---
+class: middle
+
+.content-box-green[**Option 1**]
+
+
+```r
+#--- number of polygons in a group ---#
+num_in_group &lt;- floor(nrow(US_county)/num_cores)
+
+#--- define group id ---#
+US_county &lt;- US_county %&gt;%  
+  mutate(
+    #--- create grid id ---#
+    poly_id = 1:nrow(.),
+    #--- assign group id  ---#
+    group_id = poly_id %/% num_in_group + 1
+  )
+
+extract_by_group &lt;- function(i){
+  temp_return &lt;- exact_extract(
+    temp_ppt_rs, 
+    filter(US_county, group_id == i)
+    ) %&gt;% 
+    rbindlist(idcol = "id_within_group") %&gt;% 
+    melt(id.var = c("id_within_group", "coverage_fraction")) %&gt;% 
+    .[, sum(value * coverage_fraction)/sum(coverage_fraction), by = .(id_within_group, variable)]
+
+  return(temp_return)
+}
+```
+
+
+
+---
+class: middle
+
+Here is how long this takes:
+
+
+```r
+tic()
+temp &lt;- mclapply(1:num_cores, extract_by_group, mc.cores = num_cores)
+toc() 
+```
+
+
+```
+## elapsed 
+##  42.739
+```
+
++ Okay, so this approach actually make things worse! 
+
++ If we are to process 10 years of daily PRISM data, then it would take roughly 85.48 minutes. 
+
+
+---
+class: middle
+ 
+.content-box-green[**Option 2**]
+
+
+```r
+get_prism_by_month &lt;- function(i, vector){
+
+  temp_month &lt;- month_year_data[i, month] # month to work on
+  temp_year &lt;- month_year_data[i, year] # year to work on
+
+  #--- import raster data ---#
+  temp_raster &lt;- stack(paste0("./Data/PRISM/PRISM_ppt_y", temp_year, "_m", temp_month, ".tif")) 
+
+  temp &lt;- exact_extract(temp_raster, vector) %&gt;% 
+    #--- combine the extraction results into one data.frame ---#
+    rbindlist(idcol = "row_id") %&gt;% 
+    #--- wide to long ---#
+    melt(id.var = c("row_id", "coverage_fraction")) %&gt;% 
+    #--- find coverage-weighted average ---#
+    .[, sum(value*coverage_fraction)/sum(coverage_fraction), by = .(row_id, variable)]
+
+  return(temp)
+
+  gc()
+}
+```
+
+---
+class: middle
+
+We then loop over the rows of `month_year_data` in parallel. 
+
+
+```r
+tic()
+temp &lt;- mclapply(1:nrow(month_year_data), function(x) get_prism_by_month(x, US_county), mc.cores = num_cores)
+toc()
+```
+
+
+```
+## elapsed 
+## 451.477
+```
+
+So, it takes only 7.52 minutes. 
+
+---
+class: middle
+
+# Summary 
+
++ Depending on the processing problem you work on, the optimal parallelizing strategy varies
+
++ Make the task for each core large to the extent that allows you to fit the parallelized processes in your RAM memory
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

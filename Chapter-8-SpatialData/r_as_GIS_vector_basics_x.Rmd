@@ -24,6 +24,10 @@ suppressMessages(library(mapview))
 suppressMessages(library(tidyverse))
 ```
 
+```{r eval = F}
+setwd("~/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-8-SpatialData")
+```
+
 # Before you start
 
 ## Learning objectives

@@ -1756,7 +1756,7 @@ Hint: `Grid` variable uniquely identifies which grid the observations belong to.
 Instead of using `st_join()` and then summarizing subsequently, use `aggregate()` to find the mean `NDRE` for each grid.
 
 ```{r include = F}
-aggregate(mower_sensor_sf, fwy05_grid,  mean, na.rm = TRUE)	
+aggregate(mower_sensor_sf, fwy05_grid, mean, na.rm = TRUE)	
 ```
 
 

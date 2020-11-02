@@ -21,6 +21,9 @@ output:
 knitr::opts_chunk$set(cache.lazy = FALSE)
 ```
 
+```{r eval = F}
+setwd("~/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-8-SpatialData")
+```
 
 ```{r, include = F, cache = F}
 suppressMessages(library(sf)) 
@@ -40,16 +43,8 @@ The objectives of this chapter is to learn how to speed up raster data extractio
 
 ## Table of contents
 
-1. [Understanding the data structure of `sf`](#data-structure)
+1. [Extraction from a single layer](#single-layer)
 2. [Create sf objects yourself](#create-sf)
-3. [Different Types of Simple Feature Geometry (`sfg`)](#dif-sfg)
-4. [Constructing `sfc` and `sf` from `sfg`](#const)
-5. [Importing and exporting spatial datasets](#input-output)
-6. [Projection](#proj)
-7. [Quick and Interactive View of an `sf` Object](#view)
-8. [Conversion to and from `sp` objects](#sf-to-sp)
-9. [Non-spatial Transformation of `sf`](#non-trans)
-10. [Non-interactive geometrical operations](#non-int-geo)
 
 <br>
 
@@ -94,7 +89,7 @@ num_cores	<- detectCores() - 1
 
 ---
 class: inverse, center, middle
-name: data-structure
+name: single-layer
 
 # Extraction from a single raster layer
 
@@ -159,6 +154,7 @@ tm_layout(legend.outside = TRUE)
 class: middle
 
 .content-box-green[**Goal**]
+
 Extract crop type values from `IA_CDL_15` to the intersecting polygons in `IA_grids`.
 
 
@@ -183,7 +179,7 @@ log_txt <- tic.log(format = FALSE)
 saveRDS(log_txt, "./Results/time_elapsed_nonpar.rds")
 ```
 
-```{r par_one_poly_show, echo = F}
+```{r par_one_poly_show-1, echo = F}
 non_par_one <- readRDS("./Results/time_elapsed_nonpar.rds")
 time_elapsed_nonpar <- non_par_one[[1]]$toc - non_par_one[[1]]$tic
 time_elapsed_nonpar 
@@ -227,7 +223,7 @@ log_one_poly_par <- tic.log(format = FALSE)
 saveRDS(log_one_poly_par, "./Data/log_one_poly_par.rds")
 ```
 
-```{r par_one_poly_show, echo = F}
+```{r par_one_poly_show-2, echo = F}
 log_one_poly_par <- readRDS("./Data/log_one_poly_par.rds")
 time_elapsed_nonpar <- log_one_poly_par[[1]]$toc - log_one_poly_par[[1]]$tic
 time_elapsed_nonpar 
@@ -325,11 +321,11 @@ overhead <- ((mb_dt[expr == "p_1", mean(time)] - (mb_dt[expr == "p_2", mean(time
 ---
 class: middle
 
-.content-box-green[**Parallelization by group**]
+# Parallelization by group
 
-We can minimize this overhead as much as possible by having each core use `exact_extract()` only once in which multiple polygons are processed in the single call. 
++ We can minimize this overhead as much as possible by having each core use `exact_extract()` only once in which multiple polygons are processed in the single call. 
 
-Specifically, we will split the collection of the polygons into `r num_cores` groups and have each core extract for one group. 
++ Specifically, we will split the collection of the polygons into `r num_cores` groups and have each core extract for one group. 
 
 ---
 class: middle
@@ -388,6 +384,7 @@ toc(log = TRUE, quiet = TRUE)
 log_group_par_run <- tic.log(format = FALSE)
 
 saveRDS(log_group_par_run, "./Results/log_group_par_run.rds")
+saveRDS(temp[[1]], "./Results/temp_results.rds")
 ```
 
 ```{r group_par_show, echo = F}
@@ -401,19 +398,38 @@ Great, this is much better.
 ---
 class: middle
 
+# Summarize before collating
+
 We can further reduce the processing time by reducing the size of the object that is returned from each core to be collated into one. 
+
+---
+class: middle
 
 In the code above, each core returns a list of `data.frame`s where each grid of the same group has multiple values from the intersecting raster cells.   
 
-```{r size_list}
-#--- take a look at the the values extracted for the 1st polygon of the 1st group---#
-head(temp[[1]][[1]])
+```{r echo = F}
+temp <- readRDS("./Results/temp_results.rds")
+```
 
-#--- the size of the list of data returned by the first core ---#
+```{r size_list, eval = F}
+head(temp[[1]][[1]])
+```
+
+```{r size_list_run, echo = F}
+temp[[1]] %>% head
+```
+
+Here is the size of the `data.frame`.
+
+```{r size_list, eval = F}
 object.size(temp[[1]]) %>%  format(units = "GB")
 ```
 
-In total, about 3GB of data has to be collated into one list from `r num_cores` cores.
+```{r size_list_run, echo = F}
+object.size(temp) %>%  format(units = "GB") 
+```
+
+So, in total, about 3 GB (`r object.size(temp) %>%  format(units = "GB") ` $\times$ 15 cores) of data has to be collated into one list from `r num_cores` cores.
 
 ---
 class: middle
@@ -473,40 +489,13 @@ So, approximately `r time_elapsed_gropu_par - time_elapsed_group_none` seconds w
 ---
 class: middle
 
-In most cases, we do not have to carry around all the individual cell values for our subsequent analysis. 
++ In many cases, we do not need all the individual cell values for our subsequent analysis. 
 
-So, let's get the summary before we have the computer collect the objects returned from each core as follows: 
++ So, let's get the summary before we have the computer collect the objects returned from each core as follows: 
 
-```{r return_reduced_group, eval = F}
+```{r return_reduced_group}
 extract_by_group_reduced <- function(i){
 
-  temp_return <- exact_extract(
-    IA_cdl_15, 
-    filter(IA_grids, group_id == i)
-    ) %>% 
-    #--- combine the list of data.frames into one with polygon id ---#
-    rbindlist(idcol = "id_within_group") %>% 
-    #--- find the count of land use type values by polygon ---#
-    .[, .(num_value = .N), by = .(value, id_within_group)]
-
-  return(temp_return)
-}
-
-tic()
-#--- parallelized processing by group ---#
-temp <- mclapply(
-  1:num_cores, 
-  function(i) extract_by_group_reduced(i),
-  mc.cores = num_cores
-)   
-toc()
-```
-
-```{r return_reduced_group_run, echo = F, eval = F}
-tic.clearlog()
-tic()
-
-extract_by_group_reduced <- function(i){
   temp_return <- exact_extract(
     IA_cdl_15, 
     filter(IA_grids, group_id == i)
@@ -515,10 +504,28 @@ extract_by_group_reduced <- function(i){
     rbindlist(idcol = "id_within_group") %>% 
     #--- find the count of land use type values by polygon ---#
     .[, .(num_value = .N), by = .(value, id_within_group)] #<<
+
   return(temp_return)
 }
 
+```
 
+---
+class: middle
+
+```{r par-sum, eval = F}
+tic()
+#--- parallelized processing by group ---#
+temp <- mclapply(
+  1:num_cores, 
+  function(i) extract_by_group_reduced(i),
+  mc.cores = num_cores
+)    
+```
+
+```{r par-sum-run, echo = F, eval = F}
+tic.clearlog()
+tic()
 #--- parallelized processing by group ---#
 temp <- mclapply(
   1:num_cores, 
@@ -526,7 +533,7 @@ temp <- mclapply(
   mc.cores = num_cores
 )   
 toc(log = TRUE, quiet = TRUE)
-log_reduced <- tic.log(format = FALSE)
+log_reduced <- tic.log(format = FALSE) 
 
 saveRDS(log_reduced, "./Results/log_reduced.rds")
 ```
@@ -537,13 +544,16 @@ time_elapsed_group_reduced <- log_reduced[[1]]$toc - log_reduced[[1]]$tic
 time_elapsed_group_reduced 
 ```
 
-It is of course slower than the one that returns nothing, but it is faster than the one that does not reduce the size before the outcome collation.
++ It is of course slower than the one that returns nothing, but it is faster than the one that does not reduce the size before the outcome collation.
 
++ Keep in mind that, if you find that you need to a different summary statistics, then you need to rerun the pallalelized process all over again.  
 
 ---
 class: middle
 
-+ As you can see, the computation time of the fastest approach is now much less, but you still only gained  `r round(time_elapsed_nonpar - time_elapsed_group_reduced, digits = 2)`. 
+.content-box-green[**Before you parallelize things**]
+
++ As you saw, the computation time of the fastest approach is now much less, but you still only gained  `r round(time_elapsed_nonpar - time_elapsed_group_reduced, digits = 2)` seconds. 
 
 + How much time did I spend **writing** the code to do the parallelized group processing? Three minutes. 
 
@@ -558,13 +568,18 @@ class: middle
 ---
 class: middle
 
+.content-box-green[**Example (worth parallelizing)**]
+
 + Imagine processing CDL data for all the states from 2009 to 2020. 
 
 + Then, the whole process will take roughly `r round(50*12*time_elapsed_nonpar/60/60, digits = 2)` $(50 \times 12 \times `r time_elapsed_nonpar`/60/60)$ hours. 
 
 + Again, a super rough calculation tells us that the whole process would be done in `r round(50*12*time_elapsed_group_reduced/60/60, digits = 2)` hours if parallelized in the same way as the best approach we saw above (block parallelization). 
 
-+ Actually, `r round(50*12*time_elapsed_nonpar/60/60, digits = 2)` is still not terrible. You execute the program before you go to bed, and when you start working on the next day, all the data is there for you.    
++ It is worth investing time to parallelize the process.
+
++ `r round(50*12*time_elapsed_nonpar/60/60, digits = 2)` is still not too terrible (you execute the program before you go to bed, and when you start working on the next day, all the data is there for you).    
+
 
 ---
 class: middle
@@ -591,5 +606,274 @@ name: data-structure
 ---
 class: middle
 
+# Example
 
+.content-box-green[**Datasets**]
+
++ **raster**: daily PRISM data 2010 through 2019 stacked by month
++ **polygons**: US County polygons 
+
+.content-box-green[**Objective**]
+
+Extract daily precipitation data for each county from 2010 through 2019.
+
+---
+class: middle
+
+# Data Preparation
+
+.content-box-green[**PRISM daily weather data stacked by month**]
+
+You can download all the prism files from [here](https://www.dropbox.com/sh/gkprbgp8sg5362f/AABLLEUjsGkelCK2aUxaUI72a?dl=0). (Note: if you download all the files, they amount to more than 90 Gb.)
+
+For example, here is a `RasterStack` containing daily precipitation data for the U.S. in November, 1990.
+
+```{r }
+temp_ppt_rs <- stack("/Users/tmieno2/Dropbox/TeachingUNL/R_as_GIS/Data/PRISM/PRISM_ppt_y2010_m1.tif") 
+```
+
+```{r echo = F, out.width = "50%"}
+plot(raster("/Users/tmieno2/Dropbox/TeachingUNL/R_as_GIS/Data/PRISM/PRISM_ppt_y2010_m1.tif"))
+```
+
+---
+class: middle
+
+# Data Preparation 
+
+.content-box-green[**UC county**]
+
+```{r us-county, eval = F}
+(
+US_county <- tigris::counties() %>% 
+  st_as_sf() %>% 
+  #--- project to the CRS of the CDL data ---#
+  st_transform(projection(temp_ppt_rs)) 
+)  
+```
+
+.scroll-box-16[
+```{r us-county-show, echo = F}
+(
+US_county <- tigris::counties() %>% 
+  st_as_sf() %>% 
+  #--- project to the CRS of the CDL data ---#
+  st_transform(projection(temp_ppt_rs)) 
+)  
+```
+]
+
+---
+class: middle
+
+# Non-parallelized extraction
+
+Here is how long it takes to extract daily precipitation values for all the counties for the entire month of November, 2010.
+
+```{r prism_import_one_month_disp, eval = F}
+tic()
+temp <- exact_extract(temp_ppt_rs, US_county, progress = F) 
+toc()
+```
+
+```{r prism_import_one_month_run, echo = F, eval = F}
+tic.clearlog()
+tic()
+temp <- exact_extract(temp_ppt_rs, US_county, progress = F) 
+toc(log = TRUE, quiet = TRUE)
+log_prism_import_one_month_run <- tic.log(format = FALSE)
+
+saveRDS(log_prism_import_one_month_run, "./Results/log_prism_import_one_month_run.rds")
+```
+
+```{r prism_import_one_month_show, echo = F}
+log_prism_import_one_month_run <- readRDS("./Results/log_prism_import_one_month_run.rds")
+time_elapsed_prism_import_one_month <- log_prism_import_one_month_run[[1]]$toc - log_prism_import_one_month_run[[1]]$tic
+time_elapsed_prism_import_one_month 
+```
+
+So, if you are to do this 12 (months) $\times$ 10 (years) without parallelizing, it would take `r time_elapsed_prism_import_one_month*120/60` minutes.
+
+---
+class: middle
+
+# Before parallelization 
+
+
+.content-box-green[**Question**]
+
+Should you stack layers and then extract or extract from one layer by one layer? 
+
+Here is how long it takes to extract values from a single layer:
+
+```{r eval = F}
+#--- get the first layer ---#
+ppt_rs_1 <- subset(temp_ppt_rs, subset = 1)
+
+#--- time the extraction speed ---#
+tic()
+temp <- exact_extract(ppt_rs_1, US_county, progress = F) 
+toc()
+```
+
+```{r one-by-one, echo = F}
+tic.clearlog()
+tic()
+temp <- exact_extract(ppt_rs_1, US_county, progress = F) 
+toc(log = TRUE, quiet = TRUE)
+log_txt_one_layer <- tic.log(format = FALSE)
+
+time_one <- log_txt_one_layer[[1]]$toc - log_txt_one_layer[[1]]$tic
+```
+
+So, roughly, it would take about `r round(time_one*31, digits = 2)` (`r time_one` $\times$ 31) seconds to process the entire November precipitation data, which is clearly longer than extracting values from the stacked precipitation layers for November. 
+
+--
+
+.content-box-red[**Key**]
+
+So, stack the layers of raster data and then extract all at once instead of extracting from one layer at a time (as long as your RAM memory allows). 
+
+---
+class: middle
+
+# Parallelized extraction
+
+Consider two strategies:
+
+1. parallelize over polygons (blocked) and do regular loop over year-month 
+2. parallelize over year-month 
+
+--
+
+.content-box-green[**Question**]
+
+Which one do you think is faster?
+
+.content-box-green[**Answer**]
+
+The second option is faster. It is better to have a single core handle larger tasks as long as it does not max out your RAM memory.
+
+---
+class: middle
+
+.content-box-green[**Option 1**]
+
+```{r by_state_block, eval = F}
+#--- number of polygons in a group ---#
+num_in_group <- floor(nrow(US_county)/num_cores)
+
+#--- define group id ---#
+US_county <- US_county %>%  
+  mutate(
+    #--- create grid id ---#
+    poly_id = 1:nrow(.),
+    #--- assign group id  ---#
+    group_id = poly_id %/% num_in_group + 1
+  )
+
+extract_by_group <- function(i){
+  temp_return <- exact_extract(
+    temp_ppt_rs, 
+    filter(US_county, group_id == i)
+    ) %>% 
+    rbindlist(idcol = "id_within_group") %>% 
+    melt(id.var = c("id_within_group", "coverage_fraction")) %>% 
+    .[, sum(value * coverage_fraction)/sum(coverage_fraction), by = .(id_within_group, variable)]
+
+  return(temp_return)
+}
+```
+
+```{r by_state_block_how-hidden, echo = F, eval = F}
+tic.clearlog()
+tic()
+temp <- mclapply(1:num_cores, extract_by_group, mc.cores = num_cores)
+toc(log = TRUE, quiet = TRUE)
+log_txt_state_block <- tic.log(format = FALSE)
+
+saveRDS(log_txt_state_block, "./Results/Ch6_log_txt_state_block.rds")
+```
+
+---
+class: middle
+
+Here is how long this takes:
+
+```{r eval = F}
+tic()
+temp <- mclapply(1:num_cores, extract_by_group, mc.cores = num_cores)
+toc() 
+```
+
+```{r by_state_block_how, echo = F}
+log_txt_state_block <- readRDS("./Results/Ch6_log_txt_state_block.rds")
+
+(
+log_txt_state_block_elapsed <- log_txt_state_block[[1]]$toc - log_txt_state_block[[1]]$tic
+)
+```
+
++ Okay, so this approach actually make things worse! 
+
++ If we are to process 10 years of daily PRISM data, then it would take roughly `r round(120 * log_txt_state_block_elapsed / 60, digits = 2)` minutes. 
+
+
+---
+class: middle
+ 
+.content-box-green[**Option 2**]
+
+```{r get-prism-function-year-month}
+get_prism_by_month <- function(i, vector){
+
+  temp_month <- month_year_data[i, month] # month to work on
+  temp_year <- month_year_data[i, year] # year to work on
+
+  #--- import raster data ---#
+  temp_raster <- stack(paste0("./Data/PRISM/PRISM_ppt_y", temp_year, "_m", temp_month, ".tif")) 
+
+  temp <- exact_extract(temp_raster, vector) %>% 
+    #--- combine the extraction results into one data.frame ---#
+    rbindlist(idcol = "row_id") %>% 
+    #--- wide to long ---#
+    melt(id.var = c("row_id", "coverage_fraction")) %>% 
+    #--- find coverage-weighted average ---#
+    .[, sum(value*coverage_fraction)/sum(coverage_fraction), by = .(row_id, variable)]
+
+  return(temp)
+
+  gc()
+}
+```
+
+---
+class: middle
+
+We then loop over the rows of `month_year_data` in parallel. 
+
+```{r loop_over_time, eval = F}
+tic()
+temp <- mclapply(1:nrow(month_year_data), function(x) get_prism_by_month(x, US_county), mc.cores = num_cores)
+toc()
+```
+
+```{r loop_over_time_show, echo = F}
+log_txt_all_by_month_par <- readRDS("./Results/ch6_log_txt_all_by_month_par.rds")
+
+(
+log_txt_all_by_month_par_elapsed <- log_txt_all_by_month_par[[1]]$toc - log_txt_all_by_month_par[[1]]$tic
+)
+```
+
+So, it takes only `r round(log_txt_all_by_month_par_elapsed/60, digits = 2)` minutes. 
+
+---
+class: middle
+
+# Summary 
+
++ Depending on the processing problem you work on, the optimal parallelizing strategy varies
+
++ Make the task for each core large to the extent that allows you to fit the parallelized processes in your RAM memory
 

@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>R as GIS: Creating Maps</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="AECN 396/896-002" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/animate.css/animate.xaringan.css" rel="stylesheet" />
+    <link href="libs/tachyons/tachyons.min.css" rel="stylesheet" />
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# R as GIS: Creating Maps
+### AECN 396/896-002
+
+---
+
+
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+
+.remark-slide-content.hljs-github h1 {
+  margin-top: 5px;  
+  margin-bottom: 25px;  
+}
+
+.remark-slide-content.hljs-github {
+  padding-top: 10px;  
+  padding-left: 30px;  
+  padding-right: 30px;  
+}
+
+.panel-tabs {
+  &lt;!-- color: #062A00; --&gt;
+  color: #841F27;
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panel-tab {
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 3px;  
+  margin-right: 3px;  
+  padding-top: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panelset .panel-tabs .panel-tab {
+  min-height: 40px;
+}
+
+.remark-slide th {
+  border-bottom: 1px solid #ddd;
+}
+
+.remark-slide thead {
+  border-bottom: 0px;
+}
+
+.gt_footnote {
+  padding: 2px;  
+}
+
+.remark-slide table {
+  border-collapse: collapse;
+}
+
+.remark-slide tbody {
+  border-bottom: 2px solid #666;
+}
+
+
+.important {
+  background-color: lightpink;
+  border: 2px solid blue;
+  font-weight: bold;
+} 
+
+.remark-code {
+  display: block;
+  overflow-x: auto;
+  padding: .5em;
+  background: #ffe7e7;
+} 
+
+.hljs-github .hljs {
+  background: #f2f2fd;
+}
+
+.remark-inline-code {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: #e6e6e6;
+}
+
+.r.hljs.remark-code.remark-inline-code{
+  font-size: 0.9em
+}
+
+.left-full {
+  width: 80%;
+  float: left;
+}
+
+.left-code {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left6 {
+  width: 60%;
+  height: 92%;
+  float: left;
+}
+
+.left5 {
+  width: 49%;
+  &lt;!-- height: 92%; --&gt;
+  float: left;
+}
+
+.right5 {
+  width: 49%;
+  float: right;
+  padding-left: 1%;
+}
+
+.right4 {
+  width: 39%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left3 {
+  width: 29%;
+  height: 92%;
+  float: left;
+}
+
+.right7 {
+  width: 69%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left4 {
+  width: 38%;
+  float: left;
+}
+
+.right6 {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+ul li{
+  margin: 7px;
+}
+
+ul, li{
+  margin-left: 15px; 
+  padding-left: 0px; 
+}
+
+ol li{
+  margin: 7px;
+}
+
+ol, li{
+  margin-left: 15px; 
+  padding-left: 0px; 
+}
+
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+.content-box { 
+    box-sizing: border-box;
+    background-color: #e2e2e2;
+}
+.content-box-blue,
+.content-box-gray,
+.content-box-grey,
+.content-box-army,
+.content-box-green,
+.content-box-purple,
+.content-box-red,
+.content-box-yellow {
+  box-sizing: border-box;
+  border-radius: 5px;
+  margin: 0 0 10px;
+  overflow: hidden;
+  padding: 0px 5px 0px 5px;
+  width: 100%;
+}
+.content-box-blue { background-color: #F0F8FF; }
+.content-box-gray { background-color: #e2e2e2; }
+.content-box-grey { background-color: #F5F5F5; }
+.content-box-army { background-color: #737a36; }
+.content-box-green { background-color: #d9edc2; }
+.content-box-purple { background-color: #e2e2f9; }
+.content-box-red { background-color: #ffcccc; }
+.content-box-yellow { background-color: #fef5c4; }
+.content-box-blue .remark-inline-code,
+.content-box-blue .remark-inline-code,
+.content-box-gray .remark-inline-code,
+.content-box-grey .remark-inline-code,
+.content-box-army .remark-inline-code,
+.content-box-green .remark-inline-code,
+.content-box-purple .remark-inline-code,
+.content-box-red .remark-inline-code,
+.content-box-yellow .remark-inline-code { 
+  background: none;
+}
+
+.full-width {
+    display: flex;
+    width: 100%;
+    flex: 1 1 auto;
+}
+&lt;/style&gt;
+
+
+&lt;style type="text/css"&gt;
+blockquote, .blockquote {
+  display: block;
+  margin-top: 0.1em;
+  margin-bottom: 0.2em;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-left: solid 10px #0148A4;
+  border-top: solid 2px #0148A4;
+  border-bottom: solid 2px #0148A4;
+  border-right: solid 2px #0148A4;
+  box-shadow: 0 0 6px rgba(0,0,0,0.5);
+  /* background-color: #e64626; */
+  color: #e64626;
+  padding: 0.5em;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+
+.blockquote p {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h1:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h2:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h3:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h4:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+.text-shadow {
+  text-shadow: 0 0 4px #424242;
+}
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+/******************
+ * Slide scrolling
+ * (non-functional)
+ * not sure if it is a good idea anyway
+slides &gt; slide {
+  overflow: scroll;
+ padding: 5px 40px;
+}
+.scrollable-slide .remark-slide {
+  height: 400px;
+  overflow: scroll !important;
+}
+ ******************/
+
+.scroll-box-8 {
+  height:8em;
+  overflow-y: scroll;
+}
+.scroll-box-10 {
+  height:10em;
+  overflow-y: scroll;
+}
+.scroll-box-12 {
+  height:12em;
+  overflow-y: scroll;
+}
+.scroll-box-14 {
+  height:14em;
+  overflow-y: scroll;
+}
+.scroll-box-16 {
+  height:16em;
+  overflow-y: scroll;
+}
+.scroll-box-18 {
+  height:18em;
+  overflow-y: scroll;
+}
+.scroll-box-20 {
+  height:20em;
+  overflow-y: scroll;
+}
+.scroll-box-24 {
+  height:24em;
+  overflow-y: scroll;
+}
+.scroll-box-30 {
+  height:30em;
+  overflow-y: scroll;
+}
+.scroll-output {
+  height: 90%;
+  overflow-y: scroll;
+}
+
+ 
+&lt;/style&gt;
+
+
+
+
+
+
+# Before you start
+
+## Learning objectives
+
+The objectives of this chapter is to learn how to create maps using the `ggplot2` package.
+
+## Table of contents
+
+1. [Understanding the data structure of `sf`](#data-structure)
+2. [Create sf objects yourself](#create-sf)
+3. [Different Types of Simple Feature Geometry (`sfg`)](#dif-sfg)
+4. [Constructing `sfc` and `sf` from `sfg`](#const)
+5. [Importing and exporting spatial datasets](#input-output)
+6. [Projection](#proj)
+7. [Quick and Interactive View of an `sf` Object](#view)
+8. [Conversion to and from `sp` objects](#sf-to-sp)
+9. [Non-spatial Transformation of `sf`](#non-trans)
+10. [Non-interactive geometrical operations](#non-int-geo)
+
+&lt;br&gt;
+
+&lt;span style="color:red"&gt; Tips: &lt;/span&gt;hitting letter "o" key will give you a panel view of the slides
+
+---
+class: middle
+
+.content-box-green[**Prerequisites**]
+
++ What Geographic Coordinate System (GCS), Coordinate Reference System (CRS), and projection are ([this](https://annakrystalli.me/intro-r-gis/gis.html) is a good resource)
+
++ Distinctions between vector and raster data ([this](https://gis.stackexchange.com/questions/57142/what-is-the-difference-between-vector-and-raster-data-models) is a simple summary of the difference)
+
+.content-box-green[**Datasets**]
+
++ Set the working directory to a directory
+
++ Create the "Data" folder under the directory you have set as the working directory 
+
++ Go [here](https://www.dropbox.com/sh/mn7yk7baru0pm4e/AADDfjIHcWpxACamPh3NVGI4a?dl=0), download all the files, and then save them in the "Data" folder you created in the step above
+
+.content-box-green[**packages**]
+
+
+```r
+library(sf) 
+library(patchwork)
+library(tigris)
+library(mapview)
+library(lubridate)
+library(tidyverse)
+library(exactextractr)
+library(raster)
+```
+
+---
+class: middle
+
+.content-box-green[**Mapping with ggplot2**]
+ 
++ Creating maps differs from creating non-spatial figures in some ways. However, the underlying principle and syntax under `ggplot2` to create maps and non-spatial figures are very similar. 
+
++ Indeed, you will find map making very intuitive and rather easy if you already have some knowledge of how ggplot2 works even if you have not created maps using ggplot2. The only major difference between them is the choice of geom_*() types.
+
+
+.content-box-green[**geom_*()**] for mapping
+
+We use two types of geom_*() for map creation:
+
++ geom_sf() for sf (vector) objects
++ geom_raster() for raster data
+
+---
+class: inverse, center, middle
+name: vector
+
+# Crating maps from `sf` objects
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+class: middle
+
+# Data Preparation
+
+.panelset[ 
+
+.panel[.panel-name[points]
+
+
+```r
+gw_KS_sf &lt;- readRDS( "./Data/gw_KS_sf.rds") 
+```
+
+.scroll-box-16[
+
+```
+## Simple feature collection with 56225 features and 3 fields
+## geometry type:  POINT
+## dimension:      XY
+## bbox:           xmin: -102.0495 ymin: 36.99561 xmax: -94.70746 ymax: 40.00191
+## geographic CRS: NAD83
+## First 10 features:
+##    well_id year   af_used                   geometry
+## 1        1 2010  67.00000 POINT (-100.4423 37.52046)
+## 2        1 2011 171.00000 POINT (-100.4423 37.52046)
+## 3        3 2010  30.93438 POINT (-100.7118 39.91526)
+## 4        3 2011  12.00000 POINT (-100.7118 39.91526)
+## 5        7 2010   0.00000 POINT (-101.8995 38.78077)
+## 6        7 2011   0.00000 POINT (-101.8995 38.78077)
+## 7       11 2010 154.00000 POINT (-101.7114 39.55035)
+## 8       11 2011 160.00000 POINT (-101.7114 39.55035)
+## 9       12 2010  28.17239 POINT (-95.97031 39.16121)
+## 10      12 2011  89.53479 POINT (-95.97031 39.16121)
+```
+]
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[polygons]
+
+
+```r
+KS_county &lt;- counties(state = "Kansas", cb = TRUE) %&gt;% 
+  st_as_sf() %&gt;% 
+  st_transform(st_crs(gw_KS_sf))
+```
+
+.scroll-box-16[
+
+```
+## Simple feature collection with 105 features and 9 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: -102.0517 ymin: 36.99302 xmax: -94.58841 ymax: 40.00316
+## geographic CRS: NAD83
+## First 10 features:
+##     STATEFP COUNTYFP COUNTYNS       AFFGEOID GEOID         NAME LSAD
+## 98       20      053 00484996 0500000US20053 20053    Ellsworth   06
+## 99       20      095 00485012 0500000US20095 20095      Kingman   06
+## 100      20      135 00485031 0500000US20135 20135         Ness   06
+## 101      20      199 00485060 0500000US20199 20199      Wallace   06
+## 675      20      069 00485001 0500000US20069 20069         Gray   06
+## 676      20      143 00485035 0500000US20143 20143       Ottawa   06
+## 677      20      181 00485053 0500000US20181 20181      Sherman   06
+## 895      20      033 00484986 0500000US20033 20033     Comanche   06
+## 896      20      149 00485038 0500000US20149 20149 Pottawatomie   06
+## 937      20      083 00485006 0500000US20083 20083     Hodgeman   06
+##          ALAND   AWATER                       geometry
+## 98  1853331063 19969761 POLYGON ((-98.48554 38.7839...
+## 99  2236100137  8536908 POLYGON ((-98.46489 37.6453...
+## 100 2783562240   667491 POLYGON ((-100.2477 38.6544...
+## 101 2366348284   140936 POLYGON ((-102.0472 39.1331...
+## 675 2250356170  1113338 POLYGON ((-100.665 37.86809...
+## 676 1866683176  1567629 POLYGON ((-97.93161 39.2770...
+## 677 2735193251   548248 POLYGON ((-102.0498 39.5681...
+## 895 2041681114  3604155 POLYGON ((-99.54467 37.2682...
+## 896 2177623918 54032546 POLYGON ((-96.72833 39.4271...
+## 937 2227369150   826344 POLYGON ((-100.2271 38.2622...
+```
+]
+
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[lines]
+
+
+```r
+KS_railroads &lt;- st_read(dsn = "./Data/", layer = "tl_2015_us_rails") %&gt;% 
+  st_crop(KS_county)
+```
+
+.scroll-box-16[
+
+```
+## Simple feature collection with 5804 features and 3 fields
+## geometry type:  GEOMETRY
+## dimension:      XY
+## bbox:           xmin: -102.0517 ymin: 36.99302 xmax: -94.58841 ymax: 40.00316
+## geographic CRS: NAD83
+## First 10 features:
+##         LINEARID                         FULLNAME MTFCC
+## 2124 11051038759                          Bnsf RR R1011
+## 2136 11051038771                          Bnsf RR R1011
+## 2141 11051038776                          Bnsf RR R1011
+## 2186 11051047374                   Rock Island RR R1011
+## 2240 11051048071  Burlington Northern Santa Fe RR R1011
+## 2252 11051048083  Burlington Northern Santa Fe RR R1011
+## 2256 11051048088  Burlington Northern Santa Fe RR R1011
+## 2271 11051048170 Chicago Burlington and Quincy RR R1011
+## 2272 11051048171 Chicago Burlington and Quincy RR R1011
+## 2293 11051048193 Chicago Burlington and Quincy RR R1011
+##                            geometry
+## 2124 LINESTRING (-94.58841 39.15...
+## 2136 LINESTRING (-94.59017 39.11...
+## 2141 LINESTRING (-94.58841 39.15...
+## 2186 LINESTRING (-94.58893 39.11...
+## 2240 LINESTRING (-94.58841 39.15...
+## 2252 LINESTRING (-94.59017 39.11...
+## 2256 LINESTRING (-94.58841 39.15...
+## 2271 LINESTRING (-94.58862 39.15...
+## 2272 LINESTRING (-94.58883 39.11...
+## 2293 LINESTRING (-94.58871 39.11...
+```
+]
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+]
+
+&lt;!-- panel set ends here --&gt;
+
+---
+class: middle
+ 
+# Basics
+
+.content-box-green[**Instruction**]
+
++ We can use `geom_sf()` to create maps from `sf` objects
+
++ `geom_sf()` automatically detects the geometry type of spatial objects stored in an `sf` object and draw maps accordingly 
+
+.content-box-green[**Syntax**]
+
+
+```r
+ggplot() +
+  geom_sf(data = sf)
+```
+
+---
+class: middle
+
+
+.left4[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+.content-box-green[**Example: Points**]
+
+```r
+(
+g_wells &lt;- ggplot(data = gw_KS_sf) +    
+    geom_sf()
+)
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/points-ex-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+class: middle
+
+
+.left4[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+.content-box-green[**Example: Polygons**]
+
+```r
+(
+g_wells &lt;- ggplot(data = KS_county) +    
+    geom_sf()
+)
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/polygons-ex-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+class: middle
+
+
+.left4[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+.content-box-green[**Example: Lines**]
+
+```r
+(
+g_wells &lt;- ggplot(data = KS_railroads) +    
+    geom_sf()
+)
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/lines-ex-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+# Specifying aesthetics
+
++ Maps are just special kinds of figures and what you have learned directly applies here.   
+
++ Here, I will simply list examples to show just that
+
+---
+
+# Example: Points 
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+
+.content-box-green[**Aesthetics**]
+
++ `color`: color of the points
++ `fill`: available for some shapes (but likely useless)
++ `shape`: shape of the points
++ `size`: size of the points (rarely useful)
+
+.content-box-green[**Dataset**]
+
+For illustration here, let’s focus on the wells in one county so it is easy to detect the differences across various aesthetics configurations.
+
+
+```r
+gw_Stevens &lt;- KS_county %&gt;% 
+  filter(NAME == "Stevens") %&gt;% 
+  st_crop(gw_KS_sf, .) 
+```
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Example 1]
+
+.left4[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+ggplot() + 
+  geom_sf(
+    data = gw_Stevens,
+    aes(color = af_used), 
+    size = 2
+  )
+```
+
++ `color`: dependent on `af_used` (the amount of groundwater extraction)
++ `size`: constant across the points (bigger than default)
+
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/ex-1-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Example 2]
+
+.left4[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+ggplot() + 
+  geom_sf(
+    data = gw_Stevens,
+    aes(size = af_used), 
+    color = "blue", 
+    shape = 15
+  )
+```
+
+
++ `color`: constant across the points (blue)
++ `size`: dependent on `af_used`
++ `shape`: constant across the points (square)
+
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/ex-2-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Example 3]
+
+.left4[
+&lt;br&gt;
+
+```r
+gw_Stevens %&gt;% 
+  cbind(., st_coordinates(.)) %&gt;% 
+  mutate(
+    east_west = ifelse(
+      X &lt; -101.3, 
+      "west", 
+      "east"
+    )
+  ) %&gt;% 
+  ggplot(data = .) +
+    geom_sf(
+      aes(
+        shape = east_west, 
+        color = east_west
+      )
+    )
+```
+
++ `color`: dependent on whether located east of west of -101.3 in longitude
++ `shape`: dependent on whether located east of west of -101.3 in longitude
+
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/ex-3-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+]
+
+&lt;!-- panel set ends here --&gt;
+
+---
+  
+# Example: Polygons 
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.content-box-green[**Aesthetics**]
+
++ `color`: color of the borders of the polygons
++ `fill`: color of the inside of the polygons
++ `shape`: not available
++ `size`: not available
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Example 2]
+
+.left4[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+ggplot() +  
+  geom_sf(
+    data = KS_county,
+    color = "red", 
+    fill = "darkgreen"
+  )
+```
+
++ `color`: constant (red)
++ `fill`: constant (dark green)
+
+
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/ex-poly-1-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+&lt;!-- panel ends here --&gt;
+
+.panel[.panel-name[Example 2]
+
+.left4[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+KS_county_with_pumping &lt;- gw_KS_sf %&gt;%
+  #--- only year == 2010 ---#
+  filter(., year == 2010) %&gt;%
+  #--- get total pumping by county ---#
+  aggregate(., KS_county, sum, na.rm = TRUE)
+
+ggplot() +
+  geom_sf(
+    data = KS_county_with_pumping,
+    aes(fill = af_used)
+  )
+```
+
++ `color`: default (black)
++ `fill`: dependent on the total amount of pumping in 2010
+
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/ex-poly-2-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+  ] 
+
+  &lt;!-- panel ends here --&gt;
+
+]
+
+&lt;!-- panel set ends here --&gt;
+
+---
+
+# Plotting multiple spatial objects in one figure 
+
+.content-box-green[**How**]
+
+You can combine all the layers created by `geom_sf()` additively so they appear in a single map:
+
+.left4[
+
+.content-box-green[**Example**]
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+ggplot() +  
+  #--- this one uses KS_county ---#
+  geom_sf(
+    data = KS_county
+  ) +
+  #--- this one uses KS_railroads ---#
+  geom_sf(
+    data = KS_railroads, 
+    color = "red"
+  ) +
+  #--- this one uses KS_wells ---#
+  geom_sf(
+    data = gw_KS_sf, 
+    size = 0.1
+  ) 
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/mult-ex-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+.content-box-green[**Note**]
+
++ The order of `geom_sf()`s matters. 
+
++ `geom_sf()`s that are added later are .red[superimposed] on top of the existing layers 
+
+---
+class: middle
+
+.left4[
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+Here, wells are hidden beneath the county layer.
+
+
+```r
+ggplot() +
+  #--- this one uses KS_wells ---#
+  geom_sf(
+    data = gw_KS_sf, 
+    size = 0.4
+  )+  
+  #--- this one uses KS_county ---#
+  geom_sf(
+    data = KS_county
+  ) +
+  #--- this one uses KS_railroads ---#
+  geom_sf(
+    data = KS_railroads, 
+    color = "red"
+  )  
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/mult-ex-order-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+# CRS
+
+.content-box-green[**Note**]
+
+`ggplot()` uses the CRS of the `sf` to draw a map by default. 
+
+
+---
+class: middle
+
+.content-box-green[**Example: unprojected**]
+
+.left4[
+
+Currently, `KS_county` is unprojected.
+
+
+```r
+st_crs(KS_county)
+```
+.scroll-box-8[
+
+```
+## Coordinate Reference System:
+##   User input: EPSG:4269 
+##   wkt:
+## GEOGCS["NAD83",
+##     DATUM["North_American_Datum_1983",
+##         SPHEROID["GRS 1980",6378137,298.257222101,
+##             AUTHORITY["EPSG","7019"]],
+##         TOWGS84[0,0,0,0,0,0,0],
+##         AUTHORITY["EPSG","6269"]],
+##     PRIMEM["Greenwich",0,
+##         AUTHORITY["EPSG","8901"]],
+##     UNIT["degree",0.0174532925199433,
+##         AUTHORITY["EPSG","9122"]],
+##     AUTHORITY["EPSG","4269"]]
+```
+]
+
+Create a map:
+
+
+```r
+(
+g_county &lt;- ggplot() +
+  geom_sf(data = KS_county)
+)
+```
+
+The map is drawn as if 1 degree in latitude and longitude are the same length. 
+
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/crs-gg-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+]
+
+
+---
+class: middle
+
+.content-box-green[**Example: projected**]
+
+.left4[
+
+Change the CRS and then create a map:
+
+
+```r
+g_32614 &lt;- KS_county %&gt;% 
+* st_transform(32614) %&gt;%
+  ggplot(data = .) +
+    geom_sf()
+
+#--- compare ---#
+g_county/g_32614
+```
+
++ Now, the map is drawn based on the new CRS of 32614 (the bottom figure)
+
++ Notice that the major grid lines are no longer straight in figure at the bottom unlike the one at the top 
+
++ X-Y labels are still in longitude and latitude (we will see how we change this)
+
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/crs-1-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+  
+---
+class: middle
+
+.content-box-green[**Note**]
+
+Alternatively, you could use `coord_sf()` to alter the CRS on the map, but not the CRS of the `sf` object itself.
+
+.left4[
+
+.content-box-green[**Example**]
+
+
+```r
+g_32614 &lt;- ggplot() +
+  geom_sf(data = KS_county) +
+* coord_sf(crs = 32614)
+
+g_county/g_32614
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/crs-2-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+.content-box-green[**Note**]
+
+In order to have `X` and `Y` values in the same units as that of the CRS in use, you need to add `datum =` in `coord_sf()`.
+
+.left4[
+
+.content-box-green[**Example**]
+
+
+```r
+g_county &lt;- ggplot() +
+  geom_sf(data = KS_county)
+
+g_32614 &lt;- ggplot() +
+  geom_sf(data = KS_county) +
+  coord_sf(
+    crs = 32614,
+    datum = 32614
+  ) 
+
+g_county/g_32614
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/crs-3-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+.content-box-green[**Note**]
+
+When multiple `geom_sf()` layers, the CRS of the first layers is automatically applied for all the layers.
+
+.left4[
+
+.content-box-green[**Example**]
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+ggplot() +  
+  #--- epsg: 32614 ---#
+  geom_sf(
+    data = st_transform(
+      KS_county, 
+      32614
+    )
+  ) +
+  #--- epsg: 4269 ---#
+  geom_sf(
+    data = KS_railroads
+  )
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/crs-4-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+.content-box-green[**Note**]
+
+`coord_sf()` applies to all the layers.
+
+.left4[
+
+.content-box-green[**Example**]
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+```r
+ggplot() +  
+  #--- epsg: 4269 ---#
+  geom_sf(
+    data = KS_railroads
+  ) +
+  #--- epsg: 32614 ---#
+  geom_sf(
+    data = st_transform(
+      KS_county, 
+      32614
+    ),
+    fill = NA
+  ) +
+  #--- using 32614 ---#
+  coord_sf(
+    crs = 32614,
+    datum = 32614
+  )
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/crs-csf-mult-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: inverse, center, middle
+name: vector
+
+# Raster data visualization using `geom_raster()`
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+class: middle
+
+
+.content-box-green[**How**]
+
+Visualizing `Raster*` objects involves two steps:
+
+1.convert raster dataset into a `data.frame` with coordinates
+
+2. use `geom_raster()` to make a map
+
+.content-box-green[**Raster Dataset**]
+
+
+```r
+tmax_Jan_09_rs &lt;- stack("./Data/tmax_Jan_09.tif")  
+```
+
+---
+class: middle
+
+.content-box-green[**1st step**]
+
+In order to create maps from the information stored in `Raster*` objects, you first convert them to a regular data.frame using `as.data.frame()`.
+
+.content-box-green[**Demonstration**]
+
+.left5[
+
+```r
+tmax_Jan_09_df &lt;- tmax_Jan_09_rs %&gt;% 
+  #--- convert Raster* to a data.frame with XY ---#
+  as.data.frame(xy = TRUE) %&gt;% 
+  #--- remove cells with NA for any of the layers ---#
+  na.omit() %&gt;% 
+  #--- change the variable names ---#
+  setnames(
+    paste0("tmax_Jan_09.", 1:5), 
+    seq(
+      ymd("2009-01-01"), 
+      ymd("2009-01-05"), 
+      by = "days"
+    ) %&gt;% 
+    as.character()
+  ) 
+```
+]
+
+.right5[
+
+```r
+head(tmax_Jan_09_df) 
+```
+
+```
+##               x        y 2009-01-01 2009-01-02 2009-01-03 2009-01-04
+## 17578 -95.12500 49.41667    -12.863    -11.455    -17.516    -12.755
+## 18982 -95.16667 49.37500    -12.698    -11.441    -17.436    -12.672
+## 18983 -95.12500 49.37500    -12.921    -11.611    -17.589    -12.830
+## 18984 -95.08333 49.37500    -13.074    -11.827    -17.684    -12.913
+## 18985 -95.04167 49.37500    -13.591    -12.220    -17.920    -12.684
+## 18986 -95.00000 49.37500    -13.688    -12.177    -17.911    -12.548
+##       2009-01-05
+## 17578    -26.446
+## 18982    -25.889
+## 18983    -26.544
+## 18984    -26.535
+## 18985    -25.780
+## 18986    -25.424
+```
+
+Notice that the data is in a wide format where tmax values for different dates are stored as separate columns. 
+]
+
+---
+class: middle
+
+.content-box-green[**Step 2**]
+
++ Once the conversion is done, you can use `geom_raster()` to create a map. 
+
++ Unlike `geom_sf()`, you need to supply the variables names for the geographical coordinates (here x for longitude and y for latitude). 
+
++ You also need to specify which variable to use for fill color differentiation.
+
+
+.left4[
+
+.content-box-green[**Demonstration**]
+&lt;br&gt;
+
+```r
+ggplot() +
+  geom_raster(
+    data = tmax_Jan_09_df,
+    aes(
+      x = x, 
+      y = y, 
+      fill = `2009-01-01`
+    )
+  ) +
+  scale_fill_viridis_c() +
+  theme_void() +
+  theme(
+    legend.position = "bottom"
+  )
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/fig-raster-f-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+
+.content-box-green[**Note**]
+
+To create a faceted (faceted by date) figure, you first make `tmax_Jan_09_df` long and then use `facet_wrap()` or `facet_grid()`.
+
+.left4[
+
+&lt;br&gt;
+&lt;br&gt;
+
+.content-box-green[**Demonstration**]
+
+
+```r
+#--- wide to long ---#
+tmax_long_df &lt;- tmax_Jan_09_df %&gt;%
+pivot_longer(
+  c(-x, -y),
+  names_to = "date",
+  values_to = "tmax"
+)
+
+#--- faceted figure ---#
+ggplot() +
+  geom_raster(
+    data = tmax_long_df, 
+    aes(x = x, y = y, fill = tmax)
+  ) +
+  facet_wrap(date ~ .) +
+  coord_equal() +
+  scale_fill_viridis_c() +
+  theme_void() +
+  theme(
+    legend.position = "bottom"
+  )
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/faceted-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+# In conjunction with `geom_sf()` 
+
+You can easily add `geom_sf()` layers to a map created with `geom_raster()` additively. 
+
+.content-box-green[**Caveat**]
+
++ The `sf` objects and the `Raster*` objects .red[must] have the same CRS.
+
++ No automatic CRS conversions occur unlike the case where you only use `geom_sf()`.
+
+---
+class: middle
+
+.content-box-green[**Data Preparation**]
+
+Let’s crop the tmax data to Kansas and create a map of tmax values displayed on top of the Kansas county borders.
+
+
+```r
+#--- KS to have the same CRS ---#
+KS_county_sp &lt;- st_transform(KS_county, projection(KS_tmax_Jan_09))
+
+#--- crop to KS ---#
+KS_tmax_Jan_09 &lt;- crop(tmax_Jan_09_rs, KS_county_sp) 
+
+#--- convert to a df ---#
+KS_tmax_Jan_09_df &lt;- as.data.frame(
+  KS_tmax_Jan_09,
+  xy = TRUE
+) %&gt;% 
+na.omit() %&gt;%
+pivot_longer(
+  c(-x, -y),
+  names_to = "date",
+  values_to = "tmax"
+)
+```
+
+---
+class: middle
+
+.left4[
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+.content-box-green[**Demonstration**]
+
+
+```r
+ggplot() +
+  geom_raster(
+    data = KS_tmax_Jan_09_df, 
+    aes(x = x, y = y, fill = tmax)
+  ) +
+  geom_sf(
+    data = KS_county, 
+    fill = NA
+  ) +
+  facet_wrap(date ~ .) +
+  scale_fill_viridis_c() +
+  theme_void() +
+  theme(
+    legend.position = "bottom"
+  )
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/raster-sf-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+.content-box-green[**Note**]
+
+This is what happens when the `sf` and `Raster*` objects are on different CRS.
+
+.left4[
+
+.content-box-green[**Demonstration**]
+
+
+```r
+ggplot() +
+  geom_raster(
+    data = KS_tmax_Jan_09_df, 
+    aes(x = x, y = y, fill = tmax)
+  ) +
+  geom_sf(
+    data = st_transform(KS_county, 32614), 
+    fill = NA
+  ) +
+  facet_wrap(date ~ .) +
+  scale_fill_viridis_c() +
+  theme_void() +
+  theme(
+    legend.position = "bottom"
+  )
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/raster-sf-wrong-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: inverse, center, middle
+name: tips
+
+# Tips to make maps look professional 
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+---
+class: middle
+
+# Theme
+
++ `theme_void()` is an appealing pre-made theme that can get rid of many unnecessary components from default maps.
+
++ look at the lecture slides on theme for details. 
+
+.left5[
+
+```r
+g_county 
+```
+
+&lt;img src="r_as_GIS_map_x_files/figure-html/unnamed-chunk-19-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+.right5[
+
+```r
+g_county + theme_void()
+```
+
+&lt;img src="r_as_GIS_map_x_files/figure-html/unnamed-chunk-20-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+# North arrow and scale bar
+
+The `ggspatial` package lets you put a north arrow and scale bar on a map using `annotation_scale()` and `annotation_north_arrow()`
+
+
+```r
+library(ggspatial)  
+```
+
+---
+class: middle
+
+.content-box-green[**preparation**]
+
+
+```r
+g_nc &lt;- st_read(system.file("shape/nc.shp", package="sf")) %&gt;% 
+  ggplot(data = .) + 
+    geom_sf() + 
+    theme_void()
+```
+
+---
+class: middle
+
+
+
+.left4[
+
+.content-box-green[**scale bar**]
+
+Use `annotation_scale()` to add a scale bar.
+
+.content-box-green[**Example**]
+
+
+```r
+g_nc + 
+  annotation_scale(
+    location = "bl", 
+    width_hint = 0.2
+  )
+```
+
++ `location`: determines where the scale bar is
+  * first letter is either `t` (top) or `b` (bottom)
+  * second letter is either `l` (left) or `r` (right).  
++ `width_hint`: determines the length of the scale bar relative to the plot
+
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/scale-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+
+
+.left4[
+
+.content-box-green[**fine-tune the location**]
+
+Use `pad_x` and `pad_y` options to fine-tune the location of the scale bar.
+
+.content-box-green[**Example**]
+
+
+```r
+g_nc + 
+  annotation_scale(
+    location = "bl", 
+    width_hint = 0.2,
+    pad_x = unit(1, "in"),
+    pad_y = unit(0.3, "in")
+  )
+```
+
+A positive number means that the scale bar will be placed further away from closest border of the plot.
+
++ `pad_x`: since the second letter of `location` is `l`, the scale bar move an inch from the left border of the map
+
++ `pad_y`: since the first letter of `location` is `b`, the scale bar move 0.3 inches from the bottom border of the map
+
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/scale-pad-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+.left4[
+
+.content-box-green[**north arrow**]
+
++ Use `annotation_north_arrow()` to add north arrow
++ It works just like `annotation_scale()`
+
+.content-box-green[**Example**]
+
+
+```r
+g_nc + 
+  annotation_scale(
+    location = "bl", 
+    width_hint = 0.2,
+    pad_x = unit(1, "in"),
+    pad_y = unit(0.3, "in")
+  ) +
+  #--- add north arrow ---#
+  annotation_north_arrow(
+    location = "tl", 
+    pad_x = unit(0.2, "in"), 
+    pad_y = unit(-0.1, "in"),
+    style = north_arrow_fancy_orienteering
+   ) 
+```
+
++ use `style` option to pick a different type of north arrow symbol
+
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/scale-pad-na-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+# Inset maps
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "12:8",
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
