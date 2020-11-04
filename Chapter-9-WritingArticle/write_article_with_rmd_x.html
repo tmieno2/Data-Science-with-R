@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Writing Professional Articles using Rmarkdown</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="AECN 396/896-002" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/animate.css/animate.xaringan.css" rel="stylesheet" />
+    <link href="libs/tachyons/tachyons.min.css" rel="stylesheet" />
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Writing Professional Articles using Rmarkdown
+### AECN 396/896-002
+
+---
+
+
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+
+.remark-slide-content.hljs-github h1 {
+  margin-top: 5px;  
+  margin-bottom: 25px;  
+}
+
+.remark-slide-content.hljs-github {
+  padding-top: 10px;  
+  padding-left: 30px;  
+  padding-right: 30px;  
+}
+
+.panel-tabs {
+  &lt;!-- color: #062A00; --&gt;
+  color: #841F27;
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panel-tab {
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 3px;  
+  margin-right: 3px;  
+  padding-top: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panelset .panel-tabs .panel-tab {
+  min-height: 40px;
+}
+
+.remark-slide th {
+  border-bottom: 1px solid #ddd;
+}
+
+.remark-slide thead {
+  border-bottom: 0px;
+}
+
+.gt_footnote {
+  padding: 2px;  
+}
+
+.remark-slide table {
+  border-collapse: collapse;
+}
+
+.remark-slide tbody {
+  border-bottom: 2px solid #666;
+}
+
+
+.important {
+  background-color: lightpink;
+  border: 2px solid blue;
+  font-weight: bold;
+} 
+
+.remark-code {
+  display: block;
+  overflow-x: auto;
+  padding: .5em;
+  background: #ffe7e7;
+} 
+
+.hljs-github .hljs {
+  background: #f2f2fd;
+}
+
+.remark-inline-code {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: #e6e6e6;
+}
+
+.r.hljs.remark-code.remark-inline-code{
+  font-size: 0.9em
+}
+
+.left-full {
+  width: 80%;
+  float: left;
+}
+
+.left-code {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left6 {
+  width: 60%;
+  height: 92%;
+  float: left;
+}
+
+.left5 {
+  width: 49%;
+  &lt;!-- height: 92%; --&gt;
+  float: left;
+}
+
+.right5 {
+  width: 49%;
+  float: right;
+  padding-left: 1%;
+}
+
+.right4 {
+  width: 39%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left3 {
+  width: 29%;
+  height: 92%;
+  float: left;
+}
+
+.right7 {
+  width: 69%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left4 {
+  width: 38%;
+  float: left;
+}
+
+.right6 {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+ul li{
+  margin: 7px;
+}
+
+ul, li{
+  margin-left: 15px; 
+  padding-left: 0px; 
+}
+
+ol li{
+  margin: 7px;
+}
+
+ol, li{
+  margin-left: 15px; 
+  padding-left: 0px; 
+}
+
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+.content-box { 
+    box-sizing: border-box;
+    background-color: #e2e2e2;
+}
+.content-box-blue,
+.content-box-gray,
+.content-box-grey,
+.content-box-army,
+.content-box-green,
+.content-box-purple,
+.content-box-red,
+.content-box-yellow {
+  box-sizing: border-box;
+  border-radius: 5px;
+  margin: 0 0 10px;
+  overflow: hidden;
+  padding: 0px 5px 0px 5px;
+  width: 100%;
+}
+.content-box-blue { background-color: #F0F8FF; }
+.content-box-gray { background-color: #e2e2e2; }
+.content-box-grey { background-color: #F5F5F5; }
+.content-box-army { background-color: #737a36; }
+.content-box-green { background-color: #d9edc2; }
+.content-box-purple { background-color: #e2e2f9; }
+.content-box-red { background-color: #ffcccc; }
+.content-box-yellow { background-color: #fef5c4; }
+.content-box-blue .remark-inline-code,
+.content-box-blue .remark-inline-code,
+.content-box-gray .remark-inline-code,
+.content-box-grey .remark-inline-code,
+.content-box-army .remark-inline-code,
+.content-box-green .remark-inline-code,
+.content-box-purple .remark-inline-code,
+.content-box-red .remark-inline-code,
+.content-box-yellow .remark-inline-code { 
+  background: none;
+}
+
+.full-width {
+    display: flex;
+    width: 100%;
+    flex: 1 1 auto;
+}
+&lt;/style&gt;
+
+
+&lt;style type="text/css"&gt;
+blockquote, .blockquote {
+  display: block;
+  margin-top: 0.1em;
+  margin-bottom: 0.2em;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-left: solid 10px #0148A4;
+  border-top: solid 2px #0148A4;
+  border-bottom: solid 2px #0148A4;
+  border-right: solid 2px #0148A4;
+  box-shadow: 0 0 6px rgba(0,0,0,0.5);
+  /* background-color: #e64626; */
+  color: #e64626;
+  padding: 0.5em;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+
+.blockquote p {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h1:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h2:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h3:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h4:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+.text-shadow {
+  text-shadow: 0 0 4px #424242;
+}
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+/******************
+ * Slide scrolling
+ * (non-functional)
+ * not sure if it is a good idea anyway
+slides &gt; slide {
+  overflow: scroll;
+ padding: 5px 40px;
+}
+.scrollable-slide .remark-slide {
+  height: 400px;
+  overflow: scroll !important;
+}
+ ******************/
+
+.scroll-box-8 {
+  height:8em;
+  overflow-y: scroll;
+}
+.scroll-box-10 {
+  height:10em;
+  overflow-y: scroll;
+}
+.scroll-box-12 {
+  height:12em;
+  overflow-y: scroll;
+}
+.scroll-box-14 {
+  height:14em;
+  overflow-y: scroll;
+}
+.scroll-box-16 {
+  height:16em;
+  overflow-y: scroll;
+}
+.scroll-box-18 {
+  height:18em;
+  overflow-y: scroll;
+}
+.scroll-box-20 {
+  height:20em;
+  overflow-y: scroll;
+}
+.scroll-box-24 {
+  height:24em;
+  overflow-y: scroll;
+}
+.scroll-box-30 {
+  height:30em;
+  overflow-y: scroll;
+}
+.scroll-output {
+  height: 90%;
+  overflow-y: scroll;
+}
+
+ 
+&lt;/style&gt;
+
+
+
+# Before you start
+
+## Learning objectives
+
+Learn how to use a combination of packages to generate articles in WORD 
+
+## Table of contents
+
+1. [`ggplot2` basics](#ggplot2-basics)
+2. [Different types of figures](#dif-geoms)
+3. [Placing more information in one figure](#more-info)
+
+&lt;br&gt;
+
+&lt;span style="color:red"&gt; Tips: &lt;/span&gt;hitting letter "o" key will give you a panel view of the slides
+
+---
+
+.content-box-green[**How**]
+
++ Write on an Rmarkdown file and knit to a WORD file
+
++ Do final formatting jobs on the output WORD file
+
+--
+
+.content-box-green[**Key components**]
+
++ include (run) R codes to run analysis  
+
++ use the `modelsummary` and `flextable` packages to write tables
+
++ use the `ggplot2` package to create figures
+
++ cross-reference tables and figures
+
++ create citations and a reference list automatically 
+
++ use Latex math syntax to write equations 
+
+--
+
+.content-box-green[**Key challenges**]
+
++ you can do only so much about formatting the output WORD file
+  * cannot have page breaks
+  * a bit of a hassle to adjust page margins  
+  * etc
+
++ it is impossible to include track changes (but you can compare two documents to see the differences easily) 
+
+---
+class: middle
+
+# YAML header
+
+In the YAML header, you can add 
+
++ `title`
++ `authors`
++ `date`
++ `abstract`
+
+--
+
+This is also where you can specify 
+
++ `output` 
+  * reference style docx file
++ `bibliography` 
+
+We will talk about this later.
+
+---
+class: middle
+
+# Formatting
+
+.content-box-green[**How**]
+
++ Create a reference word file (here, it's called "word-style.docx")
+
++ Add the following to the YAML header
+
+
+```r
+output:
+  bookdown::word_document2:
+*   reference_docx: word-style.docx
+```
+
+.content-box-green[**Direction**]
+
++ Open "word-style.docx" and confirm the style of the file
+
++ Remove `reference_docx: word-style.docx` from the YAML header, knit to a WORD file and check the style
+
++ Add back `reference_docx: word-style.docx` to the YAML header, knit to a WORD file and check the style
+
+---
+class: middle
+
+You can change the style in WORD and save the changes. Then, the style change will be reflected in the output WORD file.
+
+&lt;img src="style-change.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+class: middle
+
+# Citations and References
+
+.content-box-green[**How**]
+
++ Create a reference file (here, "bibliographi.bib")
+
++ Add the following to the YAML header
+
+````markdown
+bibliography: bibliographi.bib
+````
+
+.content-box-green[**Syntax**]
+
++ use `@reference_name` to print "author names (year)" in the output WORD file
+
++ use `[@reference_name]` to print "(author names, year)" in the output WORD file 
+
++ use `[@reference_name_1; @reference_name_2]` to print "(author names, year; author names, year)" in the output WORD file 
+
++ use `[-@reference_name]` to print just year
+
+
+---
+class: middle
+
+# Formatting
+
+.content-box-green[**Heading**]
+
+Use 
+
++ `#`: section 
++ `##`: subsection
++ `###`: subsubsection
+
+---
+class: middle
+
+
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:10",
+"highlightStyle": "monokai",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

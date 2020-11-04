@@ -42,16 +42,9 @@ The objectives of this chapter is to learn how to create maps using the `ggplot2
 
 ## Table of contents
 
-1. [Understanding the data structure of `sf`](#data-structure)
-2. [Create sf objects yourself](#create-sf)
-3. [Different Types of Simple Feature Geometry (`sfg`)](#dif-sfg)
-4. [Constructing `sfc` and `sf` from `sfg`](#const)
-5. [Importing and exporting spatial datasets](#input-output)
-6. [Projection](#proj)
-7. [Quick and Interactive View of an `sf` Object](#view)
-8. [Conversion to and from `sp` objects](#sf-to-sp)
-9. [Non-spatial Transformation of `sf`](#non-trans)
-10. [Non-interactive geometrical operations](#non-int-geo)
+1. [Creating maps from `sf` objects](#fig-vector)
+2. [Raster data visualization using `geom_raster()`](#raster)
+2. [Tips to make maps look professional ](#tips)
 
 <br>
 
@@ -106,7 +99,7 @@ We use two types of geom_*() for map creation:
 
 ---
 class: inverse, center, middle
-name: vector
+name: fig-vector
 
 # Crating maps from `sf` objects
 
@@ -801,7 +794,7 @@ ggplot() +
 
 ---
 class: inverse, center, middle
-name: vector
+name: raster
 
 # Raster data visualization using `geom_raster()`
 

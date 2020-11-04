@@ -1,0 +1,11 @@
+---
+title: "Title"
+author:
+  - Taro Mieno^[University of Nebraska Lincoln, tmieno2@unl.edu] and John Doe^[Random University, johndoe@email.com]
+output:
+  bookdown::word_document2
+---
+
+# Heading 1
+
+## Heading 2

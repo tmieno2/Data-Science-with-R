@@ -1,0 +1,176 @@
+---
+title: "Writing Professional Articles using Rmarkdown"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    lib_dir: libs
+    nature:
+      ratio: 16:10
+      highlightStyle: monokai
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r, child = './../setup.Rmd'}
+```
+
+```{r, include = F, cache = F}
+suppressMessages(library(nycflights13)) 
+suppressMessages(library(extrafont)) 
+suppressMessages(library(patchwork))
+```
+
+# Before you start
+
+## Learning objectives
+
+Learn how to use a combination of packages to generate articles in WORD 
+
+## Table of contents
+
+1. [`ggplot2` basics](#ggplot2-basics)
+2. [Different types of figures](#dif-geoms)
+3. [Placing more information in one figure](#more-info)
+
+<br>
+
+<span style="color:red"> Tips: </span>hitting letter "o" key will give you a panel view of the slides
+
+---
+
+.content-box-green[**How**]
+
++ Write on an Rmarkdown file and knit to a WORD file
+
++ Do final formatting jobs on the output WORD file
+
+--
+
+.content-box-green[**Key components**]
+
++ include (run) R codes to run analysis  
+
++ use the `modelsummary` and `flextable` packages to write tables
+
++ use the `ggplot2` package to create figures
+
++ cross-reference tables and figures
+
++ create citations and a reference list automatically 
+
++ use Latex math syntax to write equations 
+
+--
+
+.content-box-green[**Key challenges**]
+
++ you can do only so much about formatting the output WORD file
+  * cannot have page breaks
+  * a bit of a hassle to adjust page margins  
+  * etc
+
++ it is impossible to include track changes (but you can compare two documents to see the differences easily) 
+
+---
+class: middle
+
+# YAML header
+
+In the YAML header, you can add 
+
++ `title`
++ `authors`
++ `date`
++ `abstract`
+
+--
+
+This is also where you can specify 
+
++ `output` 
+  * reference style docx file
++ `bibliography` 
+
+We will talk about this later.
+
+---
+class: middle
+
+# Formatting
+
+.content-box-green[**How**]
+
++ Create a reference word file (here, it's called "word-style.docx")
+
++ Add the following to the YAML header
+
+```{r eval = F}
+output:
+  bookdown::word_document2:
+    reference_docx: word-style.docx #<< 
+```
+
+.content-box-green[**Direction**]
+
++ Open "word-style.docx" and confirm the style of the file
+
++ Remove `reference_docx: word-style.docx` from the YAML header, knit to a WORD file and check the style
+
++ Add back `reference_docx: word-style.docx` to the YAML header, knit to a WORD file and check the style
+
+---
+class: middle
+
+You can change the style in WORD and save the changes. Then, the style change will be reflected in the output WORD file.
+
+```{r  echo = F, out.width = "60%"}
+include_graphics("style-change.png") 
+```
+
+---
+class: middle
+
+# Citations and References
+
+.content-box-green[**How**]
+
++ Create a reference file (here, "bibliographi.bib")
+
++ Add the following to the YAML header
+
+````markdown
+bibliography: bibliographi.bib
+````
+
+.content-box-green[**Syntax**]
+
++ use `@reference_name` to print "author names (year)" in the output WORD file
+
++ use `[@reference_name]` to print "(author names, year)" in the output WORD file 
+
++ use `[@reference_name_1; @reference_name_2]` to print "(author names, year; author names, year)" in the output WORD file 
+
++ use `[-@reference_name]` to print just year
+
+.content-box-green[**Direction**]
+
+See the Introduction section in the sample word file.
+
+---
+class: middle
+
+# Tables
+
+.content-box-green[**How**]
+
++ Create a table using the `flextable` package (this is not the only option) 
+
++ Add an R code chunk like this:
+
+
+
+
+
+
