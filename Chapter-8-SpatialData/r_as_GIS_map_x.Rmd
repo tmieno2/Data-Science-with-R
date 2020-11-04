@@ -970,7 +970,7 @@ Let’s crop the tmax data to Kansas and create a map of tmax values displayed o
 
 ```{r }
 #--- KS to have the same CRS ---#
-KS_county_sp <- st_transform(KS_county, projection(KS_tmax_Jan_09))
+KS_county_sp <- st_transform(KS_county, projection(tmax_Jan_09_rs))
 
 #--- crop to KS ---#
 KS_tmax_Jan_09 <- crop(tmax_Jan_09_rs, KS_county_sp) 
@@ -1227,3 +1227,253 @@ class: middle
 
 # Inset maps
 
+.content-box-green[**What is it?**]
+
+Maps in a map
+
+.content-box-green[**Motivation**]
+
+Inset maps provide a better sense of the geographic extent and the location of the area of interest relative to the larger geographic extent that the readers are more familiar with. 
+
+.content-box-green[**Example**]
+
+```{r  echo = F, out.width = "40%"}
+include_graphics("inset.jpg") 
+```
+
+---
+class: middle
+
+.content-box-green[**Data for demonstration**]
+
+Consider three counties in Kansas: Cheyenne, Sherman, and Wallace. 
+
+```{r }
+three_counties <- filter(KS_county, NAME %in% c("Cheyenne", "Sherman", "Wallace"))
+```
+
+---
+class: middle
+
+.left5[
+
+Here is the map of three counties:
+
+```{r ks-three, eval = F}  
+(
+g_three_counties <- ggplot() +
+  geom_sf(
+    data = three_counties
+  ) +
+  geom_sf_text(
+    data = three_counties, 
+    aes(label = NAME)
+  ) +
+  theme_void()
+)
+```
+
+For those who are not familiar with Kansas, it might be useful to show where in Kansas they are located on the same map (or even where Kansas is in the U.S.). 
+]
+
+.right5[
+```{r ks-three-f, ref.label = "ks-three", echo = F}  
+
+```
+]
+
+---
+class: middle
+
+.content-box-green[**How**]
+    
+We can create an inset map using `ggplotGrob()` and `annotation_custom()`.
+
+Here are the steps:
+
+1. create a map of the area of interest and turn it into a `grob` object using `ggplotGrob()`
+
+2. create a map of the region that includes the area of interest and turn it into a `grob` object using `ggplotGrob()`
+
+3. combine the two using `annotation_custom()`
+
+
+---
+class: middle
+
+.content-box-green[**Step 1**]
+
+Create a map of the area of interest and turn it into a `grob` object using `ggplotGrob()`
+
+
+```{r }
+#--- convert the ggplot into a grob ---#
+# g_three_counties was made two slides back
+grob_aoi <- ggplotGrob(g_three_counties)
+
+#--- check the class ---#
+class(grob_aoi)
+```
+
+---
+class: middle
+
+.content-box-green[**Step 2**]
+
+Create a map of the region that includes the area of interest and turn it into a `grob` object using `ggplotGrob()`
+
+```{r }
+#--- create a map of Kansas ---#
+g_region <- ggplot() +
+  geom_sf(data = KS_county) +
+  geom_sf(data = three_counties, fill = "blue", color = "red", alpha = 0.5) +
+  theme_void()
+
+#--- convert to a grob ---#
+grob_region <- ggplotGrob(g_region)
+```
+
+---
+class: middle
+
+.content-box-green[**Step 3**]
+
+Combine the two using `annotation_custom()`   
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+.left5[
+
+The first task is to initiate a `ggplot` with `coord_equal()` as follows:
+
+```{r combine, eval = F}  
+(
+g_inset <- ggplot() +
+  coord_equal(
+    xlim = c(0, 1), 
+    ylim = c(0, 1), 
+    expand = FALSE
+  )
+)
+```
+
+You now have a blank canvas to put the images on.
+]
+
+.right5[
+```{r combine-f, ref.label = "combine", echo = F}  
+
+```
+
+]
+
+---
+class: middle
+
+.content-box-green[**Step 3**]
+
+Combine the two using `annotation_custom()`   
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+.left5[
+
+Let's add a layer to the canvas with `annotation_custom()` in which you provide the `grob` object (a map) and specify the range of the canvas the map occupies.
+
+```{r combine-2, eval = F}  
+g_inset +
+  annotation_custom(
+    grob_aoi, 
+    xmin = 0, 
+    xmax = 0.8, 
+    ymin = 0,
+    ymax = 1
+  )
+```
+]
+
+.right5[
+```{r combine-2-f, ref.label = "combine-2", echo = F}  
+
+```
+
+]
+
+---
+class: middle
+
+.content-box-green[**Step 3**]
+
+Combine the two using `annotation_custom()`   
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+.left5[
+
+Similarly, we can add `grob_region` using `annotation_custom()`. Let's put it at the right lower corner of the map.
+
+```{r combine-3, eval = F}  
+g_inset +
+  annotation_custom(
+    grob_aoi, # area of interest
+    xmin = 0, 
+    xmax = 0.8, 
+    ymin = 0,
+    ymax = 1
+  ) +
+  annotation_custom(
+    grob_region, 
+    xmin = 0.6, 
+    xmax = 1, 
+    ymin = 0,
+    ymax = 0.3
+  )
+```
+]
+
+.right5[
+```{r combine-3-f, ref.label = "combine-3", echo = F}  
+
+```
+
+]
+
+---
+class: middle
+
+.content-box-green[**Step 3**]
+
+Combine the two using `annotation_custom()`   
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+.left5[
+
+Note that the resulting map still has the default theme because it does not inherit the theme of maps added by `annotation_custom()`. So, you can add `theme_void()` to the map to make the border disappear.
+
+```{r combine-4, eval = F}  
+g_inset +
+  annotation_custom(
+    grob_aoi, # area of interest
+    xmin = 0, 
+    xmax = 0.8, 
+    ymin = 0,
+    ymax = 1
+  ) +
+  annotation_custom(
+    grob_region, 
+    xmin = 0.6, 
+    xmax = 1, 
+    ymin = 0,
+    ymax = 0.3
+  ) +
+  theme_void() #<<
+```
+]
+
+.right5[
+```{r combine-4-f, ref.label = "combine-4", echo = F}  
+
+```
+
+]

@@ -497,28 +497,28 @@ KS_county &lt;- counties(state = "Kansas", cb = TRUE) %&gt;%
 ## bbox:           xmin: -102.0517 ymin: 36.99302 xmax: -94.58841 ymax: 40.00316
 ## geographic CRS: NAD83
 ## First 10 features:
-##     STATEFP COUNTYFP COUNTYNS       AFFGEOID GEOID         NAME LSAD
-## 98       20      053 00484996 0500000US20053 20053    Ellsworth   06
-## 99       20      095 00485012 0500000US20095 20095      Kingman   06
-## 100      20      135 00485031 0500000US20135 20135         Ness   06
-## 101      20      199 00485060 0500000US20199 20199      Wallace   06
-## 675      20      069 00485001 0500000US20069 20069         Gray   06
-## 676      20      143 00485035 0500000US20143 20143       Ottawa   06
-## 677      20      181 00485053 0500000US20181 20181      Sherman   06
-## 895      20      033 00484986 0500000US20033 20033     Comanche   06
-## 896      20      149 00485038 0500000US20149 20149 Pottawatomie   06
-## 937      20      083 00485006 0500000US20083 20083     Hodgeman   06
-##          ALAND   AWATER                       geometry
-## 98  1853331063 19969761 POLYGON ((-98.48554 38.7839...
-## 99  2236100137  8536908 POLYGON ((-98.46489 37.6453...
-## 100 2783562240   667491 POLYGON ((-100.2477 38.6544...
-## 101 2366348284   140936 POLYGON ((-102.0472 39.1331...
-## 675 2250356170  1113338 POLYGON ((-100.665 37.86809...
-## 676 1866683176  1567629 POLYGON ((-97.93161 39.2770...
-## 677 2735193251   548248 POLYGON ((-102.0498 39.5681...
-## 895 2041681114  3604155 POLYGON ((-99.54467 37.2682...
-## 896 2177623918 54032546 POLYGON ((-96.72833 39.4271...
-## 937 2227369150   826344 POLYGON ((-100.2271 38.2622...
+##     STATEFP COUNTYFP COUNTYNS       AFFGEOID GEOID         NAME LSAD      ALAND   AWATER
+## 98       20      053 00484996 0500000US20053 20053    Ellsworth   06 1853331063 19969761
+## 99       20      095 00485012 0500000US20095 20095      Kingman   06 2236100137  8536908
+## 100      20      135 00485031 0500000US20135 20135         Ness   06 2783562240   667491
+## 101      20      199 00485060 0500000US20199 20199      Wallace   06 2366348284   140936
+## 675      20      069 00485001 0500000US20069 20069         Gray   06 2250356170  1113338
+## 676      20      143 00485035 0500000US20143 20143       Ottawa   06 1866683176  1567629
+## 677      20      181 00485053 0500000US20181 20181      Sherman   06 2735193251   548248
+## 895      20      033 00484986 0500000US20033 20033     Comanche   06 2041681114  3604155
+## 896      20      149 00485038 0500000US20149 20149 Pottawatomie   06 2177623918 54032546
+## 937      20      083 00485006 0500000US20083 20083     Hodgeman   06 2227369150   826344
+##                           geometry
+## 98  POLYGON ((-98.48554 38.7839...
+## 99  POLYGON ((-98.46489 37.6453...
+## 100 POLYGON ((-100.2477 38.6544...
+## 101 POLYGON ((-102.0472 39.1331...
+## 675 POLYGON ((-100.665 37.86809...
+## 676 POLYGON ((-97.93161 39.2770...
+## 677 POLYGON ((-102.0498 39.5681...
+## 895 POLYGON ((-99.54467 37.2682...
+## 896 POLYGON ((-96.72833 39.4271...
+## 937 POLYGON ((-100.2271 38.2622...
 ```
 ]
 
@@ -544,28 +544,17 @@ KS_railroads &lt;- st_read(dsn = "./Data/", layer = "tl_2015_us_rails") %&gt;%
 ## bbox:           xmin: -102.0517 ymin: 36.99302 xmax: -94.58841 ymax: 40.00316
 ## geographic CRS: NAD83
 ## First 10 features:
-##         LINEARID                         FULLNAME MTFCC
-## 2124 11051038759                          Bnsf RR R1011
-## 2136 11051038771                          Bnsf RR R1011
-## 2141 11051038776                          Bnsf RR R1011
-## 2186 11051047374                   Rock Island RR R1011
-## 2240 11051048071  Burlington Northern Santa Fe RR R1011
-## 2252 11051048083  Burlington Northern Santa Fe RR R1011
-## 2256 11051048088  Burlington Northern Santa Fe RR R1011
-## 2271 11051048170 Chicago Burlington and Quincy RR R1011
-## 2272 11051048171 Chicago Burlington and Quincy RR R1011
-## 2293 11051048193 Chicago Burlington and Quincy RR R1011
-##                            geometry
-## 2124 LINESTRING (-94.58841 39.15...
-## 2136 LINESTRING (-94.59017 39.11...
-## 2141 LINESTRING (-94.58841 39.15...
-## 2186 LINESTRING (-94.58893 39.11...
-## 2240 LINESTRING (-94.58841 39.15...
-## 2252 LINESTRING (-94.59017 39.11...
-## 2256 LINESTRING (-94.58841 39.15...
-## 2271 LINESTRING (-94.58862 39.15...
-## 2272 LINESTRING (-94.58883 39.11...
-## 2293 LINESTRING (-94.58871 39.11...
+##         LINEARID                         FULLNAME MTFCC                       geometry
+## 2124 11051038759                          Bnsf RR R1011 LINESTRING (-94.58841 39.15...
+## 2136 11051038771                          Bnsf RR R1011 LINESTRING (-94.59017 39.11...
+## 2141 11051038776                          Bnsf RR R1011 LINESTRING (-94.58841 39.15...
+## 2186 11051047374                   Rock Island RR R1011 LINESTRING (-94.58893 39.11...
+## 2240 11051048071  Burlington Northern Santa Fe RR R1011 LINESTRING (-94.58841 39.15...
+## 2252 11051048083  Burlington Northern Santa Fe RR R1011 LINESTRING (-94.59017 39.11...
+## 2256 11051048088  Burlington Northern Santa Fe RR R1011 LINESTRING (-94.58841 39.15...
+## 2271 11051048170 Chicago Burlington and Quincy RR R1011 LINESTRING (-94.58862 39.15...
+## 2272 11051048171 Chicago Burlington and Quincy RR R1011 LINESTRING (-94.58883 39.11...
+## 2293 11051048193 Chicago Burlington and Quincy RR R1011 LINESTRING (-94.58871 39.11...
 ```
 ]
   ] 
@@ -1266,20 +1255,13 @@ head(tmax_Jan_09_df)
 ```
 
 ```
-##               x        y 2009-01-01 2009-01-02 2009-01-03 2009-01-04
-## 17578 -95.12500 49.41667    -12.863    -11.455    -17.516    -12.755
-## 18982 -95.16667 49.37500    -12.698    -11.441    -17.436    -12.672
-## 18983 -95.12500 49.37500    -12.921    -11.611    -17.589    -12.830
-## 18984 -95.08333 49.37500    -13.074    -11.827    -17.684    -12.913
-## 18985 -95.04167 49.37500    -13.591    -12.220    -17.920    -12.684
-## 18986 -95.00000 49.37500    -13.688    -12.177    -17.911    -12.548
-##       2009-01-05
-## 17578    -26.446
-## 18982    -25.889
-## 18983    -26.544
-## 18984    -26.535
-## 18985    -25.780
-## 18986    -25.424
+##               x        y 2009-01-01 2009-01-02 2009-01-03 2009-01-04 2009-01-05
+## 17578 -95.12500 49.41667    -12.863    -11.455    -17.516    -12.755    -26.446
+## 18982 -95.16667 49.37500    -12.698    -11.441    -17.436    -12.672    -25.889
+## 18983 -95.12500 49.37500    -12.921    -11.611    -17.589    -12.830    -26.544
+## 18984 -95.08333 49.37500    -13.074    -11.827    -17.684    -12.913    -26.535
+## 18985 -95.04167 49.37500    -13.591    -12.220    -17.920    -12.684    -25.780
+## 18986 -95.00000 49.37500    -13.688    -12.177    -17.911    -12.548    -25.424
 ```
 
 Notice that the data is in a wide format where tmax values for different dates are stored as separate columns. 
@@ -1392,7 +1374,7 @@ Let’s crop the tmax data to Kansas and create a map of tmax values displayed o
 
 ```r
 #--- KS to have the same CRS ---#
-KS_county_sp &lt;- st_transform(KS_county, projection(KS_tmax_Jan_09))
+KS_county_sp &lt;- st_transform(KS_county, projection(tmax_Jan_09_rs))
 
 #--- crop to KS ---#
 KS_tmax_Jan_09 &lt;- crop(tmax_Jan_09_rs, KS_county_sp) 
@@ -1652,6 +1634,256 @@ class: middle
 
 # Inset maps
 
+.content-box-green[**What is it?**]
+
+Maps in a map
+
+.content-box-green[**Motivation**]
+
+Inset maps provide a better sense of the geographic extent and the location of the area of interest relative to the larger geographic extent that the readers are more familiar with. 
+
+.content-box-green[**Example**]
+
+&lt;img src="inset.jpg" width="40%" style="display: block; margin: auto;" /&gt;
+
+---
+class: middle
+
+.content-box-green[**Data for demonstration**]
+
+Consider three counties in Kansas: Cheyenne, Sherman, and Wallace. 
+
+
+```r
+three_counties &lt;- filter(KS_county, NAME %in% c("Cheyenne", "Sherman", "Wallace"))
+```
+
+---
+class: middle
+
+.left5[
+
+Here is the map of three counties:
+
+
+```r
+(
+g_three_counties &lt;- ggplot() +
+  geom_sf(
+    data = three_counties
+  ) +
+  geom_sf_text(
+    data = three_counties, 
+    aes(label = NAME)
+  ) +
+  theme_void()
+)
+```
+
+For those who are not familiar with Kansas, it might be useful to show where in Kansas they are located on the same map (or even where Kansas is in the U.S.). 
+]
+
+.right5[
+&lt;img src="r_as_GIS_map_x_files/figure-html/ks-three-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+---
+class: middle
+
+.content-box-green[**How**]
+    
+We can create an inset map using `ggplotGrob()` and `annotation_custom()`.
+
+Here are the steps:
+
+1. create a map of the area of interest and turn it into a `grob` object using `ggplotGrob()`
+
+2. create a map of the region that includes the area of interest and turn it into a `grob` object using `ggplotGrob()`
+
+3. combine the two using `annotation_custom()`
+
+
+---
+class: middle
+
+.content-box-green[**Step 1**]
+
+Create a map of the area of interest and turn it into a `grob` object using `ggplotGrob()`
+
+
+
+```r
+#--- convert the ggplot into a grob ---#
+# g_three_counties was made two slides back
+grob_aoi &lt;- ggplotGrob(g_three_counties)
+
+#--- check the class ---#
+class(grob_aoi)
+```
+
+```
+## [1] "gtable" "gTree"  "grob"   "gDesc"
+```
+
+---
+class: middle
+
+.content-box-green[**Step 2**]
+
+Create a map of the region that includes the area of interest and turn it into a `grob` object using `ggplotGrob()`
+
+
+```r
+#--- create a map of Kansas ---#
+g_region &lt;- ggplot() +
+  geom_sf(data = KS_county) +
+  geom_sf(data = three_counties, fill = "blue", color = "red", alpha = 0.5) +
+  theme_void()
+
+#--- convert to a grob ---#
+grob_region &lt;- ggplotGrob(g_region)
+```
+
+---
+class: middle
+
+.content-box-green[**Step 3**]
+
+Combine the two using `annotation_custom()`   
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+.left5[
+
+The first task is to initiate a `ggplot` with `coord_equal()` as follows:
+
+
+```r
+(
+g_inset &lt;- ggplot() +
+  coord_equal(
+    xlim = c(0, 1), 
+    ylim = c(0, 1), 
+    expand = FALSE
+  )
+)
+```
+
+You now have a blank canvas to put the images on.
+]
+
+.right5[
+&lt;img src="r_as_GIS_map_x_files/figure-html/combine-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+class: middle
+
+.content-box-green[**Step 3**]
+
+Combine the two using `annotation_custom()`   
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+.left5[
+
+Let's add a layer to the canvas with `annotation_custom()` in which you provide the `grob` object (a map) and specify the range of the canvas the map occupies.
+
+
+```r
+g_inset +
+  annotation_custom(
+    grob_aoi, 
+    xmin = 0, 
+    xmax = 0.8, 
+    ymin = 0,
+    ymax = 1
+  )
+```
+]
+
+.right5[
+&lt;img src="r_as_GIS_map_x_files/figure-html/combine-2-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+class: middle
+
+.content-box-green[**Step 3**]
+
+Combine the two using `annotation_custom()`   
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+.left5[
+
+Similarly, we can add `grob_region` using `annotation_custom()`. Let's put it at the right lower corner of the map.
+
+
+```r
+g_inset +
+  annotation_custom(
+    grob_aoi, # area of interest
+    xmin = 0, 
+    xmax = 0.8, 
+    ymin = 0,
+    ymax = 1
+  ) +
+  annotation_custom(
+    grob_region, 
+    xmin = 0.6, 
+    xmax = 1, 
+    ymin = 0,
+    ymax = 0.3
+  )
+```
+]
+
+.right5[
+&lt;img src="r_as_GIS_map_x_files/figure-html/combine-3-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+class: middle
+
+.content-box-green[**Step 3**]
+
+Combine the two using `annotation_custom()`   
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
+
+.left5[
+
+Note that the resulting map still has the default theme because it does not inherit the theme of maps added by `annotation_custom()`. So, you can add `theme_void()` to the map to make the border disappear.
+
+
+```r
+g_inset +
+  annotation_custom(
+    grob_aoi, # area of interest
+    xmin = 0, 
+    xmax = 0.8, 
+    ymin = 0,
+    ymax = 1
+  ) +
+  annotation_custom(
+    grob_region, 
+    xmin = 0.6, 
+    xmax = 1, 
+    ymin = 0,
+    ymax = 0.3
+  ) +
+* theme_void()
+```
+]
+
+.right5[
+&lt;img src="r_as_GIS_map_x_files/figure-html/combine-4-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+]
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

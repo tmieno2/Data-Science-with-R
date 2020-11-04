@@ -877,3 +877,4 @@ class: middle
 
 + Make the task for each core large to the extent that allows you to fit the parallelized processes in your RAM memory
 
+
