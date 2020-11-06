@@ -8,10 +8,11 @@ output:
     lib_dir: libs
     nature:
       ratio: 16:10
-      highlightStyle: monokai
+      highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
 ---
+class: middle
 
 ```{r, child = './../setup.Rmd'}
 ```
@@ -22,39 +23,34 @@ suppressMessages(library(extrafont))
 suppressMessages(library(patchwork))
 ```
 
-# Before you start
+# Learning objectives
 
-## Learning objectives
-
-Learn how to use a combination of packages to generate articles in WORD 
-
-## Table of contents
-
-1. [`ggplot2` basics](#ggplot2-basics)
-2. [Different types of figures](#dif-geoms)
-3. [Placing more information in one figure](#more-info)
+Learn how to use a combination of R packages to generate (mostly) publication-ready articles in WORD 
 
 <br>
 
 <span style="color:red"> Tips: </span>hitting letter "o" key will give you a panel view of the slides
 
 ---
+class: middle
 
 .content-box-green[**How**]
 
-+ Write on an Rmarkdown file and knit to a WORD file
++ Write on an Rmarkdown file and knit to a WORD file (the focus of this lecture)
 
-+ Do final formatting jobs on the output WORD file
++ Do final formatting jobs on the output WORD file (not discussed here)
 
---
+---
+class: middle
 
 .content-box-green[**Key components**]
 
-+ include (run) R codes to run analysis  
++ include (run) R codes to
+  * run statistical or modeling analysis  
+  * create figures (e.g., the `ggplot2` package)
+  * create tables (e.g., the `modelsummary` and `flextable` packages)
 
-+ use the `modelsummary` and `flextable` packages to write tables
-
-+ use the `ggplot2` package to create figures
++ refer to the R objects generated (data, tables, figures) to place them in the output WORD file 
 
 + cross-reference tables and figures
 
@@ -62,16 +58,12 @@ Learn how to use a combination of packages to generate articles in WORD
 
 + use Latex math syntax to write equations 
 
---
+---
+class: middle
 
 .content-box-green[**Key challenges**]
 
-+ you can do only so much about formatting the output WORD file
-  * cannot have page breaks
-  * a bit of a hassle to adjust page margins  
-  * etc
-
-+ it is impossible to include track changes (but you can compare two documents to see the differences easily) 
+It is impossible to include track changes (but you can compare two documents to see the differences easily) 
 
 ---
 class: middle
@@ -85,15 +77,24 @@ In the YAML header, you can add
 + `date`
 + `abstract`
 
---
+.content-box-green[**Direction**]
 
-This is also where you can specify 
+Take a look at the entries in the YAML header in sample_to_word.Rmd and check how they appear on sample_to_word.docx 
 
-+ `output` 
-  * reference style docx file
-+ `bibliography` 
+---
+class: middle
 
-We will talk about this later.
++ In the YAML header,
+
+```{r eval = F}
+output:
+  bookdown::word_document2: 
+```
+
+directs R to knit an Rmd file to a WORD file using `bookdown::word_document2` building process.
+
++ `bookdown::word_document2` is used instead of `word_document:` as it allows us to easily cross-reference tables and figure. 
+
 
 ---
 class: middle
@@ -114,11 +115,11 @@ output:
 
 .content-box-green[**Direction**]
 
++ See the style of "sample_to_word.dcox"
+
 + Open "word-style.docx" and confirm the style of the file
 
-+ Remove `reference_docx: word-style.docx` from the YAML header, knit to a WORD file and check the style
-
-+ Add back `reference_docx: word-style.docx` to the YAML header, knit to a WORD file and check the style
++ Uncomment `reference_docx: word-style.docx` to the YAML header, knit to a WORD file, and check the style of "sample_to_word.dcox"
 
 ---
 class: middle
@@ -129,16 +130,59 @@ You can change the style in WORD and save the changes. Then, the style change wi
 include_graphics("style-change.png") 
 ```
 
+See [here](https://bookdown.org/yihui/rmarkdown-cookbook/word-template.html) for more on how to create a WORD style template. 
+
 ---
 class: middle
 
-# Citations and References
+# Formatting tips 
+
+.content-box-green[**Line break**]
+
+````markdown
+<br>
+````
+
+Make sure you have empty space above and below `<br>` (see the bottom entry of [this page](https://stackoverflow.com/questions/43239868/add-blank-line-to-word-output-rmarkdown)).
+
+.content-box-green[**Direction**]
+
+See the Materials and Methods section of the Rmd and its output WORD files.
+
+---
+class: middle
+
+.content-box-green[**Page break (hacky)**]
+
++ Use `#####` to create a page break. 
+
++ This is only possible because I have configured the `word-style.docx` so that `#####` create a line break
+
++ See [here](https://datascienceplus.com/r-markdown-how-to-insert-page-breaks-in-a-ms-word-document/) if you want to create your own syntax to generate a page break on your own reference style docx file. (just build on the word-style.docx file I provided if you do not want to bother to do it)
+
++ Note that this method will leave the texts after `#####` in white (that's why you cannot see the texts) 
+
+--
+
+.content-box-green[**Direction**]
+
++ Check just above the Materials and Methods section in the Rmd file and confirm that
+
++ Confirm that a page break indeed happened right before the Materials and Methods section
+
+
+---
+class: middle
+
+# Add Citations and References
 
 .content-box-green[**How**]
 
-+ Create a reference file (here, "bibliographi.bib")
++ Create a reference file (here, "bibliography.bib")
 
 + Add the following to the YAML header
+
++ Add `<div id="refs"></div>` in the Reference section
 
 ````markdown
 bibliography: bibliographi.bib
@@ -154,9 +198,59 @@ bibliography: bibliographi.bib
 
 + use `[-@reference_name]` to print just year
 
+---
+class: middle
+
+Other bibliography systems can be used:
+
+```{r echo = F}
+data.frame(
+  format = c("CSL-JSON","MODS","BibLaTeX","BibTeX","RIS","EndNote","EndNote XML","ISI","MEDLINE","Copac"),
+  extension = c(".json", ".mods", ".bib", ".bibtex", ".ris", ".enl", ".xml", ".wos", ".medline", ".copac")
+) %>% 
+flextable() %>% 
+fontsize(size = 18, part = "all") %>% 
+autofit()
+```
+
+---
+class: middle
+
 .content-box-green[**Direction**]
 
-See the Introduction section in the sample word file.
+See the Introduction and Reference sections in the sample RMD file and its output WORD file.
+
+---
+class: middle
+
+# Citation and Reference Style 
+
+You can change the citation and reference style using [Citation Style Language](https://citationstyles.org/).
+
+--
+
+.content-box-green[**How**]
+
++ Obtain the csl file you would like to use from the [Zotero citation style repository](https://www.zotero.org/styles).
+
++ Place the following in the YAML header (see the YAML header of sample_to_word.Rmd for an example):
+
+```{r eval = F}
+csl: csl file name 
+```
+
++ Then, when knitted, citations and references styles reflect what the style specified by the csl file  
+
+---
+class: middle
+
+.content-box-green[**Direction**]
+
++ Check the current citation and reference style of sample_to_word.docx
+
++ uncomment `# csl: agronomy.csl` in the YAML header 
+
++ knit and confirm the changes in the citation and reference styles
 
 ---
 class: middle
@@ -168,6 +262,78 @@ class: middle
 + Create a table using the `flextable` package (this is not the only option) 
 
 + Add an R code chunk like this:
+  * `table_ft` is a `flextable` object.
+  * `table-name` is the chunk name
+
+````markdown
+`r ''````{r table-name}
+  table_ft
+```
+````
+
++ Use `\@ref(tab:table-name)` in the rmarkdown file to cross-reference the table (table numbering in the output WORD file is automatic)
+
+---
+class: middle
+
+.content-box-green[**Direction**]
+
+See the Table section in "sample_to_word.Rmd" and its output WORD file. 
+
+---
+class: middle
+
+# Figures
+
+.content-box-green[**How**]
+
++ Create a figure using the `ggplot2` package (this is not the only option) 
+
++ Add an R code chunk like this:
+  * `figure_g` is a `ggplot2` object.
+  * `figure-name` is the chunk name
+  * `fig.cap = "caption"` adds `caption` as the caption of the figure 
+
+````markdown
+`r ''````{r figure-name, fig.cap = "caption"}
+  figure_g 
+```
+````
+
++ Use `\@ref(fig:figure-name)` in the rmarkdown file to cross-reference the figure (figure numbering in the output WORD file is automatic)
+
+---
+class: middle
+
+.content-box-green[**Direction**]
+
+See the Figure section in "sample_to_word.Rmd" and its output WORD file. 
+
+---
+class: middle
+
+# Mathematical equations
+
+You can use Latex math syntax to write mathematical equations.
+
+.content-box-green[**Example**]
+
+````markdown
+$Y_z = f_z(S) + g_z(N) + h_z(X,Y) + \varepsilon_z$
+````
+
+$Y_z = f_z(S) + g_z(N) + h_z(X,Y) + \varepsilon_z$
+
+.content-box-green[**Caveat**]
+
++ Math in rmarkdown is limited compared to Latex. In particular, aligning equations has to done manually.   
+
++ Use the following to create white space
+  * `\quad`: space equal to the current font size 
+  * `\,`: 3/18 of \quad 
+  * `\:`: 4/18 of \quad 
+  * `\;`:5/18 of \quad 
+  * `\qquad`: twice of \quad (= 36 mu) 
 
 
 

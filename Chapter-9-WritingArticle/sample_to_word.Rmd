@@ -8,13 +8,11 @@ output:
   bookdown::word_document2:
     reference_docx: word-style.docx 
 bibliography: bibliography.bib
+# csl: agronomy.csl
 ---
 
 ```{r echo = F}
 library(knitr)
-
-# === set wd ===#
-# Notes: not really necessary to set the working directory as long as this Rmd file is part of an R project and the evaluation directory was set to "Project".
 
 opts_knit$set(root.dir = "/Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-9-WritingArticle")
 
@@ -32,11 +30,12 @@ opts_chunk$set(
 ```
 
 ```{r eval = F}
+# This is purely for 
+
 setwd("/Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-9-WritingArticle")
 ```
 
-```{r }
-# === packages ===#
+```{r packages}
 library(sf)
 library(RColorBrewer)
 library(patchwork)
@@ -46,14 +45,17 @@ library(flextable)
 library(officer)
 library(modelsummary)
 library(tidyverse)
-
-#--- source functions ---#
-source("./Codes/parameters.R")
 ```
 
-# Keywords: 
-
-site-specific input management, nitrogen rate, seed rate, on-farm randomized field trial, shape-constrained generalized additive modeling, economically optimal input rates
+```{r data-preparation}
+#--- read the regression data ---#
+reg_data <- readRDS("reg_data.rds") %>%
+  .[, Zone := case_when(
+    tgt_comb == "36-124" ~ "Zone 3",
+    tgt_comb == "34-134" ~ "Zone 2",
+  )] %>%
+  filter(!is.na(Zone))
+```
 
 # Introduction 
 
@@ -67,17 +69,25 @@ bluh bluh [@shrader1966estimation; @adrian2005producers]
 
 bluh bluh [-@shrader1966estimation] 
 
+##### page break (you cannot see this text on the output WORD file)
 
 # Materials and Methods
 
+This line break does not work:
+<br>
+See?
+
+This line break does work:
+
+<br>
+
+See?
+
+## Data
+
 ```{r summary_statistics}
 #--- number of observations by zone ---#
-num_obs <- readRDS("reg_data.rds") %>%
-  .[, Zone := case_when(
-    tgt_comb == "36-124" ~ "Zone 3",
-    tgt_comb == "34-134" ~ "Zone 2",
-  )] %>%
-  filter(!is.na(Zone)) %>% 
+num_obs <- reg_data %>% 
   group_by(Zone) %>% 
   summarize(n = n())
 
@@ -89,25 +99,39 @@ The number of observations are `r num_obs_z2` and `r num_obs_z3` for Zones 2 and
 
 Table \@ref(tab:table-1) presents summary statistics by zone.
 
-## Experimental Design and Data Collection
-
-bluh bluh
-
-## Econometric and Economic Methods
+## Statistical Model
 
 Here is the statistical model to estimate:
 
-$Y_z = f_z(S) + g_z(N) + h_z(X,Y) + \varepsilon_z$,
+$Y_z = f_z(S) + g_z(N) + h_z(X,Y) + \varepsilon_z$
+
+$\,\,\,= f_z(S) + g_z(N) + h_z(X,Y) + \varepsilon_z$
+
+$\quad\, = f_z(S) + g_z(N) + h_z(X,Y) + \varepsilon_z$
 
 # Results and Discussions
 
 Table \@ref(tab:table-1) presents the regression results.
+
+Figure \@ref(fig:figure-1) presents the distribution of yields by zone.
 
 # Conclusions
 
 bluh bluh
 
 # Figures 
+
+```{r fig-1, fig.cap = "The Distribution of Yield by Zone"}
+ggplot() +
+  geom_density(
+    data = reg_data,
+    aes(
+      x = Yield, 
+      fill = Zone,
+      alpha = 0.3
+    )
+  )
+```
 
 # Tables
 
@@ -120,12 +144,7 @@ get_N <- function(x) {
 }
 
 #--- create a summary table by zone ---#
-summary_table <- readRDS("reg_data.rds") %>%
-  .[, Zone := case_when(
-    tgt_comb == "36-124" ~ "Zone 3",
-    tgt_comb == "34-134" ~ "Zone 2",
-  )] %>%
-  .[!is.na(Zone), ] %>%
+summary_table <- reg_data %>%
   datasummary(
     Zone * (
       (`Yield (kg/ha)` = Yield) +
