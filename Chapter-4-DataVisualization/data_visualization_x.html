@@ -121,7 +121,6 @@ class: center, middle, inverse, title-slide
 
 .left-full {
   width: 80%;
-  height: 92%;
   float: left;
 }
 
@@ -137,14 +136,26 @@ class: center, middle, inverse, title-slide
   padding-left: 1%;
 }
 
+.left6 {
+  width: 60%;
+  height: 92%;
+  float: left;
+}
+
 .left5 {
   width: 49%;
-  height: 92%;
+  &lt;!-- height: 92%; --&gt;
   float: left;
 }
 
 .right5 {
   width: 49%;
+  float: right;
+  padding-left: 1%;
+}
+
+.right4 {
+  width: 39%;
   float: right;
   padding-left: 1%;
 }
@@ -163,7 +174,6 @@ class: center, middle, inverse, title-slide
 
 .left4 {
   width: 38%;
-  height: 92%;
   float: left;
 }
 
@@ -372,7 +382,7 @@ The objectives of this chapter is to learn how to use the `ggplot2` package to c
 
 ---
 
-#  `ggplot2` package
+# `ggplot2` package
 
 .left-full[
 
@@ -412,7 +422,7 @@ Go [here](https://www.dropbox.com/sh/63rlp4ydmyjm1ui/AACYSeN0f_WAgKPQKzgpGVe0a?d
 
 ```r
 county_yield &lt;- readRDS("county_yield.rds") %&gt;% 
-  select(soy_yield, corn_yield, year, county_code, state_name, d0_5_9, d1_5_9, d2_5_9, d3_5_9, d4_5_9) %&gt;% 
+  dplyr::select(soy_yield, corn_yield, year, county_code, state_name, d0_5_9, d1_5_9, d2_5_9, d3_5_9, d4_5_9) %&gt;% 
     filter(state_name %in% c("Nebraska", "Kansas", "Colorado"))
 ```
   ]
@@ -459,7 +469,6 @@ county_yield &lt;- readRDS("county_yield.rds") %&gt;%
 + `d4_5_9`: ~ drought severity of 4 from May to September   
   ]
 ]
-
 
 &lt;!-- 
 #=========================================
@@ -3329,13 +3338,15 @@ ggplot() +
 # Make your figures presentable to others    
 #=========================================
 --&gt;
+
+text.html.markdown.rmarkdown meta.block-level.markdown markup.heading.1.markdown 
   
 ---
 
 class: inverse, center, middle
 name: fine-tune
 
-# Make your figures presentable to others
+# Make your figures presentable to others 
 
 &lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#EB811B' size=1px width=1000px&gt;&lt;/html&gt;
 
@@ -3451,7 +3462,7 @@ Altered
 
 ---
 
-# Axes content  
+# Axes content
 
 .panelset[ 
 
@@ -3953,7 +3964,6 @@ It makes the specified component disappear.
   ]
 
 ]
-
 
 ---
 
@@ -4617,7 +4627,7 @@ You can use `fonttable()` to see the list of fonts available:
 
 ```r
 fonttable() %&gt;% 
-  select(FontName, Bold,  Italic) %&gt;% 
+  dplyr::select(FontName, Bold,  Italic) %&gt;% 
   head(20)  
 ```
 
@@ -5090,7 +5100,75 @@ ggplot(data = county_yield_s_b2010) +
 
 ]
 
+---
+
+# Set continuous color scale manually 
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.left-full[
+
+
+.content-box-green[**How**]
+
+You can use `scale_*_gradientn()` to create your own continuous color scale. 
+
+.content-box-green[**Syntax**]
+
+
+```r
+`scale_*_gradientn(colors, values)`
+```
+    
++ `colors`: a vector of colors 
++ `values`: a vector of numeric numbers ranging from 0 to 1
++ `limits`: define the lower and upper bounds of the scale bar
+
+`n`th value of `colors` is used for the interval defined by `n`th and `n+1`th values in `values`.
+
+]
  
+  ]
+
+.panel[.panel-name[Example]
+
+.left4[
+
+Create a figure:
+
+
+```r
+ggplot(data = county_yield) + 
+  geom_point(
+    aes(
+      x = d1_5_9, 
+      y = corn_yield,
+      color = corn_yield
+    ),
+    size = 0.3
+  ) +
+  scale_color_gradientn(
+    colors = c("red", "orange", "green", "blue"),
+    values = c(0, 0.1, 0.2, 0.9, 1),
+    limits = c(100, 250)
+  ) 
+```
+
+In this example, green is dominant in the color bar because the interval [0.2, 0.9] is for `"green"` in `colors`, where the interval represents [130, 235] 
+([100 + (250-100)\times 0.2, 100 + (250-100)\times 0.9]).
+
+]
+
+.right6[
+&lt;img src="data_visualization_x_files/figure-html/manu-gradient-f-1.png" width="90%" style="display: block; margin: auto;" /&gt;
+]
+
+  ]
+
+]
+
 
 ---
 
@@ -5916,7 +5994,7 @@ rpie = 1  # pie radius
 rlabel = 0.6 * rpie  # radius of the labels
 
 county_yield %&gt;%
-* select(state_name, corn_yield)
+* dplyr::select(state_name, corn_yield)
 ```
 ]
  
@@ -5950,7 +6028,7 @@ rpie = 1  # pie radius
 rlabel = 0.6 * rpie  # radius of the labels
 
 county_yield %&gt;%
-  select(state_name, corn_yield) %&gt;%
+  dplyr::select(state_name, corn_yield) %&gt;%
 * group_by(state_name)
 ```
 ]
@@ -5988,7 +6066,7 @@ rpie = 1  # pie radius
 rlabel = 0.6 * rpie  # radius of the labels
 
 county_yield %&gt;%
-  select(state_name, corn_yield) %&gt;%
+  dplyr::select(state_name, corn_yield) %&gt;%
   group_by(state_name) %&gt;%
 * summarize(yield = mean(corn_yield, na.rm = T))
 ```
@@ -6018,7 +6096,7 @@ rpie = 1  # pie radius
 rlabel = 0.6 * rpie  # radius of the labels
 
 county_yield %&gt;%
-  select(state_name, corn_yield) %&gt;%
+  dplyr::select(state_name, corn_yield) %&gt;%
   group_by(state_name) %&gt;%
   summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
 * mutate(yield_ratio = yield/sum(yield))
@@ -6049,7 +6127,7 @@ rpie = 1  # pie radius
 rlabel = 0.6 * rpie  # radius of the labels
 
 county_yield %&gt;%
-  select(state_name, corn_yield) %&gt;%
+  dplyr::select(state_name, corn_yield) %&gt;%
   group_by(state_name) %&gt;%
   summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
   mutate(yield_ratio = yield/sum(yield)) %&gt;%
@@ -6085,7 +6163,7 @@ rpie = 1  # pie radius
 rlabel = 0.6 * rpie  # radius of the labels
 
 county_yield %&gt;%
-  select(state_name, corn_yield) %&gt;%
+  dplyr::select(state_name, corn_yield) %&gt;%
   group_by(state_name) %&gt;%
   summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
   mutate(yield_ratio = yield/sum(yield)) %&gt;%
@@ -6114,7 +6192,7 @@ rpie = 1  # pie radius
 rlabel = 0.6 * rpie  # radius of the labels
 
 county_yield %&gt;%
-  select(state_name, corn_yield) %&gt;%
+  dplyr::select(state_name, corn_yield) %&gt;%
   group_by(state_name) %&gt;%
   summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
   mutate(yield_ratio = yield/sum(yield)) %&gt;%
@@ -6150,7 +6228,7 @@ rpie = 1  # pie radius
 rlabel = 0.6 * rpie  # radius of the labels
 
 county_yield %&gt;%
-  select(state_name, corn_yield) %&gt;%
+  dplyr::select(state_name, corn_yield) %&gt;%
   group_by(state_name) %&gt;%
   summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
   mutate(yield_ratio = yield/sum(yield)) %&gt;%
@@ -6193,7 +6271,7 @@ rpie = 1  # pie radius
 rlabel = 0.6 * rpie  # radius of the labels
 
 county_yield %&gt;%
-  select(state_name, corn_yield) %&gt;%
+  dplyr::select(state_name, corn_yield) %&gt;%
   group_by(state_name) %&gt;%
   summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
   mutate(yield_ratio = yield/sum(yield)) %&gt;%
@@ -6237,7 +6315,7 @@ rpie = 1  # pie radius
 rlabel = 0.6 * rpie  # radius of the labels
 
 county_yield %&gt;%
-  select(state_name, corn_yield) %&gt;%
+  dplyr::select(state_name, corn_yield) %&gt;%
   group_by(state_name) %&gt;%
   summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
   mutate(yield_ratio = yield/sum(yield)) %&gt;%
@@ -6282,7 +6360,7 @@ rpie = 1  # pie radius
 rlabel = 0.6 * rpie  # radius of the labels
 
 county_yield %&gt;%
-  select(state_name, corn_yield) %&gt;%
+  dplyr::select(state_name, corn_yield) %&gt;%
   group_by(state_name) %&gt;%
   summarize(yield = mean(corn_yield, na.rm = T)) %&gt;%
   mutate(yield_ratio = yield/sum(yield)) %&gt;%
@@ -6390,8 +6468,8 @@ library(ggcorrplot)
 ```r
 weather %&gt;% 
   na.omit() %&gt;% 
-  select(where(is.numeric)) %&gt;% 
-  select(- year) %&gt;% 
+  dplyr::select(where(is.numeric)) %&gt;% 
+  dplyr::select(- year) %&gt;% 
   cor() %&gt;% # create a cor matrix
   #--- create a cor plot ---#
   ggcorrplot(., 
@@ -7993,7 +8071,7 @@ gene_data &lt;- readRDS("gene.rds")
 
 .right5[
 
-&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-67-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="data_visualization_x_files/figure-html/unnamed-chunk-68-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 
 ]
 

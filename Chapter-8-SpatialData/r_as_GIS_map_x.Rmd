@@ -1595,7 +1595,20 @@ class: middle
 rgb_rs <- stack(blue, green, red)
 
 #--- create a map ---#
-ggRGB(rgb_rs)
+ggRGB(rgb_rs, 
+  stretch = "sqrt", 
+  limits = matrix(
+    c(0, 0.0, 0, 0.25, 0.25, 0.25), 
+    ncol = 2
+  )
+) +
+theme_void()
+```
+
+```{r echo = F, eval = F}
+# library(tmap)
+# tm_shape(rgb_rs) +  
+#   tm_rgb(r = 3, g = 2, b =1)
 ```
 ]
 

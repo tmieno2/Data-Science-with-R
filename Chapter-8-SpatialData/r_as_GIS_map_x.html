@@ -2091,8 +2091,17 @@ class: middle
 rgb_rs &lt;- stack(blue, green, red)
 
 #--- create a map ---#
-ggRGB(rgb_rs)
+ggRGB(rgb_rs, 
+  stretch = "sqrt", 
+  limits = matrix(
+    c(0, 0.0, 0, 0.25, 0.25, 0.25), 
+    ncol = 2
+  )
+) +
+theme_void()
 ```
+
+
 ]
 
 .right6[
