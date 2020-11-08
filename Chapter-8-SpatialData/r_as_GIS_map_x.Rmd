@@ -17,10 +17,11 @@ output:
 ```{r, child = './../setup.Rmd'}
 ```
 
-```{r echo = F}
-knitr::opts_chunk$set(cache.lazy = FALSE)
+```{r echo = F, cache = F}
+opts_knit$set(
+  root.dir = "/Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-8-SpatialData"
+)
 ```
-
 
 ```{r, include = F, cache = F}
 suppressMessages(library(sf)) 
@@ -32,6 +33,7 @@ suppressMessages(library(tidyverse))
 suppressMessages(library(exactextractr))
 suppressMessages(library(raster))
 suppressMessages(library(ggspatial))
+suppressMessages(library(RStoolbox))
 ```
 
 # Before you start
@@ -115,7 +117,7 @@ class: middle
 .panel[.panel-name[points]
 
 ```{r results = "hide"}
-gw_KS_sf <- readRDS( "./Data/gw_KS_sf.rds") 
+gw_KS_sf <- readRDS("./Data/gw_KS_sf.rds") 
 ```
 
 .scroll-box-16[
@@ -910,7 +912,7 @@ To create a faceted (faceted by date) figure, you first make `tmax_Jan_09_df` lo
 
 .content-box-green[**Demonstration**]
 
-```{r faceted, eval = F}  
+```{r faceted-demo, eval = F}  
 #--- wide to long ---#
 tmax_long_df <- tmax_Jan_09_df %>%
 pivot_longer(
@@ -936,7 +938,7 @@ ggplot() +
 ]
 
 .right6[
-```{r faceted-f, ref.label = "faceted", echo = F}  
+```{r faceted-demo-f, ref.label = "faceted-demo", echo = F}  
 
 ```
 ]
@@ -1470,3 +1472,202 @@ g_inset +
 ```
 
 ]
+
+
+---
+class: middle
+
+# Create a map from three RGB layers  
+
+Suppose you have three raster layers for R (red), G (green), and B (blue).  
+
+You can use `ggRGB()` from the `RStoolbox` package to create a map with actual colors based on the three color composite layers. 
+
+```{r eval = F}
+library(RStoolbox)  
+```
+
+.content-box-green[**Data**]
+
+```{r get-three-layers, eval = F}
+blue <- raster("./Data/Annos_062718_RE_transparent_reflectance_blue.tif") %>% 
+  aggregate(10)
+
+red <- raster("./Data/Annos_062718_RE_transparent_reflectance_red.tif") %>% 
+  aggregate(10)
+
+green <- raster("./Data/Annos_062718_RE_transparent_reflectance_green.tif") %>% 
+  aggregate(10)
+```
+
+```{r echo = F}
+blue <- readRDS("./Data/blue.rds")
+red <- readRDS("./Data/red.rds")
+green <- readRDS("./Data/green.rds")
+```
+
+.content-box-green[**How**]
+
++ stack the three layers in the order of B, G, R (not a requirement, but makes things easier later)
+
++ use `ggRGB()` to create a map
+
+---
+class: middle
+
+.left5[
+```{r rgb-map, eval = F}  
+#--- stack ---#
+rgb_rs <- stack(blue, green, red)
+
+#--- create a map ---#
+ggRGB(rgb_rs)
+```
+]
+
+.right5[
+```{r rgb-map-f, ref.label = "rgb-map", echo = F}  
+
+```
+]
+
+
+---
+class: middle
+
+# Faceted and `patchwork`ed maps  
+
+There are two ways of creating a panel of maps:
+
++ `facet_grid()`: create multiple panels of maps at one time from a single dataset
++ `patchwork`: create individual maps and patch them together later
+
+While the `facet_grid()` approach will have a single color bar shared by the maps, the `patchwork` approach clearly allows for individual color bars for the maps. 
+
+---
+class: middle
+
+
+.content-box-green[**Goal**]
+
+Create a map of NDRE at three different dates
+
+.content-box-green[**Datesets**]
+
+```{r eval = F, echo = T}
+ndre_080319 <- raster("./Data/Preston_2019_Rate_Blocks_3-AUG-2019_ndre_raw.tif") %>% 
+  aggregate(10) %>% 
+  as.data.frame(xy = TRUE) %>% 
+  setnames(names(.)[3], "value") %>% 
+  mutate(date = as.Date("2019-08-03"))
+
+ndre_081319 <- raster("./Data/Preston_2019_Rate_Blocks_13-AUG-2019_ndre_raw.tif") %>% 
+  aggregate(10) %>% 
+  as.data.frame(xy = TRUE) %>% 
+  setnames(names(.)[3], "value") %>% 
+  mutate(date = as.Date("2019-08-13"))
+
+ndre_072019 <- raster("./Data/Preston_2019_Rate_Blocks_20-JUL-2019_ndre_raw.tif") %>% 
+  aggregate(10) %>% 
+  as.data.frame(xy = TRUE) %>% 
+  setnames(names(.)[3], "value") %>% 
+  mutate(date = as.Date("2019-07-20"))
+
+#--- combine all the datasets ---#
+ndre_all <- rbind(ndre_080319, ndre_081319, ndre_072019)
+```
+
+```{r echo = F}
+# saveRDS(ndre_080319, "ndre_080319.rds") 
+# saveRDS(ndre_081319, "ndre_081319.rds") 
+# saveRDS(ndre_072019, "ndre_072019.rds") 
+
+ndre_080319 <- readRDS("ndre_080319.rds") 
+ndre_081319 <- readRDS("ndre_081319.rds") 
+ndre_072019 <- readRDS("ndre_072019.rds") 
+
+ndre_all <- rbind(ndre_080319, ndre_081319, ndre_072019)
+```
+
+---
+class: middle
+
+
+.left4[
+
+<br>
+<br>
+<br>
+<br>
+
+.content-box-green[**faceted (shared scale bar)**]
+
+```{r faceted, eval = F}  
+ggplot() +
+  geom_raster(
+    data = ndre_all, 
+    aes(x = x, y = y, fill = value)
+  ) +
+  facet_wrap(date ~ .) +
+  coord_equal() +
+  scale_fill_viridis_c() +
+  theme_void()
+```
+]
+
+.right6[
+```{r faceted-f, ref.label = "faceted", echo = F}  
+
+```
+]
+
+
+---
+class: middle
+
+.content-box-green[**patchwork (independent scale bar)**]
+
+.left4[
+```{r patched, eval = F}  
+g_ndre_080319 <- ggplot() +
+  geom_raster(
+    data = ndre_080319, 
+    aes(x = x, y = y, fill = value)
+  ) +
+  coord_equal() +
+  scale_fill_viridis_c() +
+  theme_void()
+
+g_ndre_081319 <- ggplot() +
+  geom_raster(
+    data = ndre_081319, 
+    aes(x = x, y = y, fill = value)
+  ) +
+  coord_equal() +
+  scale_fill_viridis_c() +
+  theme_void()
+
+g_ndre_072019 <- ggplot() +
+  geom_raster(
+    data = ndre_072019, 
+    aes(x = x, y = y, fill = value)
+  ) +
+  coord_equal() +
+  scale_fill_viridis_c() +
+  theme_void()
+
+g_ndre_072019 | g_ndre_080319 | g_ndre_081319 
+```
+]
+
+.right6[
+```{r patched-f, ref.label = "patched", echo = F}  
+
+```
+]
+
+
+
+
+
+

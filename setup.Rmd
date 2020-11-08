@@ -6,7 +6,7 @@ options(knitr.duplicate.label = "allow")
 
 opts_chunk$set(
   fig.align = "center", 
-  fig.retina = 5,
+  fig.retina = 6,
   fig.dim = c(4, 3.5), 
   out.width = "100%", 
   warning = F, 
@@ -17,9 +17,6 @@ opts_chunk$set(
   )
 
 # setwd("~/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-4-DataVisualization") 
-
-library(flipbookr)
-library(flair)
 ```
 
 ```{r xaringanExtra, echo=FALSE, cache = F}
@@ -53,6 +50,8 @@ suppressMessages(library(ggthemes))
 suppressMessages(library(RColorBrewer))
 suppressMessages(library(parallel))
 suppressMessages(library(tidyverse))
+suppressMessages(library(flipbookr))
+suppressMessages(library(flair))
 ````
 
 ```{css css-setup, echo = F}

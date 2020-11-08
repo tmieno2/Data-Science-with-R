@@ -359,7 +359,6 @@ slides &gt; slide {
 
 
 
-
 # Before you start
 
 ## Learning objectives
@@ -443,7 +442,7 @@ class: middle
 
 
 ```r
-gw_KS_sf &lt;- readRDS( "./Data/gw_KS_sf.rds") 
+gw_KS_sf &lt;- readRDS("./Data/gw_KS_sf.rds") 
 ```
 
 .scroll-box-16[
@@ -455,17 +454,28 @@ gw_KS_sf &lt;- readRDS( "./Data/gw_KS_sf.rds")
 ## bbox:           xmin: -102.0495 ymin: 36.99561 xmax: -94.70746 ymax: 40.00191
 ## geographic CRS: NAD83
 ## First 10 features:
-##    well_id year   af_used                   geometry
-## 1        1 2010  67.00000 POINT (-100.4423 37.52046)
-## 2        1 2011 171.00000 POINT (-100.4423 37.52046)
-## 3        3 2010  30.93438 POINT (-100.7118 39.91526)
-## 4        3 2011  12.00000 POINT (-100.7118 39.91526)
-## 5        7 2010   0.00000 POINT (-101.8995 38.78077)
-## 6        7 2011   0.00000 POINT (-101.8995 38.78077)
-## 7       11 2010 154.00000 POINT (-101.7114 39.55035)
-## 8       11 2011 160.00000 POINT (-101.7114 39.55035)
-## 9       12 2010  28.17239 POINT (-95.97031 39.16121)
-## 10      12 2011  89.53479 POINT (-95.97031 39.16121)
+##    well_id year   af_used
+## 1        1 2010  67.00000
+## 2        1 2011 171.00000
+## 3        3 2010  30.93438
+## 4        3 2011  12.00000
+## 5        7 2010   0.00000
+## 6        7 2011   0.00000
+## 7       11 2010 154.00000
+## 8       11 2011 160.00000
+## 9       12 2010  28.17239
+## 10      12 2011  89.53479
+##                      geometry
+## 1  POINT (-100.4423 37.52046)
+## 2  POINT (-100.4423 37.52046)
+## 3  POINT (-100.7118 39.91526)
+## 4  POINT (-100.7118 39.91526)
+## 5  POINT (-101.8995 38.78077)
+## 6  POINT (-101.8995 38.78077)
+## 7  POINT (-101.7114 39.55035)
+## 8  POINT (-101.7114 39.55035)
+## 9  POINT (-95.97031 39.16121)
+## 10 POINT (-95.97031 39.16121)
 ```
 ]
   ]
@@ -490,17 +500,39 @@ KS_county &lt;- counties(state = "Kansas", cb = TRUE) %&gt;%
 ## bbox:           xmin: -102.0517 ymin: 36.99302 xmax: -94.58841 ymax: 40.00316
 ## geographic CRS: NAD83
 ## First 10 features:
-##     STATEFP COUNTYFP COUNTYNS       AFFGEOID GEOID         NAME LSAD      ALAND   AWATER
-## 98       20      053 00484996 0500000US20053 20053    Ellsworth   06 1853331063 19969761
-## 99       20      095 00485012 0500000US20095 20095      Kingman   06 2236100137  8536908
-## 100      20      135 00485031 0500000US20135 20135         Ness   06 2783562240   667491
-## 101      20      199 00485060 0500000US20199 20199      Wallace   06 2366348284   140936
-## 675      20      069 00485001 0500000US20069 20069         Gray   06 2250356170  1113338
-## 676      20      143 00485035 0500000US20143 20143       Ottawa   06 1866683176  1567629
-## 677      20      181 00485053 0500000US20181 20181      Sherman   06 2735193251   548248
-## 895      20      033 00484986 0500000US20033 20033     Comanche   06 2041681114  3604155
-## 896      20      149 00485038 0500000US20149 20149 Pottawatomie   06 2177623918 54032546
-## 937      20      083 00485006 0500000US20083 20083     Hodgeman   06 2227369150   826344
+##     STATEFP COUNTYFP COUNTYNS
+## 98       20      053 00484996
+## 99       20      095 00485012
+## 100      20      135 00485031
+## 101      20      199 00485060
+## 675      20      069 00485001
+## 676      20      143 00485035
+## 677      20      181 00485053
+## 895      20      033 00484986
+## 896      20      149 00485038
+## 937      20      083 00485006
+##           AFFGEOID GEOID         NAME LSAD
+## 98  0500000US20053 20053    Ellsworth   06
+## 99  0500000US20095 20095      Kingman   06
+## 100 0500000US20135 20135         Ness   06
+## 101 0500000US20199 20199      Wallace   06
+## 675 0500000US20069 20069         Gray   06
+## 676 0500000US20143 20143       Ottawa   06
+## 677 0500000US20181 20181      Sherman   06
+## 895 0500000US20033 20033     Comanche   06
+## 896 0500000US20149 20149 Pottawatomie   06
+## 937 0500000US20083 20083     Hodgeman   06
+##          ALAND   AWATER
+## 98  1853331063 19969761
+## 99  2236100137  8536908
+## 100 2783562240   667491
+## 101 2366348284   140936
+## 675 2250356170  1113338
+## 676 1866683176  1567629
+## 677 2735193251   548248
+## 895 2041681114  3604155
+## 896 2177623918 54032546
+## 937 2227369150   826344
 ##                           geometry
 ## 98  POLYGON ((-98.48554 38.7839...
 ## 99  POLYGON ((-98.46489 37.6453...
@@ -537,17 +569,39 @@ KS_railroads &lt;- st_read(dsn = "./Data/", layer = "tl_2015_us_rails") %&gt;%
 ## bbox:           xmin: -102.0517 ymin: 36.99302 xmax: -94.58841 ymax: 40.00316
 ## geographic CRS: NAD83
 ## First 10 features:
-##         LINEARID                         FULLNAME MTFCC                       geometry
-## 2124 11051038759                          Bnsf RR R1011 LINESTRING (-94.58841 39.15...
-## 2136 11051038771                          Bnsf RR R1011 LINESTRING (-94.59017 39.11...
-## 2141 11051038776                          Bnsf RR R1011 LINESTRING (-94.58841 39.15...
-## 2186 11051047374                   Rock Island RR R1011 LINESTRING (-94.58893 39.11...
-## 2240 11051048071  Burlington Northern Santa Fe RR R1011 LINESTRING (-94.58841 39.15...
-## 2252 11051048083  Burlington Northern Santa Fe RR R1011 LINESTRING (-94.59017 39.11...
-## 2256 11051048088  Burlington Northern Santa Fe RR R1011 LINESTRING (-94.58841 39.15...
-## 2271 11051048170 Chicago Burlington and Quincy RR R1011 LINESTRING (-94.58862 39.15...
-## 2272 11051048171 Chicago Burlington and Quincy RR R1011 LINESTRING (-94.58883 39.11...
-## 2293 11051048193 Chicago Burlington and Quincy RR R1011 LINESTRING (-94.58871 39.11...
+##         LINEARID
+## 2124 11051038759
+## 2136 11051038771
+## 2141 11051038776
+## 2186 11051047374
+## 2240 11051048071
+## 2252 11051048083
+## 2256 11051048088
+## 2271 11051048170
+## 2272 11051048171
+## 2293 11051048193
+##                              FULLNAME
+## 2124                          Bnsf RR
+## 2136                          Bnsf RR
+## 2141                          Bnsf RR
+## 2186                   Rock Island RR
+## 2240  Burlington Northern Santa Fe RR
+## 2252  Burlington Northern Santa Fe RR
+## 2256  Burlington Northern Santa Fe RR
+## 2271 Chicago Burlington and Quincy RR
+## 2272 Chicago Burlington and Quincy RR
+## 2293 Chicago Burlington and Quincy RR
+##      MTFCC                       geometry
+## 2124 R1011 LINESTRING (-94.58841 39.15...
+## 2136 R1011 LINESTRING (-94.59017 39.11...
+## 2141 R1011 LINESTRING (-94.58841 39.15...
+## 2186 R1011 LINESTRING (-94.58893 39.11...
+## 2240 R1011 LINESTRING (-94.58841 39.15...
+## 2252 R1011 LINESTRING (-94.59017 39.11...
+## 2256 R1011 LINESTRING (-94.58841 39.15...
+## 2271 R1011 LINESTRING (-94.58862 39.15...
+## 2272 R1011 LINESTRING (-94.58883 39.11...
+## 2293 R1011 LINESTRING (-94.58871 39.11...
 ```
 ]
   ] 
@@ -1248,13 +1302,27 @@ head(tmax_Jan_09_df)
 ```
 
 ```
-##               x        y 2009-01-01 2009-01-02 2009-01-03 2009-01-04 2009-01-05
-## 17578 -95.12500 49.41667    -12.863    -11.455    -17.516    -12.755    -26.446
-## 18982 -95.16667 49.37500    -12.698    -11.441    -17.436    -12.672    -25.889
-## 18983 -95.12500 49.37500    -12.921    -11.611    -17.589    -12.830    -26.544
-## 18984 -95.08333 49.37500    -13.074    -11.827    -17.684    -12.913    -26.535
-## 18985 -95.04167 49.37500    -13.591    -12.220    -17.920    -12.684    -25.780
-## 18986 -95.00000 49.37500    -13.688    -12.177    -17.911    -12.548    -25.424
+##               x        y 2009-01-01
+## 17578 -95.12500 49.41667    -12.863
+## 18982 -95.16667 49.37500    -12.698
+## 18983 -95.12500 49.37500    -12.921
+## 18984 -95.08333 49.37500    -13.074
+## 18985 -95.04167 49.37500    -13.591
+## 18986 -95.00000 49.37500    -13.688
+##       2009-01-02 2009-01-03 2009-01-04
+## 17578    -11.455    -17.516    -12.755
+## 18982    -11.441    -17.436    -12.672
+## 18983    -11.611    -17.589    -12.830
+## 18984    -11.827    -17.684    -12.913
+## 18985    -12.220    -17.920    -12.684
+## 18986    -12.177    -17.911    -12.548
+##       2009-01-05
+## 17578    -26.446
+## 18982    -25.889
+## 18983    -26.544
+## 18984    -26.535
+## 18985    -25.780
+## 18986    -25.424
 ```
 
 Notice that the data is in a wide format where tmax values for different dates are stored as separate columns. 
@@ -1341,7 +1409,7 @@ ggplot() +
 ]
 
 .right6[
-&lt;img src="r_as_GIS_map_x_files/figure-html/faceted-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+&lt;img src="r_as_GIS_map_x_files/figure-html/faceted-demo-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
 ---
@@ -1877,6 +1945,191 @@ g_inset +
 &lt;img src="r_as_GIS_map_x_files/figure-html/combine-4-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 
 ]
+
+
+---
+class: middle
+
+# Create a map from three RGB layers  
+
+Suppose you have three raster layers for R (red), G (green), and B (blue).  
+
+You can use `ggRGB()` from the `RStoolbox` package to create a map with actual colors based on the three color composite layers. 
+
+
+```r
+library(RStoolbox)  
+```
+
+.content-box-green[**Data**]
+
+
+```r
+blue &lt;- raster("./Data/Annos_062718_RE_transparent_reflectance_blue.tif") %&gt;% 
+  aggregate(10)
+
+red &lt;- raster("./Data/Annos_062718_RE_transparent_reflectance_red.tif") %&gt;% 
+  aggregate(10)
+
+green &lt;- raster("./Data/Annos_062718_RE_transparent_reflectance_green.tif") %&gt;% 
+  aggregate(10)
+```
+
+
+
+.content-box-green[**How**]
+
++ stack the three layers in the order of B, G, R (not a requirement, but makes things easier later)
+
++ use `ggRGB()` to create a map
+
+---
+class: middle
+
+.left5[
+
+```r
+#--- stack ---#
+rgb_rs &lt;- stack(blue, green, red)
+
+#--- create a map ---#
+ggRGB(rgb_rs)
+```
+]
+
+.right5[
+&lt;img src="r_as_GIS_map_x_files/figure-html/rgb-map-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+class: middle
+
+# Faceted and `patchwork`ed maps  
+
+There are two ways of creating a panel of maps:
+
++ `facet_grid()`: create multiple panels of maps at one time from a single dataset
++ `patchwork`: create individual maps and patch them together later
+
+While the `facet_grid()` approach will have a single color bar shared by the maps, the `patchwork` approach clearly allows for individual color bars for the maps. 
+
+---
+class: middle
+
+
+.content-box-green[**Goal**]
+
+Create a map of NDRE at three different dates
+
+.content-box-green[**Datesets**]
+
+
+```r
+ndre_080319 &lt;- raster("./Data/Preston_2019_Rate_Blocks_3-AUG-2019_ndre_raw.tif") %&gt;% 
+  aggregate(10) %&gt;% 
+  as.data.frame(xy = TRUE) %&gt;% 
+  setnames(names(.)[3], "value") %&gt;% 
+  mutate(date = as.Date("2019-08-03"))
+
+ndre_081319 &lt;- raster("./Data/Preston_2019_Rate_Blocks_13-AUG-2019_ndre_raw.tif") %&gt;% 
+  aggregate(10) %&gt;% 
+  as.data.frame(xy = TRUE) %&gt;% 
+  setnames(names(.)[3], "value") %&gt;% 
+  mutate(date = as.Date("2019-08-13"))
+
+ndre_072019 &lt;- raster("./Data/Preston_2019_Rate_Blocks_20-JUL-2019_ndre_raw.tif") %&gt;% 
+  aggregate(10) %&gt;% 
+  as.data.frame(xy = TRUE) %&gt;% 
+  setnames(names(.)[3], "value") %&gt;% 
+  mutate(date = as.Date("2019-07-20"))
+
+#--- combine all the datasets ---#
+ndre_all &lt;- rbind(ndre_080319, ndre_081319, ndre_072019)
+```
+
+
+
+---
+class: middle
+
+
+.left4[
+
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+&lt;br&gt;
+
+.content-box-green[**faceted (shared scale bar)**]
+
+
+```r
+ggplot() +
+  geom_raster(
+    data = ndre_all, 
+    aes(x = x, y = y, fill = value)
+  ) +
+  facet_wrap(date ~ .) +
+  coord_equal() +
+  scale_fill_viridis_c() +
+  theme_void()
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/faceted-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+---
+class: middle
+
+.content-box-green[**patchwork (independent scale bar)**]
+
+.left4[
+
+```r
+g_ndre_080319 &lt;- ggplot() +
+  geom_raster(
+    data = ndre_080319, 
+    aes(x = x, y = y, fill = value)
+  ) +
+  coord_equal() +
+  scale_fill_viridis_c() +
+  theme_void()
+
+g_ndre_081319 &lt;- ggplot() +
+  geom_raster(
+    data = ndre_081319, 
+    aes(x = x, y = y, fill = value)
+  ) +
+  coord_equal() +
+  scale_fill_viridis_c() +
+  theme_void()
+
+g_ndre_072019 &lt;- ggplot() +
+  geom_raster(
+    data = ndre_072019, 
+    aes(x = x, y = y, fill = value)
+  ) +
+  coord_equal() +
+  scale_fill_viridis_c() +
+  theme_void()
+
+g_ndre_072019 | g_ndre_080319 | g_ndre_081319 
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/patched-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
+
+
+
+
+
+
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

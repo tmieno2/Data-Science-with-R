@@ -105,6 +105,20 @@ tm_shape(drone_blue) +
     legend.outside = TRUE,
     frame = F
   )
+
+# temp <- aggregate(drone_blue, 10)
+
+# drone_df <- as.data.frame(temp, xy = TRUE) %>% 
+#   setnames(names(.)[3], "blue")
+# ggplot() +
+#   geom_raster(
+#     data = drone_df, 
+#     aes(
+#       x = x,
+#       y = y,
+#       fill = blue
+#     )
+#   )
 ```
 
 ---
