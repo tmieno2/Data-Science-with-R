@@ -1473,6 +1473,80 @@ g_inset +
 
 ]
 
+---
+class: middle
+
+# Too many cells  
+
+
+.content-box-green[**Problem**]
+
+R struggles to create a map from a raster layer that has many many cells. 
+
+.content-box-green[**Solution**]
+
+In such cases, you can aggregate multiple cells into a single cell so that the spatial resolution of the raster data becomes lower using the `raster::aggregate()` function. 
+
+---
+class: middle
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+raster::aggregate(Raster* object, fact = a number)  
+```
+
++ `fact`: aggregation factor expressed as number of cells in each direction (horizontally and vertically).  
+
++ For each of the new (aggregated) cells, the values of the original cells are averaged (mean). 
+
+---
+class: middle
+
+.content-box-green[**Raw Data**]
+  
+```{r read-ndre}
+(
+ndre_080319_rl <- raster("./Data/Preston_2019_Rate_Blocks_3-AUG-2019_ndre_raw.tif")
+)
+```
+
+.content-box-green[**aggregate**]
+
+```{r aggregate-raster}
+(
+ndre_080319_rl_ag <- raster::aggregate(ndre_080319_rl, fact = 10)  
+)
+```
+
+The aggregated raster layer has about 1/100 th of cells compared to the raw data.
+
+---
+class: middle
+
+.content-box-green[**Visualization**]
+
+.left4[
+```{r raster-ag-fig, eval = F}  
+ndre_080319_rl_ag %>% 
+  as.data.frame(xy = TRUE) %>% 
+  setnames(names(.)[3], "value") %>% 
+  ggplot(data = .) +
+    geom_raster(
+      aes(
+        x = x,
+        y = y,
+        fill = value
+      )
+    )
+```
+]
+
+.right6[
+```{r raster-ag-fig-f, ref.label = "raster-ag-fig", echo = F}  
+
+```
+]
 
 ---
 class: middle
@@ -1515,7 +1589,7 @@ green <- readRDS("./Data/green.rds")
 ---
 class: middle
 
-.left5[
+.left4[
 ```{r rgb-map, eval = F}  
 #--- stack ---#
 rgb_rs <- stack(blue, green, red)
@@ -1525,7 +1599,7 @@ ggRGB(rgb_rs)
 ```
 ]
 
-.right5[
+.right6[
 ```{r rgb-map-f, ref.label = "rgb-map", echo = F}  
 
 ```

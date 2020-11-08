@@ -1946,6 +1946,104 @@ g_inset +
 
 ]
 
+---
+class: middle
+
+# Too many cells  
+
+
+.content-box-green[**Problem**]
+
+R struggles to create a map from a raster layer that has many many cells. 
+
+.content-box-green[**Solution**]
+
+In such cases, you can aggregate multiple cells into a single cell so that the spatial resolution of the raster data becomes lower using the `raster::aggregate()` function. 
+
+---
+class: middle
+
+.content-box-green[**Syntax**]
+
+
+```r
+raster::aggregate(Raster* object, fact = a number)  
+```
+
++ `fact`: aggregation factor expressed as number of cells in each direction (horizontally and vertically).  
+
++ For each of the new (aggregated) cells, the values of the original cells are averaged (mean). 
+
+---
+class: middle
+
+.content-box-green[**Raw Data**]
+  
+
+```r
+(
+ndre_080319_rl &lt;- raster("./Data/Preston_2019_Rate_Blocks_3-AUG-2019_ndre_raw.tif")
+)
+```
+
+```
+## class      : RasterLayer 
+## dimensions : 10512, 9634, 101272608  (nrow, ncol, ncell)
+## resolution : 1.035239e-06, 7.957057e-07  (x, y)
+## extent     : -95.50802, -95.49805, 40.03576, 40.04413  (xmin, xmax, ymin, ymax)
+## crs        : +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
+## source     : /Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-8-SpatialData/Data/Preston_2019_Rate_Blocks_3-AUG-2019_ndre_raw.tif 
+## names      : Preston_2019_Rate_Blocks_3.AUG.2019_ndre_raw 
+## values     : -0.1223334, 0.8836586  (min, max)
+```
+
+.content-box-green[**aggregate**]
+
+
+```r
+(
+ndre_080319_rl_ag &lt;- raster::aggregate(ndre_080319_rl, fact = 10)  
+)
+```
+
+```
+## class      : RasterLayer 
+## dimensions : 1052, 964, 1014128  (nrow, ncol, ncell)
+## resolution : 1.035239e-05, 7.957057e-06  (x, y)
+## extent     : -95.50802, -95.49804, 40.03576, 40.04413  (xmin, xmax, ymin, ymax)
+## crs        : +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
+## source     : memory
+## names      : Preston_2019_Rate_Blocks_3.AUG.2019_ndre_raw 
+## values     : -0.02993818, 0.7902546  (min, max)
+```
+
+The aggregated raster layer has about 1/100 th of cells compared to the raw data.
+
+---
+class: middle
+
+.content-box-green[**Visualization**]
+
+.left4[
+
+```r
+ndre_080319_rl_ag %&gt;% 
+  as.data.frame(xy = TRUE) %&gt;% 
+  setnames(names(.)[3], "value") %&gt;% 
+  ggplot(data = .) +
+    geom_raster(
+      aes(
+        x = x,
+        y = y,
+        fill = value
+      )
+    )
+```
+]
+
+.right6[
+&lt;img src="r_as_GIS_map_x_files/figure-html/raster-ag-fig-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
+]
 
 ---
 class: middle
@@ -1986,7 +2084,7 @@ green &lt;- raster("./Data/Annos_062718_RE_transparent_reflectance_green.tif") %
 ---
 class: middle
 
-.left5[
+.left4[
 
 ```r
 #--- stack ---#
@@ -1997,7 +2095,7 @@ ggRGB(rgb_rs)
 ```
 ]
 
-.right5[
+.right6[
 &lt;img src="r_as_GIS_map_x_files/figure-html/rgb-map-f-1.png" width="100%" style="display: block; margin: auto;" /&gt;
 ]
 
