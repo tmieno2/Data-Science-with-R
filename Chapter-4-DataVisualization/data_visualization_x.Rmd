@@ -19,6 +19,7 @@ output:
 ```{r, include = F, cache = F}
 suppressMessages(library(nycflights13)) 
 suppressMessages(library(extrafont)) 
+suppressMessages(library(data.table)) 
 suppressMessages(library(patchwork))
 ```
 
@@ -86,7 +87,7 @@ Go [here](https://www.dropbox.com/sh/63rlp4ydmyjm1ui/AACYSeN0f_WAgKPQKzgpGVe0a?d
 .panel[.panel-name[R Code]
 ```{r dataset, results = "hide", cache = F}
 county_yield <- readRDS("county_yield.rds") %>% 
-  select(soy_yield, corn_yield, year, county_code, state_name, d0_5_9, d1_5_9, d2_5_9, d3_5_9, d4_5_9) %>% 
+  dplyr::select(soy_yield, corn_yield, year, county_code, state_name, d0_5_9, d1_5_9, d2_5_9, d3_5_9, d4_5_9) %>% 
     filter(state_name %in% c("Nebraska", "Kansas", "Colorado"))
 ```
   ]
@@ -3146,7 +3147,7 @@ You can use `fonttable()` to see the list of fonts available:
 
 ```{r }
 fonttable() %>% 
-  select(FontName, Bold,  Italic) %>% 
+  dplyr::select(FontName, Bold,  Italic) %>% 
   head(20)  
 ```
 
@@ -3610,7 +3611,75 @@ ggplot(data = county_yield_s_b2010) +
 
 ]
 
+---
+
+# Set continuous color scale manually 
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+.left-full[
+
+
+.content-box-green[**How**]
+
+You can use `scale_*_gradientn()` to create your own continuous color scale. 
+
+.content-box-green[**Syntax**]
+
+```{r eval = F}
+`scale_*_gradientn(colors, values)`
+```
+    
++ `colors`: a vector of colors 
++ `values`: a vector of numeric numbers ranging from 0 to 1
++ `limits`: define the lower and upper bounds of the scale bar
+
+`n`th value of `colors` is used for the interval defined by `n`th and `n+1`th values in `values`.
+
+]
  
+  ]
+
+.panel[.panel-name[Example]
+
+.left4[
+
+Create a figure:
+
+```{r manu-gradient, eval = F}
+ggplot(data = county_yield) + 
+  geom_point(
+    aes(
+      x = d1_5_9, 
+      y = corn_yield,
+      color = corn_yield
+    ),
+    size = 0.3
+  ) +
+  scale_color_gradientn(
+    colors = c("red", "orange", "green", "blue"),
+    values = c(0, 0.1, 0.2, 0.9, 1),
+    limits = c(100, 250)
+  ) 
+```
+
+In this example, green is dominant in the color bar because the interval [0.2, 0.9] is for `"green"` in `colors`, where the interval represents [`r 100 + (250-100)*0.2`, `r 100 + (250-100)*0.9`] 
+([100 + (250-100)\times 0.2, 100 + (250-100)\times 0.9]).
+
+]
+
+.right6[
+```{r manu-gradient-f, ref.label = "manu-gradient", echo = F, out.width = "90%"}
+
+```
+]
+
+  ]
+
+]
+
 
 ---
 
@@ -4365,7 +4434,7 @@ Note: You can use the following code as a template to create a pie chart. Replac
 
 ```{r pie-chart, echo = F}  
 share_data <- county_yield %>% 
-  select(state_name, corn_yield) %>% 
+  dplyr::select(state_name, corn_yield) %>% 
   group_by(state_name) %>% 
   summarize(yield = mean(corn_yield, na.rm = T)) %>% 
   mutate(yield_ratio = yield/sum(yield)) %>% 
@@ -4414,7 +4483,7 @@ rpie = 1 # pie radius
 rlabel = 0.6 * rpie # radius of the labels
 
 county_yield %>% #BREAK
-  select(state_name, corn_yield) %>% #BREAK
+  dplyr::select(state_name, corn_yield) %>% #BREAK
   group_by(state_name) %>% #BREAK
   summarize(yield = mean(corn_yield, na.rm = T)) %>% #BREAK
   mutate(yield_ratio = yield/sum(yield)) %>% #BREAK
@@ -4497,8 +4566,8 @@ library(ggcorrplot)
 ```{r cor-plot, eval = F}  
 weather %>% 
   na.omit() %>% 
-  select(where(is.numeric)) %>% 
-  select(- year) %>% 
+  dplyr::select(where(is.numeric)) %>% 
+  dplyr::select(- year) %>% 
   cor() %>% # create a cor matrix
   #--- create a cor plot ---#
   ggcorrplot(., 
