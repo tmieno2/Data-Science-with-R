@@ -25,6 +25,7 @@ This is the repository for AECN 396/AECN896-002 at University of Nebraska Lincol
     * Hints on speeding up raster data extraction ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-8-SpatialData/r_as_GIS_speed_x.html))
     * Creating maps using the `ggplot2` package ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-8-SpatialData/r_as_GIS_map_x.html))
 + Chapter 9: Writing a WORD article using the `rmarkdown` package ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-9-WritingArticle/write_article_with_rmd_x.html))
+    * [sample files](https://www.dropbox.com/sh/7dccenk0f03v7sq/AADTO0UpSjuD4y3T4KDyTQgia?dl=0)
 
 + Appendix 1: Data Wrangling with the `data.table` package ([slide](https://tmieno2.github.io/Data-Science-with-R/data.table/data.table_x.html))
 

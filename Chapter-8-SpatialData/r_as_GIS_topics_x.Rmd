@@ -1,0 +1,56 @@
+---
+title: "R as GIS: Creating Maps"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    lib_dir: libs
+    nature:
+      ratio: 12:8
+      highlightStyle: github
+      highlightLines: true
+      highlightSpans: true
+      countIncrementalSlides: false
+---
+
+```{r, child = './../setup.Rmd'}
+```
+
+```{r echo = F, cache = F}
+opts_knit$set(
+  root.dir = "/Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-8-SpatialData"
+)
+
+```
+
+```{r echo = F}
+setwd("/Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-8-SpatialData")
+```
+
+```{r, include = F, cache = F}
+suppressMessages(library(sf)) 
+suppressMessages(library(patchwork))
+suppressMessages(library(tigris))
+suppressMessages(library(mapview))
+suppressMessages(library(lubridate))
+suppressMessages(library(tidyverse))
+suppressMessages(library(exactextractr))
+suppressMessages(library(raster))
+suppressMessages(library(ggspatial))
+suppressMessages(library(RStoolbox))
+```
+
+
+
+```{r }
+gssurgo <- st_read("./Data/gSSURGO_KS.gdb", layer = "MapunitRaster_10m")
+
+plot(gssurgo)
+
+The st_read() reads the file but as a "sf data.frame" not as Raster.
+
+Then if I try readGDL() I get an error message:
+
+gssurgo <- readGDAL("/Users/gabrielaperezquesada/Dropbox/KSU/ResearchWork/Essay3/Data/gSSURGOdata/gSSURGO_KS.gdb", layer = "MapunitRaster_10m")
+```

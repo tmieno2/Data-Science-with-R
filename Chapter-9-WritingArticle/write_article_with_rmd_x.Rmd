@@ -7,7 +7,6 @@ output:
     css: xaringan-themer.css 
     lib_dir: libs
     nature:
-      ratio: 16:10
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
