@@ -6,9 +6,10 @@ author:
 abstract: "Abstract: this research is so awesome that you cannot reject this paper."
 output:
   bookdown::word_document2:
-    reference_docx: word-style.docx 
+    reference_docx: word-style.docx
+    pandoc_args: ["-Fpandoc-crossref"]
 bibliography: bibliography.bib
-# csl: agronomy.csl
+csl: agronomy.csl
 ---
 
 ```{r echo = F}
@@ -30,8 +31,6 @@ opts_chunk$set(
 ```
 
 ```{r eval = F}
-# This is purely for 
-
 setwd("/Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-9-WritingArticle")
 ```
 
@@ -59,7 +58,7 @@ reg_data <- readRDS("reg_data.rds") %>%
 
 # Introduction 
 
-bluh bluh
+The issue this article addresses is **super** _important_!
  
 @adrian2005producers examined bluh bluh.
 
@@ -101,23 +100,35 @@ Table \@ref(tab:table-1) presents summary statistics by zone.
 
 ## Statistical Model
 
-Here is the statistical model to estimate:
+$$y = \beta_0 + \beta_1 x + \varepsilon$$ {#eq:eqn1}
 
-$Y_z = f_z(S) + g_z(N) + h_z(X,Y) + \varepsilon_z$
+Equations written in the `aligned` environment.
 
-$\,\,\,= f_z(S) + g_z(N) + h_z(X,Y) + \varepsilon_z$
+$$
+\begin{aligned}
+ Y_z & = f_z(S) + g_z(N) + h_z(X,Y) + \varepsilon_z \\
+& = \sum_{i=1}^k \phi_k(S) + g_z(N) + h_z(X,Y) + \varepsilon_z
+\end{aligned}
+$$ {#eq:eqn2}
 
-$\quad\, = f_z(S) + g_z(N) + h_z(X,Y) + \varepsilon_z$
+Equations written in the `align` environment.
+
+$$
+\begin{align}
+ Y_z & = f_z(S) + g_z(N) + h_z(X,Y) + \varepsilon_z \\
+& = \sum_{i=1}^k \phi_k(S) + g_z(N) + h_z(X,Y) + \varepsilon_z
+\end{align}
+$$
 
 # Results and Discussions
 
 Table \@ref(tab:table-1) presents the regression results.
 
-Figure \@ref(fig:figure-1) presents the distribution of yields by zone.
+Figure \@ref(fig:fig-1) presents the distribution of yields by zone.
 
 # Conclusions
 
-bluh bluh
+bluh blu^[This is a footnote]
 
 # Figures 
 

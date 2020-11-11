@@ -1,0 +1,168 @@
+---
+title: "Sensor-guided Side-dressing Decision Making"
+date: "`r Sys.Date()`" 
+author:
+  - Taro Mieno^[University of Nebraska Lincoln, tmieno2@unl.edu] and John Doe^[Random University, johndoe@email.com]
+abstract: "Abstract: this research is so awesome that you cannot reject this paper."
+output: pdf_document
+bibliography: bibliography.bib
+csl: agronomy.csl
+---
+
+```{r echo = F}
+library(knitr)
+
+opts_knit$set(root.dir = "/Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-9-WritingArticle")
+
+options(htmltools.dir.version = FALSE)
+options(knitr.duplicate.label = "allow")
+
+opts_chunk$set(
+  fig.align = "center", 
+  fig.retina = 5,
+  warning = F, 
+  message = F,
+  cache = T,
+  echo = F
+  )
+```
+
+```{r eval = F}
+setwd("/Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-9-WritingArticle")
+```
+
+```{r packages}
+library(sf)
+library(RColorBrewer)
+library(patchwork)
+library(viridis)
+library(ggthemes)
+library(flextable)
+library(officer)
+library(modelsummary)
+library(tidyverse)
+```
+
+```{r data-preparation}
+#--- read the regression data ---#
+reg_data <- readRDS("reg_data.rds") %>%
+  .[, Zone := case_when(
+    tgt_comb == "36-124" ~ "Zone 3",
+    tgt_comb == "34-134" ~ "Zone 2",
+  )] %>%
+  filter(!is.na(Zone))
+```
+
+# Introduction 
+
+The issue this article addresses is **super** _important_!
+ 
+@adrian2005producers examined bluh bluh.
+
+bluh bluh [@shrader1966estimation] 
+
+bluh bluh [@shrader1966estimation; @adrian2005producers] 
+
+bluh bluh [-@shrader1966estimation] 
+
+##### page break (you cannot see this text on the output WORD file)
+
+# Materials and Methods
+
+This line break does not work:
+<br>
+See?
+
+This line break does work:
+
+<br>
+
+See?
+
+## Data
+
+```{r summary_statistics}
+#--- number of observations by zone ---#
+num_obs <- reg_data %>% 
+  group_by(Zone) %>% 
+  summarize(n = n())
+
+num_obs_z2 <- filter(num_obs, Zone == "Zone 2")$n
+num_obs_z3 <- filter(num_obs, Zone == "Zone 3")$n
+```
+
+The number of observations are `r num_obs_z2` and `r num_obs_z3` for Zones 2 and 3, respectively. 
+
+Table \@ref(tab:table-1) presents summary statistics by zone.
+
+## Statistical Model
+
+Here is the statistical model to estimate:
+
+Equations written in the `align` environment.
+
+\begin{align}
+ Y_z & = f_z(S) + g_z(N) + h_z(X,Y) + \varepsilon_z \\
+& = \sum_{i=1}^k \phi_k(S) + g_z(N) + h_z(X,Y) + \varepsilon_z
+\end{align}
+
+# Results and Discussions
+
+Table \@ref(tab:table-1) presents the regression results.
+
+Figure \@ref(fig:fig-1) presents the distribution of yields by zone.
+
+# Conclusions
+
+bluh blu^[This is a footnote]
+
+# Figures 
+
+```{r fig-1, fig.cap = "The Distribution of Yield by Zone"}
+ggplot() +
+  geom_density(
+    data = reg_data,
+    aes(
+      x = Yield, 
+      fill = Zone,
+      alpha = 0.3
+    )
+  )
+```
+
+# Tables
+
+```{r table-1, tab.cap = "Summary Statistics by Zone"}
+
+#--- find observations ---#
+# write the function that forces the number of observations to be presented as integers
+get_N <- function(x) {
+  length(x) %>% as.integer()
+}
+
+#--- create a summary table by zone ---#
+summary_table <- reg_data %>%
+  datasummary(
+    Zone * (
+      (`Yield (kg/ha)` = Yield) +
+        (`Nitrogen Rate (kg/ha)` = aa_n) +
+        (`Seed Rate (1000/ha)` = aa_s)
+    ) ~
+    Format(digits = 0) * get_N + Mean + SD + Min + Max,
+    data = .,
+    output = "flextable"
+  ) %>%
+  autofit() %>%
+  hline(
+    i = 3,
+    border = fp_border(width = 1)
+  )
+
+summary_table
+```
+
+
+# References
+
+<div id="refs"></div>
+

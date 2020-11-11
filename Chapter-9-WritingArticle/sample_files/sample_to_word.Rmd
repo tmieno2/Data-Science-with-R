@@ -6,7 +6,7 @@ author:
 abstract: "Abstract: this research is so awesome that you cannot reject this paper."
 output:
   bookdown::word_document2:
-    reference_docx: word-style.docx 
+    # reference_docx: word-style.docx 
 bibliography: bibliography.bib
 # csl: agronomy.csl
 ---
@@ -14,7 +14,7 @@ bibliography: bibliography.bib
 ```{r echo = F}
 library(knitr)
 
-opts_knit$set(root.dir = "/Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-9-WritingArticle")
+# opts_knit$set(root.dir = "path to the project folder")
 
 options(htmltools.dir.version = FALSE)
 options(knitr.duplicate.label = "allow")
@@ -27,12 +27,6 @@ opts_chunk$set(
   cache = T,
   echo = F
   )
-```
-
-```{r eval = F}
-# This is purely for 
-
-setwd("/Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-9-WritingArticle")
 ```
 
 ```{r packages}
@@ -117,7 +111,7 @@ Figure \@ref(fig:figure-1) presents the distribution of yields by zone.
 
 # Conclusions
 
-bluh bluh
+bluh bluh^[this is a footnote]
 
 # Figures 
 

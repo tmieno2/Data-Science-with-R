@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Introduction to Shiny</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="AECN 396/896-002" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/anchor-sections/anchor-sections.css" rel="stylesheet" />
+    <script src="libs/anchor-sections/anchor-sections.js"></script>
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/animate.css/animate.xaringan.css" rel="stylesheet" />
+    <link href="libs/tachyons/tachyons.min.css" rel="stylesheet" />
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <script src="libs/clipboard/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"Copy Code","success":"Copied!","error":"Press Ctrl+C to Copy"})</script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Introduction to Shiny
+### AECN 396/896-002
+
+---
+
+class: middle
+
+
+
+
+
+
+
+
+
+
+&lt;style type="text/css"&gt;
+
+.remark-slide-content.hljs-github h1 {
+  margin-top: 5px;  
+  margin-bottom: 25px;  
+}
+
+.remark-slide-content.hljs-github {
+  padding-top: 10px;  
+  padding-left: 30px;  
+  padding-right: 30px;  
+}
+
+.panel-tabs {
+  &lt;!-- color: #062A00; --&gt;
+  color: #841F27;
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panel-tab {
+  margin-top: 0px;  
+  margin-bottom: 0px;  
+  margin-left: 3px;  
+  margin-right: 3px;  
+  padding-top: 0px;  
+  padding-bottom: 0px;  
+}
+
+.panelset .panel-tabs .panel-tab {
+  min-height: 40px;
+}
+
+.remark-slide th {
+  border-bottom: 1px solid #ddd;
+}
+
+.remark-slide thead {
+  border-bottom: 0px;
+}
+
+.gt_footnote {
+  padding: 2px;  
+}
+
+.remark-slide table {
+  border-collapse: collapse;
+}
+
+.remark-slide tbody {
+  border-bottom: 2px solid #666;
+}
+
+
+.important {
+  background-color: lightpink;
+  border: 2px solid blue;
+  font-weight: bold;
+} 
+
+.remark-code {
+  display: block;
+  overflow-x: auto;
+  padding: .5em;
+  background: #ffe7e7;
+} 
+
+.hljs-github .hljs {
+  background: #f2f2fd;
+}
+
+.remark-inline-code {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  background-color: #e6e6e6;
+}
+
+.r.hljs.remark-code.remark-inline-code{
+  font-size: 0.9em
+}
+
+.left-full {
+  width: 80%;
+  float: left;
+}
+
+.left-code {
+  width: 38%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left6 {
+  width: 60%;
+  height: 92%;
+  float: left;
+}
+
+.left5 {
+  width: 49%;
+  &lt;!-- height: 92%; --&gt;
+  float: left;
+}
+
+.right5 {
+  width: 49%;
+  float: right;
+  padding-left: 1%;
+}
+
+.right4 {
+  width: 39%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left3 {
+  width: 29%;
+  height: 92%;
+  float: left;
+}
+
+.right7 {
+  width: 69%;
+  float: right;
+  padding-left: 1%;
+}
+
+.left4 {
+  width: 38%;
+  float: left;
+}
+
+.right6 {
+  width: 60%;
+  float: right;
+  padding-left: 1%;
+}
+
+ul li{
+  margin: 7px;
+}
+
+ul, li{
+  margin-left: 15px; 
+  padding-left: 0px; 
+}
+
+ol li{
+  margin: 7px;
+}
+
+ol, li{
+  margin-left: 15px; 
+  padding-left: 0px; 
+}
+
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+.content-box { 
+    box-sizing: border-box;
+    background-color: #e2e2e2;
+}
+.content-box-blue,
+.content-box-gray,
+.content-box-grey,
+.content-box-army,
+.content-box-green,
+.content-box-purple,
+.content-box-red,
+.content-box-yellow {
+  box-sizing: border-box;
+  border-radius: 5px;
+  margin: 0 0 10px;
+  overflow: hidden;
+  padding: 0px 5px 0px 5px;
+  width: 100%;
+}
+.content-box-blue { background-color: #F0F8FF; }
+.content-box-gray { background-color: #e2e2e2; }
+.content-box-grey { background-color: #F5F5F5; }
+.content-box-army { background-color: #737a36; }
+.content-box-green { background-color: #d9edc2; }
+.content-box-purple { background-color: #e2e2f9; }
+.content-box-red { background-color: #ffcccc; }
+.content-box-yellow { background-color: #fef5c4; }
+.content-box-blue .remark-inline-code,
+.content-box-blue .remark-inline-code,
+.content-box-gray .remark-inline-code,
+.content-box-grey .remark-inline-code,
+.content-box-army .remark-inline-code,
+.content-box-green .remark-inline-code,
+.content-box-purple .remark-inline-code,
+.content-box-red .remark-inline-code,
+.content-box-yellow .remark-inline-code { 
+  background: none;
+}
+
+.full-width {
+    display: flex;
+    width: 100%;
+    flex: 1 1 auto;
+}
+&lt;/style&gt;
+
+
+&lt;style type="text/css"&gt;
+blockquote, .blockquote {
+  display: block;
+  margin-top: 0.1em;
+  margin-bottom: 0.2em;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-left: solid 10px #0148A4;
+  border-top: solid 2px #0148A4;
+  border-bottom: solid 2px #0148A4;
+  border-right: solid 2px #0148A4;
+  box-shadow: 0 0 6px rgba(0,0,0,0.5);
+  /* background-color: #e64626; */
+  color: #e64626;
+  padding: 0.5em;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+}
+
+.blockquote p {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h1:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h2:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h3:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+.blockquote &gt; h4:first-of-type {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+.text-shadow {
+  text-shadow: 0 0 4px #424242;
+}
+&lt;/style&gt;
+
+&lt;style type="text/css"&gt;
+/******************
+ * Slide scrolling
+ * (non-functional)
+ * not sure if it is a good idea anyway
+slides &gt; slide {
+  overflow: scroll;
+ padding: 5px 40px;
+}
+.scrollable-slide .remark-slide {
+  height: 400px;
+  overflow: scroll !important;
+}
+ ******************/
+
+.scroll-box-8 {
+  height:8em;
+  overflow-y: scroll;
+}
+.scroll-box-10 {
+  height:10em;
+  overflow-y: scroll;
+}
+.scroll-box-12 {
+  height:12em;
+  overflow-y: scroll;
+}
+.scroll-box-14 {
+  height:14em;
+  overflow-y: scroll;
+}
+.scroll-box-16 {
+  height:16em;
+  overflow-y: scroll;
+}
+.scroll-box-18 {
+  height:18em;
+  overflow-y: scroll;
+}
+.scroll-box-20 {
+  height:20em;
+  overflow-y: scroll;
+}
+.scroll-box-24 {
+  height:24em;
+  overflow-y: scroll;
+}
+.scroll-box-30 {
+  height:30em;
+  overflow-y: scroll;
+}
+.scroll-output {
+  height: 90%;
+  overflow-y: scroll;
+}
+
+ 
+&lt;/style&gt;
+
+
+
+# Learning objectives
+
+Learn how to use a combination of R packages to generate (mostly) publication-ready articles in WORD 
+
+&lt;br&gt;
+
+&lt;span style="color:red"&gt; Tips: &lt;/span&gt;hitting letter "o" key will give you a panel view of the slides
+
+---
+class: middle
+
+# What is Shiny? 
+
++ See [here]() for a list of web applications created using the `shiny` package
+
++ You need no or only limited knowledge of websites 
+  * how html works
+  * how css works
+  * how to make websites interactive 
+
+---
+class: middle
+
+# Folder and file structure
+
++ create a project folder (name it however you want)
++ inside the folder create a file named `app.R`
++ create a data folder inside the project folder (name it however you want)
+  * stores all the datasets you need here
+
+&lt;img src="folder-structure.png" width="90%" style="display: block; margin: auto;" /&gt;
+
+---
+class: middle
+
+# app.R 
+
+`app.R` consists mainly of three parts:
+
++ 1st part: preparation 
+  * load packages
+  * read datasets from the date folder (the working directory is directory `app.R` is stored)
++ 2nd part: define the UI of the application
++ 3rd part: generate objects displayed on the UI based on user inputs 
+
+---
+class: middle
+
+# Shiny 
+
++ `ui`: 
+  * create user interface
+  * create user input system, which can then be passed to `server` as `input`
+  * display the results created in `server` (available to `ui` as `output`)
++ `server`:
+  * take the values user entered or selected as `input` 
+  * create results to display and make it available to `ui` as output
+
+.left5[
+
+
+```r
+ui &lt;- fluidPage(
+
+  titlePanel("Precipitation"),
+
+  fluidRow(
+    column(3, # spans 3 columns
+      # place tools to let users select or enter values
+    ),
+    column(9, # spans 9 columns
+      # place results to display here
+    )
+  )
+
+) 
+```
+]
+
+.right5[
+
+```r
+server &lt;- function(input, output){
+
+  # generate results based on the inputs from the ui side
+
+}  
+```
+]
+
+---
+class: middle
+
+
+```r
+tmax_Jan_09 &lt;- stack("./Data/tmax_Jan_09.tif")
+
+states_ls &lt;- fips_codes$state_name %&gt;% 
+  unique() %&gt;% 
+  as.list()
+
+states &lt;- readRDS("./Data/state_boundary.rds")
+```
+
+---
+class: middle
+ 
+.left5[
+
+```r
+ui &lt;- fluidPage(
+
+  titlePanel("Precipitation"),
+
+  fluidRow(
+    column(3, # spans 3 columns
+*     selectInput(
+*       "selected_state",
+*       h3("Select State"),
+*       choices = states_ls,
+*       selected = states_ls[[1]]
+*     )
+    ),
+    column(9, # spans 9 columns
+
+    )
+  )
+)  
+```
+]
+
+.right5[
+
++ In the UI, an input selector will be created using `selectInput()`
+
++ `"selected_state"` is the label of the object passed to `server` as an element of `input` in `server`
+
++ `h3("Select State")` prints `Select State` (formatted as heading 3) in the UI 
+
++ `choices = states_ls` lists all the values in `states_ls` as selectable values in a dropdown list in the UI
+
++ `selected = states_ls[[1]]` sets the default value selected (here, Alabama)
+
+]
+
+---
+class: middle
+
+.left5[
+
+
+```r
+server &lt;- function(input, output){
+
+  #--- recover state fips code ---#
+  state_fp &lt;- fips_codes %&gt;% 
+    filter(state_name == `input$selected_state`) %&gt;% 
+    pull(state_code) %&gt;% 
+    unique()
+
+  #--- get the state boundary sf ---#
+  temp_state_sf &lt;- states_sf %&gt;%  
+    filter(statefp == state_fp)
+
+  #--- create a map of the selected state ---#
+  ggplot() +
+    geom_sf(data = temp_state_sf)
+
+}  
+```
+
+]
+
+.right5[
+
++ The values entered or selected by the user are made available to `server` as `input`.
+
++ As we saw in the previous slide, the state name selected by the user on the UI is labeled as `selected_state` and passed to `server` as an element of `input`, which is a list.
+
++ `input$selected_state` has the state name selected by the user
+
++ The code finds state FIPS code of the state name selected by the user (first chunk)
+
++ It then filters the state boundary `sf` to the state selected by the user (second chunk)
+
++ The final chunk creates a map of the selected state
+
+]
+
+---
+class: middle
+
+You have many input tools:
+
++ `actionButton`: Action Button
++ `checkboxGroupInput`: A group of check boxes
++ `checkboxInput`: A single check box
++ `dateInput`: A calendar to aid date selection
++ `dateRangeInput`: A pair of calendars for selecting a date range
++ `fileInput`: A file upload control wizard
++ `helpText`: Help text that can be added to an input form
++ `numericInput`: A field to enter numbers
++ `radioButtons`: A set of radio buttons
++ `selectInput`: A box with choices to select from
++ `sliderInput`: A slider bar
++ `submitButton`: A submit button
++ `textInput`: A field to enter text
+
+---
+class: middle
+
+.left5[
+
+```r
+server &lt;- function(input, output){
+
+  `output$gg_state &lt;- renderPlot({` 
+
+  state_fp &lt;- fips_codes %&gt;% 
+    filter(state_name == input$selected_state) %&gt;% 
+    pull(state_code) %&gt;% 
+    unique()
+
+  temp_state_sf &lt;- states_sf %&gt;%  
+    filter(statefp == state_fp)
+
+  ggplot() +
+    geom_sf(data = temp_state_sf)
+
+  `})`
+
+}
+```
+]
+
+.right5[
+
++ We wrap all the codes that generated a map with `renderPlot({})`, and then save it as `output$gg_state`
+
++ `gg_state` is available to `ui` as part of the output of `server`.
+
+]
+
+---
+class: middle
+
+.left5[
+
+```r
+ui &lt;- fluidPage(
+
+  titlePanel("Precipitation"),
+
+  fluidRow(
+    column(3, # spans 3 columns
+      selectInput(
+        "selected_state", 
+        h3("Select State"), 
+        choices = states_ls, 
+        selected = states_ls[[1]]
+      )
+    ),
+    column(9, # spans 9 columns
+      `plotOutput("gg_state")`
+    )
+  )
+) 
+```
+]
+
+.right5[
+
++ `plotOutput("gg_state")` display `gg_state` on the UI
+
+]
+
+---
+class: middle
+
+You have many output options
+
++ `dataTableOutput`: DataTable
++ `htmlOutput`: raw HTML
++ `imageOutput`: image
++ `plotOutput`: plot
++ `tableOutput`: table
++ `textOutput`: text
++ `uiOutput`: raw HTML
++ `verbatimTextOutput`: text
+ 
+---
+class: middle
+ 
+# Start the application
+
+You can use the `runApp()` function to make the application running:
+
+.content-box-green[**Syntax**]
+
+
+```r
+runApp("path to the shiny project") 
+```
+
++ You provide the name of the folder that has `app.R` file (and potentially other supplementary files and folders inside it) 
+
+.content-box-green[**Example**]
+
+
+```r
+setwd("/Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-10-Shiny")
+
+runApp("weather_daily") 
+```
+
+
+
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"highlightSpans": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

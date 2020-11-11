@@ -27,6 +27,8 @@ This is the repository for AECN 396/AECN896-002 at University of Nebraska Lincol
 + Chapter 9: Writing a WORD article using the `rmarkdown` package ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-9-WritingArticle/write_article_with_rmd_x.html))
     * [sample files](https://www.dropbox.com/sh/7dccenk0f03v7sq/AADTO0UpSjuD4y3T4KDyTQgia?dl=0)
 
++ Chapter 10: Introduction to Shiny ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-10-Shiny/shiny_x.html))
+
 + Appendix 1: Data Wrangling with the `data.table` package ([slide](https://tmieno2.github.io/Data-Science-with-R/data.table/data.table_x.html))
 
 ## Assignments

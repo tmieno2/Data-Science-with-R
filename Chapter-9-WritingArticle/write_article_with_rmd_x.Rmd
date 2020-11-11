@@ -33,16 +33,18 @@ Learn how to use a combination of R packages to generate (mostly) publication-re
 ---
 class: middle
 
-.content-box-green[**How**]
+# Steps 
+
+Here are the proposed steps to generate a fully publication-ready article: 
 
 + Write on an Rmarkdown file and knit to a WORD file (the focus of this lecture)
 
-+ Do final formatting jobs on the output WORD file (not discussed here)
++ Do final formatting jobs on the output WORD file (not discussed here) to the specific needs required by the final destination of the article
 
 ---
 class: middle
 
-.content-box-green[**Key components**]
+# What do you do on an Rmarkdown file?
 
 + include (run) R codes to
   * run statistical or modeling analysis  
@@ -51,23 +53,35 @@ class: middle
 
 + refer to the R objects generated (data, tables, figures) to place them in the output WORD file 
 
-+ cross-reference tables and figures
++ cross-reference tables and figures using special syntaxes
 
-+ create citations and a reference list automatically 
++ create citations and a reference list automatically using special syntaxes 
+
++ format citation and reference styles using [Citation Style Language](https://citationstyles.org/)  
 
 + use Latex math syntax to write equations 
+
++ use markdown syntax for formatting the output WORD file 
+  * headings
+  * footnotes
 
 ---
 class: middle
 
-.content-box-green[**Key challenges**]
+.content-box-green[**Challenges**]
 
 It is impossible to include track changes (but you can compare two documents to see the differences easily) 
 
 ---
-class: middle
+class: inverse, center, middle
+name: user-defined-function
 
 # YAML header
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
+class: middle
 
 In the YAML header, you can add 
 
@@ -78,12 +92,12 @@ In the YAML header, you can add
 
 .content-box-green[**Direction**]
 
-Take a look at the entries in the YAML header in sample_to_word.Rmd and check how they appear on sample_to_word.docx 
+Take a look at these entries in the YAML header in sample_to_word.Rmd and check how they appear on sample_to_word.docx 
 
 ---
 class: middle
 
-+ In the YAML header,
++ In the YAML header, the chunk below
 
 ```{r eval = F}
 output:
@@ -94,15 +108,83 @@ directs R to knit an Rmd file to a WORD file using `bookdown::word_document2` bu
 
 + `bookdown::word_document2` is used instead of `word_document:` as it allows us to easily cross-reference tables and figure. 
 
+---
+class: inverse, center, middle
+name: user-defined-function
+
+# WORD Structure and Formatting
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
 
 ---
 class: middle
 
-# Formatting
+# Section, subsection, subsubsections
+
+Use `#`, `##`, `###` at the beginning of the line to define sections, subsections, and subsubsections.
+
+.content-box-green[**Example**]
+
+```{r eval = F}
+# This becomes section title  
+
+## This becomes subsection title  
+
+### This becomes subsubsection title  
+```
+
+.content-box-green[**Direction**]
+
+Confirm that `# Materials and Methods` and `## Data` in sample_to_word.Rmd turn into a section and subsection title in sample_to_word.docx.
+
+---
+class: middle
+
+# Footnote
 
 .content-box-green[**How**]
 
-+ Create a reference word file (here, it's called "word-style.docx")
+You can add a footnote using `^[]` like this:
+
+```{r eval = F}
+regular texts^[this is a footnote]
+```
+
+Footnotes are automatically numbered.
+
+.content-box-green[**Direction**]
+
+See the Conclusion section of the sample Rmd file and output WORD file. 
+
+---
+class: middle
+
+# Specifying the style 
+
+Rmarkdown itself is very limited in its ability to specify the style of the output WORD file .red[syntactically].   
+
+Few exceptions are:
+
++ bold font: `**this becomes bold**` (or `__this becomes bold__`)
++ italic font: `*this becomes italic*` 
+
+Confirm this by comparing the first sentence in the Introduction section of the sample Rmd and WORD files.
+
+---
+class: middle
+
+However, you can define the style of the output WORD file in detail using a style reference WORD file.
+
+.content-box-green[**Example**]
+
+font size and family for different parts of a WORD file (e.g., section, subsection, footnote)
+
+---
+class: middle
+
+.content-box-green[**How**]
+
++ Create a reference word file (here, it's called "word-style.docx") that follows the style you would like the output WORD file to have
 
 + Add the following to the YAML header
 
@@ -111,6 +193,11 @@ output:
   bookdown::word_document2:
     reference_docx: word-style.docx #<< 
 ```
+
+.red[Important]: only the style of the style reference WORD file will be inherited to the output WORD file, but not its contents 
+
+---
+class: middle
 
 .content-box-green[**Direction**]
 
@@ -123,7 +210,7 @@ output:
 ---
 class: middle
 
-You can change the style in WORD and save the changes. Then, the style change will be reflected in the output WORD file.
+You can change the style of the reference WORD style file and save the changes. Then, the style changes will be reflected in the output WORD file.
 
 ```{r  echo = F, out.width = "60%"}
 include_graphics("style-change.png") 
@@ -134,7 +221,7 @@ See [here](https://bookdown.org/yihui/rmarkdown-cookbook/word-template.html) for
 ---
 class: middle
 
-# Formatting tips 
+# Tips 
 
 .content-box-green[**Line break**]
 
@@ -159,16 +246,23 @@ class: middle
 
 + See [here](https://datascienceplus.com/r-markdown-how-to-insert-page-breaks-in-a-ms-word-document/) if you want to create your own syntax to generate a page break on your own reference style docx file. (just build on the word-style.docx file I provided if you do not want to bother to do it)
 
-+ Note that this method will leave the texts after `#####` in white (that's why you cannot see the texts) 
++ Note that this method will leave the texts after `#####` in white (that's why you cannot see the texts). If you do not like this, simply do not use this syntax to include page breaks.
 
 --
 
 .content-box-green[**Direction**]
 
-+ Check just above the Materials and Methods section in the Rmd file and confirm that
++ Check just above the Materials and Methods section in the Rmd file and confirm that there is a line that starts with `#####` 
 
 + Confirm that a page break indeed happened right before the Materials and Methods section
 
+---
+class: inverse, center, middle
+name: user-defined-function
+
+# Citations and References
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
 
 ---
 class: middle
@@ -179,13 +273,16 @@ class: middle
 
 + Create a reference file (here, "bibliography.bib")
 
-+ Add the following to the YAML header
++ Add the following to the YAML header (see the sample Rmd file for an example)
 
-+ Add `<div id="refs"></div>` in the Reference section
+```{r eval = F}
+bibliography: bibliography file name
+```
 
-````markdown
-bibliography: bibliographi.bib
-````
++ Add `<div id="refs"></div>` in the Reference section (see the sample Rmd file)
+
+---
+class: middle
 
 .content-box-green[**Syntax**]
 
@@ -196,6 +293,13 @@ bibliography: bibliographi.bib
 + use `[@reference_name_1; @reference_name_2]` to print "(author names, year; author names, year)" in the output WORD file 
 
 + use `[-@reference_name]` to print just year
+
+---
+class: middle
+
+.content-box-green[**Direction**]
+
+See the Introduction and Reference sections in the sample RMD file and its output WORD file.
 
 ---
 class: middle
@@ -211,13 +315,6 @@ flextable() %>%
 fontsize(size = 18, part = "all") %>% 
 autofit()
 ```
-
----
-class: middle
-
-.content-box-green[**Direction**]
-
-See the Introduction and Reference sections in the sample RMD file and its output WORD file.
 
 ---
 class: middle
@@ -252,6 +349,14 @@ class: middle
 + knit and confirm the changes in the citation and reference styles
 
 ---
+class: inverse, center, middle
+name: user-defined-function
+
+# Tables and Figures
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+
+---
 class: middle
 
 # Tables
@@ -271,6 +376,8 @@ class: middle
 ````
 
 + Use `\@ref(tab:table-name)` in the rmarkdown file to cross-reference the table (table numbering in the output WORD file is automatic)
+
++ .red[Caveat]: You cannot use `_` in the chunk name (`-` is allowed). Cross-referencing would not work with chunk names that include `_`.
 
 ---
 class: middle
@@ -301,6 +408,8 @@ class: middle
 
 + Use `\@ref(fig:figure-name)` in the rmarkdown file to cross-reference the figure (figure numbering in the output WORD file is automatic)
 
++ .red[Caveat]: You cannot use `_` in the chunk name (`-` is allowed). Cross-referencing would not work with chunk names that include `_`.
+
 ---
 class: middle
 
@@ -309,13 +418,19 @@ class: middle
 See the Figure section in "sample_to_word.Rmd" and its output WORD file. 
 
 ---
-class: middle
+class: inverse, center, middle
+name: user-defined-function
 
 # Mathematical equations
 
-You can use Latex math syntax to write mathematical equations.
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
 
-.content-box-green[**Example**]
+---
+class: middle
+
+You can use Latex.red[-like] math syntax to write mathematical equations.
+
+.content-box-green[**Examples**]
 
 ````markdown
 $Y_z = f_z(S) + g_z(N) + h_z(X,Y) + \varepsilon_z$
@@ -323,17 +438,62 @@ $Y_z = f_z(S) + g_z(N) + h_z(X,Y) + \varepsilon_z$
 
 $Y_z = f_z(S) + g_z(N) + h_z(X,Y) + \varepsilon_z$
 
-.content-box-green[**Caveat**]
+````markdown
+$\bar{x} = \frac{\sum_{i=1}^n x_i}{n}$
+````
 
-+ Math in rmarkdown is limited compared to Latex. In particular, aligning equations has to done manually.   
+$\bar{x} = \frac{\sum_{i=1}^n x_i}{n}$
 
-+ Use the following to create white space
-  * `\quad`: space equal to the current font size 
-  * `\,`: 3/18 of \quad 
-  * `\:`: 4/18 of \quad 
-  * `\;`:5/18 of \quad 
-  * `\qquad`: twice of \quad (= 36 mu) 
+````markdown
+$$
+\begin{aligned}
+ AR(p): Y_i &= c + \epsilon_i + \phi_i Y_{i-1} \dots \\
+ Y_{i} &= c + \phi_i Y_{i-1} \dots
+\end{aligned}
+$$
+````
 
+$$
+\begin{aligned}
+ AR(p): Y_i &= c + \epsilon_i + \phi_i Y_{i-1} \dots \\
+ Y_{i} &= c + \phi_i Y_{i-1} \dots
+\end{aligned}
+$$
+
+---
+class: middle
+
+.content-box-red[**Caveat**]
+
++ When knitted to WORD, Latex is .red[NOT] involved in converting Latex.red[-like] to math equations. Instead, pandoc is doing the conversion job.
+
++ So, it is not surprising that not all the Latex math capabilities can be utilized when knitting to a WORD file. 
+
++ For example, the math written in an "align" environment does not print in the output WORD file even though it prints the equations on RStudio.  
+
++ With that said, many of the syntaxes that you will need are the same between Rmd-to-WORD and Latex.   
+
+---
+class: middle
+
+.content-box-green[**Direction**]
+
++ Confirm that the equations (in the Statistical Model subsection) written in the "aligned" and "align" environments are both correctly printed below on RStudio (RStudio can interpret them)
+
++ Now, knit to a WORD file and confirm that the equations from the "align" environment do not appear in the WORD document 
+
+---
+class: middle
+
+.content-box-green[**Creating white space**]
+
+Sometimes, you need to insert white space inside equations. You can use the following syntax to achieve that:
+
+* `\quad`: space equal to the current font size 
+* `\,`: 3/18 of \quad 
+* `\:`: 4/18 of \quad 
+* `\;`:5/18 of \quad 
+* `\qquad`: twice of \quad (= 36 mu) 
 
 
 
