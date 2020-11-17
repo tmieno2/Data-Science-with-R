@@ -1,5 +1,5 @@
 ---
-title: "Writing Professional Articles using Rmarkdown"
+title: "Writing Articles to WORD using Rmarkdown"
 author: "AECN 396/896-002"
 output:
   xaringan::moon_reader:
@@ -33,6 +33,15 @@ Learn how to use a combination of R packages to generate (mostly) publication-re
 ---
 class: middle
 
+# Before you start 
+
++ This lecture slides assume basic knowledge on how to use Rmarkdown. See [here](https://bookdown.org/yihui/rmarkdown/) first if are not familiar with Rmarkdown.
+
++ Go [here](https://www.dropbox.com/sh/7dccenk0f03v7sq/AADTO0UpSjuD4y3T4KDyTQgia?dl=0) and download all the files including sample_to_word.Rmd (a sample Rmarkdown file).
+
+---
+class: middle
+
 # Steps 
 
 Here are the proposed steps to generate a fully publication-ready article: 
@@ -43,11 +52,14 @@ Here are the proposed steps to generate a fully publication-ready article:
 
 + Do final formatting jobs on the output WORD file (not discussed here) to the specific needs required by the final destination of the article
 
+---
+class: middle
+
 # Why Rmarkdown-WORD?
 
 + No manual copying and pasting of tables and figures
 
-+ No manual formatting of tables and figures when they get updated during the course of research
++ No manual formatting of tables and figures when they get updated in the course of your research projects
 
 + No manual updating of data-driven numbers (e.g., coefficient estimates, summary numbers) in text
 
@@ -75,12 +87,11 @@ class: middle
   * headings
   * footnotes
 
----
-class: middle
+--
 
-.content-box-green[**Challenges**]
+.content-box-red[**Challenges**]
 
-It is impossible to include track changes (but you can compare two documents to see the differences easily) 
+It is impossible to include track changes!
 
 ---
 class: inverse, center, middle
@@ -107,16 +118,20 @@ Take a look at these entries in the YAML header in sample_to_word.Rmd and check 
 ---
 class: middle
 
-In the YAML header, the chunk below
+In the YAML header, include the lines below
 
 ```{r eval = F}
 output:
   bookdown::word_document2: 
 ```
 
-directs R to knit an Rmd file to a WORD file using `bookdown::word_document2` building process.
+to direct R to knit an Rmd file to a WORD file using `bookdown::word_document2` building process.
 
 Note: `bookdown::word_document2` is used instead of `word_document:` as it allows us to easily cross-reference tables and figure. 
+
+--
+
+Note: We also specify bibliography and style reference files in the YAML header as we will see later.
 
 ---
 class: middle
@@ -480,7 +495,7 @@ class: middle
 
 .content-box-red[**Caveat**]
 
-+ When knitted to WORD, Latex is .red[NOT] involved in converting Latex.red[-like] to math equations. Instead, pandoc is doing the conversion job.
++ When knitted to WORD, Latex is .red[NOT] involved in converting Latex.red[-like] math syntax to math equations. Instead, pandoc is doing the conversion job.
 
 + So, it is not surprising that not all the Latex math capabilities can be utilized when knitting to a WORD file. 
 
@@ -502,7 +517,9 @@ class: middle
 
 # Equation numbering and cross-reference 
 
-In order to number equations automatically, we can use `pandoc-crossref` (see [here](https://stackoverflow.com/questions/47985267/equation-numbering-in-rmarkdown-for-export-to-word) for how to install it). 
+By default, equation numbering is not supported with `bookdown::word_document2`.
+
+In order to number and cross-reference equations automatically, we can use `pandoc-crossref` (see [here](https://stackoverflow.com/questions/47985267/equation-numbering-in-rmarkdown-for-export-to-word) for how to install it). 
 
 
 .content-box-green[**How**]

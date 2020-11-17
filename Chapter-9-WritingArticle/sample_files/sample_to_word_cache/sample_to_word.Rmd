@@ -9,7 +9,7 @@ output:
     reference_docx: word-style.docx
     pandoc_args: ["-Fpandoc-crossref"]
 bibliography: bibliography.bib
-# csl: agronomy.csl
+csl: agronomy.csl
 # eqnPrefix:
 #   - "Equation"
 ---
