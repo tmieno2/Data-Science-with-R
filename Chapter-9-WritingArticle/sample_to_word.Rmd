@@ -10,6 +10,8 @@ output:
     pandoc_args: ["-Fpandoc-crossref"]
 bibliography: bibliography.bib
 csl: agronomy.csl
+# eqnPrefix:
+#   - "Equation"
 ---
 
 ```{r echo = F}
@@ -100,9 +102,11 @@ Table \@ref(tab:table-1) presents summary statistics by zone.
 
 ## Statistical Model
 
+See equation ([@eq:eqn1]) for the statistical model we use.
+
 $$y = \beta_0 + \beta_1 x + \varepsilon$$ {#eq:eqn1}
 
-Equations written in the `aligned` environment.
+Equations written in the `aligned` environment (Equation ([-@eq:eqn2])).
 
 $$
 \begin{aligned}

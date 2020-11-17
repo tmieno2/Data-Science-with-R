@@ -23,6 +23,10 @@ opts_knit$set(
 )
 ```
 
+```{r eval = F}
+setwd("/Users/tmieno2/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-8-SpatialData")
+```
+
 ```{r, include = F, cache = F}
 suppressMessages(library(sf)) 
 suppressMessages(library(patchwork))

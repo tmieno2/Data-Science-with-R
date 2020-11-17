@@ -37,14 +37,24 @@ class: middle
 
 Here are the proposed steps to generate a fully publication-ready article: 
 
-+ Write on an Rmarkdown file and knit to a WORD file (the focus of this lecture)
++ Write an Rmarkdown file and knit to a WORD file (the focus of this lecture)
+  * regular texts
+  * R codes for analysis, tables, figures
 
 + Do final formatting jobs on the output WORD file (not discussed here) to the specific needs required by the final destination of the article
+
+# Why Rmarkdown-WORD?
+
++ No manual copying and pasting of tables and figures
+
++ No manual formatting of tables and figures when they get updated during the course of research
+
++ No manual updating of data-driven numbers (e.g., coefficient estimates, summary numbers) in text
 
 ---
 class: middle
 
-# What do you do on an Rmarkdown file?
+# What can you do with Rmarkdown-WORD?
 
 + include (run) R codes to
   * run statistical or modeling analysis  
@@ -97,7 +107,7 @@ Take a look at these entries in the YAML header in sample_to_word.Rmd and check 
 ---
 class: middle
 
-+ In the YAML header, the chunk below
+In the YAML header, the chunk below
 
 ```{r eval = F}
 output:
@@ -106,7 +116,12 @@ output:
 
 directs R to knit an Rmd file to a WORD file using `bookdown::word_document2` building process.
 
-+ `bookdown::word_document2` is used instead of `word_document:` as it allows us to easily cross-reference tables and figure. 
+Note: `bookdown::word_document2` is used instead of `word_document:` as it allows us to easily cross-reference tables and figure. 
+
+---
+class: middle
+
+As we will see later, the YAML header also 
 
 ---
 class: inverse, center, middle
@@ -481,6 +496,77 @@ class: middle
 + Confirm that the equations (in the Statistical Model subsection) written in the "aligned" and "align" environments are both correctly printed below on RStudio (RStudio can interpret them)
 
 + Now, knit to a WORD file and confirm that the equations from the "align" environment do not appear in the WORD document 
+
+---
+class: middle
+
+# Equation numbering and cross-reference 
+
+In order to number equations automatically, we can use `pandoc-crossref` (see [here](https://stackoverflow.com/questions/47985267/equation-numbering-in-rmarkdown-for-export-to-word) for how to install it). 
+
+
+.content-box-green[**How**]
+
+Place `{#eq:equation-name}` after an equation like this:
+
+```{r eval = F}
+$$y = \beta_0 + \beta_1 x + \varepsilon$$ {#eq:eqn1}  
+```
+
+We can then cross-reference the equation with [@eq:equation-name].
+
+.red[Note]: do not forget `eq:`
+
+---
+class: middle
+
+.content-box-green[**Direction**]
+
++ Look at the Statistical Model section of the sample Rmd and WORD file to see examples.
+
++ As you can see in the sample WORD file, `eq. ` is added to the cross-referenced equation number.
+
+---
+class: middle
+
+.content-box-green[**Changing the prefix**]
+
+In order to change the prefix, put this in the YAML header:
+
+```{r eval = F}
+eqnPrefix:
+  - "prefix you like"
+```
+
+--
+
+.content-box-green[**Direction**]
+
++ Uncomment the following lines in the YAML header of the sample Rmd file and knit 
+
+```{r }
+# eqnPrefix:
+#   - "Equation" 
+```
+
++ Confirm that the prefix for the first equation has changed 
+
+---
+class: middle
+
+.content-box-green[**Suppress prefix**]
+
+In order to just have equation number, put `-` in front of `@` like this:
+
+```{r eval = F}
+[-@eq:eqn2]
+``` 
+
+--
+
+.content-box-green[**Direction**]
+
+Confirm that the prefix of the second equation is gone (only equation number). 
 
 ---
 class: middle
