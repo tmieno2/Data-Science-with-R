@@ -3,17 +3,17 @@ title: "Reporting using Rmarkdown"
 author: "Taro Mieno"
 date: "`r Sys.Date()`"
 output:
+  word_document:
+    toc: yes
   html_document:
     number_sections: yes
     theme: flatly
     toc: yes
     toc_float: yes
-  word_document:
-    toc: yes
 # bibliography: example.bib
 ---
 
-<!-- ```{r , include = F}
+```{r , include = F}
 library(knitr)
 opts_chunk$set(
   echo = FALSE,
@@ -24,9 +24,9 @@ opts_chunk$set(
   fig.height = 4
   ) 
 
-opts_knit$set(root.dir = "~/Box/Teaching/UNL/DataScience/Data")
+# opts_knit$set(root.dir = "~/Box/Teaching/UNL/DataScience/Data")
 ```
--->
+
 
 # Basic illustrations
 
@@ -36,7 +36,7 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
+```{r cars, echo = TRUE}
 summary(cars)
 ```
 
