@@ -6,7 +6,7 @@ This is the repository for AECN 396/AECN896-002 at University of Nebraska Lincol
 ## Lecture Notes
 
 + Chapter 1: Introduction to R ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-1-Introduction/Introduction.html))
-+ Chapter 2: Introduction to Rmarkdown ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-2-Rmarkdown/Rmarkdown_x.html), [sample rmd file](https://tmieno2.github.io/Data-Science-with-R/Chapter-2-Rmarkdown/sample_rmd.rmd))
++ Chapter 2: Introduction to Rmarkdown ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-2-Rmarkdown/Rmarkdown_x.html), [sample rmd file](https://tmieno2.github.io/Data-Science-with-R/Chapter-2-Rmarkdown/sample_rmd.Rmd))
 + Chapter 3: Data Wrangling with the `tidyverse` package ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-3-DataWrangling/data_wrangling_x.html))
 + Chapter 4: Data Visualization ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-4-DataVisualization/data_visualization_x.html))
 + Chapter 5: Function, Loop, and Parallel Computation ([slide](https://tmieno2.github.io/Data-Science-with-R/Chapter-5-Functions-Loop-Parallel/function_loop_parallel_x.html))
