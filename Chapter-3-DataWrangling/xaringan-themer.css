@@ -37,13 +37,14 @@
   --text-font-size: 0.7rem;
   --code-font-size: 0.6rem;
   --code-inline-font-size: 1em;
-  --header-h1-font-size: 1.8rem;
-  --header-h2-font-size: 1.3rem;
+  --header-h1-font-size: 1.5rem;
+  --header-h2-font-size: 1.2rem;
   --header-h3-font-size: 1rem;
 
   /* Colors */
   --text-color: #000000;
   --header-color: #035AA6;
+  --header-two-color: #c87eb2;
   --background-color: #FFFFFF;
   --link-color: #ff005a;
   --text-bold-color: #035AA6;
@@ -70,10 +71,17 @@ body {
   font-weight: normal;
   color: var(--text-color);
 }
-h1, h2, h3 {
+
+h1 {
   font-family: var(--header-font-family);
-  font-weight: 600;
+  font-weight: 400;
   color: var(--header-color);
+}
+
+h2, h3 {
+  font-family: var(--header-font-family);
+  font-weight: 300;
+  color: var(--header-two-color);
 }
 .remark-slide-content {
   background-color: var(--background-color);

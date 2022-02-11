@@ -6,11 +6,13 @@ output:
     # css: [default, metropolis, metropolis-fonts] 
     css: xaringan-themer.css 
     lib_dir: libs
+    self-contained: true
     nature:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
 ---
+class: middle
 
 ```{r, child = './../setup.Rmd'}
 ```
@@ -26,6 +28,7 @@ output:
 7. [Merging datasets](#merging)
 
 ---
+class: middle 
 
 # Learning objectives
 
@@ -37,12 +40,10 @@ The objectives of this chapter is to learn how to use the `tidyverse` package to
 + merge multiple datasets 
 
 ---
+class: middle 
 
-#  `tidyverse` package
+#  `tidyverse` package: What is it?
 
-.panelset[ 
-
-.panel[.panel-name[What is it?]
 <br>
 The `tidyverse` is a package of a collection of packages developed mainly by Hadley Wickham. Some of the packages included are
 
@@ -58,9 +59,10 @@ They are also easy to learn and get help as they are extremely popular and very 
  
 You could also google the package name, and you will see bunch of introductions/tutorials.
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[Preparation]
+.content-box-green[**Preparation**]
 
 Install the package if you have not.
 
@@ -74,17 +76,15 @@ When you load the `tidyverse` package, it automatically loads many of the packag
 library(tidyverse)
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[Conflicts?]
+.content-box-green[**Conflicts**]
 
 Sometimes packages share the same functions names. 
 
 When those packages are loaded, there are function name conflicts where the function from the package loaded later masks the function from the other package.
 
-  ]
-
-]
 
 ---
 
@@ -96,43 +96,36 @@ name: df_tbl
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
 ---
+class: middle
 
-# `data.frame` and `tibble` 
+## `data.frame` and `tibble` 
 
-.panelset[ 
 
-.panel[.panel-name[What]
-
-<br>
-
-## `data.frame`
+.content-box-green[**`data.frame`**] 
 
 The traditional (most common) class of two-dimensional data (rows and columns) supported by R.
 
 <br>
 
-## `tibble`
+.content-box-green[**`tibble`**] 
 
 A relatively newer class of two-dimensional data that brings minor enhancements over `data.frame`.
 
 `tibble` is defined by the `tibble` package, which is part of the `tidyverse` package.
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[Objectives]
-
-<br>
+.content-box-green[**Objectives**]
 
 + Learn basic operations on `data.frame` and `tibble` 
 
 + Highlight some differences between the two (They are almost interchangeable, and you do no need to pay much attention to which class of data you are dealing with)
 
+---
+class: middle
 
-  ]
-
-.panel[.panel-name[Preparation 1]
-
-<br>
+.content-box-green[**Preparation 1**] 
 
 We use `HousePrices` dataset from the `AER` package.
 
@@ -152,9 +145,10 @@ data(HousePrices)
 class(HousePrices)
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[Preparation 2]
+.content-box-green[**Preparation 2**]
 
 <br>
 
@@ -172,14 +166,9 @@ HousePrices_tbl <- as_tibble(HousePrices)
 class(HousePrices_tbl)
 ```
 
-  ]
-
-]
-
-
 ---
 
-# `data.frame` and `tibble`: display method
+# Display method
 
 .left5[
 
@@ -204,11 +193,7 @@ HousePrices_tbl
 
 # Accessing parts of the data 
 
-.panelset[ 
-
-.panel[.panel-name[Numerical index]
-
-<br>
+## Using Numerical Index
 
 Subsetting a data.frame works in a very similar manner as a matrix:
 
@@ -216,7 +201,7 @@ Subsetting a data.frame works in a very similar manner as a matrix:
 matrix[rows of interest, columns of interest]
 ```
 
-## Example:
+.content-box-green[**Example:**] 
 
 2nd to 8th rows, the 3rd and 5th columns
 
@@ -238,9 +223,12 @@ HousePrices_tbl[2:8, c(3,5)]
 ```
 ]
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[Variable names]
+# Accessing parts of the data 
+
+## Using Variable Names
 
 <br>
 
@@ -252,7 +240,7 @@ Instead, the following is better:
 data[, c("variable 1", "variable 2", ...)]
 ```
 
-## Examples:
+.content-box-green[**Examples:**]
 
 .left5[
 `data.frame`
@@ -270,16 +258,15 @@ head(HousePrices_tbl[, "price"])
 ```
 ]
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[$]
-
-<br>
+# Accessing parts of the data 
+## Using $
 
 Alternatively, to access a column (variable) from a dataset, you can use `$` like below (remember? A `data.frame` is a special kind of `list`).
 
-## Examples:
-
+.content-box-green[**Examples**]
 .left5[
 
 `data.frame`
@@ -295,13 +282,6 @@ head(HousePrices$price)
 head(HousePrices_tbl$price)
 ```
 ]
-
-  ]
-
-]
-
-
-
 
 <!-- 
 #/*=================================================*/
@@ -319,6 +299,7 @@ name: inputoutput
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
 ---
+class: middle
 
 # Importing and Exporting Datasets
 
@@ -334,8 +315,11 @@ name: inputoutput
 + Place all the data files in the same folder (any folder) 
 
 ---
+class: middle
 
-# Import files (datasets) in various formats 
+# Importing and Exporting Datasets
+
+## Import files (datasets) in various formats 
 
 Check the format in which the dataset is stored by looking at the extension of the file (what comes after the file name and a dot)
   * **corn.csv**: a file format Microsof Excel supports. 
@@ -348,87 +332,83 @@ Check the format in which the dataset is stored by looking at the extension of t
 When you import a dataset, you need to use a particular function that is appropriate for the particular type of format the dataset is in.   
 
 ---
+class: middle
 
-# Read a csv file
+# Importing and Exporting Datasets
 
-.panelset[ 
+## Read a csv file
 
-.panel[.panel-name[read.csv()]
-
-<br>
+.content-box-green[**`read.csv()`**] 
 
 You can use `read.csv()` from the `base` package.
 
-## Syntax
+.content-box-green[**Syntax**] 
 
 ```{r eval = F}
 #--- NOT RUN ---#  
 data = read.csv(path to the file to import)
 ```
 
-## Examples
+.content-box-green[**Examples**]
 
 ```{r}
 corn_yields_df <- read.csv("~/Dropbox/TeachingUNL/DataScience/Datasets/Chapter_3_data_wrangling/corn_yields.csv")
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[read_csv()]
+# Importing and Exporting Datasets
+## Read a csv file
 
-<br>
+.content-box-green[**`read_csv()`**]   
 
 You can use `read_csv()` from the `readr` package.
 
-## Syntax
+.content-box-green[**Syntax**] 
 
 ```{r eval = F}
 #--- NOT RUN ---#  
 data = read_csv(path to the file to import)
 ```
 
-## Examples
+.content-box-green[**Examples**] 
 
 ```{r, message = F}
 corn_yields_tbl <- read_csv("~/Dropbox/TeachingUNL/DataScience/Datasets/Chapter_3_data_wrangling/corn_yields.csv")
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[compare]
+# Importing and Exporting Datasets
 
-<span style="color:red"> Direction:</span> evaluate `corn_yields_df` and `corn_yields_tbl` to see the differences.
+## Compare
+
+.content-box-red[**Direction:**]
+
+Evaluate `corn_yields_df` and `corn_yields_tbl` to see the differences.
 
 <br>
 
-Data read using `read.csv()`:
+.content-box-green[**Data read using `read.csv()`**]
 
 ```{r }
 class(corn_yields_df)
 ```
 
-<br>
-
-Data read using `read_csv()`:
+.content-box-green[**Data read using `read_csv()`:**]
 
 ```{r }
 class(corn_yields_tbl) 
 ```
 
-  ]
-
-]
-
-
 ---
+class: middle
 
 # Setting the working directory
 
-.panelset[ 
-
-.panel[.panel-name[What and why]
-
-<br>
+## What and why
 
 + In the previous slide, we provided a full path to the csv file to read onto R.
 
@@ -448,11 +428,11 @@ corn_yield <- read.csv("corn_yields.csv")
 
 + It is not just when importing datasets. When you export an R object as a file, R will create a file in the working directory by default.   
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[how]
-
-<br>
+# Setting the working directory
+## How
 
 You can use `setwd()` to designate a directory as the working directory:
 
@@ -470,11 +450,11 @@ You can check the current working directory using the `getwd()` function:
 getwd()
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[navigation]
-
-<br>
+# Setting the working directory
+## Navigation
 
 Suppose it is convenient for you to set the working directory somewhere else than the folder where all the datasets are residing.
 
@@ -498,11 +478,10 @@ You can use `..` to move up a folder. For example, if you want to import **corn_
 data <- read_csv("../corn_yields.csv")
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[RStudio project]
-
-<br>
+## RStudio project
 
 You can create an R Project using RStudio:
 
@@ -519,19 +498,12 @@ When you open an R Project folder, then the working directory is set at the proj
 getwd() 
 ```
 
-  ]
-
-]
-
 ---
+class: middle
 
 # Read a sheet from an xls(x) file
 
-.panelset[ 
-
-.panel[.panel-name[Instruction]
-
-<br>
+## Instruction 
 
 + You can use `read_excel()` from the `readxl` package to read data sheets from an **xls(x)** file, which is part of the `tidyverse` package. 
 
@@ -546,11 +518,12 @@ getwd()
 library(readxl)
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[Syntax and Examples]
+## Syntax and Examples
 
-## Syntax
+.content-box-green[**Syntax**] 
 
 ```{r readxls, eval = F}
 read_excel(path to the file, sheet = x)
@@ -558,7 +531,7 @@ read_excel(path to the file, sheet = x)
 
 + `x`: sheet number
 
-## Examples
+.content-box-green[**Examples**] 
 
 Import a sheet of an **xls(x)** file using `read_excel()`:
 
@@ -571,10 +544,10 @@ corn_09 <- read_excel("corn_yields.xls", sheet = 2) # 2nd sheet
 corn_08 <- read_excel("~/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-3-DataWrangling/corn_yields.xls", sheet = 1)  
 ```
 
+---
+class: middle
 
-  ]
-
-.panel[.panel-name[Note]
+## Note
 
 <br>
 
@@ -585,19 +558,12 @@ class(corn_08)
 
 Notice that the data is converted into a **tibble** (because the `readxl` package is part of the `tidyverse` package.).
 
-  ]
-
-]
-
 ---
+class: middle
 
 # Read a STATA data file (.dta)  
 
-.panelset[ 
-
-.panel[.panel-name[Instruction]
-
-<br>
+## Instruction
 
 Use the `read.dta13()` function from the `readstata13` package.
 
@@ -613,29 +579,29 @@ library(readstata13)
 library(readstata13) 
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[Syntax and Examples]
+## Syntax and Examples
 
-## Syntax
+.content-box-green[**Syntax**] 
 
 ```{r eval = F}
 #--- Syntax (NOT RUN) ---#
 read.dta13(file path)
 ```
 
-## Examples
+.content-box-green[**Examples**] 
 
 ```{r read_dta, cache = TRUE}
 #--- import the data ---#
 corn_yields <- read.dta13("corn_yields.dta")
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[Note]
-
-<br>
+## Note
 
 ```{r }
 #--- check the class ---#
@@ -644,20 +610,10 @@ class(corn_yields)
 
 Notice that the data is converted into a **data.frame** object, not a **tibble**.
 
-  ]
-
-]
-
 ---
-
+class: middle
 
 # Read an **rds** file 
-
-.panelset[ 
-
-.panel[.panel-name[Instruction]
-
-<br>
 
 + An **rds** (<span style="color:red"> r </span><span style="color:red">d</span>ata<span style="color:red"> s</span>et) file is a file type that is supported by R.  
 
@@ -665,27 +621,24 @@ Notice that the data is converted into a **data.frame** object, not a **tibble**
 
 + No special packages are necessary.
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[Syntax and Examples]
+## Syntax and Examples
 
-## Syntax
+.content-box-green[**Syntax**] 
 
 ```{r eval = F}
 readRDS("path to the file") 
 ```
 
-## Examples
+.content-box-green[**Examples**] 
 
 ```{r read_rds}
 corn_yields <- readRDS("corn_yields.rds") 
 ```
 
-  ]
-
-.panel[.panel-name[Note]
-
-<br>
+## Note
 
 ```{r }
 class(corn_yields)
@@ -695,17 +648,13 @@ class(corn_yields)
 
 Notice that the imported dataset is already a `tibble` object. This is because the R object exported as **corn_yields.rds** was `tibble`. 
 
-  ]
-]
-
 ---
+class: middle
 
 # Export an R object 
 
-.panelset[ 
+## Instruction
 
-.panel[.panel-name[Instruction]
-<br>
 + Exporting datasets work much the same way as importing them. 
 
 + Here is the list of functions that let you export a `data.frame` or (`tibble`) in different formats:
@@ -713,19 +662,18 @@ Notice that the imported dataset is already a `tibble` object. This is because t
   * **dta**: `save.dta13()`
   * **rds**: `saveRDS()`
  
-  ]
+---
+class: middle
 
-.panel[.panel-name[Syntax and Examples]
+## Syntax and Examples
 
-<br>
-
-## Syntax
+.content-box-green[**Syntax**] 
 
 ```{r eval = F}
 export_function(obeject name, file name)
 ```
 
-## Examples
+.content-box-green[**Examples**] 
 
 ```{r exp, eval=FALSE}
 #--- export as csv ---#
@@ -741,11 +689,10 @@ saveRDS(corn_yields, "corn_yields_exp.rds")
 # just don't do it
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[type preservation]
-
-<br>
+## type preservation
 
 You can export any kind of R objects as an rds file.
 
@@ -755,23 +702,19 @@ a_list <- list(a = c("R", "rocks"), b = corn_yields)
 saveRDS(a_list, "a_list.rds")
 
 readRDS("a_list.rds")
-``` 
+```
 
 As you can see a list is saved as an rds file, and when imported, it is still a list.
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[file size]
-
-<br>
+## File size
 
 Check the size of the corn data files in different formats. 
 
 Which one is the smallest?
 
-  ]
-
-]
 
 <!-- 
 #/*=================================================*/
@@ -788,7 +731,7 @@ name: dplyr
 <html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
 
 ---
-
+class: middle
 
 # Essential verbs 
 
@@ -800,7 +743,7 @@ name: dplyr
 + `relocate()`
 
 ---
-
+class: middle
 
 # Before we start
 
@@ -818,69 +761,59 @@ flights_mini <- distinct(flights,month,day,.keep_all=TRUE) %>%
 ```
 
 ---
+class: middle
 
 # `filter()`: row-wise subset
 
-
-.panelset[ 
-
-.panel[.panel-name[Instruction]
-
-<br>
+## Instruction
 
 `filter()`: subset data row-wise using logical conditions based on variables  
  
-
 ```{r eval = F}
 #--- syntax ---# 
 filter(dataset, condition 1, ..., condition K)
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[equal to]
-<br>
+.content-box-green[**equal to**] 
+
 Observations where `month` is 4:
 
 ```{r }
 filter(flights_mini, month == 4) 
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[not equal to]
-<br>
+.content-box-green[**not equal to**]  
+
 Observations where `month` is NOT 4:
 
 ```{r }
 filter(flights_mini, month != 4) 
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[inequality]
-<br>
+.content-box-green[**inequality**] 
+
 Observations where `month` is less than 4:
 
 ```{r }
 filter(flights_mini, month < 4) 
 ```
 
-  ]
-
-
-]
-
-
 ---
-
+class: middle
 
 # `filter()`: multiple conditions
 
-.panelset[ 
+.content-box-green[**and (&)**]
 
-.panel[.panel-name[and (&)]
-<br>
 ```{r }
 filter(flights_mini, month >= 9 & month <= 11) 
 
@@ -888,18 +821,20 @@ filter(flights_mini, month >= 9 & month <= 11)
 # filter(flights_mini, month >= 9, month <= 11) 
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[or (|)]
-<br>
+.content-box-green[**or (|)**]
+
 ```{r }
 filter(flights_mini, month >= 11 | month <= 1) 
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[in any of (`%in%`)]
-<br>
+.content-box-green[**in any of (`%in%`)**] 
+
 ```{r }
 filter(flights_mini, month %in% c(1, 2, 3)) 
 
@@ -909,11 +844,8 @@ filter(flights_mini, month %in% c(1, 2, 3))
 
 This is very useful when you have many values to check.  
 
-  ]
-
-]
-
 ---
+class: middle
 
 # Important 
 
@@ -934,14 +866,11 @@ flights_mini_filtered
 ```
 
 ---
+class: middle
 
 # Exercises 
 
-.panelset[ 
-
-.panel[.panel-name[Exercise 1]
-
-<br>
+.content-box-green[**Exercise 1**]
 
 E1: Find the observations in June and July
 
@@ -955,11 +884,10 @@ Here is the output you should get:
 filter(flights_mini, month %in% c(6, 7))  
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[Exercise 2]
-
-<br>
+.content-box-green[**Exercise 2**]
 
 E2: Find the observations in January, April, July, September, and December
 
@@ -973,11 +901,7 @@ Here is the output you should get:
 filter(flights_mini, month %in% c(1, 4, 6, 9, 12))  
 ```
 
-  ]
-
-.panel[.panel-name[Exercise 3]
-
-<br>
+.content-box-green[**Exercise 3**]
 
 E3: Find the observations by carrier "US"
 
@@ -991,20 +915,11 @@ Here is the output you should get:
 filter(flights_mini, carrier == "US")  
 ```
 
-  ]
-]
-
-
-
 ---
 
 # `select()`: column-wise subset
 
-.panelset[ 
-
-.panel[.panel-name[Instruction]
-
-<br>
+.content-box-green[**Instruction**]
 
 You can select a subset of variables using `select()`. 
 
@@ -1018,50 +933,39 @@ If you would like to drop some variables, but want to keep all the other variabl
 select(dataset, - variable 1, - variable 2, ...)
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[Example 1]
-
-<br>
+.content-box-green[**Example 1**] 
 
 ```{r }
 select(flights_mini, arr_delay)
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[Example 2]
-
-<br>
+.content-box-green[**Example 2**] 
 
 ```{r }
 select(flights_mini, month, arr_delay, dep_delay)
 ```
-  ]
 
-.panel[.panel-name[Example 3]
+---
+class: middle
 
-<br>
-
+.content-box-green[**Example 3**]
 
 ```{r }
 select(flights_mini, - year, - month)  
-``` 
-
-  ]
-
-]
-
+```
 
 ---
+class: middle
 
 # Exercises
 
-.panelset[ 
-
-.panel[.panel-name[Exercise 1]
-
-<br>
+.content-box-green[**Exercise 1**]
 
 E1: select all the columns except `arr_delay`
 
@@ -1075,11 +979,7 @@ Here is the output you should get:
 select(flights_mini, - arr_delay)  
 ```
 
-  ]
-
-.panel[.panel-name[Exercise 2]
-
-<br>
+.content-box-green[**Exercise 2**]
 
 E2: select `arr_delay` and `month`
 
@@ -1093,22 +993,16 @@ Here is the output you should get:
 select(flights_mini, month, arr_delay)  
 ```
 
-  ]
-
-]
-
-
 ---
+class: middle
 
 # `relocate()`: change the column order 
-
-<br>
 
 You can use `relocate()` to change the column order. 
 
 ```{r }
 relocate(flights_mini, dep_time, dep_delay)
-``` 
+```
 
 Chosen variables come front with the order of the rest of the variable unchanged.
 
@@ -1116,17 +1010,13 @@ Chosen variables come front with the order of the rest of the variable unchanged
 
 # Piping with `%>%`
 
-.panelset[ 
-
-.panel[.panel-name[The Basic]
-
-<br>
+.content-box-green[**The Basic**]
 
 Let `f()` be a function and `x` is an R object that `f()` accepts. Then, 
 
 `x %>% f()` is the same as `f(x)`
 
-## Example
+.content-box-green[**Example**]
 
 Try the following codes and confirm they return the same results:
 
@@ -1138,11 +1028,10 @@ mean(seq(1, 99, by = 2))
 seq(1, 99, by = 2) %>% mean()   
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[More generally]
-
-<br>
+.content-box-green[**More generally**] 
 
 Suppose you have more than one arguments to the function like this:
 
@@ -1164,11 +1053,10 @@ f(z, x2, option 1, option 2)
 
 That is, in general, an R object that precedes the piping operator (`%>%`) becomes the <span style="color:red"> first </span> argument of the function that comes after the piping operator.
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[.]
-
-<br>
+.content-box-green[**.**] 
 
 What if the object before the piping operator is not the first argument of the subsequent function? 
 
@@ -1197,11 +1085,10 @@ You can refer to the preceding object by `.` like this:
 a_string %>% gsub(" ", "", .)  
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[chaining]
-
-<br>
+.content-box-green[**chaining**] 
 
 You can keep piping like this:  
 
@@ -1223,19 +1110,12 @@ decorate("pipe-illustrate", eval = F) %>%
   knit_print.with_flair()
 ```
 
-  ]
-]
-
 ---
+class: middle
 
 # Why piping with `%>%`
 
-.panelset[ 
-
-
-.panel[.panel-name[Problem]
-
-<br>
+.content-box-green[**Problem**]
 
 Consider the following sequence of actions:
 
@@ -1245,7 +1125,7 @@ a1 <- filter(flights_mini, month <= 3)
 a2 <- select(a1, year, month, dep_time)
 
 a3 <- relocate(a2, dep_time)
-``` 
+```
 
 <br>
 
@@ -1255,11 +1135,10 @@ a3 <- relocate(a2, dep_time)
 
 + It is easy to imagine that you will soon have lots of unnecessary intermediate objects on R.
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[Alternative 1]
-
-<br>
+.content-box-green[**Alternative 1**] 
 
 Alternatively, you can do the following:
 
@@ -1271,7 +1150,7 @@ a3 <- relocate(
   ), 
   dep_time
 )
-``` 
+```
 
 <br>
 
@@ -1279,11 +1158,10 @@ a3 <- relocate(
 
 + However, it is hard to understand the code partly because the order of actions is the reverse of the order of the corresponding functions you see as you read the code from left to right.
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[Alternative 2 (with piping)]
-
-<br>
+.content-box-green[**Alternative 2 (with piping)**]
 
 Taking advantage of the piping operator, 
 
@@ -1292,32 +1170,26 @@ a3 <- flights_mini %>%
   filter(month <= 3) %>% 
   select(year, month, dep_time) %>% 
   relocate(dep_time)
-``` 
+```
 
 <br>
-
-  ]
-
-]
 
 ---
 
 
 # `mutate()`: define new (or update) variables  
 
-.panelset[ 
-
-.panel[.panel-name[What]
+.content-box-green[**What**]
 
 You can use `mutate()` to create a new variable (or overwrite the existing one) in the dataset:
 
-## Synatax
+.content-box-green[**Synatax**] 
 
 ```{r eval = F}
 mutate(data, new variable name = expression)
 ```
 
-## Example
+.content-box-green[**Example**] 
 
 ```{r }
 mutate(flights_mini, gain = arr_delay - dep_delay) %>% 
@@ -1325,15 +1197,16 @@ mutate(flights_mini, gain = arr_delay - dep_delay) %>%
   relocate(gain)
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[multiple variables]
+.content-box-green[**multiple variables**] 
 
 You can define multiple variables within a single `mutate()` function.  
 
 You can create a new variable based on the variables that have been just created within the same `mutate()` function.
 
-## Examples
+.content-box-green[**Examples**] 
 
 ```{r m-mult, echo = F, eval = F}
 flights_mini %>% mutate(
@@ -1355,13 +1228,14 @@ decorate("m-mult", eval = F) %>%
   
 ```
 
-  ]
+---
+class: middle
 
-.panel[.panel-name[function]
+.content-box-green[**function**] 
 
 You can apply functions to variables when creating new variables:
 
-## Example
+.content-box-green[**Example**] 
 
 ```{r ex-func, echo = F, eval = F}
 flights_mini %>% 
@@ -1384,11 +1258,6 @@ flights_mini %>%
 ```
 
 Note: the function you apply has to accept a vector (a variable column).
-
-  ] 
-
-  <!-- panel ends here -->
-]
 
 ---
 
