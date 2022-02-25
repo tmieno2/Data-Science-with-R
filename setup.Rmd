@@ -25,6 +25,7 @@ xaringanExtra::use_xaringan_extra(c("tile_view", "animate_css", "tachyons"))
 xaringanExtra::use_tile_view()
 xaringanExtra::use_panelset()
 xaringanExtra::use_clipboard()
+xaringanExtra::use_search(show_icon = TRUE)
 ```
 
 ```{r xaringan-themer, include = FALSE, warning = FALSE, cache = F}
