@@ -1,0 +1,2141 @@
+---
+title: "Data wrangling with `tidyverse`: The Basics"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    self_contained: true
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r, child = './../setup.Rmd'}
+```
+
+# Table of contents
+
+1. [Importing and exporting data](#inputoutput)
+2. [`data.frame` and `tibble`](#df_tbl)
+3. [Data manipulation with `dplyr`: the Basics](#dplyr)
+4. [Grouped operations](#grouped)
+5. [Extensions](#extensions)
+
+---
+
+# Learning objectives
+
+The objectives of this chapter is to learn how to use the `tidyverse` package to 
+
++ import and export datasets in various formats
++ manipulate data using the `tidyverse` functions
+
+---
+
+# `tidyverse` package
+
+.panelset[ 
+
+.panel[.panel-name[What is it?]
+<br>
+The `tidyverse` is a package of a collection of packages developed mainly by Hadley Wickham. Some of the packages included are
+
++ `readr`: read datasets in various formats
++ `dplyr`: manipulate and merge datasets
++ `tidyr`: reshape datasets 
++ `ggplot2`: data visualization 
++ `stringr`: character string operations
+
+These packages are by no means the only ways to do the operations we will learn today. However, we learn these packages because they are easy to use. 
+
+They are also easy to learn and get help as they are extremely popular and very well-documented. Go to the [tidyverse website](http://www.tidyverse.org/), and click on the icon of the package you would like to learn, then you will have a nice documentation of the packages. 
+ 
+You could also google the package name, and you will see bunch of introductions/tutorials.
+
+  ]
+
+.panel[.panel-name[Preparation]
+
+Install the package if you have not.
+
+```{r, eval = FALSE}
+install.packages("tidyverse")
+```
+
+When you load the `tidyverse` package, it automatically loads many of the packages contained in it. 
+
+```{r, message = TRUE}
+library(tidyverse)
+```
+
+  ]
+
+.panel[.panel-name[Conflicts?]
+
+Sometimes packages share the same functions names. 
+
+When those packages are loaded, there are function name conflicts where the function from the package loaded later masks the function from the other package.
+
+  ]
+
+]
+
+---
+
+class: inverse, center, middle
+name: df_tbl
+
+# `data.frame` and `tibble`
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+
+# `data.frame` and `tibble`
+
+.panelset[ 
+
+.panel[.panel-name[What]
+
+<br>
+
+## `data.frame`
+
+The traditional (most common) class of two-dimensional data (rows and columns) supported by R.
+
+<br>
+
+## `tibble`
+
+A relatively newer class of two-dimensional data that brings minor enhancements over `data.frame`.
+
+`tibble` is defined by the `tibble` package, which is part of the `tidyverse` package.
+
+  ]
+
+.panel[.panel-name[Objectives]
+
+<br>
+
++ Learn basic operations on `data.frame` and `tibble` 
+
++ Highlight some differences between the two (They are almost interchangeable, and you do no need to pay much attention to which class of data you are dealing with)
+
+
+  ]
+
+.panel[.panel-name[Preparation 1]
+
+<br>
+
+We use `HousePrices` dataset from the `AER` package.
+
+```{r}
+#--- load the AER package ---#
+library(AER)
+
+#--- load the HousePrices data ---#
+data(HousePrices)
+```
+
+<br>
+
+`HousePrices` is a `data.frame`.
+
+```{r }
+class(HousePrices)
+```
+
+  ]
+
+.panel[.panel-name[Preparation 2]
+
+<br>
+
+You can convert a `data.frame` into a `tibble` using `as_tibble()`:
+
+```{r }
+HousePrices_tbl <- as_tibble(HousePrices)
+```
+
+<br>
+
+`HousePrices` is a `tibble` (and also a `data.frame`).
+
+```{r }
+class(HousePrices_tbl)
+```
+
+  ]
+
+]
+
+
+---
+
+# `data.frame` and `tibble`: display method
+
+.left5[
+
+`data.frame`
+
+```{r }  
+HousePrices
+```
+]
+
+.right5[
+
+`tibble`
+
+```{r }  
+HousePrices_tbl
+```
+
+]
+
+---
+
+# Accessing parts of the data
+
+.panelset[ 
+
+.panel[.panel-name[Numerical index]
+
+<br>
+
+Subsetting a data.frame works in a very similar manner as a matrix:
+
+```{r eval = F}
+matrix[rows of interest, columns of interest]
+```
+
+## Example:
+
+2nd to 8th rows, the 3rd and 5th columns
+
+.left5[
+
+`data.frame`
+
+```{r, cache=TRUE}
+HousePrices[2:8, c(3,5)]
+```
+]
+
+.right5[
+
+`tibble`
+
+```{r, cache=TRUE}
+HousePrices_tbl[2:8, c(3,5)]
+```
+]
+
+  ]
+
+.panel[.panel-name[Variable names]
+
+<br>
+
+But, subsetting a data.frame using numerical indexes are not recommended because it is not immediately clear to you (or your collaborators who might look at the code) what you intended to do with the code.
+
+Instead, the following is better:
+
+```{r eval = F}
+data[, c("variable 1", "variable 2", ...)]
+```
+
+## Examples:
+
+.left5[
+`data.frame`
+
+```{r, cache=TRUE}
+head(HousePrices[, "price"])
+```
+]
+
+.right5[
+`tibble`
+
+```{r, cache=TRUE}
+head(HousePrices_tbl[, "price"])
+```
+]
+
+  ]
+
+.panel[.panel-name[$]
+
+<br>
+
+Alternatively, to access a column (variable) from a dataset, you can use `$` like below (remember? A `data.frame` is a special kind of `list`).
+
+## Examples:
+
+.left5[
+
+`data.frame`
+
+```{r, cache=TRUE}
+head(HousePrices$price)
+```
+]
+
+.right5[
+`tibble`
+```{r, cache=TRUE}
+head(HousePrices_tbl$price)
+```
+]
+
+  ]
+
+]
+
+
+
+
+<!-- 
+#/*=================================================*/
+#' # Input and output
+#/*=================================================*/
+-->
+
+---
+
+class: inverse, center, middle
+name: inputoutput
+
+# Importing and Exporting Datasets
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+
+# Importing and Exporting Datasets
+
+## Objectives
+
++ read datasets in various formats (**csv**, **xlsx**, **dta**, and **rds**) containing corn yields in Nebraska counties for the year of 2008.  
+
++ write R objects as files in various formats 
+
+## Directions
+
++ Go [here](https://www.dropbox.com/sh/0hhhrx02y29oksr/AABy9Spbfd4xna4SpBe-i-vra?dl=0) and download all the files
++ Place all the data files in the same folder (any folder) 
+
+---
+
+# Import files (datasets) in various formats
+
+Check the format in which the dataset is stored by looking at the extension of the file (what comes after the file name and a dot)
+  * **corn.csv**: a file format Microsof Excel supports. 
+  * **corn.xlsx**: another format supported by Microsof Excel, which may have more than one tabs of data sheets. 
+  * **corn.dta**: a format that STATA support (software that is immensely popular for economists). 
+  * **corn.rds**: a format that R supports. 
+
+--
+
+When you import a dataset, you need to use a particular function that is appropriate for the particular type of format the dataset is in.   
+
+---
+
+# Read a csv file
+
+.panelset[ 
+
+.panel[.panel-name[read.csv()]
+
+<br>
+
+You can use `read.csv()` from the `base` package.
+
+## Syntax
+
+```{r eval = F}
+#--- NOT RUN ---#  
+data = read.csv(path to the file to import)
+```
+
+## Examples
+
+```{r}
+corn_yields_df <- read.csv("~/Dropbox/TeachingUNL/DataScience/Datasets/Chapter_3_data_wrangling/corn_yields.csv")
+```
+
+  ]
+
+.panel[.panel-name[read_csv()]
+
+<br>
+
+You can use `read_csv()` from the `readr` package.
+
+## Syntax
+
+```{r eval = F}
+#--- NOT RUN ---#  
+data = read_csv(path to the file to import)
+```
+
+## Examples
+
+```{r, message = F}
+corn_yields_tbl <- read_csv("~/Dropbox/TeachingUNL/DataScience/Datasets/Chapter_3_data_wrangling/corn_yields.csv")
+```
+
+  ]
+
+.panel[.panel-name[compare]
+
+<span style="color:red"> Direction:</span> evaluate `corn_yields_df` and `corn_yields_tbl` to see the differences.
+
+<br>
+
+Data read using `read.csv()`:
+
+```{r }
+class(corn_yields_df)
+```
+
+<br>
+
+Data read using `read_csv()`:
+
+```{r }
+class(corn_yields_tbl) 
+```
+
+  ]
+
+]
+
+
+---
+
+# Setting the working directory
+
+.panelset[ 
+
+.panel[.panel-name[What and why]
+
+<br>
+
++ In the previous slide, we provided a full path to the csv file to read onto R.
+
++ If you expect to import and/or export (save) datasets and R objects often in that particular directory, it would be nice to tell R to look for files in the directory by default.
+
+So, a code like this works:
+
+```{r csv-read, eval = F}
+corn_yield <- read.csv("corn_yields.csv")
+```
+
++ This will save us from writing out the full path every time we either import or export datasets.
+
++ You can do so by designate the directory as the **working directory**.  
+
++ Once the working directory is set, R looks for files in that directory unless told otherwise. 
+
++ It is not just when importing datasets. When you export an R object as a file, R will create a file in the working directory by default.   
+
+  ]
+
+.panel[.panel-name[how]
+
+<br>
+
+You can use `setwd()` to designate a directory as the working directory:
+
+```{r eval = F}
+#--- Setting a directory (path) in your computer---#
+setwd("~/Dropbox/TeachingUNL/DataScience/Datasets/Chapter_3_data_wrangling")
+```
+
+<br>
+
+You can check the current working directory using the `getwd()` function:
+
+```{r }
+#--- find the current working directory ---#
+getwd()
+```
+
+  ]
+
+.panel[.panel-name[navigation]
+
+<br>
+
+Suppose it is convenient for you to set the working directory somewhere else than the folder where all the datasets are residing.
+
+```{r, eval = FALSE}
+setwd("~/Dropbox/TeachingUNL/DataScience")
+```
+
+<br>
+
+You can then provide the path to the file relative to the working directory like this:
+
+```{r eval = F}
+data <- read_csv("Datasets/Chapter_3_data_wrangling/corn_yields.csv")
+```
+
+<br>
+
+You can use `..` to move up a folder. For example, if you want to import **corn_yields.csv** stored in "~/Dropbox/TeachingUNL", then the following works:
+
+```{r eval = F}
+data <- read_csv("../corn_yields.csv")
+```
+
+  ]
+
+.panel[.panel-name[RStudio project]
+
+<br>
+
+You can create an R Project using RStudio:
+
++ click on a blue transparent box with a plus sign at the upper left corner of RStudio
++ click on "new directory" (to initiate a new folder) or "existing directory" (to designate an existing folder)
+
+(<span style="color:blue"> Direction: </span> demonstrate on RStduio)
+
+<br>
+
+When you open an R Project folder, then the working directory is set at the project folder. Confirm this:
+
+```{r eval = F}
+getwd() 
+```
+
+  ]
+
+]
+
+---
+
+# Read a sheet from an xls(x) file
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+<br>
+
++ You can use `read_excel()` from the `readxl` package to read data sheets from an **xls(x)** file, which is part of the `tidyverse` package. 
+
++ The `readxl` package is installed when you install the `tidyverse` pacakge. 
+
++ However, it is not loaded automatically when you load the `tidyverse` package. 
+
++ So, you need to library the package even if you have loaded the `tidyverse` package. 
+
+
+```{r }
+library(readxl)
+```
+
+  ]
+
+.panel[.panel-name[Syntax and Examples]
+
+## Syntax
+
+```{r readxls, eval = F}
+read_excel(path to the file, sheet = x)
+```
+
++ `x`: sheet number
+
+## Examples
+
+Import a sheet of an **xls(x)** file using `read_excel()`:
+
+```{r eval = F}
+corn_08 <- read_excel("corn_yields.xls", sheet = 1) # 1st sheet 
+corn_09 <- read_excel("corn_yields.xls", sheet = 2) # 2nd sheet
+```
+
+```{r echo = F}
+corn_08 <- read_excel("~/Dropbox/TeachingUNL/DataScience/LectureNotes/Chapter-3-DataWrangling/corn_yields.xls", sheet = 1)  
+```
+
+
+  ]
+
+.panel[.panel-name[Note]
+
+<br>
+
+```{r }
+#--- check the class ---#
+class(corn_08) 
+```
+
+Notice that the data is converted into a **tibble** (because the `readxl` package is part of the `tidyverse` package.).
+
+  ]
+
+]
+
+---
+
+# Read a STATA data file (.dta)
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+<br>
+
+Use the `read.dta13()` function from the `readstata13` package.
+
+```{r, eval = FALSE}
+#--- install the package ---#
+install.packages(readstata13)
+
+#--- load the package ---#
+library(readstata13) 
+```
+
+```{r, echo = FALSE}
+library(readstata13) 
+```
+
+  ]
+
+.panel[.panel-name[Syntax and Examples]
+
+## Syntax
+
+```{r eval = F}
+#--- Syntax (NOT RUN) ---#
+read.dta13(file path)
+```
+
+## Examples
+
+```{r read_dta, cache = TRUE}
+#--- import the data ---#
+corn_yields <- read.dta13("corn_yields.dta")
+```
+
+  ]
+
+.panel[.panel-name[Note]
+
+<br>
+
+```{r }
+#--- check the class ---#
+class(corn_yields) 
+```
+
+Notice that the data is converted into a **data.frame** object, not a **tibble**.
+
+  ]
+
+]
+
+---
+
+
+# Read an **rds** file
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+<br>
+
++ An **rds** (<span style="color:red"> r </span><span style="color:red">d</span>ata<span style="color:red"> s</span>et) file is a file type that is supported by R.  
+
++ You can use the `readRDS()` function to read an **rds** file. 
+
++ No special packages are necessary.
+
+  ]
+
+.panel[.panel-name[Syntax and Examples]
+
+## Syntax
+
+```{r eval = F}
+readRDS("path to the file") 
+```
+
+## Examples
+
+```{r read_rds}
+corn_yields <- readRDS("corn_yields.rds") 
+```
+
+  ]
+
+.panel[.panel-name[Note]
+
+<br>
+
+```{r }
+class(corn_yields)
+```
+
+<br>
+
+Notice that the imported dataset is already a `tibble` object. This is because the R object exported as **corn_yields.rds** was `tibble`. 
+
+  ]
+]
+
+---
+
+# Export an R object
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+<br>
++ Exporting datasets work much the same way as importing them. 
+
++ Here is the list of functions that let you export a `data.frame` or (`tibble`) in different formats:
+  * **csv**: `write_csv()`
+  * **dta**: `save.dta13()`
+  * **rds**: `saveRDS()`
+ 
+  ]
+
+.panel[.panel-name[Syntax and Examples]
+
+<br>
+
+## Syntax
+
+```{r eval = F}
+export_function(obeject name, file name)
+```
+
+## Examples
+
+```{r exp, eval=FALSE}
+#--- export as csv ---#
+write_csv(corn_yields, "corn_yields_exp_rownames.csv")
+
+#--- export as dta ---#
+save.dta13(corn_yields, "corn_yields_exp.dta")
+
+#--- export as rds ---#
+saveRDS(corn_yields, "corn_yields_exp.rds")
+
+#--- export as xls file ---#
+# just don't do it
+```
+
+  ]
+
+.panel[.panel-name[type preservation]
+
+<br>
+
+You can export any kind of R objects as an rds file.
+
+```{r }
+a_list <- list(a = c("R", "rocks"), b = corn_yields)   
+
+saveRDS(a_list, "a_list.rds")
+
+readRDS("a_list.rds")
+```
+
+As you can see a list is saved as an rds file, and when imported, it is still a list.
+
+  ]
+
+.panel[.panel-name[file size]
+
+<br>
+
+Check the size of the corn data files in different formats. 
+
+Which one is the smallest?
+
+  ]
+
+]
+
+<!--
+#/*=================================================*/
+#' # Data manipulation using dplyr
+#/*=================================================*/
+-->
+
+---
+class: inverse, center, middle
+name: dplyr
+
+# Data manipulation using the `dplyr` package
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+
+
+# Essential verbs
+
++ `filter()`
++ `mutate()`
++ `select()`
++ `rename()`
++ `arrange()`
++ `relocate()`
+
+---
+
+
+# Before we start
+
+For illustrations, we will use `flights_mini` that we create below:
+
+```{r }
+library(nycflights13)
+
+(
+flights_mini <- distinct(flights,month,day,.keep_all=TRUE) %>% 
+  filter(day %in% c(1,2)) %>% 
+  arrange(month)
+)
+
+```
+
+---
+
+# `filter()`: row-wise subset
+
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+<br>
+
+`filter()`: subset data row-wise using logical conditions based on variables  
+ 
+
+```{r eval = F}
+#--- syntax ---# 
+filter(dataset, condition 1, ..., condition K)
+```
+
+  ]
+
+.panel[.panel-name[equal to]
+<br>
+Observations where `month` is 4:
+
+```{r }
+filter(flights_mini, month == 4) 
+```
+
+  ]
+
+.panel[.panel-name[not equal to]
+<br>
+Observations where `month` is NOT 4:
+
+```{r }
+filter(flights_mini, month != 4) 
+```
+
+  ]
+
+.panel[.panel-name[inequality]
+<br>
+Observations where `month` is less than 4:
+
+```{r }
+filter(flights_mini, month < 4) 
+```
+
+  ]
+
+]
+
+---
+
+# `filter()`: multiple conditions
+
+.panelset[
+
+.panel[.panel-name[and (&)]
+
+<br>
+```{r }
+filter(flights_mini, month >= 9 & month <= 11) 
+
+#--- alternatively ---#
+# filter(flights_mini, month >= 9, month <= 11)
+```
+
+  ]
+
+.panel[.panel-name[or (|)]
+<br>
+```{r }
+filter(flights_mini, month >= 11 | month <= 1) 
+```
+
+  ]
+
+.panel[.panel-name[in any of (`%in%`)]
+<br>
+```{r }
+filter(flights_mini, month %in% c(1, 2, 3)) 
+
+#--- equivalently ---#
+# filter(flights_mini, month == 1 | month == 2 | month == 2) 
+```
+
+This is very useful when you have many values to check.  
+
+  ]
+
+]
+
+---
+
+# Important
+
+<br>
+
+Notice that the original data `flights_mini` was not affected by the `filter()` operations in the previous slides.
+
+This is consistent across all the verbs in `dplyr`. Whatever actions you take, the original data is unaltered.
+
+--
+
+To use the transformed data for later use, you need to assign it to a new object (or overwrite if that is okay):
+
+```{r }
+flights_mini_filtered <- filter(flights_mini, month == 4) 
+
+flights_mini_filtered
+```
+
+---
+
+# Exercises
+
+.panelset[ 
+
+.panel[.panel-name[Exercise 1]
+
+<br>
+
+E1: Find the observations in June and July
+
+<br>
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+<br>
+
+Here is the output you should get: 
+
+```{r echo = F}
+filter(flights_mini, month %in% c(6, 7))  
+```
+
+  ]
+
+.panel[.panel-name[Exercise 2]
+
+<br>
+
+E2: Find the observations in January, April, July, September, and December
+
+<br>
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+<br>
+
+Here is the output you should get: 
+
+```{r echo = F}
+filter(flights_mini, month %in% c(1, 4, 6, 9, 12))  
+```
+
+  ]
+
+.panel[.panel-name[Exercise 3]
+
+<br>
+
+E3: Find the observations by carrier "US"
+
+<br>
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+<br>
+
+Here is the output you should get: 
+
+```{r echo = F}
+filter(flights_mini, carrier == "US")  
+```
+
+  ]
+]
+
+
+
+---
+
+# `select()`: column-wise subset
+
+.panelset[ 
+
+.panel[.panel-name[Instruction]
+
+<br>
+
+You can select a subset of variables using `select()`. 
+
+```{r eval = F}
+select(dataset, variable 1, variable 2, ...)
+```
+
+If you would like to drop some variables, but want to keep all the other variables, you can take advantage of  `−` operator:
+
+```{r eval = F}
+select(dataset, - variable 1, - variable 2, ...)
+```
+
+  ]
+
+.panel[.panel-name[Example 1]
+
+<br>
+
+```{r }
+select(flights_mini, arr_delay)
+```
+
+  ]
+
+.panel[.panel-name[Example 2]
+
+<br>
+
+```{r }
+select(flights_mini, month, arr_delay, dep_delay)
+```
+  ]
+
+.panel[.panel-name[Example 3]
+
+<br>
+
+
+```{r }
+select(flights_mini, - year, - month)  
+```
+
+  ]
+
+]
+
+
+---
+
+# Exercises
+
+.panelset[ 
+
+.panel[.panel-name[Exercise 1]
+
+<br>
+
+E1: select all the columns except `arr_delay`
+
+<br>
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+<br>
+
+Here is the output you should get: 
+
+```{r echo = F}
+select(flights_mini, - arr_delay)  
+```
+
+  ]
+
+.panel[.panel-name[Exercise 2]
+
+<br>
+
+E2: select `arr_delay` and `month`
+
+<br>
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=1000px></html>
+<br>
+
+Here is the output you should get: 
+
+```{r echo = F}
+select(flights_mini, month, arr_delay)  
+```
+
+  ]
+
+]
+
+
+---
+
+# `relocate()`: change the column order
+
+<br>
+
+You can use `relocate()` to change the column order. 
+
+```{r }
+relocate(flights_mini, dep_time, dep_delay)
+```
+
+Chosen variables come front with the order of the rest of the variable unchanged.
+
+---
+
+# Piping with `%>%`
+
+.panelset[ 
+
+.panel[.panel-name[The Basic]
+
+<br>
+
+Let `f()` be a function and `x` is an R object that `f()` accepts. Then, 
+
+`x %>% f()` is the same as `f(x)`
+
+## Example
+
+Try the following codes and confirm they return the same results:
+
+```{r eval = F}
+#--- not piped ---#
+mean(seq(1, 99, by = 2))  
+
+#--- piped ---#
+seq(1, 99, by = 2) %>% mean()   
+```
+
+  ]
+
+.panel[.panel-name[More generally]
+
+<br>
+
+Suppose you have more than one arguments to the function like this:
+
+```{r eval = F}
+f(x1, x2, option 1, option 2)
+```
+
+Then,
+
+```{r eval = F}
+z %>% f(x2, option 1, option 2) 
+```
+
+is equivalent to
+
+```{r eval = F}
+f(z, x2, option 1, option 2) 
+```
+
+That is, in general, an R object that precedes the piping operator (`%>%`) becomes the <span style="color:red"> first </span> argument of the function that comes after the piping operator.
+
+  ]
+
+.panel[.panel-name[.]
+
+<br>
+
+What if the object before the piping operator is not the first argument of the subsequent function? 
+
+
+```{r }
+a_string <- "I do not like space"
+
+gsub(" ", "", a_string)
+```
+
+This does not work:
+
+```{r eval = F}
+a_string %>%  gsub(" ", "") 
+```
+
+because the above is equivalent to 
+
+```{r eval = F}
+a_string <- gsub(a_string, " ", "") 
+```
+
+You can refer to the preceding object by `.` like this:
+
+```{r }
+a_string %>% gsub(" ", "", .)  
+```
+
+  ]
+
+.panel[.panel-name[chaining]
+
+<br>
+
+You can keep piping like this:  
+
+```{r pipe-illustrate, eval = F}
+flights_mini %>% 
+  select(year, month, dep_time) %>% 
+  relocate(dep_time) %>% 
+  filter(month <= 3)
+```
+
+<span style="color:red"> Important: </span> The object created by all the codes preceding the piping operator is passed down to the function after the piping operator. 
+
+For example, `relocate(dep_time)` receives as its first argument the outcome of the evaluation of the highlighted parts of the code below.
+
+```{r echo = F}
+decorate("pipe-illustrate", eval = F) %>% 
+  flair("flights_mini %>%") %>% 
+  flair("select(year, month, dep_time)") %>% 
+  knit_print.with_flair()
+```
+
+  ]
+]
+
+---
+
+# Why piping with `%>%`
+
+.panelset[ 
+
+
+.panel[.panel-name[Problem]
+
+<br>
+
+Consider the following sequence of actions:
+
+```{r }
+a1 <- filter(flights_mini, month <= 3)
+
+a2 <- select(a1, year, month, dep_time)
+
+a3 <- relocate(a2, dep_time)
+```
+
+<br>
+
++ Notice that you generated two intermediate datasets (`a1` and `a2`) to obtain the dataset you wanted (`a3`). 
+
++ These intermediate objects are generated only for the purpose of generating the final dataset.
+
++ It is easy to imagine that you will soon have lots of unnecessary intermediate objects on R.
+
+  ]
+
+.panel[.panel-name[Alternative 1]
+
+<br>
+
+Alternatively, you can do the following:
+
+```{r }
+a3 <- relocate(
+  select(
+    filter(flights_mini, month <= 3)
+    , year, month, dep_time
+  ), 
+  dep_time
+)
+```
+
+<br>
+
++ This does not create any intermediate objects unlike the first example. 
+
++ However, it is hard to understand the code partly because the order of actions is the reverse of the order of the corresponding functions you see as you read the code from left to right.
+
+  ]
+
+.panel[.panel-name[Alternative 2 (with piping)]
+
+<br>
+
+Taking advantage of the piping operator, 
+
+```{r eval = F}
+a3 <- flights_mini %>% 
+  filter(month <= 3) %>% 
+  select(year, month, dep_time) %>% 
+  relocate(dep_time)
+```
+
+<br>
+
+  ]
+
+]
+
+---
+
+
+# `mutate()`: define new (or update) variables
+
+.panelset[ 
+
+.panel[.panel-name[What]
+
+You can use `mutate()` to create a new variable (or overwrite the existing one) in the dataset:
+
+## Synatax
+
+```{r eval = F}
+mutate(data, new variable name = expression)
+```
+
+## Example
+
+```{r }
+mutate(flights_mini, gain = arr_delay - dep_delay) %>% 
+  filter(month <= 2) %>% 
+  relocate(gain)
+```
+
+  ]
+
+.panel[.panel-name[multiple variables]
+
+You can define multiple variables within a single `mutate()` function.  
+
+You can create a new variable based on the variables that have been just created within the same `mutate()` function.
+
+## Examples
+
+```{r m-mult, echo = F, eval = F}
+flights_mini %>% mutate(
+    gain = arr_delay-dep_delay,
+    gain_per_hour = gain / (air_time / 60)
+  ) %>% 
+  filter(month <= 2) %>% 
+  relocate(gain, gain_per_hour)
+```
+
+```{r echo = F}
+decorate("m-mult", eval = F) %>% 
+  flair("gain = ") %>%
+  flair("gain /") %>%
+  knit_print.with_flair()
+```
+
+```{r ref.label = "m-mult", echo = F}
+  
+```
+
+  ]
+
+.panel[.panel-name[function]
+
+You can apply functions to variables when creating new variables:
+
+## Example
+
+```{r ex-func, echo = F, eval = F}
+flights_mini %>% 
+  mutate(avg_arr_delay = mean(arr_delay, na.rm = TRUE)) %>% 
+  filter(month <= 1) %>% 
+  relocate(avg_arr_delay)
+```
+
+```{r echo = F}
+decorate("ex-func", eval = F) %>% 
+  flair("mean(arr_delay, na.rm = TRUE)") %>%
+  knit_print.with_flair()
+```
+
+```{r echo = F}
+flights_mini %>% 
+  mutate(avg_arr_delay = mean(arr_delay, na.rm = TRUE)) %>% 
+  filter(month <= 1) %>% 
+  relocate(avg_arr_delay)
+```
+
+Note: the function you apply has to accept a vector (a variable column).
+
+  ] 
+
+  <!-- panel ends here -->
+]
+
+---
+
+# More on `mutate()`
+
+.panelset[ 
+
+.panel[.panel-name[selective mutation]
+
+Sometimes, you want to to alter the values of a variable for specific rows that satisfy certain conditions.
+
+**Example**:
+Suppose you found out that `dep_time` for all the flights from `JFK` was misreported so that `dep_time` is 10 minutes earlier than the true departure times. 
+
+So, we would like to add 10 minutes to all the flights by `JFK`.
+
+You can use `ifelse()` like this:
+
+.scroll-box-24[
+```{r }
+flights_mini %>% 
+  mutate(
+    dep_time_correct = ifelse(origin == "JFK", dep_time + 10, dep_time) #<<
+  ) %>% 
+  relocate(origin, dep_time, dep_time_correct) %>% arrange(origin) 
+```
+]
+
+  ] 
+
+.panel[.panel-name[dichotomous]
+
+Suppose you want to label flights with `arr_delay > 0` to be `time-loss` and `time-gain` otherwise:
+
+You can use `ifelse()` for defining a dichotomous variable like this:
+
+.scroll-box-32[
+```{r }
+flights_mini %>% 
+  mutate(
+    loss_or_gain = ifelse(arr_delay > 0, "time-loss", "time-gain") #<<
+  ) %>% 
+  relocate(arr_delay, loss_or_gain)
+```
+]
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[More than two cases]
+
+The `case_when()` function is useful if you have more than two cases.
+
+**Syntax**:
+
+```{r eval = F}
+case_when(
+  condition 1 ~ value to assign,
+  condition 2 ~ value to assign,
+  condition 3 ~ value to assign,
+  ...
+)  
+```
+
+**Example**:
+
+.scroll-box-24[
+```{r }
+flights_mini %>% 
+  mutate(origin = case_when(
+    origin == "JFK" ~ "John F. Kennedy",
+    origin == "EWR" ~ "Newark Liberty International", 
+    origin == "LGA" ~ "LaGuardia" 
+    )
+  ) %>% relocate(origin)
+```
+]
+
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+
+---
+
+# Exercises
+
+.panelset[ 
+
+.panel[.panel-name[Exercise 1]
+
+<br>
+
+Find the mean value of `arr_delay` in April and May (combined) and define it as a new variable named `avg_arr_delay`
+
+  ]
+
+.panel[.panel-name[Exercise 2]
+
+<br>
+
+Find the sum of `dep_delay` in January, February, and December (combined) and define it as a new variable named `sum_arr_delay`, and then move the variable to the first column of the dataset.
+
+  ]
+
+]
+
+---
+
+# `rename()`: rename variables
+
+.panelset[ 
+
+.panel[.panel-name[How]
+
+## Syntax
+
+```{r eval = F}
+rename(data, new variable name = old variable name, ...)
+```
+
+## Example
+
+```{r }
+rename(flights_mini, 
+  departure_delay = dep_delay,
+  departure_time = dep_time
+) %>% head()
+```
+
+  ]
+
+.panel[.panel-name[White space]
+
+Let’s create a dataset with variables that have a white space in their names:
+
+```{r }
+df <- tibble(
+  'County ID' = c(1,2,3),
+  'County Name' = c('Dundy','Chase','Perkins')
+) 
+```
+
+When you have a white space in a variable name, and refer to the variable in a function, it would not work most of the time . For example,
+
+```{r eval = F}
+filter(df, County ID == 1)
+```
+
+You could actually enclose the variable name with a white space with back ticks like this:
+
+```{r }
+filter(df, `County ID` == 1)
+```
+
+But, you do not want do this.
+
+Rename it:
+
+```{r eval = F}
+rename(df, county_id = `County ID`)  
+```
+
+  ]
+
+]
+
+---
+
+# `arrange()`: ordering rows
+
+.panelset[ 
+
+.panel[.panel-name[What]
+
+<br>
+
+You can use `arrange()` to reorder rows based on the value of variables.
+
+  ]
+
+.panel[.panel-name[How]
+
+## Syntax
+
+```{r eval = F}
+#--- Syntax (NOT RUN) ---#
+arrange(flights_mini, variable name)
+```
+
+## Example
+
+```{r }
+arrange(flights_mini, dep_delay) %>% head()
+```
+
+As you can see, the default is the ascending order. 
+
+  ]
+
+.panel[.panel-name[Descending]
+
+<br>
+
+To arrange in the descending order, you use `desc()` function:
+
+```{r arrange-desc, echo = F, eval = F}
+arrange(flights_mini, desc(dep_delay))
+```
+
+```{r echo = F}
+decorate("arrange-desc") %>% 
+  flair("desc") %>% 
+  knit_print.with_flair()
+```
+
+  ]
+
+]
+
+---
+
+# `distinct()`: extract rows with unique values
+
+.panelset[ 
+
+.panel[.panel-name[What]
+
+<br>
+
+`distinct()` extract rows with unique values.
+
+  ]
+
+.panel[.panel-name[Example]
+
+<br>
+
++ (left): `flights_mini` has two observations per month (left). 
++ (right): Only one observation per month (12 unique values) after applying `distinct()` 
+
+.left5[
+
+```{r }
+flights_mini
+```
+]
+
+.right5[
+
+```{r }
+distinct(flights_mini, month)
+```
+]
+
+  ]
+
+.panel[.panel-name[.keep_all]
+
+<br>
+
+You do not want to lose the other variables? Add `.keep_all = TRUE`
+
+```{r }
+distinct(flights_mini, month, .keep_all = TRUE)
+```
+
+  ]
+
+]
+
+---
+class: inverse, center, middle
+name: grouped
+
+# Grouped operations
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+
+# Grouped operations: the basics
+
+.panelset[ 
+ 
+ .panel[.panel-name[Motivation]
+ 
+Group-wise operations, such as the mean of arrival delay by carrier are very useful to gain an insight into differences across groups. 
+
+The `group_by()` function in conjunction with `summarize()` function does exactly that.
+
+```{r eval = F}
+#--- group by variables ---#
+group_by(dataset, variable to group by, variable to group by, ...)  
+
+#--- summarize ---#
+summarize(grouped dataset, expression)  
+```
+
+   ]
+ 
+ .panel[.panel-name[Step 1: grouping]
+ 
+You first use `group_by()` to set the group for a dataset:
+
+```{r }
+flights_carrier <- group_by(flights, carrier)  
+
+flights_carrier
+```
+
+There are no apparent differences in `flights_carrier` from `flights`. The only thing you did by `group_by()` was to tell R that whatever we will do to the new dataset is going to be done by group, which is reflected in "Groups" of the printed data.
+
+   ]
+
+.panel[.panel-name[Step 2: summarizing]
+ 
+Once the group is set, we are ready to do some group-wise (by carrier) operations. Let’s now find the means of `arr_delay` by carrier so we know which carriers perform better than others. We can do so using `summarize()`. 
+
+```{r }
+summarize(flights_carrier, mean_arr_delay = mean(arr_delay, na.rm = TRUE)) 
+```
+
+   ] 
+
+.panel[.panel-name[Piped]
+
+Using the piping operator,
+
+```{r }
+flights %>% 
+  group_by(carrier) %>% 
+  summarize(mean_arr_delay = mean(arr_delay, na.rm = TRUE)) 
+```
+
+  ]
+
+]
+
+---
+
+# Grouped operations
+
+You can apply any functions that work on a vector (a variable) 
+
+```{r }
+flights %>%  
+  group_by(carrier) %>% 
+  summarize(
+    mean_arr_delay = mean(arr_delay, na.rm = TRUE),
+    min_arr_delay = min(arr_delay, na.rm = TRUE),
+    quantile_arr_delay = quantile(arr_delay, prob = 0.9, na.rm = TRUE)
+  ) 
+```
+
+---
+
+# Grouped operations
+
+What happens if the applied function returns more than one values per group?
+
+```{r }
+flights %>% 
+  group_by(carrier) %>% 
+  summarize(
+    quantile_arr_delay = quantile(arr_delay, prob = c(0.1, 0.9), na.rm = TRUE)
+  ) 
+```
+
+---
+
+# Grouped operations
+
+Multiple grouping variables?
+
+```{r }
+flights %>% 
+  group_by(carrier, month) %>% 
+  summarize(
+    mean_arr_delay = mean(arr_delay, na.rm = TRUE)
+  ) 
+```
+
+---
+  
+# Grouped operations
+
+You can assign the results of the grouped operations to new variables using `mutate()`
+
+```{r }
+flights_new <- flights %>% 
+  group_by(carrier, month) %>% 
+  mutate(
+    mean_arr_delay = mean(arr_delay, na.rm = TRUE)
+  ) %>% 
+  relocate(mean_arr_delay)
+
+flights_new
+```
+
+---
+
+# Exercises
+
+.panelset[ 
+
+.panel[.panel-name[Exercise 1]
+
+<br>
+
+Find the carrier that had the longest average delay during May through August. Below is the output you will see if you get it right.
+
+  ]
+
+.panel[.panel-name[Instruction]
+
+<br>
+
+For the rest of the exercises, we are going to use the weather data for the three airports in NY. First load the weather data and get familiar with the data set.
+
+```{r }
+#--- load the weather data ---#
+data(weather)
+
+#--- omit observations with NA in any of the variables ---#
+weather <- na.omit(weather)
+
+#--- take a look ---#
+weather 
+```
+
+  ]
+
+.panel[.panel-name[Exercise 2]
+
+<br>
+
+Find the daily mean temperature (temp), humidity (humid), wind speed (wind_speed), and precipitation (precip) by the origin of departure. Do not forget to name each daily weather variable. Below is the output you will see if you get it right.
+
+  ]
+
+.panel[.panel-name[Exercise 3]
+
+<br>
+
+Subset the daily weather data you obtained in exercise 2 so that it contains weather information only in Nov, Dec, Jan, and Feb for flights that depart from “EWR”. Below is the output you will see if you get it right.
+
+  ]
+
+.panel[.panel-name[Exercise 4]
+
+<br>
+
+Find the monthly mean temperature (temp), humidity (humid), wind speed (wind_speed), and precipitation (precip) by the origin of departure.
+
+  ]
+
+]
+
+---
+class: inverse, center, middle
+name: extensions
+
+# Extensions (may be helpful occasionally)
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+
+# `across()`
+
+.panelset[ 
+
+.panel[.panel-name[What]
+
+<br>
+
++ `across()` lets you apply the same operation (function) to multiple columns at the same time.
+
++ It is used with `summarize()` and `mutate()`
+
++ It is useful when you want to apply the same function to many variables.
+
+  ]
+
+.panel[.panel-name[Syntax and Example]
+
+## Syntax
+
+```{r eval = F}
+across(which variables to apply the function, function, options to the function)
+```
+
+## Examples
+
+```{r across-ex, echo = F, eval = F}
+flights %>% 
+  group_by(carrier) %>% 
+  summarize(
+    across(c(arr_delay, dep_delay, air_time, time_hour),
+    mean, # function 
+    na.rm = TRUE # an option to the function 
+    )
+  ) %>% head()
+```
+
+```{r echo = F}
+decorate("across-ex", eval = F) %>% 
+  flair("across(c(arr_delay, dep_delay, air_time, time_hour)") %>%
+  knit_print.with_flair()
+```
+
+```{r ref.label = "across-ex", echo = F, message = F}
+```
+
+Note: `na.rm = TRUE` is an option for the `mean()` function.
+
+  ]
+
+.panel[.panel-name[Compare]
+
+<br>
+
+Without `across()`
+
+```{r eval = F}
+flights %>% 
+  group_by(carrier) %>% 
+  summarize(
+    mean_arr_delay = mean(arr_delay, na.rm = TRUE),
+    mean_dep_delay = mean(dep_delay, na.rm = TRUE),
+    mean_air_time = mean(air_time, na.rm = TRUE),
+    mean_time_hour = mean(time_hour, na.rm = TRUE)
+  ) 
+```
+
+<br>
+
+With `across()`
+
+```{r eval = F}
+flights %>% 
+  group_by(carrier) %>% 
+  summarize(
+    across(c(arr_delay, dep_delay, air_time, time_hour),
+    mean,
+    na.rm = TRUE
+    )
+  )
+```
+
+  ] <!-- panel ends here -->
+
+]
+
+
+---
+
+# `across()` with pattern functions
+
+.panelset[ 
+
+.panel[.panel-name[What]
+
+<br>
+
+You can use `across()` (and other `dplyr` functions) in conjunction with functions that identify variables that fit with the pattern you specify:
+
++ `is.numeric()`  
++ `is.character()`  
++ `starts_with()`  
++ `ends_with()`  
+
+  ] <!-- panel ends here -->
+
+.panel[.panel-name[numeric]
+
+<br>
+
+Applying the same function to all numeric variables using `where(is.numeric)`:
+
+
+```{r numeric-across, echo = F, eval = F}
+flights %>% 
+  group_by(carrier) %>% 
+  summarize(
+    across(where(is.numeric),
+    mean, # function to apply
+    na.rm = TRUE # option to the function
+    )
+  ) %>% head()
+```
+
+```{r echo = F}
+decorate("numeric-across", eval = F) %>% 
+  flair("where(is.numeric)") %>%
+  knit_print.with_flair()
+```
+
+```{r ref.label = "numeric-across", echo = F, message = F}
+
+```
+
+  ] 
+
+.panel[.panel-name[character]
+
+<br>
+
+Applying the same function to all character variables using `where(is.character)`:
+
+
+```{r char-across, echo = F, eval = F}
+flights %>% 
+  group_by(carrier) %>% 
+  summarize(
+    across(where(is.character),
+    n_distinct # function to apply
+    )
+  ) %>% head()
+```
+
+```{r echo = F}
+decorate("char-across", eval = F) %>% 
+  flair("where(is.character)") %>%
+  knit_print.with_flair()
+```
+
+```{r ref.label = "char-across", echo = F, message = F}
+
+```
+
++ `n_distinct()` identifies the number of unique values.
+
+  ]
+
+.panel[.panel-name[end with]
+
+<br>
+
+Applying the same function to all the variables that end with `delay`:
+
+```{r end-with, echo = F, eval = F}
+flights %>% 
+  group_by(carrier) %>% 
+  summarize(
+    across(ends_with("delay"),
+    mean,
+    na.rm = TRUE
+    )
+  ) %>% head()
+
+```
+
+```{r echo = F}
+decorate("end-with", eval = F) %>% 
+  flair('ends_with("delay")') %>%
+  knit_print.with_flair()
+```
+
+```{r ref.label = "end-with", echo = F, message = F}
+
+```
+
++ Use `starts_with()` to apply the same function to all the variables that star with a particular sting of characters:
+
+  ]
+
+.panel[.panel-name[logical operator]
+
+<br>
+
+You can use logical operators:
+
+```{r logical, echo = F, eval = F}
+flights %>% 
+  group_by(carrier) %>% 
+  summarize(
+    across(!where(is.numeric), n_distinct)
+  ) %>% head()
+```
+
+```{r echo = F}
+decorate("logical", eval = F) %>% 
+  flair("!where(is.numeric)") %>%
+  knit_print.with_flair()
+```
+
+```{r ref.label = "logical", echo = F, message = F}
+
+```
+
+  ] 
+
+.panel[.panel-name[mix]
+
+<br>
+
+Mixing explicitly naming variables and using functions:
+
+```{r mix, echo = F, eval = F}
+flights %>% 
+  group_by(carrier) %>% 
+  summarize(
+    across(c(month, ends_with("delay")), mean, na.rm = TRUE),
+    across(where(is.character), n_distinct)
+  ) %>% head()
+```
+
+```{r echo = F}
+decorate("mix", eval = F) %>% 
+  flair('c(month, ends_with("delay"))') %>%
+  knit_print.with_flair()
+```
+
+```{r ref.label = "mix", echo = F, message = F}
+
+```
+
+  ] 
+
+]
+
+
+---
+
+# `select()` and `relocate()`
+
+<br>
+
+The approaches to refer to the variables that fit with a specified pattern can be applied to other `dplyr` operations as well:
+
+
+Try:
+
+```{r eval = F}
+flights %>% 
+  select(c(origin, where(is.numeric)))  
+```
+
+```{r eval = F}
+flights %>% 
+  select(ends_with("delay"))  
+```
+
+```{r eval = F}
+flights %>% 
+  relocate(where(is.character))  
+```
+

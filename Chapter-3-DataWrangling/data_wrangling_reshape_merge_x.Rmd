@@ -1,0 +1,968 @@
+---
+title: "Data wrangling with `tidyverse`: Reshaping and Merging"
+author: "AECN 396/896-002"
+output:
+  xaringan::moon_reader:
+    # css: [default, metropolis, metropolis-fonts] 
+    css: xaringan-themer.css 
+    self_contained: true
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: middle
+
+```{r, child = './../setup.Rmd'}
+```
+
+# Table of contents
+
+1. [Reshaping data](#reshaping)
+2. [Merging datasets](#merging)
+
+---
+class: middle
+
+# Learning objectives
+
+The objectives of this chapter is to learn how to use the `tidyverse` package to 
+
++ reshape a dataset
++ merge multiple datasets 
+
+---
+class: inverse, center, middle
+name: reshaping
+
+# Reshaping
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+
+# Long and wide formats
+
+.left5[
+
+## Long format
+
+A single column representing a single variable 
+
+```{r long-data-gen-2, echo = F}
+(
+yield_data_long <- data.frame(
+  state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
+  year = c(2019, 2020) %>% rep(4),
+  yield = c(200, 240, 210, 220, 220, 230, 190, 150)
+  )
+)
+```
+]
+
+.right5[
+
+## Wide format
+
+Multiple column representing a single variable 
+
+```{r echo = F}
+(
+  yield_data_wide <- pivot_wider(yield_data_long, names_from = year, values_from = yield)
+)
+```
+
+Note: there is nothing in the dataset that tells you what the data values represent in the wide format.
+
+]
+
+---
+
+# Long to wide 
+
+.panelset[ 
+
+<!-- panel ends here -->
+
+.panel[.panel-name[prepare]
+
+Create the following dataset in long format:
+
+```{r long-data-gen-1}
+yield_data_long <- data.frame(
+  state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
+  year = c(2019, 2020) %>% rep(4),
+  yield = c(200, 240, 210, 220, 220, 230, 190, 150)
+  )
+```
+
+  ]
+
+<!-- panel ends here -->
+.panel[.panel-name[how and example]
+
+.left5[
+
+## How
+
+To convert a long-formatted `data.frame` into a wide-formatted `data.frame`, you can use `pivot_wider()` function from the `tidyr` package.
+
+```{r eval = F}
+#--- NOT RUN ---#
+pivot_wider(
+  data, 
+  names_from = variable 1, 
+  values_from = variable 2
+)
+```
+
++ the value of `variable 1` becomes the name the new variables
++ the value of `variable 2` becomes the value of the new variables
+]
+
+.right5[
+
+## Example
+
+```{r }
+yield_data_wide <- pivot_wider(
+  yield_data_long, 
+  names_from = year, 
+  values_from = yield
+)
+
+yield_data_wide
+```
+
++ the value of `year` becomes the name the new variables
++ the value of `yield` becomes the value of the new variables
+
+]
+
+  ]
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[prefix]
+
+You can append a character string to the new variable names. The previous example had `2019` and `2010` as the name of the new variables.
+
+```{r }
+yield_data_long %>%
+  pivot_wider(
+    #--- let R know what the prefix is ---#
+    names_prefix = "yield_",
+    names_from = "year",
+    values_from = "yield"
+  )
+```
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[multiple columns]
+
+.left5[
+
+## Prepare a dataset 
+
+Create the following data in long format;
+
+```{r wide-data-gen}
+yield_data_long <- data.frame(
+  state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
+  year = c(2019, 2020) %>% rep(4),
+  yield = c(200, 240, 210, 220, 220, 230, 190, 150),
+  rainfall = c(14, 15, 15, 16, 20, 21, 24, 15)
+  ) 
+```
+
+```{r echo = F}
+yield_data_long
+```
+]
+
+.right5[
+
+## Example
+
+You can simply supply multiple variables to be made wide like this:
+
+```{r }
+yield_data_long %>%  
+  pivot_wider(
+    names_from = "year",
+    values_from = c("yield", "rainfall")
+  )  
+```
+]
+  ] 
+
+  <!-- panel ends here -->
+]
+
+<!-- panel set ends here -->
+
+---
+
+# Wide to long
+
+.panelset[ 
+
+.panel[.panel-name[how]
+
+
+.left5[
+
+## How
+
+To convert a long-formatted `data.frame` into a wide-formatted `data.frame`, you can use `pivot_longer()` function from the `tidyr` package.
+
+```{r eval = F}
+pivot_longer(
+  data, 
+  cols = x,
+  names_to = y, 
+  values_to = z 
+)
+```
+
++ `x`: list of the name of the columns to pivot into longer format
++ `y`: what the name of `x` represents
++ `z`: what the values stored in `x` represents
+]
+
+.right5[
+
+## Example
+
+```{r }
+yield_data_wide %>% 
+  pivot_longer(
+    - state, 
+    names_to = "year", 
+    values_to = "yield"
+  )
+```
+
++ `x`: all the variables except `state`
++ `y`: "year"
++ `z`: "yield"
+
+]
+
+  ]
+
+<!-- panel ends here -->
+
+
+<!-- panel ends here -->
+
+.panel[.panel-name[prefix]
+
+You do not want `year_` in front of the year numbers in the new `year` variable? You can use the `names_prefix` option as follows:
+
+```{r }
+yield_data_wide %>%  
+  pivot_longer(
+    - state,
+    #--- let R know what the prefix is ---#
+    names_prefix = "yield_",
+    names_to = "year",
+    values_to = "yield"
+  )
+```
+
+Notice `year` is character. Convert it to numeric using `as.numeric()` if you use is as a numeric variable.
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+---
+
+# Wide to long: multiple sets of columns
+
+.panelset[ 
+
+.panel[.panel-name[Prep]
+
+
+.left5[
+
+## Long
+
+Create the following dataset in the long format;
+
+```{r wide-data-gen-2}
+yield_data_long <- data.frame(
+  state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
+  year = c(2019, 2020) %>% rep(4),
+  yield = c(200, 240, 210, 220, 220, 230, 190, 150),
+  rainfall = c(14, 15, 15, 16, 20, 21, 24, 15)
+  ) 
+```
+
+```{r echo = F}
+yield_data_long
+```
+
+]
+
+.right5[
+
+## Wide
+
+Convert the long dataset into the wide format: 
+
+```{r }
+yield_data_wide <- yield_data_long %>% 
+  pivot_wider(
+    names_from = year, 
+    values_from = c(yield, rainfall)
+  ) 
+```
+
+```{r echo = F}
+yield_data_wide 
+```
+
+.red[Objective]: We would like to convert the wide data back to the original long data.
+
+]
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[one-step?]
+
+You cannot revert this data back to the original long-formatted data in one step. 
+
+```{r }
+yield_data_wide %>% 
+  pivot_longer(
+    - state,
+    names_to = "year",
+    values_to = "yield"
+  )
+```
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[separate()]
+
+However, you take advantage of `dplyr::separate()` function, which separate a variable of type character by a user-specified separator into two variables in the dataset.
+
+```{r eval = F}
+#--- syntax ---#
+separate(data, variable name, the name of variables, separator)  
+```
+
+.left5[
+
+Before separation: 
+
+```{r sep-demo-b, eval = F}
+yield_data_wide %>% 
+  #--- select only state and yield variables ---#
+  pivot_longer(
+    - state,
+    names_to = "type_year",
+    values_to = "value"
+  ) 
+```
+
+.scroll-box-12[
+```{r ref.label = "sep-demo-b", echo = F}
+```
+]
+
+]
+
+.right5[
+
+After separation: 
+
+```{r sep-demo-a, eval = F}
+yield_data_wide %>% 
+  #--- select only state and yield variables ---#
+  pivot_longer(
+    - state,
+    names_to = "type_year",
+    values_to = "value"
+  ) %>% separate(type_year, c("type", "year"), sep = "_") #<<
+```
+
+.scroll-box-12[
+```{r ref.label = "sep-demo-a", echo = F}
+```
+]
+]
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[three-step]
+
+After separating `type_year` to `type` and `year`, all you have to do is to apply `pivot_wider()` to have the desired long-formatted data.
+
+```{r }
+yield_data_wide %>% 
+  #--- select only state and yield variables ---#
+  pivot_longer(
+    - state,
+    names_to = "type_year",
+    values_to = "value"
+  ) %>% 
+  separate(type_year, c("type", "year"), sep = "_") %>% 
+  pivot_wider( #<<
+    names_from = "type", #<<
+    values_from = "value" #<<
+  ) #<<
+```
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+
+---
+
+# Wide or long?
+
+Suppose you are interested in estimating the following statistical model:
+
+$$corn yield = \beta_0 + \beta_1 R_{May}  + \beta_2 R_{June} + \beta_2 R_{July} + \beta_2 R_{August} + \beta_2 R_{September} + v$$
+
+where $R$ refers to rainfall.
+
+--
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+Then the following dataset
+
+```{r echo = F}
+data.frame(
+  state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
+  year = c(2019, 2020) %>% rep(4),
+  yield = c(200, 240, 210, 220, 220, 230, 190, 150)
+  ) %>% 
+  .[rep(1:nrow(.), each = 5), ] %>% 
+  mutate(
+    month = rep(c("May", "June", "July", "August", "September"), 8),
+    rainfall = 20*runif(40)
+  ) %>% 
+  pivot_wider(names_from  = month, values_from = rainfall, names_prefix = "R_")
+```
+
+is in a <span style="color:red"> long </span> format.
+
+---
+
+# Wide or long?
+
+This is ".red[too long]" for your analysis. 
+
+```{r echo = F}
+data.frame(
+  state = c("Kansas", "Nebraska", "Iowa", "Illinois") %>% rep(each = 2),
+  year = c(2019, 2020) %>% rep(4),
+  yield = c(200, 240, 210, 220, 220, 230, 190, 150)
+  ) %>% 
+  .[rep(1:nrow(.), each = 5), ] %>% 
+  mutate(
+    month = rep(c("May", "June", "July", "August", "September"), 8),
+    rainfall = 20*runif(40)
+  ) %>% 
+  head(15)
+```
+
+--
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+<span style="color:red"> Key point:</span> Whether a dataset is wide or long is determined based on what you are doing with the dataset.
+
+---
+
+# Exercises 
+
+.panelset[ 
+
+
+.panel[.panel-name[Preparation]
+
+Run the following code so you can use the `flights` dataset.
+```{r }
+library(nycflights13)
+```
+  ]
+
+.panel[.panel-name[Exercise 1]
+
++ Using `flights` data, calculate the total number of flights by carrier-month, which is in the long format
+
++ Reshape the data into a wide format so that you have number of flights per month in columns 
+
+Here is the output you are supposed to get if done correctly:
+
+```{r echo = F}
+(
+num_flights_wide <- flights %>% 
+  group_by(carrier, month) %>% 
+  summarize(num_obs = n()) %>% 
+  pivot_wider(
+    names_from = month,
+    names_prefix = "month_",
+    values_from = num_obs
+  ) 
+)
+
+```
+
+  ]
+
+.panel[.panel-name[Exercise 2]
+
++ Reshape the data back into the long format so that a single columns has all the flight number values 
+
+Here is the output you are supposed to get if done correctly:
+
+```{r echo = F}
+num_flights_wide %>% 
+  pivot_longer(
+    starts_with("month_"),
+    names_to = "month",
+    names_prefix = "month_",
+    values_to = "num_flights"
+  ) 
+```
+
+  ]
+
+]
+
+
+<!-- 
+#/*=================================================*/
+#' # Data merge
+#/*=================================================*/
+-->
+
+---
+
+class: inverse, center, middle
+name: merging
+
+# Merging multiple datasets
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+---
+
+```{r data_gen, echo = FALSE, cache = TRUE}
+N <- 2
+T <- 2
+
+set.seed(582374)
+
+price_data <- data.frame(
+  price = runif(N * T, min = 2, max = 6),
+  county = c(rep('Lancaster',2),rep('Douglas',2)),
+  year = c(2015, 2016, 2015, 2016)
+  )
+
+yield_data <- data.frame(
+  yield = runif(N * T, min = 180, max = 280),
+  county = c('Lancaster','Douglas','Lancaster','Douglas'),
+  year = c(2015, 2015, 2016, 2016)
+  )
+```
+
+# Merging multiple datasets
+
+.panelset[ 
+
+.panel[.panel-name[Motivation]
+
+<br>
+
+It is very common that you have data stored in separate files, and you need to combine them before you conduct any statistical analysis. 
+
+For example, if you are interested in how crop price affects the supply of crops, you want to have price and production data in a single dataset. However, it may be that price and production data are stored in two separate files.
+
+  ]
+
+.panel[.panel-name[Match? 1]
+
+<br>
+
+Now suppose, you have collected price and production data for Lancaster and Douglas County from 2015 to 2016. 
+
+Here is what the datasets look like (these are made-up numbers).
+
+.left5[
+```{r echo = F, dependson = "data_gen"}  
+select(price_data, price)
+```
+]
+
+.right5[
+```{r echo = F, dependson = "data_gen"}  
+select(yield_data, yield)
+```
+]
+
+<br>
+
+Question: Can you merge the two?   
+
+  ]
+
+.panel[.panel-name[Match? 2]
+
+<br>
+
+Let's display one more variable from each of the datasets.
+
+.left5[
+```{r echo = F, dependson = "data_gen"}  
+select(price_data, price, county)
+```
+]
+
+.right5[
+```{r echo = F, dependson = "data_gen"}  
+select(yield_data, yield, county)
+```
+]
+
+<br>
+<br>
+
+Okay, great. At least we know which price and prod belong to which county! In other words, we know which price and prod belong to **who** (or **where**). 
+
+Question: Can you merge the two now?   
+
+  ]
+
+.panel[.panel-name[Match? 3]
+
+<br>
+
+Let's display one more variable from each of the datasets.
+
+.left5[
+```{r echo = F, dependson = "data_gen"}
+select(price_data, price, county, year)
+```
+]
+
+.right5[
+```{r echo = F, dependson = "data_gen"}
+select(yield_data, yield, county, year)
+```
+]
+
+<br>
+<br>
+
+Question: Can you merge the two now?   
+
+<html><div style='float:left'></div><hr color='#EB811B' size=1px width=796px></html>
+
+The variables that let you merge two datasets are called <span style="color:blue"> keys</span>.
+
+What are the keys here?
+
+  ]
+
+.panel[.panel-name[How]
+
++ You can use the `left_join()` function from the `dplyr` package to merge two datasets.
+
++ There are different types of join functions:
+  * `right_join()` (you never need to use this one)
+  * `inner_join()`
+  * `full_join()`
+  * `semi_join()`
+  * `nest_join()`
+
++ But, most of the time, `left_join()` is sufficient. 
+
++ Try to learn other functions when you encounter a case where `left_join()` is not sufficient. Do not waster your time until then. 
+
+  ]
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[left_join()]
+
+**Syntax**
+
+```{r eval = F}
+#--- Syntax (NOT RUN) ---#
+left_join(data_x, data_y, by = keys)  
+```
+
+**Rules to remember**
+
++ .blue[Rule 1]: It returns all rows from `data_x`, and all columns from `data_x` and `data_y`
++ .blue[Rule 2]: Rows in `data_x` with no match in `data_y` will have NA values in the new columns 
++ .blue[Rule 3]: If there are multiple matches between `data_x` and `data_y`, all combinations of the matches are returned
+
+.content-box-red[Note: The order of datasets matter.]
+
+  ]
+
+]
+
+---
+
+# `left_join()` demonstration: 1 to 1
+
+.panelset[ 
+
+<!-- panel ends here -->
+
+.panel[.panel-name[Data prep]
+
+Run the following code to run the merging demonstration later:
+
+```{r data_gen_disp, eval = F}
+N <- 2
+T <- 2
+
+set.seed(582374)
+
+price_data <- data.frame(
+  price = runif(N * T, min = 2, max = 6),
+  county = c(rep('Lancaster',2),rep('Douglas',2)),
+  year = c(2015, 2016, 2015, 2016)
+  )
+
+yield_data <- data.frame(
+  yield = runif(N * T, min = 180, max = 280),
+  county = c('Lancaster','Douglas','Lancaster','Douglas'),
+  year = c(2015, 2015, 2016, 2016)
+  )
+```
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[Demo 1]
+
+The keys are `county` and `year`, so
+
+```{r }
+left_join(yield_data, price_data, by = c("county", "year"))  
+```
+
+Switching the two?
+
+```{r }
+left_join(price_data, yield_data, by = c("county", "year"))  
+```
+
+<br>
+
+Note: In this instance, .red[which comes first does not matter] because all the individual rows in `yield_data` (left data) have exactly one match in `price_data` (right data) without fail, and vice versa.  
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[Data prep 2]
+
+Let's expand the `yield_data`:
+
+```{r }
+yield_data <- data.frame(
+  yield = runif(6, min = 180, max = 280),
+  county = c("Lancaster", "Douglas", "Chase", "Lancaster", "Douglas", "Chase"),
+  year = c(2015, 2015, 2015, 2016, 2016, 2016)
+  ) 
+
+yield_data
+```
+
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[Demo 2]
+
+**`yield_data` on the right**:
+
+```{r }
+left_join(price_data, yield_data, by = c("county", "year"))  
+```
+
+**`yield_data` on the left**:
+
+```{r }
+left_join(yield_data, price_data, by = c("county", "year"))  
+```
+
+.red[Remember?]
+
++ .blue[Rule 1]: `left_join()` returns all rows from `data_x`, and all columns from `data_x` and `data_y`
++ .blue[Rule 2]: Rows in `data_x` with no match in `data_y` will have NA values in the new columns 
+  ] 
+
+  <!-- panel ends here -->
+
+.panel[.panel-name[keeping all rows]
+
+We saw in the previous slide having `price_data` (as `data_x`) and `yield_data` as (`data_y`), `left_join()` discarded rows in `yield_data` (`data_y`).
+
+If you would like to keep unmatched rows in `data_y`, you can use `full_join()`.
+
+```{r }
+full_join(price_data, yield_data, by = c("county", "year"))  
+```
+
+  ] 
+
+  <!-- panel ends here -->
+
+]
+<!-- panel set ends here -->
+
+---
+
+# `left_join` demonstration: 1 to m
+
+
+.panelset[ 
+
+.panel[.panel-name[Data prep]
+
+Let's create a weather dataset where you have more than one observations per county-year:
+
+```{r }
+weather_data <- data.frame(
+  rainfall = 20 * runif(12),
+  county = rep(c("Lancaster", "Douglas", "Chase"), each = 4),
+  year = rep(c(2015, 2016), each = 2) %>% rep(3),
+  month = rep(c(4, 5), 6)
+  ) 
+
+weather_data
+```
+
+  ]
+
+<!-- panel ends here -->
+
+.panel[.panel-name[Demo]
+
+```{r }
+left_join(yield_data, weather_data, by = c("county", "year"))  
+```
+
+.red[Remember?] 
+
++ .blue[Rule 3]: If there are multiple matches between `data_x` and `data_y`, all combinations of the matches are returned
+
+  ]
+
+  <!-- panel ends here -->
+
+]
+
+<!-- panel set ends here -->
+
+
+---
+
+# Exercises
+
+.panelset[ 
+
+.panel[.panel-name[Preparation]
+
+Create the following datasets and take a look at them to understand what's in them:
+
+**Flights in January**:
+
+```{r }
+flights_Jan <- flights %>% 
+  filter(month == 1) %>% 
+  select(month, day, dep_delay, origin)
+```
+
+**daily temperature in January**:
+
+```{r }
+daily_temp_Jan <- weather %>% 
+  filter(month == 1) %>% 
+  group_by(origin, month, day) %>% 
+  summarize(temp = mean(temp))
+```
+
+**hourly temperature in January**:
+
+```{r }
+hourly_temp_Jan <- weather %>% 
+  filter(month == 1) %>% 
+  select(origin, month, day, hour, temp)
+```
+
+  ] 
+
+.panel[.panel-name[Exercise 1]
+
++ You are interested in learning the impact of **daily** temperature on departure delay for the flights in January. To do so, you need to have them in a single dataset.  
+
++ Is this going to be a 1-to-1 matching or 1-to-m matching?
+
++ Merge `daily_temp_Jan` to `flights_Jan` using `left_join()`
+
+<br>
+
+Here is the output you are supposed to get if done correctly:
+
+```{r echo = F}
+left_join(flights_Jan, daily_temp_Jan, by = c("origin", "month", "day"))
+```
+
+  ]
+
+.panel[.panel-name[Exercise 2]
+
++ You are interested in learning the impact of **hourly** temperature on departure delay for the flights in January. To do so, you need to have them in a single dataset.  
+
++ Is this going to be a 1-to-1 matching or 1-to-m matching?
+
++ Merge `hourly_temp_Jan` to `flights_Jan` using `left_join()`
+
+<br>
+
+Here is the output you are supposed to get if done correctly:
+
+```{r echo = F}
+left_join(flights_Jan, hourly_temp_Jan, by = c("origin", "month", "day"))
+```
+
+Each flight (single row in `flights_Jan`) now has multiple rows. Was this expected? 
+
+  ]
+
+]
+
